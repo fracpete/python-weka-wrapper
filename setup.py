@@ -34,7 +34,7 @@ setup(
   version="0.1.0",
   author="Peter Reutemann",
   install_requires=[
-    "javabridge=1.0.0",
+    "javabridge",
   ],
 )
 
