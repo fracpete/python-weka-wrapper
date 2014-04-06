@@ -15,10 +15,14 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
+import os
+import sys
+import getopt
 import core.jvm as jvm
 import core.classes as classes
 from core.classes import OptionHandler
 from core.converters import Loader
+from core.converters import Saver
 from core.dataset import Instances
 from core.dataset import Instance
 
@@ -49,22 +53,80 @@ class Filter(OptionHandler):
         """ Filters the dataset. """
         return Instances(javabridge.static_call("Lweka/filters/Filter;", "useFilter", "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;", data.jobject, self.jobject))
 
-if __name__ == "__main__":
-    # only for testing
-    jvm.start(["/home/fracpete/development/waikato/projects/weka-HEAD/dist/weka.jar"])
+def main(args):
+    """
+    Runs a filter from the command-line. Calls JVM start/stop automatically.
+    Use "-l jar1:..." to build the classpath (use ";" instead on Windows)
+    The first argument after "-l classpath" is the classname of the Weka 
+    filter class to execute, all others following are considered options
+    """
+
+    usage = "Usage: weka.filters -l jar1[" + os.pathsep + "jar2...] -i input1 -o output1 [-r input2 -s output2] [-c classindex] filterclass [filter options]"
+    optlist, args = getopt.getopt(args, "l:i:o:r:s:c:h")
+    if len(args) == 0:
+        raise Exception("No filter classname provided!\n" + usage)
+    for opt in optlist:
+        if opt[0] == "-h":
+            print(usage)
+            return
+        
+    jars    = []
+    input1  = None
+    output1 = None
+    input2  = None
+    output2 = None
+    cls     = "-1"
+    for opt in optlist:
+        if opt[0] == "-l":
+            jars = opt[1].split(os.pathsep)
+        elif opt[0] == "-i":
+            input1 = opt[1]
+        elif opt[0] == "-o":
+            output1 = opt[1]
+        elif opt[0] == "-r":
+            input2 = opt[1]
+        elif opt[0] == "-s":
+            output2 = opt[1]
+        elif opt[0] == "-c":
+            cls = opt[1]
+    
+    # check parameters
+    if input1 == None:
+        raise Exception("No input file provided ('-i ...')!")
+    if output1 == None:
+        raise Exception("No output file provided ('-o ...')!")
+    if input2 != None and output2 == None:
+        raise Exception("No 2nd output file provided ('-s ...')!")
+        
+    jvm.start(jars)
     try:
-        filter = Filter("weka.filters.unsupervised.attribute.Remove")
-        filter.set_options(["-R", "last"])
+        filter = Filter(args[0])
+        args = args[1:]
+        if len(args) > 0:
+            filter.set_options(args)
         loader = Loader("weka.core.converters.ArffLoader")
-        data   = loader.loadFile("/home/fracpete/development/waikato/datasets/uci/nominal/iris.arff")
-        data.set_class_index(data.num_attributes() - 1)
-        print("class index: " + str(data.get_class_index()))
-        print("class attr: " + str(data.get_class_attribute()))
-        filter.set_inputformat(data)
-        filtered = filter.filter(data)
-        print("input:\n" + data.get_relationname() + "\n" + str(data))
-        print("output:\n" + filtered.get_relationname() + "\n" + str(filtered))
+        in1 = loader.loadFile(input1)
+        if str(cls) == "first":
+            cls = "0"
+        if str(cls) == "last":
+            cls = str(in1.num_attributes() - 1)
+        in1.set_class_index(int(cls))
+        filter.set_inputformat(in1)
+        out1 = filter.filter(in1)
+        saver = Saver("weka.core.converters.ArffSaver")
+        saver.saveFile(out1, output1)
+        if input2 != None:
+            in2 = loader.loadFile(input2)
+            in2.set_class_index(int(cls))
+            out2 = filter.filter(in2)
+            saver.saveFile(out2, output2)
     except Exception, e:
         print(e)
     finally:
         jvm.stop()
+
+if __name__ == "__main__":
+    try:
+        main(sys.argv[1:])
+    except Exception, e:
+        print(e)

@@ -35,12 +35,14 @@ class Loader(OptionHandler):
         self._enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(file, "Ljava/io/File;"):
             file = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(str(file)))
+        javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", file)
         return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
         
     def loadURL(self, url):
         """ Loads the specified URL and returns the Instances object. """
         self._enforce_type(self.jobject, "weka.core.converters.URLSourcedLoader")
+        javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setURL", "(Ljava/lang/String;)V", str(url))
         return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
 
