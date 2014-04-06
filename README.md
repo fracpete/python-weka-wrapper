@@ -1,5 +1,5 @@
-pyweka
-======
+python-weka-wrapper
+===================
 
 Python wrapper for Weka (http://www.cs.waikato.ac.nz/~ml/weka/) 
 using javabridge (https://pypi.python.org/pypi/javabridge).
