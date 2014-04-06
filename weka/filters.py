@@ -56,13 +56,19 @@ class Filter(OptionHandler):
 def main(args):
     """
     Runs a filter from the command-line. Calls JVM start/stop automatically.
-    Use "-l jar1:..." to build the classpath (use ";" instead on Windows)
-    The first argument after "-l classpath" is the classname of the Weka 
-    filter class to execute, all others following are considered options
+    Options:
+        -j jar1[:jar2...]
+        -i input1
+        -o output1
+        [-r input2]
+        [-s output2]
+        [-c classindex]
+        filter classname
+        [filter options]
     """
 
-    usage = "Usage: weka.filters -l jar1[" + os.pathsep + "jar2...] -i input1 -o output1 [-r input2 -s output2] [-c classindex] filterclass [filter options]"
-    optlist, args = getopt.getopt(args, "l:i:o:r:s:c:h")
+    usage = "Usage: weka.filters -j jar1[" + os.pathsep + "jar2...] -i input1 -o output1 [-r input2 -s output2] [-c classindex] filterclass [filter options]"
+    optlist, args = getopt.getopt(args, "j:i:o:r:s:c:h")
     if len(args) == 0:
         raise Exception("No filter classname provided!\n" + usage)
     for opt in optlist:
@@ -77,7 +83,7 @@ def main(args):
     output2 = None
     cls     = "-1"
     for opt in optlist:
-        if opt[0] == "-l":
+        if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
         elif opt[0] == "-i":
             input1 = opt[1]
