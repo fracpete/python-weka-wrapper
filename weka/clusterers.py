@@ -112,7 +112,7 @@ def main(args):
         elif opt[0] == "-s":
             params.append(opt[0])
             params.append(opt[1])
-        elif opt[0] == "-x":
+        elif opt[0] == "-c":
             params.append(opt[0])
             params.append(opt[1])
         elif opt[0] == "-g":
