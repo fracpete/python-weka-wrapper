@@ -16,7 +16,9 @@
 
 import javabridge
 import core.jvm as jvm
+import core.classes as classes
 from core.classes import OptionHandler
+from core.converters import Loader
 
 class Classifier(OptionHandler):
     """
@@ -25,28 +27,32 @@ class Classifier(OptionHandler):
     
     def __init__(self, classname):
         """ Initializes the specified classifier. """
-        jo = javabridge.make_instance(classname.replace(".", "/"), "()V")
-        super(Classifier, self).__init__(jo)
-        if not javabridge.is_instance_of(self.jobject, "Lweka/classifiers/Classifier;"):
-            raise TypeError("Classifier does not implement weka.classifiers.Classifier!")
+        jobject = Classifier.new_instance(classname)
+        self._enforce_type(jobject, "weka.classifiers.Classifier")
+        super(Classifier, self).__init__(jobject)
         
     def build_classifier(self, data):
         """ Builds the classifier with the data. """
-        # TODO
+        javabridge.call(self.jobject, "buildClassifier", "(Lweka/core/Instances;)V", data.jobject)
         
     def classify_instance(self, inst):
         """ Peforms a prediction. """
-        # TODO
+        return javabridge.call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)V", data.jobject)
         
     def distribution_for_instance(self, inst):
         """ Peforms a prediction, returning the class distribution. """
-        # TODO
+        pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)V", data.jobject)
+        return jvm.ENV.get_double_array_elements(pred)
 
 if __name__ == "__main__":
     # only for testing
     jvm.start(["/home/fracpete/development/waikato/projects/weka-HEAD/dist/weka.jar"])
     try:
-        cl = Classifier("weka.classifiers.trees.J48")
+        cl     = Classifier("weka.classifiers.trees.J48")
+        loader = Loader("weka.core.converters.ArffLoader")
+        data   = loader.loadFile("/home/fracpete/development/waikato/datasets/uci/nominal/iris.arff")
+        data.set_class_index(data.num_attributes() - 1)
+        cl.build_classifier(data)
         print(cl)
     except Exception, e:
         print(e)

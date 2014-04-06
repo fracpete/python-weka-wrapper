@@ -19,15 +19,15 @@ import jvm
 def string_array_to_list(array):
     """ Turns the Java string array into Python unicode string list. """
     result  = []
-    len     = JVM.ENV.get_array_length(array)
-    wrapped = JVM.ENV.get_object_array_elements(array)
+    len     = jvm.ENV.get_array_length(array)
+    wrapped = jvm.ENV.get_object_array_elements(array)
     for i in xrange(len):
-        result.append(JVM.ENV.get_string(wrapped[i]))
+        result.append(jvm.ENV.get_string(wrapped[i]))
     return result
 
 def string_list_to_array(list):
     """ Turns a Python unicode string list into a Java String array. """
-    result = JVM.ENV.make_object_array(len(list), JVM.ENV.find_class("java/lang/String"))
+    result = jvm.ENV.make_object_array(len(list), jvm.ENV.find_class("java/lang/String"))
     for i in xrange(len(list)):
-        JVM.ENV.set_object_array_element(result, i, JVM.ENV.new_string_utf(list[i]))
+        jvm.ENV.set_object_array_element(result, i, jvm.ENV.new_string_utf(list[i]))
     return result

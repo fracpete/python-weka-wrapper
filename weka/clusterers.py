@@ -17,6 +17,7 @@
 import javabridge
 import core.jvm as jvm
 from core.classes import OptionHandler
+from core.converters import Loader
 
 class Clusterer(OptionHandler):
     """
@@ -25,24 +26,27 @@ class Clusterer(OptionHandler):
     
     def __init__(self, classname):
         """ Initializes the specified clusterer. """
-        jo = javabridge.make_instance(classname.replace(".", "/"), "()V")
-        super(Clusterer, self).__init__(jo)
-        if not javabridge.is_instance_of(self.jobject, "Lweka/clusterers/Clusterer;"):
-            raise TypeError("Clusterer does not implement weka.clusterers.Clusterer!")
+        jobject = Clusterer.new_instance(classname)
+        self._enforce_type(jobject, "weka.clusterers.Clusterer")
+        super(Clusterer, self).__init__(jobject)
         
     def build_clusterer(self, data):
         """ Builds the clusterer with the data. """
-        # TODO
+        javabridge.call(self.jobject, "buildClusterer", "(Lweka/core/Instances;)V", data.jobject)
         
     def cluster_instance(self, inst):
         """ Peforms a prediction. """
-        # TODO
+        return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)V", data.jobject)
 
 if __name__ == "__main__":
     # only for testing
     jvm.start(["/home/fracpete/development/waikato/projects/weka-HEAD/dist/weka.jar"])
     try:
         cl = Clusterer("weka.clusterers.SimpleKMeans")
+        loader = Loader("weka.core.converters.ArffLoader")
+        data   = loader.loadFile("/home/fracpete/development/waikato/datasets/uci/nominal/iris.arff")
+        data.set_class_index(-1)
+        cl.build_clusterer(data)
         print(cl)
     except Exception, e:
         print(e)
