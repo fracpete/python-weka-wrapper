@@ -15,7 +15,11 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
+import os
+import sys
+import getopt
 import core.jvm as jvm
+from core.classes import WekaObject
 from core.classes import OptionHandler
 from core.converters import Loader
 
@@ -38,17 +42,100 @@ class Clusterer(OptionHandler):
         """ Peforms a prediction. """
         return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)V", data.jobject)
 
-if __name__ == "__main__":
-    # only for testing
-    jvm.start(["/home/fracpete/development/waikato/projects/weka-HEAD/dist/weka.jar"])
+
+class ClusterEvaluation(WekaObject):
+    """
+    Evaluation class for clusterers. 
+    """
+    
+    def __init__(self):
+        """ Initializes a ClusterEvaluation object. """
+        super(ClusterEvaluation, self).__init__(ClusterEvaluation.new_instance("weka.clusterers.ClusterEvaluation"))
+        
+    @classmethod
+    def evaluateClusterer(self, clusterer, args):
+        return javabridge.static_call("Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer", "(Lweka/clusterers/Clusterer;[Ljava/lang/String;)Ljava/lang/String;", clusterer.jobject, args)
+
+def main(args):
+    """
+    Runs a filter from the command-line. Calls JVM start/stop automatically.
+    Options:
+        -j jar1[:jar2...]
+        -t train
+        [-T test]
+        [-d output model file]
+        [-l input model file]
+        [-p attribute range]
+        [-x num folds]
+        [-s seed]
+        [-c classindex]
+        [-g graph file]
+        clusterer classname
+        [clusterer options]
+    """
+
+    usage = "Usage: weka.clusterers -l jar1[" + os.pathsep + "jar2...] -t train [-T test] [-d output model file] [-l input model file] [-p attribute range] [-x num folds] [-s seed] [-c classindex] [-g graph file] clusterer classname [clusterer options]"
+    optlist, args = getopt.getopt(args, "j:t:T:d:l:p:x:s:c:g:")
+    if len(args) == 0:
+        raise Exception("No clusterer classname provided!\n" + usage)
+    for opt in optlist:
+        if opt[0] == "-h":
+            print(usage)
+            return
+        
+    jars    = []
+    params  = []
+    train   = None
+    for opt in optlist:
+        if opt[0] == "-j":
+            jars = opt[1].split(os.pathsep)
+        elif opt[0] == "-t":
+            params.append(opt[0])
+            params.append(opt[1])
+            train = opt[1]
+        elif opt[0] == "-T":
+            params.append(opt[0])
+            params.append(opt[1])
+        elif opt[0] == "-d":
+            params.append(opt[0])
+            params.append(opt[1])
+        elif opt[0] == "-l":
+            params.append(opt[0])
+            params.append(opt[1])
+        elif opt[0] == "-p":
+            params.append(opt[0])
+            params.append(opt[1])
+        elif opt[0] == "-x":
+            params.append(opt[0])
+            params.append(opt[1])
+        elif opt[0] == "-s":
+            params.append(opt[0])
+            params.append(opt[1])
+        elif opt[0] == "-x":
+            params.append(opt[0])
+            params.append(opt[1])
+        elif opt[0] == "-g":
+            params.append(opt[0])
+            params.append(opt[1])
+    
+    # check parameters
+    if train == None:
+        raise Exception("No train file provided ('-t ...')!")
+        
+    jvm.start(jars)
     try:
-        cl = Clusterer("weka.clusterers.SimpleKMeans")
-        loader = Loader("weka.core.converters.ArffLoader")
-        data   = loader.loadFile("/home/fracpete/development/waikato/datasets/uci/nominal/iris.arff")
-        data.set_class_index(-1)
-        cl.build_clusterer(data)
-        print(cl)
+        clusterer = Clusterer(args[0])
+        args = args[1:]
+        if len(args) > 0:
+            clusterer.set_options(args)
+        print(ClusterEvaluation.evaluateClusterer(clusterer, params))
     except Exception, e:
         print(e)
     finally:
         jvm.stop()
+
+if __name__ == "__main__":
+    try:
+        main(sys.argv[1:])
+    except Exception, e:
+        print(e)
