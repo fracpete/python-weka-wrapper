@@ -54,6 +54,7 @@ class ClusterEvaluation(WekaObject):
         
     @classmethod
     def evaluateClusterer(self, clusterer, args):
+        """ Evaluates the clusterer with the given options. """
         return javabridge.static_call("Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer", "(Lweka/clusterers/Clusterer;[Ljava/lang/String;)Ljava/lang/String;", clusterer.jobject, args)
 
 def main(args):
