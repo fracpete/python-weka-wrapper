@@ -11,22 +11,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# OptionHandler.py
+# jvm.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
 
-class OptionHandler:
-    """
-    Ancestor for option-handling classes. 
-    must implement the weka.core.OptionHandler interface.
-    """
-    
-    def __init__(self, jobject)
-        """ Initializes the wrapper with the specified Java object. """
-        javabridge.is_instance_of(jobject, "Lweka/core/OptionHandler;")
-        self.jobject = jobject
+ENV = None
 
-if __name__ == "__main__":
-    jo = javabridge.make_instance("weka/classifiers/trees/J48", "()V")
-    o = OptionHandler(jo)
+def start(class_path = []):
+    """ Initializes the javabridge connection (starts up the JVM). """
+    global ENV
+    for cp in class_path:
+        javabridge.JARS.append(cp)
+    javabridge.start_vm(run_headless=True)
+    javabridge.attach()
+    ENV = javabridge.get_env()
+
+def stop():
+    """ Kills the JVM. """
+    global ENV
+    if not ENV == None:
+        ENV  = None
+        javabridge.kill_vm()

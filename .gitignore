@@ -56,3 +56,6 @@ docs/_build/
 *~
 *.swp
 
+# Eric IDE
+*.e4p
+
