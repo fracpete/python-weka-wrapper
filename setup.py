@@ -30,7 +30,10 @@ setup(
     'Programming Language :: Python',
   ],
   license='GNU General Public License version 3.0 (GPLv3)',
-
+  packages=[
+    "weka",
+    "weka.core"
+  ],
   version="0.1.0",
   author="Peter Reutemann",
   install_requires=[
