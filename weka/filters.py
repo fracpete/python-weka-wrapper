@@ -2,12 +2,12 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -30,25 +30,25 @@ class Filter(OptionHandler):
     """
     Wrapper class for filters.
     """
-    
+
     def __init__(self, classname):
         """ Initializes the specified filter. """
         jobject = Filter.new_instance(classname)
         self._enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject)
-        
+
     def set_inputformat(self, data):
         """ Sets the input format. """
         return javabridge.call(self.jobject, "setInputFormat", "(Lweka/core/Instances;)Z", data.jobject)
-        
+
     def input(self, inst):
         """ Inputs the Instance. """
         return javabridge.call(self.jobject, "input", "(Lweka/core/Instance;)Z", inst.jobject)
-        
+
     def output(self):
         """ Outputs the filtered Instance. """
         return Instance(javabridge.call(self.jobject, "output", "()Lweka/core/Instance;"))
-        
+
     def filter(self, data):
         """ Filters the dataset. """
         return Instances(javabridge.static_call("Lweka/filters/Filter;", "useFilter", "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;", data.jobject, self.jobject))
@@ -75,7 +75,7 @@ def main(args):
         if opt[0] == "-h":
             print(usage)
             return
-        
+
     jars    = []
     input1  = None
     output1 = None
@@ -95,7 +95,7 @@ def main(args):
             output2 = opt[1]
         elif opt[0] == "-c":
             cls = opt[1]
-    
+
     # check parameters
     if input1 == None:
         raise Exception("No input file provided ('-i ...')!")
@@ -103,7 +103,7 @@ def main(args):
         raise Exception("No output file provided ('-o ...')!")
     if input2 != None and output2 == None:
         raise Exception("No 2nd output file provided ('-s ...')!")
-        
+
     jvm.start(jars)
     try:
         filter = Filter(args[0])
