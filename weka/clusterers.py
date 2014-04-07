@@ -2,12 +2,12 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -27,17 +27,17 @@ class Clusterer(OptionHandler):
     """
     Wrapper class for clusterers.
     """
-    
+
     def __init__(self, classname):
         """ Initializes the specified clusterer. """
         jobject = Clusterer.new_instance(classname)
         self._enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject)
-        
+
     def build_clusterer(self, data):
         """ Builds the clusterer with the data. """
         javabridge.call(self.jobject, "buildClusterer", "(Lweka/core/Instances;)V", data.jobject)
-        
+
     def cluster_instance(self, inst):
         """ Peforms a prediction. """
         return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)V", data.jobject)
@@ -45,13 +45,13 @@ class Clusterer(OptionHandler):
 
 class ClusterEvaluation(WekaObject):
     """
-    Evaluation class for clusterers. 
+    Evaluation class for clusterers.
     """
-    
+
     def __init__(self):
         """ Initializes a ClusterEvaluation object. """
         super(ClusterEvaluation, self).__init__(ClusterEvaluation.new_instance("weka.clusterers.ClusterEvaluation"))
-        
+
     @classmethod
     def evaluateClusterer(self, clusterer, args):
         """ Evaluates the clusterer with the given options. """
@@ -83,7 +83,7 @@ def main(args):
         if opt[0] == "-h":
             print(usage)
             return
-        
+
     jars    = []
     params  = []
     train   = None
@@ -118,11 +118,11 @@ def main(args):
         elif opt[0] == "-g":
             params.append(opt[0])
             params.append(opt[1])
-    
+
     # check parameters
     if train == None:
         raise Exception("No train file provided ('-t ...')!")
-        
+
     jvm.start(jars)
     try:
         clusterer = Clusterer(args[0])
