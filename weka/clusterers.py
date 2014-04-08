@@ -23,6 +23,7 @@ from core.classes import WekaObject
 from core.classes import OptionHandler
 from core.converters import Loader
 
+
 class Clusterer(OptionHandler):
     """
     Wrapper class for clusterers.
@@ -40,7 +41,7 @@ class Clusterer(OptionHandler):
 
     def cluster_instance(self, inst):
         """ Peforms a prediction. """
-        return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)V", data.jobject)
+        return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)V", inst.jobject)
 
 
 class ClusterEvaluation(WekaObject):
@@ -53,7 +54,7 @@ class ClusterEvaluation(WekaObject):
         super(ClusterEvaluation, self).__init__(ClusterEvaluation.new_instance("weka.clusterers.ClusterEvaluation"))
 
     @classmethod
-    def evaluateClusterer(self, clusterer, args):
+    def evaluate_clusterer(self, clusterer, args):
         """ Evaluates the clusterer with the given options. """
         return javabridge.static_call("Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer", "(Lweka/clusterers/Clusterer;[Ljava/lang/String;)Ljava/lang/String;", clusterer.jobject, args)
 
@@ -129,7 +130,7 @@ def main(args):
         args = args[1:]
         if len(args) > 0:
             clusterer.set_options(args)
-        print(ClusterEvaluation.evaluateClusterer(clusterer, params))
+        print(ClusterEvaluation.evaluate_clusterer(clusterer, params))
     except Exception, e:
         print(e)
     finally:

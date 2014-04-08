@@ -24,6 +24,7 @@ from core.classes import WekaObject
 from core.classes import OptionHandler
 from core.converters import Loader
 
+
 class Classifier(OptionHandler):
     """
     Wrapper class for classifiers.
@@ -41,11 +42,11 @@ class Classifier(OptionHandler):
 
     def classify_instance(self, inst):
         """ Peforms a prediction. """
-        return javabridge.call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)V", data.jobject)
+        return javabridge.call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)V", inst.jobject)
 
     def distribution_for_instance(self, inst):
         """ Peforms a prediction, returning the class distribution. """
-        pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)V", data.jobject)
+        pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)V", inst.jobject)
         return jvm.ENV.get_double_array_elements(pred)
 
 
@@ -59,7 +60,7 @@ class Evaluation(WekaObject):
         super(Evaluation, self).__init__(Evaluation.new_instance("weka.classifiers.Evaluation"))
 
     @classmethod
-    def evaluateModel(self, classifier, args):
+    def evaluate_model(self, classifier, args):
         """ Evaluates the classifier with the given options. """
         return javabridge.static_call("Lweka/classifiers/Evaluation;", "evaluateModel", "(Lweka/classifiers/Classifier;[Ljava/lang/String;)Ljava/lang/String;", classifier.jobject, args)
 
@@ -144,7 +145,7 @@ def main(args):
         args = args[1:]
         if len(args) > 0:
             classifier.set_options(args)
-        print(Evaluation.evaluateModel(classifier, params))
+        print(Evaluation.evaluate_model(classifier, params))
     except Exception, e:
         print(e)
     finally:
