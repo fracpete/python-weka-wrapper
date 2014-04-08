@@ -155,18 +155,10 @@ def main(args):
     jvm.start(jars)
     try:
         classifier = Classifier(args[0])
-        # TODO
-        #cls = Classifier(args[0])
         args = args[1:]
         if len(args) > 0:
             classifier.set_options(args)
         print(Evaluation.evaluate_model(classifier, params))
-        # TODO
-        #data = Loader("weka.core.converters.ArffLoader").loadFile("/home/fracpete/development/waikato/datasets/uci/nominal/iris.arff")
-        #data.set_class_index(data.num_attributes() - 1)
-        #evaluation = Evaluation(data)
-        #evaluation.crossvalidate_model(cls, data, 10, Random(10))
-        #print(evaluation.get_percent_correct())
     except Exception, e:
         print(e)
     finally:

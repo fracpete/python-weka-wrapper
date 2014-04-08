@@ -53,6 +53,18 @@ class ClusterEvaluation(JavaObject):
         """ Initializes a ClusterEvaluation object. """
         super(ClusterEvaluation, self).__init__(ClusterEvaluation.new_instance("weka.clusterers.ClusterEvaluation"))
 
+    def set_model(self, clusterer):
+        """ Sets the built clusterer to evaluate. """
+        javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
+
+    def evaluate_model(self, test):
+        """ Evaluates the currently set clusterer on the test set. """
+        javabridge.call(self.jobject, "evaluateClusterer", "(Lweka/core/Instances;)V", test.jobject)
+
+    def get_cluster_results(self):
+        """ The cluster results as string. """
+        return javabridge.call(self.jobject, "clusterResultsToString", "()Ljava/lang/String;")
+
     @classmethod
     def evaluate_clusterer(cls, clusterer, args):
         """ Evaluates the clusterer with the given options.
