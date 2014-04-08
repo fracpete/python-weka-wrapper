@@ -16,9 +16,9 @@
 
 import javabridge
 import core.jvm as jvm
-from core.classes import WekaObject
+from core.classes import JavaObject
 
-class Instances(WekaObject):
+class Instances(JavaObject):
     """
     Wrapper class for weka.core.Instances.
     """
@@ -82,7 +82,7 @@ class Instances(WekaObject):
         """ Sorts the dataset using the specified attribute index. """
         javabridge.call(self.jobject, "sort", "(I)V", index)
 
-class Instance(WekaObject):
+class Instance(JavaObject):
     """
     Wrapper class for weka.core.Instance.
     """
@@ -117,7 +117,7 @@ class Instance(WekaObject):
         return javabridge.call(self.jobject, "setWeight", "(D)V", weight)
         
 
-class Attribute(WekaObject):
+class Attribute(JavaObject):
     """
     Wrapper class for weka.core.Attribute.
     """

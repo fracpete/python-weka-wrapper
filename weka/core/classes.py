@@ -16,14 +16,14 @@
 
 import javabridge
 import arrays
-import jvm
 
-class WekaObject(object):
-    """ Basic Weka object. """
+
+class JavaObject(object):
+    """ Basic Java object. """
     
     def __init__(self, jobject):
         """ Initializes the wrapper with the specified Java object. """
-        if jobject == None:
+        if jobject is None:
             raise Exception("No Java object supplied!")
         self.jobject = jobject
 
@@ -33,7 +33,7 @@ class WekaObject(object):
         E.g.: self._check_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
         or self._check_type('weka.core.converters.AbstractFileLoader')
         """
-        if jni_intf_or_class == None:
+        if jni_intf_or_class is None:
             jni_intf_or_class = "L" + intf_or_class.replace(".", "/") + ";"
         return javabridge.is_instance_of(jobject, jni_intf_or_class)
         
@@ -53,7 +53,7 @@ class WekaObject(object):
     @classmethod
     def new_instance(cls, classname, jni_classname = None):
         """ Creates a new object from the given classname using the default constructor, None in case of error. """
-        if jni_classname == None:
+        if jni_classname is None:
             jni_classname = classname.replace(".", "/")
         try:
             return javabridge.make_instance(jni_classname, "()V")
@@ -62,7 +62,28 @@ class WekaObject(object):
             return None
 
 
-class OptionHandler(WekaObject):
+class Random(JavaObject):
+    """
+    Wrapper for the java.util.Random class.
+    """
+
+    def __init__(self, seed):
+        """ The seed value  """
+        super(Random, self).__init__(javabridge.make_instance("Ljava/util/Random;", "(I)V", seed))
+
+    def next_int(self, n = None):
+        """ next random integer. if n is provided, then between 0 and n-1 """
+        if n is None:
+            return javabridge.call(self.jobject, "nextInt", "()I")
+        else:
+            return javabridge.call(self.jobject, "nextInt", "(I)I")
+
+    def next_double(self):
+        """ next random double. """
+        return javabridge.call(self.jobject, "nextDouble", "()D")
+
+
+class OptionHandler(JavaObject):
     """
     Ancestor for option-handling classes. 
     Classes should implement the weka.core.OptionHandler interface to have any effect.

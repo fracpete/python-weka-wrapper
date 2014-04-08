@@ -19,7 +19,7 @@ import os
 import sys
 import getopt
 import core.jvm as jvm
-from core.classes import WekaObject
+from core.classes import JavaObject
 from core.classes import OptionHandler
 from core.converters import Loader
 
@@ -41,10 +41,10 @@ class Clusterer(OptionHandler):
 
     def cluster_instance(self, inst):
         """ Peforms a prediction. """
-        return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)V", inst.jobject)
+        return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)D", inst.jobject)
 
 
-class ClusterEvaluation(WekaObject):
+class ClusterEvaluation(JavaObject):
     """
     Evaluation class for clusterers.
     """
@@ -54,8 +54,12 @@ class ClusterEvaluation(WekaObject):
         super(ClusterEvaluation, self).__init__(ClusterEvaluation.new_instance("weka.clusterers.ClusterEvaluation"))
 
     @classmethod
-    def evaluate_clusterer(self, clusterer, args):
-        """ Evaluates the clusterer with the given options. """
+    def evaluate_clusterer(cls, clusterer, args):
+        """ Evaluates the clusterer with the given options.
+        :rtype : str
+        :param clusterer: the clusterer instance to evaluate
+        :param args: the command-line arguments
+        """
         return javabridge.static_call("Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer", "(Lweka/clusterers/Clusterer;[Ljava/lang/String;)Ljava/lang/String;", clusterer.jobject, args)
 
 def main(args):
@@ -121,7 +125,7 @@ def main(args):
             params.append(opt[1])
 
     # check parameters
-    if train == None:
+    if train is None:
         raise Exception("No train file provided ('-t ...')!")
 
     jvm.start(jars)

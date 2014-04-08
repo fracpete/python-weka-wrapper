@@ -19,8 +19,8 @@ import os
 import sys
 import getopt
 import core.jvm as jvm
-import core.classes as classes
-from core.classes import WekaObject
+from core.classes import JavaObject
+from core.classes import Random
 from core.classes import OptionHandler
 from core.converters import Loader
 
@@ -42,26 +42,39 @@ class Classifier(OptionHandler):
 
     def classify_instance(self, inst):
         """ Peforms a prediction. """
-        return javabridge.call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)V", inst.jobject)
+        return javabridge.call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)D", inst.jobject)
 
     def distribution_for_instance(self, inst):
         """ Peforms a prediction, returning the class distribution. """
-        pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)V", inst.jobject)
+        pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
         return jvm.ENV.get_double_array_elements(pred)
 
 
-class Evaluation(WekaObject):
+class Evaluation(JavaObject):
     """
     Evaluation class for classifiers.
     """
 
-    def __init__(self):
+    def __init__(self, data):
         """ Initializes an Evaluation object. """
-        super(Evaluation, self).__init__(Evaluation.new_instance("weka.classifiers.Evaluation"))
+        jobject = javabridge.make_instance("weka/classifiers/Evaluation", "(Lweka/core/Instances;)V", data.jobject)
+        super(Evaluation, self).__init__(jobject)
+
+    def crossvalidate_model(self, classifier, data, num_folds, random):
+        """ crossvalidates the model using the specified data, number of folds and random number generator wrapper. """
+        javabridge.call(self.jobject, "crossValidateModel", "(Lweka/core/Instance;Lweka/core/Instance;)V", data.jobject, num_folds, random.jobject)
+
+    def get_percent_correct(self):
+        """ Returns the percent correct.  """
+        return javabridge.call(self.jobject, "percentCorrect", "()D")
 
     @classmethod
-    def evaluate_model(self, classifier, args):
-        """ Evaluates the classifier with the given options. """
+    def evaluate_model(cls, classifier, args):
+        """ Evaluates the classifier with the given options.
+        :rtype : str
+        :param classifier: the classifier instance to use
+        :param args: the command-line arguments to use
+        """
         return javabridge.static_call("Lweka/classifiers/Evaluation;", "evaluateModel", "(Lweka/classifiers/Classifier;[Ljava/lang/String;)Ljava/lang/String;", classifier.jobject, args)
 
 def main(args):
@@ -136,16 +149,24 @@ def main(args):
             params.append(opt[1])
 
     # check parameters
-    if train == None:
+    if train is None:
         raise Exception("No train file provided ('-t ...')!")
 
     jvm.start(jars)
     try:
         classifier = Classifier(args[0])
+        # TODO
+        #cls = Classifier(args[0])
         args = args[1:]
         if len(args) > 0:
             classifier.set_options(args)
         print(Evaluation.evaluate_model(classifier, params))
+        # TODO
+        #data = Loader("weka.core.converters.ArffLoader").loadFile("/home/fracpete/development/waikato/datasets/uci/nominal/iris.arff")
+        #data.set_class_index(data.num_attributes() - 1)
+        #evaluation = Evaluation(data)
+        #evaluation.crossvalidate_model(cls, data, 10, Random(10))
+        #print(evaluation.get_percent_correct())
     except Exception, e:
         print(e)
     finally:
