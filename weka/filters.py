@@ -129,7 +129,7 @@ def main(args):
         if len(args) > 0:
             flter.set_options(args)
         loader = Loader("weka.core.converters.ArffLoader")
-        in1 = loader.loadFile(input1)
+        in1 = loader.load_file(input1)
         if str(cls) == "first":
             cls = "0"
         if str(cls) == "last":
@@ -138,12 +138,12 @@ def main(args):
         flter.set_inputformat(in1)
         out1 = flter.filter(in1)
         saver = Saver("weka.core.converters.ArffSaver")
-        saver.saveFile(out1, output1)
+        saver.save_file(out1, output1)
         if not input2 is None:
-            in2 = loader.loadFile(input2)
+            in2 = loader.load_file(input2)
             in2.set_class_index(int(cls))
             out2 = flter.filter(in2)
-            saver.saveFile(out2, output2)
+            saver.save_file(out2, output2)
     except Exception, e:
         print(e)
     finally:

@@ -74,7 +74,8 @@ class Evaluation(JavaObject):
         Initializes an Evaluation object.
         :param data: the data to use to initialize the priors with
         """
-        jobject = javabridge.make_instance("weka/classifiers/Evaluation", "(Lweka/core/Instances;)V", data.jobject)
+        jobject = javabridge.make_instance("weka/classifiers/EvaluationWrapper", "(Lweka/core/Instances;)V", data.jobject)
+        jobject = javabridge.call(jobject, "getEvaluation", "()Lweka/classifiers/Evaluation;")
         super(Evaluation, self).__init__(jobject)
 
     def crossvalidate_model(self, classifier, data, num_folds, random):
@@ -85,14 +86,14 @@ class Evaluation(JavaObject):
         :param num_folds: the number of folds
         :param random: the random number generator to use
         """
-        javabridge.call(self.jobject, "crossValidateModel", "(Lweka/core/Instance;Lweka/core/Instance;)V", data.jobject, num_folds, random.jobject)
+        javabridge.call(self.jobject, "crossValidateModel", "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V", classifier.jobject, data.jobject, num_folds, random.jobject, [])
 
     def get_percent_correct(self):
         """
         Returns the percent correct.
         :rtype: double
         """
-        return javabridge.call(self.jobject, "percentCorrect", "()D")
+        return javabridge.call(self.jobject, "pctCorrect", "()D")
 
     @classmethod
     def evaluate_model(cls, classifier, args):
@@ -136,9 +137,9 @@ def main(args):
             print(usage)
             return
 
-    jars    = []
-    params  = []
-    train   = None
+    jars   = []
+    params = []
+    train  = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
@@ -187,6 +188,12 @@ def main(args):
         if len(args) > 0:
             classifier.set_options(args)
         print(Evaluation.evaluate_model(classifier, params))
+        # data = Loader("weka.core.converters.ArffLoader").load_file(train)
+        # data.set_class_index(data.num_attributes() - 1)
+        # evl = Evaluation(data)
+        # rnd = Random(1)
+        # evl.crossvalidate_model(classifier, data, 10, rnd)
+        # print(evl.get_percent_correct())
     except Exception, e:
         print(e)
     finally:

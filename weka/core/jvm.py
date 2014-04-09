@@ -26,6 +26,7 @@ def start(class_path=[]):
     global ENV
     for cp in class_path:
         javabridge.JARS.append(cp)
+    print("classpath: " + str(javabridge.JARS))
     javabridge.start_vm(run_headless=True)
     javabridge.attach()
     ENV = javabridge.get_env()

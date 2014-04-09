@@ -24,14 +24,20 @@ class Loader(OptionHandler):
     Wrapper class for Loaders.
     """
     
-    def __init__(self, classname):
-        """ Initializes the specified loader. """
+    def __init__(self, classname="weka.core.converters.ArffLoader"):
+        """
+        Initializes the specified loader.
+        :param classname: the classname of the loader
+        """
         jobject = Loader.new_instance(classname)
         self._enforce_type(jobject, "weka.core.converters.Loader")
         super(Loader, self).__init__(jobject)
 
-    def loadFile(self, file):
-        """ Loads the specified file and returns the Instances object. """
+    def load_file(self, file):
+        """
+        Loads the specified file and returns the Instances object.
+        :param file: the file to load
+        """
         self._enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(file, "Ljava/io/File;"):
             file = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(str(file)))
@@ -39,8 +45,11 @@ class Loader(OptionHandler):
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", file)
         return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
         
-    def loadURL(self, url):
-        """ Loads the specified URL and returns the Instances object. """
+    def load_url(self, url):
+        """
+        Loads the specified URL and returns the Instances object.
+        :param url: the URL to load the data from
+        """
         self._enforce_type(self.jobject, "weka.core.converters.URLSourcedLoader")
         javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setURL", "(Ljava/lang/String;)V", str(url))
@@ -52,14 +61,21 @@ class Saver(OptionHandler):
     Wrapper class for Savers.
     """
     
-    def __init__(self, classname):
-        """ Initializes the specified saver. """
+    def __init__(self, classname="weka.core.converters.ArffSaver"):
+        """
+        Initializes the specified saver.
+        :param classname: the classname of the saver
+        """
         jobject = Saver.new_instance(classname)
         self._enforce_type(jobject, "weka.core.converters.Saver")
         super(Saver, self).__init__(jobject)
 
-    def saveFile(self, data, file):
-        """ Saves the Instances object in the specified fil. """
+    def save_file(self, data, file):
+        """
+        Saves the Instances object in the specified file.
+        :param data: the data to save
+        :param file: the file to save the data to
+        """
         self._enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(file, "Ljava/io/File;"):
             file = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(str(file)))

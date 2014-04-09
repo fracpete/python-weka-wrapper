@@ -72,7 +72,7 @@ class Random(JavaObject):
         The seed value.
         :param seed: the seed value
         """
-        super(Random, self).__init__(javabridge.make_instance("Ljava/util/Random;", "(I)V", seed))
+        super(Random, self).__init__(javabridge.make_instance("Ljava/util/Random;", "(J)V", seed))
 
     def next_int(self, n = None):
         """
