@@ -56,4 +56,14 @@ weka.filters \
     -R last
 </pre>
 
+Data generators
+---------------
 
+Artifical data can be generated using one of Weka' data generators, e.g., the Agrawal classification generator:
+
+<pre>
+weka.datageneators \
+    -j /some/where/weka.jar \
+    -o /tmp/out.arff \
+    weka.datagenerators.classifiers.classification.Agrawal
+</pre>
