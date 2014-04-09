@@ -104,6 +104,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.static_call("Lweka/classifiers/Evaluation;", "evaluateModel", "(Lweka/classifiers/Classifier;[Ljava/lang/String;)Ljava/lang/String;", classifier.jobject, args)
 
+
 def main(args):
     """
     Runs a classifier from the command-line. Calls JVM start/stop automatically.

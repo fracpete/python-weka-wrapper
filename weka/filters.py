@@ -70,6 +70,7 @@ class Filter(OptionHandler):
         """
         return Instances(javabridge.static_call("Lweka/filters/Filter;", "useFilter", "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;", data.jobject, self.jobject))
 
+
 def main(args):
     """
     Runs a filter from the command-line. Calls JVM start/stop automatically.

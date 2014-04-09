@@ -88,6 +88,7 @@ class ClusterEvaluation(JavaObject):
         """
         return javabridge.static_call("Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer", "(Lweka/clusterers/Clusterer;[Ljava/lang/String;)Ljava/lang/String;", clusterer.jobject, args)
 
+
 def main(args):
     """
     Runs a clusterer from the command-line. Calls JVM start/stop automatically.
