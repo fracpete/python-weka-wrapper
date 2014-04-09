@@ -31,21 +31,35 @@ class Classifier(OptionHandler):
     """
 
     def __init__(self, classname):
-        """ Initializes the specified classifier. """
+        """
+        Initializes the specified classifier.
+        :param classname: the classname of the classifier
+        """
         jobject = Classifier.new_instance(classname)
         self._enforce_type(jobject, "weka.classifiers.Classifier")
         super(Classifier, self).__init__(jobject)
 
     def build_classifier(self, data):
-        """ Builds the classifier with the data. """
+        """
+        Builds the classifier with the data.
+        :param data: the data to train the classifier with
+        """
         javabridge.call(self.jobject, "buildClassifier", "(Lweka/core/Instances;)V", data.jobject)
 
     def classify_instance(self, inst):
-        """ Peforms a prediction. """
+        """
+        Peforms a prediction.
+        :param inst: the Instance to get a prediction for
+        :rtype: double
+        """
         return javabridge.call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)D", inst.jobject)
 
     def distribution_for_instance(self, inst):
-        """ Peforms a prediction, returning the class distribution. """
+        """
+        Peforms a prediction, returning the class distribution.
+        :param inst: the Instance to get the class distribution for
+        :rtype: double[]
+        """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
         return jvm.ENV.get_double_array_elements(pred)
 
@@ -56,21 +70,34 @@ class Evaluation(JavaObject):
     """
 
     def __init__(self, data):
-        """ Initializes an Evaluation object. """
+        """
+        Initializes an Evaluation object.
+        :param data: the data to use to initialize the priors with
+        """
         jobject = javabridge.make_instance("weka/classifiers/Evaluation", "(Lweka/core/Instances;)V", data.jobject)
         super(Evaluation, self).__init__(jobject)
 
     def crossvalidate_model(self, classifier, data, num_folds, random):
-        """ crossvalidates the model using the specified data, number of folds and random number generator wrapper. """
+        """
+        Crossvalidates the model using the specified data, number of folds and random number generator wrapper.
+        :param classifier: the classifier to cross-validate
+        :param data: the data to evaluate on
+        :param num_folds: the number of folds
+        :param random: the random number generator to use
+        """
         javabridge.call(self.jobject, "crossValidateModel", "(Lweka/core/Instance;Lweka/core/Instance;)V", data.jobject, num_folds, random.jobject)
 
     def get_percent_correct(self):
-        """ Returns the percent correct.  """
+        """
+        Returns the percent correct.
+        :rtype: double
+        """
         return javabridge.call(self.jobject, "percentCorrect", "()D")
 
     @classmethod
     def evaluate_model(cls, classifier, args):
-        """ Evaluates the classifier with the given options.
+        """
+        Evaluates the classifier with the given options.
         :rtype : str
         :param classifier: the classifier instance to use
         :param args: the command-line arguments to use
@@ -79,7 +106,7 @@ class Evaluation(JavaObject):
 
 def main(args):
     """
-    Runs a filter from the command-line. Calls JVM start/stop automatically.
+    Runs a classifier from the command-line. Calls JVM start/stop automatically.
     Options:
         -j jar1[:jar2...]
         -t train

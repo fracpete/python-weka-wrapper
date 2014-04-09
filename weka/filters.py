@@ -26,31 +26,48 @@ from core.converters import Saver
 from core.dataset import Instances
 from core.dataset import Instance
 
+
 class Filter(OptionHandler):
     """
     Wrapper class for filters.
     """
 
     def __init__(self, classname):
-        """ Initializes the specified filter. """
+        """
+        Initializes the specified filter.
+        :param classname: the classname of the filter
+        """
         jobject = Filter.new_instance(classname)
         self._enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject)
 
     def set_inputformat(self, data):
-        """ Sets the input format. """
+        """
+        Sets the input format.
+        :param data: the data to use as input
+        """
         return javabridge.call(self.jobject, "setInputFormat", "(Lweka/core/Instances;)Z", data.jobject)
 
     def input(self, inst):
-        """ Inputs the Instance. """
+        """
+        Inputs the Instance.
+        :param inst: the instance to filter
+        """
         return javabridge.call(self.jobject, "input", "(Lweka/core/Instance;)Z", inst.jobject)
 
     def output(self):
-        """ Outputs the filtered Instance. """
+        """
+        Outputs the filtered Instance.
+        :rtype : an Instance object
+        """
         return Instance(javabridge.call(self.jobject, "output", "()Lweka/core/Instance;"))
 
     def filter(self, data):
-        """ Filters the dataset. """
+        """
+        Filters the dataset.
+        :param data: the Instances to filter
+        :rtype : the filtered Instances object
+        """
         return Instances(javabridge.static_call("Lweka/filters/Filter;", "useFilter", "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;", data.jobject, self.jobject))
 
 def main(args):
@@ -97,19 +114,19 @@ def main(args):
             cls = opt[1]
 
     # check parameters
-    if input1 == None:
+    if input1 is None:
         raise Exception("No input file provided ('-i ...')!")
-    if output1 == None:
+    if output1 is None:
         raise Exception("No output file provided ('-o ...')!")
-    if input2 != None and output2 == None:
+    if not input2 is None and output2 is None:
         raise Exception("No 2nd output file provided ('-s ...')!")
 
     jvm.start(jars)
     try:
-        filter = Filter(args[0])
+        flter = Filter(args[0])
         args = args[1:]
         if len(args) > 0:
-            filter.set_options(args)
+            flter.set_options(args)
         loader = Loader("weka.core.converters.ArffLoader")
         in1 = loader.loadFile(input1)
         if str(cls) == "first":
@@ -117,14 +134,14 @@ def main(args):
         if str(cls) == "last":
             cls = str(in1.num_attributes() - 1)
         in1.set_class_index(int(cls))
-        filter.set_inputformat(in1)
-        out1 = filter.filter(in1)
+        flter.set_inputformat(in1)
+        out1 = flter.filter(in1)
         saver = Saver("weka.core.converters.ArffSaver")
         saver.saveFile(out1, output1)
-        if input2 != None:
+        if not input2 is None:
             in2 = loader.loadFile(input2)
             in2.set_class_index(int(cls))
-            out2 = filter.filter(in2)
+            out2 = flter.filter(in2)
             saver.saveFile(out2, output2)
     except Exception, e:
         print(e)

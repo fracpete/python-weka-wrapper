@@ -21,7 +21,6 @@ import getopt
 import core.jvm as jvm
 from core.classes import JavaObject
 from core.classes import OptionHandler
-from core.converters import Loader
 
 
 class Clusterer(OptionHandler):
@@ -30,17 +29,26 @@ class Clusterer(OptionHandler):
     """
 
     def __init__(self, classname):
-        """ Initializes the specified clusterer. """
+        """
+        Initializes the specified clusterer.
+        :param classname: the classname of the clusterer
+        """
         jobject = Clusterer.new_instance(classname)
         self._enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject)
 
     def build_clusterer(self, data):
-        """ Builds the clusterer with the data. """
+        """
+        Builds the clusterer with the data.
+        :param data: the data to use for training the clusterer
+        """
         javabridge.call(self.jobject, "buildClusterer", "(Lweka/core/Instances;)V", data.jobject)
 
     def cluster_instance(self, inst):
-        """ Peforms a prediction. """
+        """
+        Peforms a prediction.
+        :param inst: the instance to determine the cluster for
+        """
         return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)D", inst.jobject)
 
 
@@ -54,15 +62,21 @@ class ClusterEvaluation(JavaObject):
         super(ClusterEvaluation, self).__init__(ClusterEvaluation.new_instance("weka.clusterers.ClusterEvaluation"))
 
     def set_model(self, clusterer):
-        """ Sets the built clusterer to evaluate. """
+        """ Sets the built clusterer to evaluate.
+        :param clusterer: the clusterer to evaluate
+        """
         javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
 
     def evaluate_model(self, test):
-        """ Evaluates the currently set clusterer on the test set. """
+        """ Evaluates the currently set clusterer on the test set.
+        :param test: the test set to use for evaluating
+        """
         javabridge.call(self.jobject, "evaluateClusterer", "(Lweka/core/Instances;)V", test.jobject)
 
     def get_cluster_results(self):
-        """ The cluster results as string. """
+        """ The cluster results as string. 
+        :rtype : str
+        """
         return javabridge.call(self.jobject, "clusterResultsToString", "()Ljava/lang/String;")
 
     @classmethod
@@ -76,7 +90,7 @@ class ClusterEvaluation(JavaObject):
 
 def main(args):
     """
-    Runs a filter from the command-line. Calls JVM start/stop automatically.
+    Runs a clusterer from the command-line. Calls JVM start/stop automatically.
     Options:
         -j jar1[:jar2...]
         -t train
@@ -101,9 +115,9 @@ def main(args):
             print(usage)
             return
 
-    jars    = []
-    params  = []
-    train   = None
+    jars   = []
+    params = []
+    train  = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)

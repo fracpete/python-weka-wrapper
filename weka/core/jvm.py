@@ -18,8 +18,11 @@ import javabridge
 
 ENV = None
 
-def start(class_path = []):
-    """ Initializes the javabridge connection (starts up the JVM). """
+def start(class_path=[]):
+    """
+    Initializes the javabridge connection (starts up the JVM).
+    :param class_path: the additional classpath elements to add
+    """
     global ENV
     for cp in class_path:
         javabridge.JARS.append(cp)

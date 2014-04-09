@@ -68,18 +68,28 @@ class Random(JavaObject):
     """
 
     def __init__(self, seed):
-        """ The seed value  """
+        """
+        The seed value.
+        :param seed: the seed value
+        """
         super(Random, self).__init__(javabridge.make_instance("Ljava/util/Random;", "(I)V", seed))
 
     def next_int(self, n = None):
-        """ next random integer. if n is provided, then between 0 and n-1 """
+        """
+        Next random integer. if n is provided, then between 0 and n-1.
+        :param n: the upper limit (minus 1) for the random integer
+        :rtype: int
+        """
         if n is None:
             return javabridge.call(self.jobject, "nextInt", "()I")
         else:
             return javabridge.call(self.jobject, "nextInt", "(I)I")
 
     def next_double(self):
-        """ next random double. """
+        """
+        Next random double.
+        :rtype: double
+        """
         return javabridge.call(self.jobject, "nextDouble", "()D")
 
 
@@ -90,29 +100,44 @@ class OptionHandler(JavaObject):
     """
     
     def __init__(self, jobject):
-        """ Initializes the wrapper with the specified Java object. """
+        """
+        Initializes the wrapper with the specified Java object.
+        :param jobject: the java object to wrap
+        """
         super(OptionHandler, self).__init__(jobject)
         self.is_optionhandler = self._check_type(jobject, "weka.core.OptionHandler")
         
     def global_info(self):
-        """ Returns the globalInfo() result, None if not available. """
+        """
+        Returns the globalInfo() result, None if not available.
+        :rtypes: str
+        """
         try:
             return javabridge.call(self.jobject, "globalInfo", "()Ljava/lang/String;")
-        except:
+        except Exception, e:
             return None
         
     def set_options(self, options):
-        """ Sets the command-line options (as list). """
+        """
+        Sets the command-line options (as list).
+        :param options: the list of command-line options to set
+        """
         if self.is_optionhandler:
             javabridge.call(self.jobject, "setOptions", "([Ljava/lang/String;)V", arrays.string_list_to_array(options))
                                                        
     def get_options(self):
-        """ Obtains the currently set options as list. """
+        """
+        Obtains the currently set options as list.
+        :rtype: list
+        """
         if self.is_optionhandler:
             return arrays.string_array_to_list(javabridge.call(self.jobject, "getOptions", "()[Ljava/lang/String;"))
         else:
             return []
                                                        
     def __str__(self):
-        """ Obtains the currently set options as list. """
+        """
+        Obtains the currently set options as list.
+        :rtype: str
+        """
         return javabridge.to_string(self.jobject)
