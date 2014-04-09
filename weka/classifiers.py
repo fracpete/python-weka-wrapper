@@ -88,12 +88,26 @@ class Evaluation(JavaObject):
         """
         javabridge.call(self.jobject, "crossValidateModel", "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V", classifier.jobject, data.jobject, num_folds, random.jobject, [])
 
-    def get_percent_correct(self):
+    def percent_correct(self):
         """
         Returns the percent correct.
         :rtype: double
         """
         return javabridge.call(self.jobject, "pctCorrect", "()D")
+
+    def percent_incorrect(self):
+        """
+        Returns the percent incorrect.
+        :rtype: double
+        """
+        return javabridge.call(self.jobject, "pctIncorrect", "()D")
+
+    def percent_unclassifier(self):
+        """
+        Returns the percent unclassified.
+        :rtype: double
+        """
+        return javabridge.call(self.jobject, "pctUnclassified", "()D")
 
     @classmethod
     def evaluate_model(cls, classifier, args):
