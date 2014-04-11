@@ -18,6 +18,7 @@ import javabridge
 
 ENV = None
 
+
 def start(class_path=[]):
     """
     Initializes the javabridge connection (starts up the JVM).
@@ -30,6 +31,7 @@ def start(class_path=[]):
     javabridge.start_vm(run_headless=True)
     javabridge.attach()
     ENV = javabridge.get_env()
+
 
 def stop():
     """ Kills the JVM. """

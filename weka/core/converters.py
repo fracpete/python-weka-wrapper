@@ -15,9 +15,9 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
-import jvm
 from classes import OptionHandler
 from dataset import Instances
+
 
 class Loader(OptionHandler):
     """

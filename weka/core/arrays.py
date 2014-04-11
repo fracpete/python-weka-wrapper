@@ -14,7 +14,6 @@
 # arrays.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
-import jvm
 
 def string_array_to_list(array):
     """

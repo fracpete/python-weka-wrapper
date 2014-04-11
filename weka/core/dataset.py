@@ -15,8 +15,7 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
-import core.jvm as jvm
-from core.classes import JavaObject
+from weka.core.classes import JavaObject
 
 class Instances(JavaObject):
     """

@@ -18,11 +18,9 @@ import javabridge
 import os
 import sys
 import getopt
-import core.jvm as jvm
-from core.classes import JavaObject
-from core.classes import Random
-from core.classes import OptionHandler
-from core.converters import Loader
+import weka.core.jvm as jvm
+from weka.core.classes import JavaObject
+from weka.core.classes import OptionHandler
 
 
 class Classifier(OptionHandler):

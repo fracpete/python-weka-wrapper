@@ -18,9 +18,9 @@ import javabridge
 import os
 import sys
 import getopt
-import core.jvm as jvm
-from core.classes import OptionHandler
-from core.dataset import Instances
+import weka.core.jvm as jvm
+from weka.core.classes import OptionHandler
+from weka.core.dataset import Instances
 
 
 class DataGenerator(OptionHandler):

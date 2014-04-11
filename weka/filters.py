@@ -18,13 +18,12 @@ import javabridge
 import os
 import sys
 import getopt
-import core.jvm as jvm
-import core.classes as classes
-from core.classes import OptionHandler
-from core.converters import Loader
-from core.converters import Saver
-from core.dataset import Instances
-from core.dataset import Instance
+import weka.core.jvm as jvm
+from weka.core.classes import OptionHandler
+from weka.core.converters import Loader
+from weka.core.converters import Saver
+from weka.core.dataset import Instances
+from weka.core.dataset import Instance
 
 
 class Filter(OptionHandler):
