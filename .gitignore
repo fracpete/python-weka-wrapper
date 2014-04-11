@@ -59,4 +59,5 @@ docs/_build/
 # IDEs
 *.e4p
 *.nja
+.idea
 
