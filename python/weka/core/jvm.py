@@ -16,10 +16,14 @@
 
 import javabridge
 import os
+import logging
 
 
 ENV = None
-DEBUG = False
+
+# logging setup
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 def start(class_path=[]):
@@ -28,7 +32,6 @@ def start(class_path=[]):
     :param class_path: the additional classpath elements to add
     """
     global ENV
-    global DEBUG
 
     # add user-defined jars first
     for cp in class_path:
@@ -46,8 +49,7 @@ def start(class_path=[]):
         if l.lower().endswith(".jar"):
             javabridge.JARS.append(libdir + os.sep + l)
 
-    if DEBUG:
-        print("classpath: " + str(javabridge.JARS))
+    logger.debug("Classpath=" + str(javabridge.JARS))
 
     javabridge.start_vm(run_headless=True)
     javabridge.attach()

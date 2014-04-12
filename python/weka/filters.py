@@ -15,15 +15,20 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
+import logging
 import os
 import sys
 import getopt
 import weka.core.jvm as jvm
+import weka.core.utils as utils
 from weka.core.classes import OptionHandler
 from weka.core.converters import Loader
 from weka.core.converters import Saver
 from weka.core.dataset import Instances
 from weka.core.dataset import Instance
+
+# logging setup
+logger = logging.getLogger("weka.classifiers")
 
 
 class Filter(OptionHandler):
@@ -89,8 +94,9 @@ def main(args):
 
     usage = "Usage: weka.filters -j jar1[" + os.pathsep + "jar2...] -i input1 -o output1 " \
             + "[-r input2 -s output2] [-c classindex] filterclass [filter options]"
-    optlist, args = getopt.getopt(args, "j:i:o:r:s:c:h")
-    if len(args) == 0:
+
+    optlist, optargs = getopt.getopt(args, "j:i:o:r:s:c:h")
+    if len(optargs) == 0:
         raise Exception("No filter classname provided!\n" + usage)
     for opt in optlist:
         if opt[0] == "-h":
@@ -126,11 +132,14 @@ def main(args):
         raise Exception("No 2nd output file provided ('-s ...')!")
 
     jvm.start(jars)
+
+    logger.debug("Commandline: " + utils.join_options(args))
+
     try:
-        flter = Filter(args[0])
-        args = args[1:]
-        if len(args) > 0:
-            flter.set_options(args)
+        flter = Filter(optargs[0])
+        optargs = optargs[1:]
+        if len(optargs) > 0:
+            flter.set_options(optargs)
         loader = Loader("weka.core.converters.ArffLoader")
         in1 = loader.load_file(input1)
         if str(cls) == "first":

@@ -15,12 +15,17 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
+import logging
 import os
 import sys
 import getopt
 import weka.core.jvm as jvm
+import weka.core.utils as utils
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
+
+# logging setup
+logger = logging.getLogger("weka.classifiers")
 
 
 class Classifier(OptionHandler):
@@ -152,8 +157,9 @@ def main(args):
             + "[-o # only stats, no model] [-i # information-retrieval stats per class] " \
             + "-kl # information-theoretic stats] [-m cost matrix file] [-g graph file] " \
             + "classifier classname [classifier options]"
-    optlist, args = getopt.getopt(args, "j:t:T:c:d:l:x:s:voikm:g:")
-    if len(args) == 0:
+
+    optlist, optargs = getopt.getopt(args, "j:t:T:c:d:l:x:s:voikm:g:")
+    if len(optargs) == 0:
         raise Exception("No classifier classname provided!\n" + usage)
     for opt in optlist:
         if opt[0] == "-h":
@@ -205,11 +211,14 @@ def main(args):
         raise Exception("No train file provided ('-t ...')!")
 
     jvm.start(jars)
+
+    logger.debug("Commandline: " + utils.join_options(args))
+
     try:
-        classifier = Classifier(args[0])
-        args = args[1:]
-        if len(args) > 0:
-            classifier.set_options(args)
+        classifier = Classifier(optargs[0])
+        optargs = optargs[1:]
+        if len(optargs) > 0:
+            classifier.set_options(optargs)
         print(Evaluation.evaluate_model(classifier, params))
         # data = Loader("weka.core.converters.ArffLoader").load_file(train)
         # data.set_class_index(data.num_attributes() - 1)

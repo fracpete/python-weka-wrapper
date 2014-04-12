@@ -15,7 +15,11 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
+import logging
 from weka.core.classes import JavaObject
+
+# logging setup
+logger = logging.getLogger(__name__)
 
 
 class Instances(JavaObject):

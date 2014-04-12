@@ -15,12 +15,17 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
+import logging
 import os
 import sys
 import getopt
 import weka.core.jvm as jvm
+import weka.core.utils as utils
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
+
+# logging setup
+logger = logging.getLogger("weka.clusterers")
 
 
 class Clusterer(OptionHandler):
@@ -114,8 +119,9 @@ def main(args):
             + "-t train [-T test] [-d output model file] [-l input model file] " \
             + "[-p attribute range] [-x num folds] [-s seed] [-c classindex] " \
             + "[-g graph file] clusterer classname [clusterer options]"
-    optlist, args = getopt.getopt(args, "j:t:T:d:l:p:x:s:c:g:")
-    if len(args) == 0:
+
+    optlist, optargs = getopt.getopt(args, "j:t:T:d:l:p:x:s:c:g:")
+    if len(optargs) == 0:
         raise Exception("No clusterer classname provided!\n" + usage)
     for opt in optlist:
         if opt[0] == "-h":
@@ -162,11 +168,14 @@ def main(args):
         raise Exception("No train file provided ('-t ...')!")
 
     jvm.start(jars)
+
+    logger.debug("Commandline: " + utils.join_options(args))
+
     try:
-        clusterer = Clusterer(args[0])
-        args = args[1:]
-        if len(args) > 0:
-            clusterer.set_options(args)
+        clusterer = Clusterer(optargs[0])
+        optargs = optargs[1:]
+        if len(optargs) > 0:
+            clusterer.set_options(optargs)
         print(ClusterEvaluation.evaluate_clusterer(clusterer, params))
     except Exception, ex:
         print(ex)

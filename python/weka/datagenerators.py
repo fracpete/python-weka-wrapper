@@ -15,12 +15,17 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
+import logging
 import os
 import sys
 import getopt
 import weka.core.jvm as jvm
+import weka.core.utils as utils
 from weka.core.classes import OptionHandler
 from weka.core.dataset import Instances
+
+# logging setup
+logger = logging.getLogger("weka.datagenerators")
 
 
 class DataGenerator(OptionHandler):
@@ -63,8 +68,9 @@ def main(args):
 
     usage = "Usage: weka.datagenerators -l jar1[" + os.pathsep + "jar2...] " \
             + "datagenerator classname -o output [-S seed] [-r relation] [datagenerator options]"
-    optlist, args = getopt.getopt(args, "j:")
-    if len(args) == 0:
+
+    optlist, optargs = getopt.getopt(args, "j:")
+    if len(optargs) == 0:
         raise Exception("No datagenerator classname provided!\n" + usage)
     for opt in optlist:
         if opt[0] == "-h":
@@ -77,12 +83,15 @@ def main(args):
             jars = opt[1].split(os.pathsep)
 
     jvm.start(jars)
+
+    logger.debug("Commandline: " + utils.join_options(args))
+
     try:
-        generator = DataGenerator(args[0])
-        args = args[1:]
-        if len(args) > 0:
-            generator.set_options(args)
-        DataGenerator.make_data(generator, args)
+        generator = DataGenerator(optargs[0])
+        optargs = optargs[1:]
+        if len(optargs) > 0:
+            generator.set_options(optargs)
+        DataGenerator.make_data(generator, optargs)
     except Exception, ex:
         print(ex)
     finally:

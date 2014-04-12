@@ -11,37 +11,37 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# arrays.py
+# utils.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
+import javabridge
 import logging
-import weka.core.jvm as jvm
+import weka.core.arrays as arrays
 
 # logging setup
 logger = logging.getLogger(__name__)
 
 
-def string_array_to_list(a):
+def split_options(cmdline):
     """
-    Turns the Java string array into Python unicode string list.
-    :param a: the string array to convert
+    Splits the commandline into a list of options.
+    :param cmdline: the commandline string to split into individual options
     :rtype: list
     """
-    result  = []
-    len     = jvm.ENV.get_array_length(a)
-    wrapped = jvm.ENV.get_object_array_elements(a)
-    for i in xrange(len):
-        result.append(jvm.ENV.get_string(wrapped[i]))
-    return result
+    return arrays.string_array_to_list(
+        javabridge.static_call(
+            "Lweka/core/Utils;", "splitOptions",
+            "(Ljava/lang/String;)[Ljava/lang/String;",
+            cmdline))
 
 
-def string_list_to_array(l):
+def join_options(options):
     """
-    Turns a Python unicode string list into a Java String array.
-    :param l: the string list
-    :rtype: java string array
+    Turns the list of options back into a single commandline string.
+    :param options: the list of options to process
+    :rtype: str
     """
-    result = jvm.ENV.make_object_array(len(l), jvm.ENV.find_class("java/lang/String"))
-    for i in xrange(len(l)):
-        jvm.ENV.set_object_array_element(result, i, jvm.ENV.new_string_utf(l[i]))
-    return result
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "joinOptions",
+        "([Ljava/lang/String;)Ljava/lang/String;",
+        options)
