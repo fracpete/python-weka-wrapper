@@ -29,40 +29,66 @@ def main():
     """
 
     # load a dataset
-    iris = helper.get_data_dir() + os.sep + "iris.arff"
-    helper.print_info("Loading dataset: " + iris)
+    iris_file = helper.get_data_dir() + os.sep + "iris.arff"
+    helper.print_info("Loading dataset: " + iris_file)
     loader = Loader("weka.core.converters.ArffLoader")
-    data = loader.load_file(iris)
-    data.set_class_index(data.num_attributes() - 1)
+    iris_data = loader.load_file(iris_file)
+    iris_data.set_class_index(iris_data.num_attributes() - 1)
 
     # build a classifier and output model
     helper.print_title("Training J48 classifier on iris")
     classifier = Classifier("weka.classifiers.trees.J48")
     classifier.set_options(["-C", "0.3"])
-    classifier.build_classifier(data)
+    classifier.build_classifier(iris_data)
     print(classifier)
 
-    # cross-validate classifier
+    # cross-validate nominal classifier
     helper.print_title("Cross-validating SMO on iris")
     classifier = Classifier("weka.classifiers.functions.SMO")
     classifier.set_options(["-M"])
-    evaluation = Evaluation(data)
-    evaluation.crossvalidate_model(classifier, data, 10, Random(42))
-    print(evaluation.to_summary_string())
+    evaluation = Evaluation(iris_data)
+    evaluation.crossvalidate_model(classifier, iris_data, 10, Random(42))
+    print(evaluation.to_summary())
+    print(evaluation.to_class_details())
+    print(evaluation.to_matrix())
+    print("areaUnderPRC/0: " + str(evaluation.area_under_prc(0)))
+    print("areaUnderROC/1: " + str(evaluation.area_under_roc(1)))
+    print("avgCost: " + str(evaluation.avg_cost()))
+    print("confusionMatrix: " + str(evaluation.confusion_matrix()))
+    print("correct: " + str(evaluation.correct()))
+    print("pctCorrect: " + str(evaluation.percent_correct()))
+    print("incorrect: " + str(evaluation.incorrect()))
+    print("pctIncorrect: " + str(evaluation.percent_incorrect()))
+    print("unclassified: " + str(evaluation.unclassified()))
+    print("pctUnclassified: " + str(evaluation.percent_unclassified()))
+    print("coverageOfTestCasesByPredictedRegions: " + str(evaluation.coverage_of_test_cases_by_predicted_regions()))
+    print("falseNegativeRate: " + str(evaluation.false_negative_rate(1)))
+    print("falsePositiveRate: " + str(evaluation.false_positive_rate(1)))
+    print("fMeasure: " + str(evaluation.f_measure(1)))
 
     # load a numeric dataset
-    bolts = helper.get_data_dir() + os.sep + "bolts.arff"
-    helper.print_info("Loading dataset: " + bolts)
+    bolts_file = helper.get_data_dir() + os.sep + "bolts.arff"
+    helper.print_info("Loading dataset: " + bolts_file)
     loader = Loader("weka.core.converters.ArffLoader")
-    data = loader.load_file(bolts)
-    data.set_class_index(data.num_attributes() - 1)
+    bolts_data = loader.load_file(bolts_file)
+    bolts_data.set_class_index(bolts_data.num_attributes() - 1)
 
     # build a classifier and output model
     helper.print_title("Training LinearRegression on bolts")
     classifier = Classifier("weka.classifiers.functions.LinearRegression")
     classifier.set_options(["-S", "1", "-C"])
-    classifier.build_classifier(data)
+    classifier.build_classifier(bolts_data)
     print(classifier)
+
+    # cross-validate numeric classifier
+    helper.print_title("Cross-validating LinearRegression on bolts")
+    classifier = Classifier("weka.classifiers.functions.LinearRegression")
+    classifier.set_options(["-S", "1", "-C"])
+    evaluation = Evaluation(bolts_data)
+    evaluation.crossvalidate_model(classifier, bolts_data, 10, Random(42))
+    print(evaluation.to_summary())
+    print("correlationCoefficient: " + str(evaluation.correlation_coefficient()))
+    print("errorRate: " + str(evaluation.error_rate()))
 
 
 if __name__ == "__main__":

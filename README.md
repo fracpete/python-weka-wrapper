@@ -7,6 +7,7 @@ using javabridge (https://pypi.python.org/pypi/javabridge).
 Requirements:
 
 * javabridge (>= 1.0.0)
+* numpy
 
 
 Examples

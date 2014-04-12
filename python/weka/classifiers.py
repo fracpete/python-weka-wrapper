@@ -19,8 +19,10 @@ import logging
 import os
 import sys
 import getopt
+import numpy
 import weka.core.jvm as jvm
 import weka.core.utils as utils
+import weka.core.arrays as arrays
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
 
@@ -53,7 +55,7 @@ class Classifier(OptionHandler):
         """
         Peforms a prediction.
         :param inst: the Instance to get a prediction for
-        :rtype: double
+        :rtype: float
         """
         return javabridge.call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)D", inst.jobject)
 
@@ -61,10 +63,10 @@ class Classifier(OptionHandler):
         """
         Peforms a prediction, returning the class distribution.
         :param inst: the Instance to get the class distribution for
-        :rtype: double[]
+        :rtype: float[]
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
-        return jvm.ENV.get_double_array_elements(pred)
+        return jvm.ENV.get_float_array_elements(pred)
 
 
 class Evaluation(JavaObject):
@@ -95,28 +97,7 @@ class Evaluation(JavaObject):
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V",
             classifier.jobject, data.jobject, num_folds, random.jobject, [])
 
-    def percent_correct(self):
-        """
-        Returns the percent correct.
-        :rtype: double
-        """
-        return javabridge.call(self.jobject, "pctCorrect", "()D")
-
-    def percent_incorrect(self):
-        """
-        Returns the percent incorrect.
-        :rtype: double
-        """
-        return javabridge.call(self.jobject, "pctIncorrect", "()D")
-
-    def percent_unclassified(self):
-        """
-        Returns the percent unclassified.
-        :rtype: double
-        """
-        return javabridge.call(self.jobject, "pctUnclassified", "()D")
-
-    def to_summary_string(self, title=None):
+    def to_summary(self, title=None):
         """
         Generates a summary.
         :param title: optional title
@@ -126,6 +107,146 @@ class Evaluation(JavaObject):
             return javabridge.call(self.jobject, "toSummaryString", "()Ljava/lang/String;")
         else:
             return javabridge.call(self.jobject, "toSummaryString", "(Ljava/lang/String;)Ljava/lang/String;", title)
+
+    def to_class_details(self, title=None):
+        """
+        Generates the class details.
+        :param title: optional title
+        :rtype: str
+        """
+        if title is None:
+            return javabridge.call(self.jobject, "toClassDetailsString", "()Ljava/lang/String;")
+        else:
+            return javabridge.call(self.jobject, "toClassDetailsString", "(Ljava/lang/String;)Ljava/lang/String;", title)
+
+    def to_matrix(self, title=None):
+        """
+        Generates the confusion matrix.
+        :param title: optional title
+        :rtype: str
+        """
+        if title is None:
+            return javabridge.call(self.jobject, "toMatrixString", "()Ljava/lang/String;")
+        else:
+            return javabridge.call(self.jobject, "toMatrixString", "(Ljava/lang/String;)Ljava/lang/String;", title)
+
+    def area_under_prc(self, class_index):
+        """
+        Returns the area under precision recall curve.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "areaUnderPRC", "(I)D", class_index)
+
+    def area_under_roc(self, class_index):
+        """
+        Returns the area under receiver operators characteristics curve.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "areaUnderROC", "(I)D", class_index)
+
+    def avg_cost(self):
+        """
+        Returns the average cost.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "avgCost", "()D")
+
+    def confusion_matrix(self):
+        """
+        Returns the confusion matrix.
+        :rtype: float[][]
+        """
+        return arrays.double_matrix_to_list(javabridge.call(self.jobject, "confusionMatrix", "()[[D"))
+
+    def correct(self):
+        """
+        Returns the correct count (nominal classes).
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "correct", "()D")
+
+    def incorrect(self):
+        """
+        Returns the incorrect count (nominal classes).
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "incorrect", "()D")
+
+    def unclassified(self):
+        """
+        Returns the unclassified count.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "unclassified", "()D")
+
+    def percent_correct(self):
+        """
+        Returns the percent correct (nominal classes).
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "pctCorrect", "()D")
+
+    def percent_incorrect(self):
+        """
+        Returns the percent incorrect (nominal classes).
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "pctIncorrect", "()D")
+
+    def percent_unclassified(self):
+        """
+        Returns the percent unclassified.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "pctUnclassified", "()D")
+
+    def correlation_coefficient(self):
+        """
+        Returns the correlation coefficient (numeric classes).
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "correlationCoefficient", "()D")
+
+    def coverage_of_test_cases_by_predicted_regions(self):
+        """
+        Returns the coverage of the test cases by the predicted regions at the confidence level
+        specified when evaluation was performed..
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "coverageOfTestCasesByPredictedRegions", "()D")
+
+    def error_rate(self):
+        """
+        Returns the error rate (numeric classes).
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "errorRate", "()D")
+
+    def false_negative_rate(self, class_index):
+        """
+        Returns the false negative rate.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "falseNegativeRate", "(I)D", class_index)
+
+    def false_positive_rate(self, class_index):
+        """
+        Returns the false positive rate.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "falsePositiveRate", "(I)D", class_index)
+
+    def f_measure(self, class_index):
+        """
+        Returns the f measure.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "fMeasure", "(I)D", class_index)
 
     @classmethod
     def evaluate_model(cls, classifier, args):

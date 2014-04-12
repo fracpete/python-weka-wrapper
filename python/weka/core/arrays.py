@@ -15,6 +15,7 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import logging
+import numpy
 import weka.core.jvm as jvm
 
 # logging setup
@@ -44,4 +45,24 @@ def string_list_to_array(l):
     result = jvm.ENV.make_object_array(len(l), jvm.ENV.find_class("java/lang/String"))
     for i in xrange(len(l)):
         jvm.ENV.set_object_array_element(result, i, jvm.ENV.new_string_utf(l[i]))
+    return result
+
+
+def double_matrix_to_list(m):
+    """
+    Turns the Java matrix (2-dim array) of doubles into a numpy 2-dim array.
+    :param m: the double matrix
+    :rtype: numpy.darray
+    """
+    rows   = jvm.ENV.get_object_array_elements(m)
+    num    = jvm.ENV.get_array_length(m)
+    result = numpy.zeros(num * num).reshape((num, num))
+    i      = 0
+    for row in rows:
+        elements = jvm.ENV.get_double_array_elements(row)
+        n        = 0
+        for element in elements:
+            result[i][n] = element
+            n += 1
+        i += 1
     return result
