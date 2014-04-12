@@ -109,7 +109,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "pctIncorrect", "()D")
 
-    def percent_unclassifier(self):
+    def percent_unclassified(self):
         """
         Returns the percent unclassified.
         :rtype: double
