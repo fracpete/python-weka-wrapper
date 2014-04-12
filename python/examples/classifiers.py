@@ -36,19 +36,33 @@ def main():
     data.set_class_index(data.num_attributes() - 1)
 
     # build a classifier and output model
-    helper.print_title("Training J48 classifier")
+    helper.print_title("Training J48 classifier on iris")
     classifier = Classifier("weka.classifiers.trees.J48")
     classifier.set_options(["-C", "0.3"])
     classifier.build_classifier(data)
-    print(str(classifier))
+    print(classifier)
 
     # cross-validate classifier
-    helper.print_title("Cross-validating SMO")
+    helper.print_title("Cross-validating SMO on iris")
     classifier = Classifier("weka.classifiers.functions.SMO")
     classifier.set_options(["-M"])
     evaluation = Evaluation(data)
     evaluation.crossvalidate_model(classifier, data, 10, Random(42))
     print(evaluation.to_summary_string())
+
+    # load a numeric dataset
+    bolts = helper.get_data_dir() + os.sep + "bolts.arff"
+    helper.print_info("Loading dataset: " + bolts)
+    loader = Loader("weka.core.converters.ArffLoader")
+    data = loader.load_file(bolts)
+    data.set_class_index(data.num_attributes() - 1)
+
+    # build a classifier and output model
+    helper.print_title("Training LinearRegression on bolts")
+    classifier = Classifier("weka.classifiers.functions.LinearRegression")
+    classifier.set_options(["-S", "1", "-C"])
+    classifier.build_classifier(data)
+    print(classifier)
 
 
 if __name__ == "__main__":
