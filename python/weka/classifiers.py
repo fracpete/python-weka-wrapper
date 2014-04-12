@@ -116,6 +116,16 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "pctUnclassified", "()D")
 
+    def to_summary_string(self, title=None):
+        """
+        Returns the percent unclassified.
+        :rtype: double
+        """
+        if title is None:
+            return javabridge.call(self.jobject, "toSummaryString", "()Ljava/lang/String;")
+        else:
+            return javabridge.call(self.jobject, "toSummaryString", "(Ljava/lang/String;)Ljava/lang/String;", title)
+
     @classmethod
     def evaluate_model(cls, classifier, args):
         """
