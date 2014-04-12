@@ -1,5 +1,6 @@
-# Makefile for Sphinx documentation
+# Makefile for additional class for python-weka-wrapper
 #
+# Author: Fracpete (fracpete at gmail dot com)
 
 SRCDIR        = src
 BUILDDIR      = build
