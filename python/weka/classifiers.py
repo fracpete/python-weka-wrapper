@@ -118,8 +118,9 @@ class Evaluation(JavaObject):
 
     def to_summary_string(self, title=None):
         """
-        Returns the percent unclassified.
-        :rtype: double
+        Generates a summary.
+        :param title: optional title
+        :rtype: str
         """
         if title is None:
             return javabridge.call(self.jobject, "toSummaryString", "()Ljava/lang/String;")
