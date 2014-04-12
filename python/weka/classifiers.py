@@ -34,7 +34,7 @@ class Classifier(OptionHandler):
         :param classname: the classname of the classifier
         """
         jobject = Classifier.new_instance(classname)
-        self._enforce_type(jobject, "weka.classifiers.Classifier")
+        self.enforce_type(jobject, "weka.classifiers.Classifier")
         super(Classifier, self).__init__(jobject)
 
     def build_classifier(self, data):
@@ -72,7 +72,8 @@ class Evaluation(JavaObject):
         Initializes an Evaluation object.
         :param data: the data to use to initialize the priors with
         """
-        jobject = javabridge.make_instance("weka/classifiers/EvaluationWrapper", "(Lweka/core/Instances;)V", data.jobject)
+        jobject = javabridge.make_instance(
+            "weka/classifiers/EvaluationWrapper", "(Lweka/core/Instances;)V", data.jobject)
         jobject = javabridge.call(jobject, "getEvaluation", "()Lweka/classifiers/Evaluation;")
         super(Evaluation, self).__init__(jobject)
 
@@ -84,7 +85,10 @@ class Evaluation(JavaObject):
         :param num_folds: the number of folds
         :param random: the random number generator to use
         """
-        javabridge.call(self.jobject, "crossValidateModel", "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V", classifier.jobject, data.jobject, num_folds, random.jobject, [])
+        javabridge.call(
+            self.jobject, "crossValidateModel",
+            "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V",
+            classifier.jobject, data.jobject, num_folds, random.jobject, [])
 
     def percent_correct(self):
         """
@@ -115,7 +119,10 @@ class Evaluation(JavaObject):
         :param classifier: the classifier instance to use
         :param args: the command-line arguments to use
         """
-        return javabridge.static_call("Lweka/classifiers/Evaluation;", "evaluateModel", "(Lweka/classifiers/Classifier;[Ljava/lang/String;)Ljava/lang/String;", classifier.jobject, args)
+        return javabridge.static_call(
+            "Lweka/classifiers/Evaluation;", "evaluateModel",
+            "(Lweka/classifiers/Classifier;[Ljava/lang/String;)Ljava/lang/String;",
+            classifier.jobject, args)
 
 
 def main(args):
@@ -140,7 +147,11 @@ def main(args):
         [classifier options]
     """
 
-    usage = "Usage: weka.classifiers -j jar1[" + os.pathsep + "jar2...] -t train [-T test] [-c classindex] [-d output model file] [-l input model file] [-x num folds] [-s seed] [-v # no stats for training] [-o # only stats, no model] [-i # information-retrieval stats per class] -kl # information-theoretic stats] [-m cost matrix file] [-g graph file] classifier classname [classifier options]"
+    usage = "Usage: weka.classifiers -j jar1[" + os.pathsep + "jar2...] -t train [-T test] [-c classindex] " \
+            + "[-d output model file] [-l input model file] [-x num folds] [-s seed] [-v # no stats for training] " \
+            + "[-o # only stats, no model] [-i # information-retrieval stats per class] " \
+            + "-kl # information-theoretic stats] [-m cost matrix file] [-g graph file] " \
+            + "classifier classname [classifier options]"
     optlist, args = getopt.getopt(args, "j:t:T:c:d:l:x:s:voikm:g:")
     if len(args) == 0:
         raise Exception("No classifier classname provided!\n" + usage)

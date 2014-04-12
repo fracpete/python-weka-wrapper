@@ -30,7 +30,7 @@ class Loader(OptionHandler):
         :param classname: the classname of the loader
         """
         jobject = Loader.new_instance(classname)
-        self._enforce_type(jobject, "weka.core.converters.Loader")
+        self.enforce_type(jobject, "weka.core.converters.Loader")
         super(Loader, self).__init__(jobject)
 
     def load_file(self, dfile):
@@ -38,7 +38,7 @@ class Loader(OptionHandler):
         Loads the specified file and returns the Instances object.
         :param dfile: the file to load
         """
-        self._enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
+        self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
             dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "reset", "()V")
@@ -50,7 +50,7 @@ class Loader(OptionHandler):
         Loads the specified URL and returns the Instances object.
         :param url: the URL to load the data from
         """
-        self._enforce_type(self.jobject, "weka.core.converters.URLSourcedLoader")
+        self.enforce_type(self.jobject, "weka.core.converters.URLSourcedLoader")
         javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setURL", "(Ljava/lang/String;)V", str(url))
         return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
@@ -67,7 +67,7 @@ class Saver(OptionHandler):
         :param classname: the classname of the saver
         """
         jobject = Saver.new_instance(classname)
-        self._enforce_type(jobject, "weka.core.converters.Saver")
+        self.enforce_type(jobject, "weka.core.converters.Saver")
         super(Saver, self).__init__(jobject)
 
     def save_file(self, data, dfile):
@@ -76,7 +76,7 @@ class Saver(OptionHandler):
         :param data: the data to save
         :param dfile: the file to save the data to
         """
-        self._enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
+        self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
             dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)

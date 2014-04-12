@@ -34,7 +34,7 @@ class Clusterer(OptionHandler):
         :param classname: the classname of the clusterer
         """
         jobject = Clusterer.new_instance(classname)
-        self._enforce_type(jobject, "weka.clusterers.Clusterer")
+        self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject)
 
     def build_clusterer(self, data):
@@ -86,7 +86,10 @@ class ClusterEvaluation(JavaObject):
         :param clusterer: the clusterer instance to evaluate
         :param args: the command-line arguments
         """
-        return javabridge.static_call("Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer", "(Lweka/clusterers/Clusterer;[Ljava/lang/String;)Ljava/lang/String;", clusterer.jobject, args)
+        return javabridge.static_call(
+            "Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer",
+            "(Lweka/clusterers/Clusterer;[Ljava/lang/String;)Ljava/lang/String;",
+            clusterer.jobject, args)
 
 
 def main(args):
@@ -107,7 +110,10 @@ def main(args):
         [clusterer options]
     """
 
-    usage = "Usage: weka.clusterers -l jar1[" + os.pathsep + "jar2...] -t train [-T test] [-d output model file] [-l input model file] [-p attribute range] [-x num folds] [-s seed] [-c classindex] [-g graph file] clusterer classname [clusterer options]"
+    usage = "Usage: weka.clusterers -l jar1[" + os.pathsep + "jar2...] " \
+            + "-t train [-T test] [-d output model file] [-l input model file] " \
+            + "[-p attribute range] [-x num folds] [-s seed] [-c classindex] " \
+            + "[-g graph file] clusterer classname [clusterer options]"
     optlist, args = getopt.getopt(args, "j:t:T:d:l:p:x:s:c:g:")
     if len(args) == 0:
         raise Exception("No clusterer classname provided!\n" + usage)

@@ -17,6 +17,7 @@
 import javabridge
 
 ENV = None
+DEBUG = False
 
 
 def start(class_path=[]):
@@ -25,9 +26,11 @@ def start(class_path=[]):
     :param class_path: the additional classpath elements to add
     """
     global ENV
+    global DEBUG
     for cp in class_path:
         javabridge.JARS.append(cp)
-    print("classpath: " + str(javabridge.JARS))
+    if DEBUG:
+        print("classpath: " + str(javabridge.JARS))
     javabridge.start_vm(run_headless=True)
     javabridge.attach()
     ENV = javabridge.get_env()
@@ -36,6 +39,6 @@ def start(class_path=[]):
 def stop():
     """ Kills the JVM. """
     global ENV
-    if not ENV == None:
-        ENV  = None
+    if not ENV is None:
+        ENV = None
         javabridge.kill_vm()

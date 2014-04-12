@@ -33,7 +33,7 @@ class DataGenerator(OptionHandler):
         :param classname: the classname of the datagenerator
         """
         jobject = DataGenerator.new_instance(classname)
-        self._enforce_type(jobject, "weka.datagenerators.DataGenerator")
+        self.enforce_type(jobject, "weka.datagenerators.DataGenerator")
         super(DataGenerator, self).__init__(jobject)
 
     @classmethod
@@ -43,7 +43,10 @@ class DataGenerator(OptionHandler):
         :param generator: the generator instance to use
         :param args: the command-line arguments
         """
-        return javabridge.static_call("Lweka/datagenerators/DataGenerator;", "makeData", "(Lweka/datagenerators/DataGenerator;[Ljava/lang/String;)V", generator.jobject, args)
+        return javabridge.static_call(
+            "Lweka/datagenerators/DataGenerator;", "makeData",
+            "(Lweka/datagenerators/DataGenerator;[Ljava/lang/String;)V",
+            generator.jobject, args)
 
 
 def main(args):
@@ -58,7 +61,8 @@ def main(args):
         [datagenerator options]
     """
 
-    usage = "Usage: weka.datagenerators -l jar1[" + os.pathsep + "jar2...] datagenerator classname -o output [-S seed] [-r relation] [datagenerator options]"
+    usage = "Usage: weka.datagenerators -l jar1[" + os.pathsep + "jar2...] " \
+            + "datagenerator classname -o output [-S seed] [-r relation] [datagenerator options]"
     optlist, args = getopt.getopt(args, "j:")
     if len(args) == 0:
         raise Exception("No datagenerator classname provided!\n" + usage)

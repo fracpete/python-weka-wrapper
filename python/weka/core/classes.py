@@ -28,7 +28,12 @@ class JavaObject(object):
             raise Exception("No Java object supplied!")
         self.jobject = jobject
 
-    def _check_type(self, jobject, intf_or_class, jni_intf_or_class=None):
+    def __str__(self):
+        """ Just calls the toString() method. """
+        return javabridge.to_string(self.jobject)
+
+    @classmethod
+    def check_type(cls, jobject, intf_or_class, jni_intf_or_class=None):
         """
         Returns whether the object implements the specified interface or is a subclass. 
         E.g.: self._check_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
@@ -38,19 +43,16 @@ class JavaObject(object):
             jni_intf_or_class = "L" + intf_or_class.replace(".", "/") + ";"
         return javabridge.is_instance_of(jobject, jni_intf_or_class)
         
-    def _enforce_type(self, jobject, intf_or_class, jni_intf_or_class=None):
+    @classmethod
+    def enforce_type(cls, jobject, intf_or_class, jni_intf_or_class=None):
         """
         Raises an exception if the object does not implement the specified interface or is not a subclass. 
         E.g.: self._enforce_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
         or self._enforce_type('weka.core.converters.AbstractFileLoader')
         """
-        if not self._check_type(jobject, intf_or_class, jni_intf_or_class):
+        if not cls.check_type(jobject, intf_or_class, jni_intf_or_class):
             raise TypeError("Object does not implement or subclass " + intf_or_class + "!")
- 
-    def __str__(self):
-        """ Just calls the toString() method. """
-        return javabridge.to_string(self.jobject)
-       
+
     @classmethod
     def new_instance(cls, classname, jni_classname=None):
         """ Creates a new object from the given classname using the default constructor, None in case of error. """
@@ -75,7 +77,7 @@ class Random(JavaObject):
         """
         super(Random, self).__init__(javabridge.make_instance("Ljava/util/Random;", "(J)V", seed))
 
-    def next_int(self, n = None):
+    def next_int(self, n=None):
         """
         Next random integer. if n is provided, then between 0 and n-1.
         :param n: the upper limit (minus 1) for the random integer
@@ -106,7 +108,7 @@ class OptionHandler(JavaObject):
         :param jobject: the java object to wrap
         """
         super(OptionHandler, self).__init__(jobject)
-        self.is_optionhandler = self._check_type(jobject, "weka.core.OptionHandler")
+        self.is_optionhandler = self.check_type(jobject, "weka.core.OptionHandler")
         
     def global_info(self):
         """

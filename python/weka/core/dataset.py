@@ -28,7 +28,7 @@ class Instances(JavaObject):
         Initializes the weka.core.Instances wrapper.
         :param jobject: the weka.core.Instances object to wrap
         """
-        self._enforce_type(jobject, "weka.core.Instances")
+        self.enforce_type(jobject, "weka.core.Instances")
         super(Instances, self).__init__(jobject)
 
     def get_relationname(self):
@@ -133,7 +133,7 @@ class Instance(JavaObject):
         Initializes the weka.core.Instance wrapper.
         :param jobject: the weka.core.Instance object to initialize with
         """
-        self._enforce_type(jobject, "weka.core.Instance")
+        self.enforce_type(jobject, "weka.core.Instance")
         super(Instances, self).__init__(jobject)
 
     def num_attributes(self):
@@ -188,7 +188,7 @@ class Attribute(JavaObject):
     
     def __init__(self, jobject):
         """ Initializes the weka.core.Attribute wrapper. """
-        self._enforce_type(jobject, "weka.core.Attribute")
+        self.enforce_type(jobject, "weka.core.Attribute")
         super(Attribute, self).__init__(jobject)
 
     def get_name(self):

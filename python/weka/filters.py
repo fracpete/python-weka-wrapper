@@ -37,7 +37,7 @@ class Filter(OptionHandler):
         :param classname: the classname of the filter
         """
         jobject = Filter.new_instance(classname)
-        self._enforce_type(jobject, "weka.filters.Filter")
+        self.enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject)
 
     def set_inputformat(self, data):
@@ -67,7 +67,10 @@ class Filter(OptionHandler):
         :param data: the Instances to filter
         :rtype : the filtered Instances object
         """
-        return Instances(javabridge.static_call("Lweka/filters/Filter;", "useFilter", "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;", data.jobject, self.jobject))
+        return Instances(javabridge.static_call(
+            "Lweka/filters/Filter;", "useFilter",
+            "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;",
+            data.jobject, self.jobject))
 
 
 def main(args):
@@ -84,7 +87,8 @@ def main(args):
         [filter options]
     """
 
-    usage = "Usage: weka.filters -j jar1[" + os.pathsep + "jar2...] -i input1 -o output1 [-r input2 -s output2] [-c classindex] filterclass [filter options]"
+    usage = "Usage: weka.filters -j jar1[" + os.pathsep + "jar2...] -i input1 -o output1 " \
+            + "[-r input2 -s output2] [-c classindex] filterclass [filter options]"
     optlist, args = getopt.getopt(args, "j:i:o:r:s:c:h")
     if len(args) == 0:
         raise Exception("No filter classname provided!\n" + usage)

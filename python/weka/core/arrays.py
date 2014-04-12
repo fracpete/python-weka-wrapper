@@ -14,28 +14,29 @@
 # arrays.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
+import weka.core.jvm as jvm
 
-def string_array_to_list(array):
+def string_array_to_list(a):
     """
     Turns the Java string array into Python unicode string list.
-    :param array: the string array to convert
+    :param a: the string array to convert
     :rtype: list
     """
     result  = []
-    len     = jvm.ENV.get_array_length(array)
-    wrapped = jvm.ENV.get_object_array_elements(array)
+    len     = jvm.ENV.get_array_length(a)
+    wrapped = jvm.ENV.get_object_array_elements(a)
     for i in xrange(len):
         result.append(jvm.ENV.get_string(wrapped[i]))
     return result
 
 
-def string_list_to_array(list):
+def string_list_to_array(l):
     """
     Turns a Python unicode string list into a Java String array.
-    :param list: the string list
+    :param l: the string list
     :rtype: java string array
     """
-    result = jvm.ENV.make_object_array(len(list), jvm.ENV.find_class("java/lang/String"))
-    for i in xrange(len(list)):
-        jvm.ENV.set_object_array_element(result, i, jvm.ENV.new_string_utf(list[i]))
+    result = jvm.ENV.make_object_array(len(l), jvm.ENV.find_class("java/lang/String"))
+    for i in xrange(len(l)):
+        jvm.ENV.set_object_array_element(result, i, jvm.ENV.new_string_utf(l[i]))
     return result
