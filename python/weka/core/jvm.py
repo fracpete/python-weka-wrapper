@@ -15,6 +15,8 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
+import os
+
 
 ENV = None
 DEBUG = False
@@ -27,10 +29,26 @@ def start(class_path=[]):
     """
     global ENV
     global DEBUG
+
+    # add user-defined jars first
     for cp in class_path:
         javabridge.JARS.append(cp)
+
+    # determine lib directory with jars
+    rootdir = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
+    if os.path.exists(rootdir + os.sep + "lib"):
+        libdir = rootdir + os.sep + "lib"
+    else:
+        libdir = os.path.split(rootdir)[0] + os.sep + "lib"
+
+    # add jars from lib directory
+    for l in os.listdir(libdir):
+        if l.lower().endswith(".jar"):
+            javabridge.JARS.append(libdir + os.sep + l)
+
     if DEBUG:
         print("classpath: " + str(javabridge.JARS))
+
     javabridge.start_vm(run_headless=True)
     javabridge.attach()
     ENV = javabridge.get_env()
