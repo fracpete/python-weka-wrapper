@@ -6,8 +6,6 @@ using javabridge (https://pypi.python.org/pypi/javabridge).
 
 Requirements:
 
-* Weka (>= 3.7.10)
-
 * javabridge (>= 1.0.0)
 
 
@@ -19,7 +17,6 @@ on the iris UCI dataset:
 
 <pre>
 weka.classifiers \
-    -j /some/where/weka.jar \
     -t /my/datasets/iris.arff \
     -c last \
     weka.classifiers.trees.J48
@@ -34,7 +31,6 @@ using the iris UCI dataset:
 
 <pre>
 weka.clusterers \
-    -j /some/where/weka.jar \
     -t /my/datasets/iris.arff \
     -c last \
     weka.clusterers.SimpleKMeans
@@ -48,7 +44,6 @@ Filtering a single ARFF dataset, removing the last attribute using the Remove fi
 
 <pre>
 weka.filters \
-    -j /some/where/weka.jar \
     -i /my/datasets/iris.arff \
     -o /tmp/out.arff \
     -c last \
@@ -63,7 +58,6 @@ Artifical data can be generated using one of Weka' data generators, e.g., the Ag
 
 <pre>
 weka.datageneators \
-    -j /some/where/weka.jar \
     -o /tmp/out.arff \
     weka.datagenerators.classifiers.classification.Agrawal
 </pre>
