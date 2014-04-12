@@ -61,3 +61,7 @@ docs/_build/
 *.nja
 .idea
 
+# java
+build
+dist
+
