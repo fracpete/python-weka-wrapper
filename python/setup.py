@@ -17,27 +17,27 @@
 from setuptools import setup
 
 setup(
-  name="python-weka-wrapper",
-  description="Python wrapper for the Weka Machine Learning Workbench",
-  long_description='''The python-weka-wrapper package makes it easy to run 
-  Weka algorihtms and filters from within Python. It offers access to Weka 
-  API using thin wrappers around JNI calls using the "javabridge" package.''',
-  url="https://github.com/fracpete/python-weka-wrapper",
-  classifiers=[
-    'Development Status :: 3 - Alpha',
-    'License :: OSI-Approved Open Source :: GNU General Public License version 3.0 (GPLv3)',
-    'Topic :: Scientific/Engineering :: Artificial Intelligence :: Machine Learning'
-    'Programming Language :: Python',
-  ],
-  license='GNU General Public License version 3.0 (GPLv3)',
-  packages=[
-    "weka",
-    "weka.core"
-  ],
-  version="0.1.0",
-  author="Peter Reutemann",
-  install_requires=[
-    "javabridge",
-  ],
+    name="python-weka-wrapper",
+    description="Python wrapper for the Weka Machine Learning Workbench",
+    long_description='''The python-weka-wrapper package makes it easy to run
+    Weka algorihtms and filters from within Python. It offers access to Weka
+    API using thin wrappers around JNI calls using the "javabridge" package.''',
+    url="https://github.com/fracpete/python-weka-wrapper",
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'License :: OSI-Approved Open Source :: GNU General Public License version 3.0 (GPLv3)',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence :: Machine Learning'
+        'Programming Language :: Python',
+    ],
+    license='GNU General Public License version 3.0 (GPLv3)',
+    packages=[
+        "weka",
+        "weka.core"
+    ],
+    version="0.1.0",
+    author='Peter "fracpete" Reutemann',
+    install_requires=[
+        "javabridge",
+    ],
 )
 
