@@ -9,6 +9,12 @@ Requirements:
 * javabridge (>= 1.0.0)
 
 
+Examples
+--------
+
+See **python/examples** for some example code.
+
+
 Classifiers
 -----------
 
@@ -57,7 +63,7 @@ Data generators
 Artifical data can be generated using one of Weka' data generators, e.g., the Agrawal classification generator:
 
 <pre>
-weka.datageneators \
+weka.datagenerators \
     -o /tmp/out.arff \
     weka.datagenerators.classifiers.classification.Agrawal
 </pre>
