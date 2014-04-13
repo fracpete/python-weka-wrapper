@@ -26,17 +26,10 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-def start(class_path=[]):
+def add_bundled_jars():
     """
-    Initializes the javabridge connection (starts up the JVM).
-    :param class_path: the additional classpath elements to add
+     Adds the bundled jars to the JVM's classpath.
     """
-    global ENV
-
-    # add user-defined jars first
-    for cp in class_path:
-        javabridge.JARS.append(cp)
-
     # determine lib directory with jars
     rootdir = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
     if os.path.exists(rootdir + os.sep + "lib"):
@@ -46,8 +39,67 @@ def start(class_path=[]):
 
     # add jars from lib directory
     for l in os.listdir(libdir):
-        if l.lower().endswith(".jar"):
+        if l.lower().endswith(".jar") and (l.lower().find("-src.") == -1):
             javabridge.JARS.append(libdir + os.sep + l)
+
+
+def add_weka_packages():
+    """
+    Adds the jars from all Weka packages to the JVM's classpath.
+    """
+    package_dir = os.path.expanduser("~" + os.sep + "wekafiles" + os.sep + "packages")
+    logger.debug("package_dir=" + package_dir)
+    # traverse packages
+    for p in os.listdir(package_dir):
+        if os.path.isdir(package_dir + os.sep + p):
+            directory = package_dir + os.sep + p
+            logger.debug("  directory=" + directory)
+            # inspect package
+            for l in os.listdir(directory):
+                if l.lower().endswith(".jar"):
+                    javabridge.JARS.append(directory + os.sep + l)
+                if l == "lib":
+                    for m in os.listdir(directory + os.sep + "lib"):
+                        if m.lower().endswith(".jar"):
+                            javabridge.JARS.append(directory + os.sep + "lib" + os.sep + m)
+
+
+def add_system_classpath():
+    """
+    Adds the system's classpath to the JVM's classpath.
+    """
+    if not os.environ['CLASSPATH'] is None:
+        parts = not os.environ['CLASSPATH'].split(os.pathsep)
+        for part in parts:
+            javabridge.JARS.append(part)
+
+
+def start(class_path=[], bundled=True, packages=False, system_cp=False):
+    """
+    Initializes the javabridge connection (starts up the JVM).
+    :param class_path: the additional classpath elements to add
+    :param bundled: whether to add jars from the "lib" directory
+    :param packages: whether to add jars from Weka packages as well
+    :param system_cp: whether to add the system classpath as well
+    """
+    global ENV
+
+    # add user-defined jars first
+    for cp in class_path:
+        logger.debug("Adding user-supplied classpath=" + class_path)
+        javabridge.JARS.append(cp)
+
+    if bundled:
+        logger.debug("Adding bundled jars")
+        add_bundled_jars()
+
+    if packages:
+        logger.debug("Adding Weka packages")
+        add_weka_packages()
+
+    if system_cp:
+        logger.debug("Adding system classpath")
+        add_system_classpath()
 
     logger.debug("Classpath=" + str(javabridge.JARS))
 
