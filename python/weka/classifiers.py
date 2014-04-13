@@ -25,6 +25,7 @@ import weka.core.utils as utils
 import weka.core.arrays as arrays
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
+from weka.core.dataset import Instances
 
 # logging setup
 logger = logging.getLogger("weka.classifiers")
@@ -138,6 +139,13 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "areaUnderPRC", "(I)D", class_index)
 
+    def weighted_area_under_prc(self):
+        """
+        Returns the weighted area under precision recall curve.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedAreaUnderPRC", "()D")
+
     def area_under_roc(self, class_index):
         """
         Returns the area under receiver operators characteristics curve.
@@ -146,12 +154,26 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "areaUnderROC", "(I)D", class_index)
 
+    def weighted_area_under_roc(self):
+        """
+        Returns the weighted area under receiver operator characteristic curve.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedAreaUnderROC", "()D")
+
     def avg_cost(self):
         """
         Returns the average cost.
         :rtype: float
         """
         return javabridge.call(self.jobject, "avgCost", "()D")
+
+    def total_cost(self):
+        """
+        Returns the total cost.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "totalCost", "()D")
 
     def confusion_matrix(self):
         """
@@ -181,6 +203,13 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "unclassified", "()D")
 
+    def num_instances(self):
+        """
+        Returns the number of instances that had a know class value.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "numInstances", "()D")
+
     def percent_correct(self):
         """
         Returns the percent correct (nominal classes).
@@ -209,13 +238,36 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "correlationCoefficient", "()D")
 
+    def matthews_correlation_coefficient(self, class_index):
+        """
+        Returns the Matthews correlation coefficient (nominal classes).
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "matthewsCorrelationCoefficient", "(I)D", class_index)
+
+    def weighted_matthews_correlation(self):
+        """
+        Returns the weighted Matthews correlation (nominal classes).
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedMatthewsCorrelation", "()D")
+
     def coverage_of_test_cases_by_predicted_regions(self):
         """
         Returns the coverage of the test cases by the predicted regions at the confidence level
-        specified when evaluation was performed..
+        specified when evaluation was performed.
         :rtype: float
         """
         return javabridge.call(self.jobject, "coverageOfTestCasesByPredictedRegions", "()D")
+
+    def size_of_predicted_regions(self):
+        """
+        Returns  the average size of the predicted regions, relative to the range of the target in the
+        training data, at the confidence level specified when evaluation was performed.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "sizeOfPredictedRegions", "()D")
 
     def error_rate(self):
         """
@@ -223,6 +275,48 @@ class Evaluation(JavaObject):
         :rtype: float
         """
         return javabridge.call(self.jobject, "errorRate", "()D")
+
+    def mean_absolute_error(self):
+        """
+        Returns the mean absolute error.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "meanAbsoluteError", "()D")
+
+    def relative_absolute_error(self):
+        """
+        Returns the relative absolute error.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "relativeAbsoluteError", "()D")
+
+    def root_mean_squared_error(self):
+        """
+        Returns the root mean squared error.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "rootMeanSquaredError", "()D")
+
+    def root_relative_squared_error(self):
+        """
+        Returns the root relative squared error.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "rootRelativeSquaredError", "()D")
+
+    def root_mean_prior_squared_error(self):
+        """
+        Returns the root mean prior squared error.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "rootMeanPriorSquaredError", "()D")
+
+    def mean_prior_absolute_error(self):
+        """
+        Returns the mean prior absolute error.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "meanPriorAbsoluteError", "()D")
 
     def false_negative_rate(self, class_index):
         """
@@ -232,6 +326,13 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "falseNegativeRate", "(I)D", class_index)
 
+    def weighted_false_negative_rate(self):
+        """
+        Returns the weighted false negative rate.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedFalseNegativeRate", "()D")
+
     def false_positive_rate(self, class_index):
         """
         Returns the false positive rate.
@@ -240,6 +341,75 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "falsePositiveRate", "(I)D", class_index)
 
+    def weighted_false_positive_rate(self):
+        """
+        Returns the weighted false positive rate.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedFalsePositiveRate", "()D")
+
+    def num_false_negatives(self, class_index):
+        """
+        Returns the number of false negatives.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "numFalseNegatives", "(I)D", class_index)
+
+    def true_negative_rate(self, class_index):
+        """
+        Returns the true negative rate.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "trueNegativeRate", "(I)D", class_index)
+
+    def weighted_true_negative_rate(self):
+        """
+        Returns the weighted true negative rate.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedTrueNegativeRate", "()D")
+
+    def num_true_negatives(self, class_index):
+        """
+        Returns the number of true negatives.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "numTrueNegatives", "(I)D", class_index)
+
+    def num_false_positives(self, class_index):
+        """
+        Returns the number of false positives.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "numFalsePositives", "(I)D", class_index)
+
+    def true_positive_rate(self, class_index):
+        """
+        Returns the true positive rate.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "truePositiveRate", "(I)D", class_index)
+
+    def weighted_true_positive_rate(self):
+        """
+        Returns the weighted true positive rate.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedTruePositiveRate", "()D")
+
+    def num_true_positives(self, class_index):
+        """
+        Returns the number of true positives.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "numTruePositives", "(I)D", class_index)
+
     def f_measure(self, class_index):
         """
         Returns the f measure.
@@ -247,6 +417,148 @@ class Evaluation(JavaObject):
         :rtype: float
         """
         return javabridge.call(self.jobject, "fMeasure", "(I)D", class_index)
+
+    def weighted_f_measure(self):
+        """
+        Returns the weighted f measure.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedFMeasure", "()D")
+
+    def unweighted_macro_f_measure(self):
+        """
+        Returns the unweighted macro-averaged F-measure.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "unweightedMacroFmeasure", "()D")
+
+    def unweighted_micro_f_measure(self):
+        """
+        Returns the unweighted micro-averaged F-measure.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "unweightedMicroFmeasure", "()D")
+
+    def precision(self, class_index):
+        """
+        Returns the precision.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "precision", "(I)D", class_index)
+
+    def weighted_precision(self):
+        """
+        Returns the weighted precision.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedPrecision", "()D")
+
+    def recall(self, class_index):
+        """
+        Returns the recall.
+        :param class_index: the 0-based index of the class label
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "recall", "(I)D", class_index)
+
+    def weighted_recall(self):
+        """
+        Returns the weighted recall.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weightedRecall", "()D")
+
+    def kappa(self):
+        """
+        Returns kappa.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "kappa", "()D")
+
+    def kb_information(self):
+        """
+        Returns KB information.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "KBInformation", "()D")
+
+    def kb_mean_information(self):
+        """
+        Returns KB mean information.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "KBMeanInformation", "()D")
+
+    def kb_relative_information(self):
+        """
+        Returns KB relative information.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "KBRelativeInformation", "()D")
+
+    def sf_entropy_gain(self):
+        """
+        Returns the total SF, which is the null model entropy minus the scheme entropy.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "SFEntropyGain", "()D")
+
+    def sf_mean_entropy_gain(self):
+        """
+        Returns the SF per instance, which is the null model entropy minus the scheme entropy, per instance.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "SFMeanEntropyGain", "()D")
+
+    def sf_mean_prior_entropy(self):
+        """
+        Returns the entropy per instance for the null model.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "SFMeanPriorEntropy", "()D")
+
+    def sf_mean_scheme_entropy(self):
+        """
+        Returns the entropy per instance for the scheme.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "SFMeanSchemeEntropy", "()D")
+
+    def set_class_priors(self, data):
+        """
+        Sets the class priors derived from the dataset.
+        :param data: the dataset to derive the priors from
+        """
+        return javabridge.call(self.jobject, "setClassPriors", "(Lweka/core/Instances;)V", data)
+
+    def get_class_priors(self):
+        """
+        Returns the class priors.
+        :rtype: darray
+        """
+        return jvm.ENV.get_float_array_elements(javabridge.call(self.jobject, "getClassPriors", "()[D"))
+
+    def header(self):
+        """
+        Returns the header format.
+        :rtype: Instances
+        """
+        return Instances(javabridge.call(self.jobject, "getHeader", "()Lweka/core/Instances;"))
+
+    def set_discard_predictions(self, discard):
+        """
+        Sets whether to discard predictions (saves memory).
+        :param discard: True if to discard predictions
+        """
+        javabridge.call(self.jobject, "setDiscardPredictions", "(Z)V", discard)
+
+    def set_discard_predictions(self):
+        """
+        Returns whether to discard predictions (saves memory).
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "setDiscardPredictions", "()Z")
 
     @classmethod
     def evaluate_model(cls, classifier, args):
