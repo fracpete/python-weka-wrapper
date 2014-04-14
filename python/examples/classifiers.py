@@ -21,6 +21,7 @@ from weka.core.converters import Loader
 from weka.classifiers import Classifier
 from weka.classifiers import Evaluation
 from weka.core.classes import Random
+import weka.plot.classifiers as plot_cls
 
 
 def main():
@@ -132,9 +133,11 @@ def main():
     print(str(evaluation.header()))
     helper.print_title("Predictions on bolts")
     i = 0
-    for pred in evaluation.predictions():
+    preds = evaluation.predictions()
+    for pred in preds:
         i += 1
         print(str(i) + ": " + str(pred) + " -> error=" + str(pred.error()))
+    plot_cls.plot_classifier_errors(preds)
 
 
 if __name__ == "__main__":
