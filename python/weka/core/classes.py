@@ -23,13 +23,19 @@ class JavaObject(object):
     """ Basic Java object. """
     
     def __init__(self, jobject):
-        """ Initializes the wrapper with the specified Java object. """
+        """
+        Initializes the wrapper with the specified Java object.
+        :param jobject: the Java object to wrap
+        """
         if jobject is None:
             raise Exception("No Java object supplied!")
         self.jobject = jobject
 
     def __str__(self):
-        """ Just calls the toString() method. """
+        """
+        Just calls the toString() method.
+        :rtype: str
+        """
         return javabridge.to_string(self.jobject)
 
     @classmethod
@@ -38,6 +44,10 @@ class JavaObject(object):
         Returns whether the object implements the specified interface or is a subclass. 
         E.g.: self._check_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
         or self._check_type('weka.core.converters.AbstractFileLoader')
+        :param jobject: the Java object to check
+        :param intf_or_class: the classname in Java notation (eg "weka.core.Instance")
+        :param jni_intf_or_class: the classname in JNI notation (eg "Lweka/core/Instance;")
+        :rtype: bool
         """
         if jni_intf_or_class is None:
             jni_intf_or_class = "L" + intf_or_class.replace(".", "/") + ";"
@@ -49,13 +59,21 @@ class JavaObject(object):
         Raises an exception if the object does not implement the specified interface or is not a subclass. 
         E.g.: self._enforce_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
         or self._enforce_type('weka.core.converters.AbstractFileLoader')
+        :param jobject: the Java object to check
+        :param intf_or_class: the classname in Java notation (eg "weka.core.Instance")
+        :param jni_intf_or_class: the classname in JNI notation (eg "Lweka/core/Instance;")
         """
         if not cls.check_type(jobject, intf_or_class, jni_intf_or_class):
             raise TypeError("Object does not implement or subclass " + intf_or_class + "!")
 
     @classmethod
     def new_instance(cls, classname, jni_classname=None):
-        """ Creates a new object from the given classname using the default constructor, None in case of error. """
+        """
+        Creates a new object from the given classname using the default constructor, None in case of error.
+        :param classname: the classname in Java notation (eg "weka.core.Instance")
+        :param jni_classname: the classname in JNI notation (eg "Lweka/core/Instance;")
+        :rtype: object
+        """
         if jni_classname is None:
             jni_classname = classname.replace(".", "/")
         try:
