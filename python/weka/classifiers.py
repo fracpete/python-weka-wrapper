@@ -19,7 +19,6 @@ import logging
 import os
 import sys
 import getopt
-import numpy
 import weka.core.jvm as jvm
 import weka.core.utils as utils
 import weka.core.arrays as arrays
@@ -68,6 +67,97 @@ class Classifier(OptionHandler):
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
         return jvm.ENV.get_float_array_elements(pred)
+
+
+class Prediction(JavaObject):
+    """
+    Wrapper class for a prediction.
+    """
+
+    def __init__(self, jobject):
+        """
+        Initializes the wrapper.
+        :param jobject: the prediction to wrap
+        """
+        self.enforce_type(jobject, "weka.classifiers.evaluation.Prediction")
+        super(Prediction, self).__init__(jobject)
+
+    def actual(self):
+        """
+        Returns the actual value.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "actual", "()D")
+
+    def predicted(self):
+        """
+        Returns the predicted value.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "predicted", "()D")
+
+    def weight(self):
+        """
+        Returns the weight.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "weight", "()D")
+
+
+class NominalPrediction(Prediction):
+    """
+    Wrapper class for a nominal prediction.
+    """
+
+    def __init__(self, jobject):
+        """
+        Initializes the wrapper.
+        :param jobject: the prediction to wrap
+        """
+        self.enforce_type(jobject, "weka.classifiers.evaluation.NominalPrediction")
+        super(NominalPrediction, self).__init__(jobject)
+
+    def distribution(self):
+        """
+        Returns the class distribution.
+        :rtype: list
+        """
+        return javabridge.call(self.jobject, "distribution", "()[D")
+
+    def margin(self):
+        """
+        Returns the margin.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "margin", "()D")
+
+
+class NumericPrediction(Prediction):
+    """
+    Wrapper class for a numeric prediction.
+    """
+
+    def __init__(self, jobject):
+        """
+        Initializes the wrapper.
+        :param jobject: the prediction to wrap
+        """
+        self.enforce_type(jobject, "weka.classifiers.evaluation.NumericPrediction")
+        super(NumericPrediction, self).__init__(jobject)
+
+    def error(self):
+        """
+        Returns the error.
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "error", "()D")
+
+    def prediction_intervals(self):
+        """
+        Returns the prediction intervals.
+        :rtype: ndarray
+        """
+        return arrays.double_matrix_to_list(javabridge.call(self.jobject, "predictionIntervals", "()[[D"))
 
 
 class Evaluation(JavaObject):
@@ -535,7 +625,7 @@ class Evaluation(JavaObject):
     def get_class_priors(self):
         """
         Returns the class priors.
-        :rtype: darray
+        :rtype: ndarray
         """
         return jvm.ENV.get_float_array_elements(javabridge.call(self.jobject, "getClassPriors", "()[D"))
 
@@ -559,6 +649,23 @@ class Evaluation(JavaObject):
         :rtype: bool
         """
         return javabridge.call(self.jobject, "setDiscardPredictions", "()Z")
+
+    def predictions(self):
+        """
+        Returns the predictions.
+        :rtype: list
+        """
+        preds = javabridge.get_collection_wrapper(
+            javabridge.call(self.jobject, "predictions", "()Lweka/core/FastVector;"))
+        result = []
+        for pred in preds:
+            if javabridge.is_instance_of(pred, "weka/classifiers/evaluation/NominalPrediction"):
+                result.append(NominalPrediction(pred))
+            elif javabridge.is_instance_of(pred, "weka/classifiers/evaluation/NumericPrediction"):
+                result.append(NumericPrediction(pred))
+            else:
+                result.append(Prediction(pred))
+        return result
 
     @classmethod
     def evaluate_model(cls, classifier, args):
@@ -664,12 +771,6 @@ def main(args):
         if len(optargs) > 0:
             classifier.set_options(optargs)
         print(Evaluation.evaluate_model(classifier, params))
-        # data = Loader("weka.core.converters.ArffLoader").load_file(train)
-        # data.set_class_index(data.num_attributes() - 1)
-        # evl = Evaluation(data)
-        # rnd = Random(1)
-        # evl.crossvalidate_model(classifier, data, 10, rnd)
-        # print(evl.get_percent_correct())
     except Exception, e:
         print(e)
     finally:

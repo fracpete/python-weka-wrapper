@@ -128,8 +128,13 @@ def main():
     print(evaluation.to_summary())
     print("correlationCoefficient: " + str(evaluation.correlation_coefficient()))
     print("errorRate: " + str(evaluation.error_rate()))
-    helper.print_title("Header")
+    helper.print_title("Header - bolts")
     print(str(evaluation.header()))
+    helper.print_title("Predictions on bolts")
+    i = 0
+    for pred in evaluation.predictions():
+        i += 1
+        print(str(i) + ": " + str(pred) + " -> error=" + str(pred.error()))
 
 
 if __name__ == "__main__":
