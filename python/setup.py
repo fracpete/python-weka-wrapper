@@ -38,7 +38,9 @@ setup(
     author='Peter "fracpete" Reutemann',
     install_requires=[
         "javabridge",
-        "matplotlib"
+        "matplotlib",
+        "pygraphviz",
+        "PIL"
     ],
 )
 

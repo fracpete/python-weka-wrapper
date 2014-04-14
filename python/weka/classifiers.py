@@ -41,7 +41,10 @@ class Classifier(OptionHandler):
         :param classname: the classname of the classifier
         """
         jobject = Classifier.new_instance(classname)
+        self.classname = classname
         self.enforce_type(jobject, "weka.classifiers.Classifier")
+        self.is_updateable = self.check_type(jobject, "weka.classifiers.UpdateableClassifier")
+        self.is_drawable   = self.check_type(jobject, "weka.core.Drawable")
         super(Classifier, self).__init__(jobject)
 
     def build_classifier(self, data):
@@ -50,6 +53,16 @@ class Classifier(OptionHandler):
         :param data: the data to train the classifier with
         """
         javabridge.call(self.jobject, "buildClassifier", "(Lweka/core/Instances;)V", data.jobject)
+
+    def updated_classifier(self, inst):
+        """
+        Updates the classifier with the instance.
+        :param inst: the Instance to update the classifier with
+        """
+        if self.is_updateable:
+            javabridge.call(self.jobject, "updateClassifier", "(Lweka/core/Instance;)V", inst.jobject)
+        else:
+            logger.critical(self.classname + " is not updateable!")
 
     def classify_instance(self, inst):
         """
@@ -67,6 +80,26 @@ class Classifier(OptionHandler):
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
         return jvm.ENV.get_float_array_elements(pred)
+
+    def graph_type(self):
+        """
+        Returns the graph type if classifier implements weka.core.Drawable, otherwise -1.
+        :rtype: int
+        """
+        if self.is_drawable:
+            return javabridge.call(self.jobject, "graphType", "()I")
+        else:
+            return -1
+
+    def graph(self):
+        """
+        Returns the graph if classifier implements weka.core.Drawable, otherwise None.
+        :rtype: str
+        """
+        if self.is_drawable:
+            return javabridge.call(self.jobject, "graph", "()Ljava/lang/String;")
+        else:
+            return None
 
 
 class Prediction(JavaObject):

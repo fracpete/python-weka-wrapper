@@ -16,7 +16,9 @@
 
 import matplotlib.pyplot as plt
 from weka.classifiers import NumericPrediction
-
+from pygraphviz.agraph import AGraph
+import tempfile
+from PIL import Image
 
 def plot_classifier_errors(predictions, absolute=True, max_relative_size=20):
     """
@@ -51,3 +53,18 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20):
     ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     ax.grid(True)
     plt.show()
+
+
+def plot_dot_graph(graph, filename=None):
+    """
+    Plots a graph in graphviz dot notation.
+    :param graph: the dot notation graph
+    :param filename: the (optional) file to save the generated plot to. The extension determines the file format.
+    """
+    agraph = AGraph(graph)
+    agraph.layout(prog='dot')
+    if filename is None:
+        filename = tempfile.mktemp(suffix=".png")
+    agraph.draw(filename)
+    image = Image.open(filename)
+    image.show()

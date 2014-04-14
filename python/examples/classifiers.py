@@ -42,6 +42,8 @@ def main():
     classifier.set_options(["-C", "0.3"])
     classifier.build_classifier(iris_data)
     print(classifier)
+    print(classifier.graph())
+    plot_cls.plot_dot_graph(classifier.graph())
 
     # cross-validate nominal classifier
     helper.print_title("Cross-validating SMO on iris")
