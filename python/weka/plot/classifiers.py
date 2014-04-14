@@ -20,9 +20,11 @@ from pygraphviz.agraph import AGraph
 import tempfile
 from PIL import Image
 
-def plot_classifier_errors(predictions, absolute=True, max_relative_size=20):
+
+def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, outfile=None):
     """
     Plots the classifers for the given list of predictions.
+    NB: The plot window blocks execution till closed.
     :param predictions: the predictions to plot
     :param absolute: whether to use absolute errors as size or relative ones
     """
@@ -52,6 +54,9 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20):
     ax.set_title("Classifier errors")
     ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     ax.grid(True)
+    plt.draw()
+    if not outfile is None:
+        plt.savefig(outfile)
     plt.show()
 
 

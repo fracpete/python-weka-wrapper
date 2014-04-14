@@ -139,7 +139,7 @@ def main():
     for pred in preds:
         i += 1
         print(str(i) + ": " + str(pred) + " -> error=" + str(pred.error()))
-    plot_cls.plot_classifier_errors(preds)
+    plot_cls.plot_classifier_errors(preds, outfile="/tmp/out2.png")
 
 
 if __name__ == "__main__":
