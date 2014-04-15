@@ -16,6 +16,7 @@
 
 import javabridge
 import os
+import glob
 import logging
 
 
@@ -38,9 +39,9 @@ def add_bundled_jars():
         libdir = os.path.split(rootdir)[0] + os.sep + "lib"
 
     # add jars from lib directory
-    for l in os.listdir(libdir):
-        if l.lower().endswith(".jar") and (l.lower().find("-src.") == -1):
-            javabridge.JARS.append(libdir + os.sep + l)
+    for l in glob.glob(libdir + os.sep + "*.jar"):
+        if l.lower().find("-src.") == -1:
+            javabridge.JARS.append(str(l))
 
 
 def add_weka_packages():
@@ -54,14 +55,13 @@ def add_weka_packages():
         if os.path.isdir(package_dir + os.sep + p):
             directory = package_dir + os.sep + p
             logger.debug("  directory=" + directory)
-            # inspect package
+            # inspect package directory
             for l in os.listdir(directory):
                 if l.lower().endswith(".jar"):
                     javabridge.JARS.append(directory + os.sep + l)
                 if l == "lib":
-                    for m in os.listdir(directory + os.sep + "lib"):
-                        if m.lower().endswith(".jar"):
-                            javabridge.JARS.append(directory + os.sep + "lib" + os.sep + m)
+                    for m in glob.glob(directory + os.sep + "lib" + os.sep + "*.jar"):
+                        javabridge.JARS.append(m)
 
 
 def add_system_classpath():
@@ -74,13 +74,14 @@ def add_system_classpath():
             javabridge.JARS.append(part)
 
 
-def start(class_path=[], bundled=True, packages=False, system_cp=False):
+def start(class_path=[], bundled=True, packages=False, system_cp=False, max_heap_size=None):
     """
     Initializes the javabridge connection (starts up the JVM).
     :param class_path: the additional classpath elements to add
     :param bundled: whether to add jars from the "lib" directory
     :param packages: whether to add jars from Weka packages as well
     :param system_cp: whether to add the system classpath as well
+    :param max_heap_size: the maximum heap size
     """
     global ENV
 
@@ -102,8 +103,9 @@ def start(class_path=[], bundled=True, packages=False, system_cp=False):
         add_system_classpath()
 
     logger.debug("Classpath=" + str(javabridge.JARS))
+    logger.debug("MaxHeapSize=" + ("default" if (max_heap_size is None) else max_heap_size))
 
-    javabridge.start_vm(run_headless=True)
+    javabridge.start_vm(run_headless=True, max_heap_size=max_heap_size)
     javabridge.attach()
     ENV = javabridge.get_env()
 
