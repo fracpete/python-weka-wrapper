@@ -24,6 +24,7 @@ import weka.core.utils as utils
 import weka.core.arrays as arrays
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
+from weka.core.classes import Capabilities
 from weka.core.dataset import Instances
 
 # logging setup
@@ -46,6 +47,13 @@ class Classifier(OptionHandler):
         self.is_updateable = self.check_type(jobject, "weka.classifiers.UpdateableClassifier")
         self.is_drawable   = self.check_type(jobject, "weka.core.Drawable")
         super(Classifier, self).__init__(jobject)
+
+    def get_capabilities(self):
+        """
+        Returns the capabilities of the classifier.
+        :rtype: Capabilities
+        """
+        return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
 
     def build_classifier(self, data):
         """
@@ -100,6 +108,36 @@ class Classifier(OptionHandler):
             return javabridge.call(self.jobject, "graph", "()Ljava/lang/String;")
         else:
             return None
+
+
+class SingleClassifierEnhancer(Classifier):
+    """
+    Wrapper class for classifiers that use a single base classifier.
+    """
+
+    def __init__(self, classname):
+        """
+        Initializes the specified classifier.
+        :param classname: the classname of the classifier
+        """
+        jobject = SingleClassifierEnhancer.new_instance(classname)
+        self.classname = classname
+        self.enforce_type(jobject, "weka.classifiers.SingleClassifierEnhancer")
+        super(SingleClassifierEnhancer, self).__init__(jobject)
+
+    def set_classifier(self, classifier):
+        """
+        Sets the base classifier.
+        :param classifier: the base classifier to use
+        """
+        javabridge.call(self.jobject, "setClassifier", "(Lweka/classifiers/Classifier;)V", classifier.jobject)
+
+    def get_classifier(self):
+        """
+        Returns the base classifier.
+        :rtype: Classifier
+        """
+        return Classifier(javabridge.call(self.jobject, "setClassifier", "()Lweka/classifiers/Classifier;"))
 
 
 class Prediction(JavaObject):

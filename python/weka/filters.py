@@ -22,6 +22,7 @@ import getopt
 import weka.core.jvm as jvm
 import weka.core.utils as utils
 from weka.core.classes import OptionHandler
+from weka.core.classes import Capabilities
 from weka.core.converters import Loader
 from weka.core.converters import Saver
 from weka.core.dataset import Instances
@@ -44,6 +45,13 @@ class Filter(OptionHandler):
         jobject = Filter.new_instance(classname)
         self.enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject)
+
+    def get_capabilities(self):
+        """
+        Returns the capabilities of the filter.
+        :rtype: Capabilities
+        """
+        return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
 
     def set_inputformat(self, data):
         """

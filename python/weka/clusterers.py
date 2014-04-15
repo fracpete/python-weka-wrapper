@@ -23,6 +23,7 @@ import weka.core.jvm as jvm
 import weka.core.utils as utils
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
+from weka.core.classes import Capabilities
 
 # logging setup
 logger = logging.getLogger("weka.clusterers")
@@ -41,6 +42,13 @@ class Clusterer(OptionHandler):
         jobject = Clusterer.new_instance(classname)
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject)
+
+    def get_capabilities(self):
+        """
+        Returns the capabilities of the clusterer.
+        :rtype: Capabilities
+        """
+        return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
 
     def build_clusterer(self, data):
         """
