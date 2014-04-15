@@ -16,6 +16,7 @@
 
 import javabridge
 import logging
+import weka.core.jvm as jvm
 from weka.core.classes import JavaObject
 
 # logging setup
@@ -99,7 +100,7 @@ class Instances(JavaObject):
             javabridge.call(self.jobject, "add", "(Lweka/core/Instance;)Z", inst.jobject)
         else:
             javabridge.call(self.jobject, "add", "(ILweka/core/Instance;)V", index, inst.jobject)
-        
+
     def set_instance(self, index, inst):
         """
         Sets the Instance at the specified location in the dataset.
@@ -118,13 +119,73 @@ class Instances(JavaObject):
             javabridge.call(self.jobject, "delete", "()V")
         else:
             javabridge.call(self.jobject, "delete", "(I)V", index)
-            
+
+    def delete_attribute(self, index):
+        """
+        Deletes an attribute at the given position.
+        :param index: the 0-based index of the attribute to remove
+        """
+        javabridge.call(self.jobject, "deleteAttributeAt", "(I)V", index)
+
+    def delete_attribute_type(self, type):
+        """
+        Deletes all attributes of the given type in the dataset.
+        :param type: the attribute type to remove, see weka.core.Attribute Javadoc
+        """
+        javabridge.call(self.jobject, "deleteAttributeType", "(I)V", type)
+
+    def compactify(self):
+        """
+        Compactifies the set of instances.
+        """
+        javabridge.call(self.jobject, "compactify", "()V")
+
     def sort(self, index):
         """
         Sorts the dataset using the specified attribute index.
         :param index: the index of the attribute
         """
         javabridge.call(self.jobject, "sort", "(I)V", index)
+
+    @classmethod
+    def copy_instances(cls, dataset):
+        """
+        Creates a copy of the Instances.
+        :param dataset: the original dataset
+        :rtype: Instances
+        """
+        return Instances(
+            javabridge.make_instance(
+                "weka/core/Instances", "(Lweka/core/Instances;)V", dataset.jobject))
+
+    @classmethod
+    def template_instances(cls, dataset, capacity=0):
+        """
+        Uses the Instances as template to create an empty dataset.
+        :param dataset: the original dataset
+        :param capacity: how many data rows to reserve initially (see compactify)
+        :rtype: Instances
+        """
+        return Instances(
+            javabridge.make_instance(
+                "weka/core/Instances", "(Lweka/core/Instances;I)V", dataset.jobject, capacity))
+
+    @classmethod
+    def create_instances(cls, name, atts, capacity):
+        """
+        Creates a new Instances.
+        :param name: the relation name
+        :param atts: the list of attributes to use for the dataset
+        :param capacity: how many data rows to reserve initially (see compactify)
+        :rtype: Instances
+        """
+        attributes = []
+        for att in atts:
+            attributes.append(att.jobject)
+        return Instances(
+            javabridge.make_instance(
+                "weka/core/Instances", "(Ljava/lang/String;Ljava/util/ArrayList;I)V",
+                name, javabridge.make_list(attributes), capacity))
 
 
 class Instance(JavaObject):
@@ -138,7 +199,21 @@ class Instance(JavaObject):
         :param jobject: the weka.core.Instance object to initialize with
         """
         self.enforce_type(jobject, "weka.core.Instance")
-        super(Instances, self).__init__(jobject)
+        super(Instance, self).__init__(jobject)
+
+    def set_dataset(self, dataset):
+        """
+        Sets the dataset that this instance belongs to (for attribute information).
+        :param dataset: the dataset this instance belongs to.
+        """
+        javabridge.call(self.jobject, "setDataset", "(Lweka/core/Instances;)V", dataset.jobject)
+
+    def get_dataset(self):
+        """
+        Returns the dataset that this instance belongs to.
+        :rtype: Instances
+        """
+        return Instances(javabridge.call(self.jobject, "dataset", "()Lweka/core/Instances"))
 
     def num_attributes(self):
         """
@@ -183,7 +258,25 @@ class Instance(JavaObject):
         :param weight: the float weight to set
         """
         javabridge.call(self.jobject, "setWeight", "(D)V", weight)
-        
+
+    def get_values(self):
+        """
+        Returns the internal values of this instance.
+        :rtype: ndarray
+        """
+        return jvm.ENV.get_double_array_elements(javabridge.call(self.jobject, "toDoubleArray", "()[D"))
+
+    @classmethod
+    def create_instance(cls, values, classname="weka.core.DenseInstance", weight=1.0):
+        """
+        Creates a new instance.
+        :param values: the double values (internal format) to use (numpy array)
+        :param classname: the classname of the instance (eg weka.core.DenseInstance).
+        :param weight: the weight of the instance
+        """
+        jni_classname = classname.replace(".", "/")
+        return Instance(javabridge.make_instance(jni_classname, "(D[D)V", weight, jvm.ENV.make_double_array(values)))
+
 
 class Attribute(JavaObject):
     """
@@ -326,6 +419,14 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "addRelation", "(Lweka/core/Instances;)I", instances.jobject)
 
+    def parse_date(self, s):
+        """
+        Parses the date string and returns the internal format value.
+        :param s: the date string
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "parseDate", "(Ljava/lang/String;)D", s)
+
     def equals(self, att):
         """
         Checks whether this attributes is the same as the provided one.
@@ -342,3 +443,35 @@ class Attribute(JavaObject):
         :rtype: str
         """
         return javabridge.call(self.jobject, "equalsMsg", "(Lweka/core/Attribute;)Ljava/lang/String;", att.jobject)
+
+    @classmethod
+    def create_numeric(cls, name):
+        """
+        Creates a numeric attribute.
+        :param name: the name of the attribute
+        """
+        return Attribute(
+            javabridge.make_instance(
+                "weka/core/Attribute", "(Ljava/lang/String;)V", name))
+
+    @classmethod
+    def create_date(cls, name, format="yyyy-MM-dd'T'HH:mm:ss"):
+        """
+        Creates a date attribute.
+        :param name: the name of the attribute
+        :param format: the date format, see Javadoc for java.text.SimpleDateFormat
+        """
+        return Attribute(
+            javabridge.make_instance(
+                "weka/core/Attribute", "(Ljava/lang/String;Ljava/lang/String;)V", name, format))
+
+    @classmethod
+    def create_nominal(cls, name, labels):
+        """
+        Creates a date attribute.
+        :param name: the name of the attribute
+        :param labels: the list of string labels to use
+        """
+        return Attribute(
+            javabridge.make_instance(
+                "weka/core/Attribute", "(Ljava/lang/String;Ljava/util/List;)V", name, javabridge.make_list(labels)))

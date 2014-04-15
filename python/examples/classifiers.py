@@ -21,6 +21,7 @@ from weka.core.converters import Loader
 from weka.classifiers import Classifier
 from weka.classifiers import Evaluation
 from weka.core.classes import Random
+import weka.plot.classifiers as plot_cls
 
 
 def main():
@@ -41,6 +42,8 @@ def main():
     classifier.set_options(["-C", "0.3"])
     classifier.build_classifier(iris_data)
     print(classifier)
+    print(classifier.graph())
+    plot_cls.plot_dot_graph(classifier.graph())
 
     # cross-validate nominal classifier
     helper.print_title("Cross-validating SMO on iris")
@@ -128,8 +131,15 @@ def main():
     print(evaluation.to_summary())
     print("correlationCoefficient: " + str(evaluation.correlation_coefficient()))
     print("errorRate: " + str(evaluation.error_rate()))
-    helper.print_title("Header")
+    helper.print_title("Header - bolts")
     print(str(evaluation.header()))
+    helper.print_title("Predictions on bolts")
+    i = 0
+    preds = evaluation.predictions()
+    for pred in preds:
+        i += 1
+        print(str(i) + ": " + str(pred) + " -> error=" + str(pred.error()))
+    plot_cls.plot_classifier_errors(preds, outfile="/tmp/out2.png")
 
 
 if __name__ == "__main__":
