@@ -23,7 +23,7 @@ import weka.core.jvm as jvm
 import weka.core.utils as utils
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
-from weka.core.classes import Capabilities
+from weka.core.capabilities import Capabilities
 
 # logging setup
 logger = logging.getLogger("weka.clusterers")

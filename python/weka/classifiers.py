@@ -24,7 +24,7 @@ import weka.core.utils as utils
 import weka.core.arrays as arrays
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
-from weka.core.classes import Capabilities
+from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances
 
 # logging setup
