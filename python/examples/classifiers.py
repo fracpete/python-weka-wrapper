@@ -18,11 +18,12 @@ import os
 import weka.core.jvm as jvm
 import examples.helper as helper
 from weka.core.converters import Loader
-from weka.classifiers import Classifier
+from weka.classifiers import Classifier, SingleClassifierEnhancer
 from weka.classifiers import Evaluation
+from weka.filters import Filter
 from weka.core.classes import Random
 import weka.plot.classifiers as plot_cls
-
+import weka.core.utils as utils
 
 def main():
     """
@@ -44,6 +45,16 @@ def main():
     print(classifier)
     print(classifier.graph())
     plot_cls.plot_dot_graph(classifier.graph())
+
+    # construct a meta-classifier
+    helper.print_title("Meta classifiers")
+    meta = SingleClassifierEnhancer("weka.classifiers.meta.FilteredClassifier")
+    meta.set_classifier(Classifier("weka.classifiers.functions.LinearRegression"))
+    flter = Filter("weka.filters.unsupervised.attribute.Remove")
+    flter.set_options(["-R", "first"])
+    meta.set_property("filter", flter.jobject)
+    print(utils.join_options(meta.get_options()))
+    print(meta.to_commandline())
 
     # cross-validate nominal classifier
     helper.print_title("Cross-validating SMO on iris")
