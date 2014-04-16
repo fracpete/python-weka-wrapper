@@ -37,12 +37,17 @@ class Filter(OptionHandler):
     Wrapper class for filters.
     """
 
-    def __init__(self, classname):
+    def __init__(self, classname=None, jobject=None):
         """
-        Initializes the specified filter.
+        Initializes the specified filter using either the classname or the supplied JB_Object.
         :param classname: the classname of the filter
+        :param jobject: the JB_Object to use
         """
-        jobject = Filter.new_instance(classname)
+        if jobject is None:
+            jobject = Filter.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
+        self.classname = classname
         self.enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject)
 
@@ -144,7 +149,7 @@ def main(args):
     logger.debug("Commandline: " + utils.join_options(args))
 
     try:
-        flter = Filter(optargs[0])
+        flter = Filter(classname=optargs[0])
         optargs = optargs[1:]
         if len(optargs) > 0:
             flter.set_options(optargs)

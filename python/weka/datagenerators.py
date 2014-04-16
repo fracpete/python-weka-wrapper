@@ -33,11 +33,17 @@ class DataGenerator(OptionHandler):
     Wrapper class for datagenerators.
     """
 
-    def __init__(self, classname):
-        """ Initializes the specified generator.
-        :param classname: the classname of the datagenerator
+    def __init__(self, classname=None, jobject=None):
         """
-        jobject = DataGenerator.new_instance(classname)
+        Initializes the specified datagenerator using either the classname or the supplied JB_Object.
+        :param classname: the classname of the datagenerator
+        :param jobject: the JB_Object to use
+        """
+        if jobject is None:
+            jobject = DataGenerator.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
+        self.classname = classname
         self.enforce_type(jobject, "weka.datagenerators.DataGenerator")
         super(DataGenerator, self).__init__(jobject)
 
@@ -87,7 +93,7 @@ def main(args):
     logger.debug("Commandline: " + utils.join_options(args))
 
     try:
-        generator = DataGenerator(optargs[0])
+        generator = DataGenerator(classname=optargs[0])
         optargs = optargs[1:]
         if len(optargs) > 0:
             generator.set_options(optargs)

@@ -34,12 +34,17 @@ class Clusterer(OptionHandler):
     Wrapper class for clusterers.
     """
 
-    def __init__(self, classname):
+    def __init__(self, classname=None, jobject=None):
         """
-        Initializes the specified clusterer.
+        Initializes the specified clusterer using either the classname or the supplied JB_Object.
         :param classname: the classname of the clusterer
+        :param jobject: the JB_Object to use
         """
-        jobject = Clusterer.new_instance(classname)
+        if jobject is None:
+            jobject = Clusterer.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
+        self.classname = classname
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject)
 
@@ -180,7 +185,7 @@ def main(args):
     logger.debug("Commandline: " + utils.join_options(args))
 
     try:
-        clusterer = Clusterer(optargs[0])
+        clusterer = Clusterer(classname=optargs[0])
         optargs = optargs[1:]
         if len(optargs) > 0:
             clusterer.set_options(optargs)

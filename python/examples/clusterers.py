@@ -42,7 +42,7 @@ def main():
 
     # build a clusterer and output model
     helper.print_title("Training SimpleKMeans clusterer")
-    clusterer = Clusterer("weka.clusterers.SimpleKMeans")
+    clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans")
     clusterer.set_options(["-N", "3"])
     clusterer.build_clusterer(data)
     print(clusterer)

@@ -56,3 +56,12 @@ def to_commandline(optionhandler):
         "Lweka/core/Utils;", "toCommandLine",
         "(Ljava/lang/Object;)Ljava/lang/String;",
         optionhandler.jobject)
+
+
+def get_classname(jobject):
+    """
+    Returns the classname of the JB_Object.
+    :rtype: str
+    """
+    cls = javabridge.call(jobject, "getClass", "()Ljava/lang/Class;")
+    return javabridge.call(cls, "getName", "()Ljava/lang/String;")

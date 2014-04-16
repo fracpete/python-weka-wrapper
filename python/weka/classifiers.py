@@ -36,12 +36,16 @@ class Classifier(OptionHandler):
     Wrapper class for classifiers.
     """
 
-    def __init__(self, classname):
+    def __init__(self, classname=None, jobject=None):
         """
-        Initializes the specified classifier.
+        Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
+        :param jobject: the JB_Object to use
         """
-        jobject = Classifier.new_instance(classname)
+        if jobject is None:
+            jobject = Classifier.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
         self.classname = classname
         self.enforce_type(jobject, "weka.classifiers.Classifier")
         self.is_updateable = self.check_type(jobject, "weka.classifiers.UpdateableClassifier")
@@ -115,15 +119,19 @@ class SingleClassifierEnhancer(Classifier):
     Wrapper class for classifiers that use a single base classifier.
     """
 
-    def __init__(self, classname):
+    def __init__(self, classname=None, jobject=None):
         """
-        Initializes the specified classifier.
+        Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
+        :param jobject: the JB_Object to use
         """
+        if jobject is None:
+            jobject = Classifier.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
         jobject = SingleClassifierEnhancer.new_instance(classname)
-        self.classname = classname
         self.enforce_type(jobject, "weka.classifiers.SingleClassifierEnhancer")
-        super(SingleClassifierEnhancer, self).__init__(jobject)
+        super(SingleClassifierEnhancer, self).__init__(classname, jobject)
 
     def set_classifier(self, classifier):
         """
@@ -137,7 +145,49 @@ class SingleClassifierEnhancer(Classifier):
         Returns the base classifier.
         :rtype: Classifier
         """
-        return Classifier(javabridge.call(self.jobject, "setClassifier", "()Lweka/classifiers/Classifier;"))
+        return Classifier(javabridge.call(self.jobject, "getClassifier", "()Lweka/classifiers/Classifier;"))
+
+
+class MultipleClassifiersCombiner(Classifier):
+    """
+    Wrapper class for classifiers that use a multiple base classifiers.
+    """
+
+    def __init__(self, classname=None, jobject=None):
+        """
+        Initializes the specified classifier using either the classname or the supplied JB_Object.
+        :param classname: the classname of the classifier
+        :param jobject: the JB_Object to use
+        """
+        if jobject is None:
+            jobject = Classifier.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
+        jobject = MultipleClassifiersCombiner.new_instance(classname)
+        self.enforce_type(jobject, "weka.classifiers.MultipleClassifiersCombiner")
+        super(MultipleClassifiersCombiner, self).__init__(classname, jobject)
+
+    def set_classifiers(self, classifiers):
+        """
+        Sets the base classifiers.
+        :param classifiers: the list of base classifiers to use
+        """
+        obj = []
+        for classifier in classifiers:
+            obj.append(classifier.jobject)
+        javabridge.call(self.jobject, "setClassifiers", "([Lweka/classifiers/Classifier;)V", obj)
+
+    def get_classifiers(self):
+        """
+        Returns the list of base classifiers.
+        :rtype: list
+        """
+        objects = javabridge.get_object_array_elements(
+            javabridge.call(self.jobject, "getClassifiers", "()[Lweka/classifiers/Classifier;"))
+        result = []
+        for object in objects:
+            result.append(Classifier(jobject=object))
+        return result
 
 
 class Prediction(JavaObject):
@@ -837,7 +887,7 @@ def main(args):
     logger.debug("Commandline: " + utils.join_options(args))
 
     try:
-        classifier = Classifier(optargs[0])
+        classifier = Classifier(classname=optargs[0])
         optargs = optargs[1:]
         if len(optargs) > 0:
             classifier.set_options(optargs)

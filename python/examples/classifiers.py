@@ -18,7 +18,7 @@ import os
 import weka.core.jvm as jvm
 import examples.helper as helper
 from weka.core.converters import Loader
-from weka.classifiers import Classifier, SingleClassifierEnhancer
+from weka.classifiers import Classifier, SingleClassifierEnhancer, MultipleClassifiersCombiner
 from weka.classifiers import Evaluation
 from weka.filters import Filter
 from weka.core.classes import Random
@@ -39,26 +39,33 @@ def main():
 
     # build a classifier and output model
     helper.print_title("Training J48 classifier on iris")
-    classifier = Classifier("weka.classifiers.trees.J48")
+    classifier = Classifier(classname="weka.classifiers.trees.J48")
     classifier.set_options(["-C", "0.3"])
     classifier.build_classifier(iris_data)
     print(classifier)
     print(classifier.graph())
     plot_cls.plot_dot_graph(classifier.graph())
 
-    # construct a meta-classifier
+    # construct meta-classifiers
     helper.print_title("Meta classifiers")
-    meta = SingleClassifierEnhancer("weka.classifiers.meta.FilteredClassifier")
-    meta.set_classifier(Classifier("weka.classifiers.functions.LinearRegression"))
+    meta = SingleClassifierEnhancer(classname="weka.classifiers.meta.FilteredClassifier")
+    meta.set_classifier(Classifier(classname="weka.classifiers.functions.LinearRegression"))
     flter = Filter("weka.filters.unsupervised.attribute.Remove")
     flter.set_options(["-R", "first"])
     meta.set_property("filter", flter.jobject)
     print(utils.join_options(meta.get_options()))
     print(meta.to_commandline())
+    meta = MultipleClassifiersCombiner(classname="weka.classifiers.meta.Vote")
+    classifiers = [
+        Classifier(classname="weka.classifiers.functions.SMO"),
+        Classifier(classname="weka.classifiers.trees.J48")
+    ]
+    meta.set_classifiers(classifiers)
+    print(meta.to_commandline())
 
     # cross-validate nominal classifier
     helper.print_title("Cross-validating SMO on iris")
-    classifier = Classifier("weka.classifiers.functions.SMO")
+    classifier = Classifier(classname="weka.classifiers.functions.SMO")
     classifier.set_options(["-M"])
     evaluation = Evaluation(iris_data)
     evaluation.crossvalidate_model(classifier, iris_data, 10, Random(42))
@@ -128,14 +135,14 @@ def main():
 
     # build a classifier and output model
     helper.print_title("Training LinearRegression on bolts")
-    classifier = Classifier("weka.classifiers.functions.LinearRegression")
+    classifier = Classifier(classname="weka.classifiers.functions.LinearRegression")
     classifier.set_options(["-S", "1", "-C"])
     classifier.build_classifier(bolts_data)
     print(classifier)
 
     # cross-validate numeric classifier
     helper.print_title("Cross-validating LinearRegression on bolts")
-    classifier = Classifier("weka.classifiers.functions.LinearRegression")
+    classifier = Classifier(classname="weka.classifiers.functions.LinearRegression")
     classifier.set_options(["-S", "1", "-C"])
     evaluation = Evaluation(bolts_data)
     evaluation.crossvalidate_model(classifier, bolts_data, 10, Random(42))
