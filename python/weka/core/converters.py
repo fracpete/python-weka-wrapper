@@ -17,6 +17,7 @@
 import javabridge
 import weka.core.jvm as jvm
 from weka.core.classes import OptionHandler
+from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances
 
 
@@ -70,6 +71,13 @@ class Saver(OptionHandler):
         jobject = Saver.new_instance(classname)
         self.enforce_type(jobject, "weka.core.converters.Saver")
         super(Saver, self).__init__(jobject)
+
+    def get_capabilities(self):
+        """
+        Returns the capabilities of the saver.
+        :rtype: Capabilities
+        """
+        return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
 
     def save_file(self, data, dfile):
         """
