@@ -11,12 +11,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# classes.py
+# capabilities.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import weka.core.jvm as jvm
 import examples.helper as helper
-from weka.core.classes import Capability
+from weka.core.capabilities import Capability
 from weka.classifiers import Classifier
 
 
