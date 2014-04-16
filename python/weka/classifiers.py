@@ -185,8 +185,8 @@ class MultipleClassifiersCombiner(Classifier):
         objects = javabridge.get_object_array_elements(
             javabridge.call(self.jobject, "getClassifiers", "()[Lweka/classifiers/Classifier;"))
         result = []
-        for object in objects:
-            result.append(Classifier(jobject=object))
+        for obj in objects:
+            result.append(Classifier(jobject=obj))
         return result
 
 
@@ -327,9 +327,11 @@ class Evaluation(JavaObject):
         :rtype: str
         """
         if title is None:
-            return javabridge.call(self.jobject, "toClassDetailsString", "()Ljava/lang/String;")
+            return javabridge.call(
+                self.jobject, "toClassDetailsString", "()Ljava/lang/String;")
         else:
-            return javabridge.call(self.jobject, "toClassDetailsString", "(Ljava/lang/String;)Ljava/lang/String;", title)
+            return javabridge.call(
+                self.jobject, "toClassDetailsString", "(Ljava/lang/String;)Ljava/lang/String;", title)
 
     def to_matrix(self, title=None):
         """
@@ -764,12 +766,12 @@ class Evaluation(JavaObject):
         """
         javabridge.call(self.jobject, "setDiscardPredictions", "(Z)V", discard)
 
-    def set_discard_predictions(self):
+    def get_discard_predictions(self):
         """
         Returns whether to discard predictions (saves memory).
         :rtype: bool
         """
-        return javabridge.call(self.jobject, "setDiscardPredictions", "()Z")
+        return javabridge.call(self.jobject, "getDiscardPredictions", "()Z")
 
     def predictions(self):
         """

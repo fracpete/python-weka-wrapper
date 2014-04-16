@@ -25,6 +25,7 @@ from weka.core.classes import Random
 import weka.plot.classifiers as plot_cls
 import weka.core.utils as utils
 
+
 def main():
     """
     Just runs some example code.
