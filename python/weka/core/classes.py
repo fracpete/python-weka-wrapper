@@ -38,6 +38,28 @@ class JavaObject(object):
         """
         return javabridge.to_string(self.jobject)
 
+    def set_property(self, path, jobject):
+        """
+        Attempts to set the value (jobject, a Java object) of the provided (bean) property path.
+        :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
+        :param jobject: the Java object to set
+        """
+        javabridge.static_call(
+            "Lweka/core/PropertyPath;", "setValue",
+            "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)V",
+            self.jobject, path, jobject)
+
+    def get_property(self, path):
+        """
+        Attempts to get the value (jobject, a Java object) of the provided (bean) property path.
+        :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
+        :rtype: JavaObject
+        """
+        return JavaObject(javabridge.static_call(
+            "Lweka/core/PropertyPath;", "getValue",
+            "(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;",
+            self.jobject, path))
+
     @classmethod
     def check_type(cls, jobject, intf_or_class, jni_intf_or_class=None):
         """
