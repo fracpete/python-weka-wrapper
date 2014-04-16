@@ -66,7 +66,7 @@ class Classifier(OptionHandler):
         """
         javabridge.call(self.jobject, "buildClassifier", "(Lweka/core/Instances;)V", data.jobject)
 
-    def updated_classifier(self, inst):
+    def update_classifier(self, inst):
         """
         Updates the classifier with the instance.
         :param inst: the Instance to update the classifier with
