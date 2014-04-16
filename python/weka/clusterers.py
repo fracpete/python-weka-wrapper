@@ -44,7 +44,8 @@ class Clusterer(OptionHandler):
             jobject = Clusterer.new_instance(classname)
         if classname is None:
             classname = utils.get_classname(jobject)
-        self.classname = classname
+        self.classname     = classname
+        self.is_updateable = self.check_type(jobject, "weka.clusterers.UpdateableClusterer")
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject)
 
@@ -62,12 +63,47 @@ class Clusterer(OptionHandler):
         """
         javabridge.call(self.jobject, "buildClusterer", "(Lweka/core/Instances;)V", data.jobject)
 
+    def update_clusterer(self, inst):
+        """
+        Updates the clusterer with the instance.
+        :param inst: the Instance to update the clusterer with
+        """
+        if self.is_updateable:
+            javabridge.call(self.jobject, "updateClusterer", "(Lweka/core/Instance;)V", inst.jobject)
+        else:
+            logger.critical(self.classname + " is not updateable!")
+
+    def update_finished(self):
+        """
+        Signals the clusterer that updating with new data has finished.
+        """
+        if self.is_updateable:
+            javabridge.call(self.jobject, "updateFinished", "()V")
+        else:
+            logger.critical(self.classname + " is not updateable!")
+
     def cluster_instance(self, inst):
         """
         Peforms a prediction.
         :param inst: the instance to determine the cluster for
         """
         return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)D", inst.jobject)
+
+    def distribution_for_instance(self, inst):
+        """
+        Peforms a prediction, returning the cluster distribution.
+        :param inst: the Instance to get the cluster distribution for
+        :rtype: float[]
+        """
+        pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
+        return jvm.ENV.get_float_array_elements(pred)
+
+    def number_of_clusters(self, inst):
+        """
+        Returns the number of clusters found.
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "numberOfClusters", "()I")
 
 
 class ClusterEvaluation(JavaObject):
