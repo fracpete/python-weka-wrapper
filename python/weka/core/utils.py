@@ -45,3 +45,14 @@ def join_options(options):
         "Lweka/core/Utils;", "joinOptions",
         "([Ljava/lang/String;)Ljava/lang/String;",
         options)
+
+
+def to_commandline(optionhandler):
+    """
+    Generates a commandline string from the OptionHandler instance.
+    :rtype: str
+    """
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "toCommandLine",
+        "(Ljava/lang/Object;)Ljava/lang/String;",
+        optionhandler.jobject)

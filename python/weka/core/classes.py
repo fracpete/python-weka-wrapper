@@ -258,7 +258,17 @@ class OptionHandler(JavaObject):
             return arrays.string_array_to_list(javabridge.call(self.jobject, "getOptions", "()[Ljava/lang/String;"))
         else:
             return []
-                                                       
+
+    def to_commandline(self):
+        """
+        Generates a commandline string from the JavaObject instance.
+        :rtype: str
+        """
+        return javabridge.static_call(
+            "Lweka/core/Utils;", "toCommandLine",
+            "(Ljava/lang/Object;)Ljava/lang/String;",
+            self.jobject)
+
     def __str__(self):
         """
         Obtains the currently set options as list.
