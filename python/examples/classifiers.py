@@ -18,7 +18,7 @@ import os
 import weka.core.jvm as jvm
 import examples.helper as helper
 from weka.core.converters import Loader
-from weka.classifiers import Classifier, SingleClassifierEnhancer, MultipleClassifiersCombiner
+from weka.classifiers import Classifier, SingleClassifierEnhancer, MultipleClassifiersCombiner, FilteredClassifier
 from weka.classifiers import Evaluation
 from weka.filters import Filter
 from weka.core.classes import Random
@@ -49,13 +49,24 @@ def main():
 
     # construct meta-classifiers
     helper.print_title("Meta classifiers")
+    # generic FilteredClassifier instantiation
+    print("generic FilteredClassifier instantiation")
     meta = SingleClassifierEnhancer(classname="weka.classifiers.meta.FilteredClassifier")
     meta.set_classifier(Classifier(classname="weka.classifiers.functions.LinearRegression"))
     flter = Filter("weka.filters.unsupervised.attribute.Remove")
     flter.set_options(["-R", "first"])
     meta.set_property("filter", flter.jobject)
-    print(utils.join_options(meta.get_options()))
     print(meta.to_commandline())
+    # direct FilteredClassifier instantiation
+    print("direct FilteredClassifier instantiation")
+    meta = FilteredClassifier()
+    meta.set_classifier(Classifier(classname="weka.classifiers.functions.LinearRegression"))
+    flter = Filter("weka.filters.unsupervised.attribute.Remove")
+    flter.set_options(["-R", "first"])
+    meta.set_filter(flter)
+    print(meta.to_commandline())
+    # generic Vote
+    print("generic Vote instantiation")
     meta = MultipleClassifiersCombiner(classname="weka.classifiers.meta.Vote")
     classifiers = [
         Classifier(classname="weka.classifiers.functions.SMO"),

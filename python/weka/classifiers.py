@@ -26,6 +26,7 @@ from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances
+from weka.filters import Filter
 
 # logging setup
 logger = logging.getLogger("weka.classifiers")
@@ -146,6 +147,40 @@ class SingleClassifierEnhancer(Classifier):
         :rtype: Classifier
         """
         return Classifier(javabridge.call(self.jobject, "getClassifier", "()Lweka/classifiers/Classifier;"))
+
+
+class FilteredClassifier(SingleClassifierEnhancer):
+    """
+    Wrapper class for the filtered classifier.
+    """
+
+    def __init__(self, jobject=None):
+        """
+        Initializes the specified classifier using either the classname or the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        """
+        if jobject is None:
+            classname = "weka.classifiers.meta.FilteredClassifier"
+            jobject   = Classifier.new_instance(classname)
+        else:
+            classname = utils.get_classname(jobject)
+        jobject = FilteredClassifier.new_instance(classname)
+        self.enforce_type(jobject, "weka.classifiers.meta.FilteredClassifier")
+        super(FilteredClassifier, self).__init__(classname, jobject)
+
+    def set_filter(self, filtr):
+        """
+        Sets the filter.
+        :param filtr: the filter to use
+        """
+        javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
+
+    def get_filter(self):
+        """
+        Returns the filter.
+        :rtype: Filter
+        """
+        return Filter(javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
 
 
 class MultipleClassifiersCombiner(Classifier):
