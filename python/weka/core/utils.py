@@ -17,6 +17,7 @@
 import javabridge
 import logging
 import weka.core.arrays as arrays
+from weka.core.classes import OptionHandler
 
 # logging setup
 logger = logging.getLogger(__name__)
@@ -50,12 +51,27 @@ def join_options(options):
 def to_commandline(optionhandler):
     """
     Generates a commandline string from the OptionHandler instance.
+    :param optionhandler: the OptionHandler instance to turn into a commandline
     :rtype: str
     """
     return javabridge.static_call(
         "Lweka/core/Utils;", "toCommandLine",
         "(Ljava/lang/Object;)Ljava/lang/String;",
         optionhandler.jobject)
+
+
+def from_commandline(cmdline):
+    """
+    Creates an OptionHandler based on the provided commandline string.
+    :param cmdline: the commandline string to use
+    :rtype: OptionHandler
+    """
+    params = split_options(cmdline)
+    cls    = params[0]
+    params = params[1:]
+    result = OptionHandler(cls)
+    result.set_options(params)
+    return result
 
 
 def get_classname(jobject):
