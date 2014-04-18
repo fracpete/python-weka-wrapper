@@ -72,6 +72,17 @@ class Filter(OptionHandler):
         """
         return javabridge.call(self.jobject, "input", "(Lweka/core/Instance;)Z", inst.jobject)
 
+    def get_outputformat(self):
+        """
+        Returns the output format.
+        :rtype: Instances
+        """
+        inst = javabridge.call(self.jobject, "getOutputFormat", "()Lweka/core/Instances;")
+        if inst is None:
+            return None
+        else:
+            return Instances(inst)
+
     def output(self):
         """
         Outputs the filtered Instance.

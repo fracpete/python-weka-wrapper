@@ -24,6 +24,7 @@ import weka.core.utils as utils
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
+from weka.filters import Filter
 
 # logging setup
 logger = logging.getLogger("weka.clusterers")
@@ -104,6 +105,74 @@ class Clusterer(OptionHandler):
         :rtype: int
         """
         return javabridge.call(self.jobject, "numberOfClusters", "()I")
+
+
+class SingleClustererEnhancer(Clusterer):
+    """
+    Wrapper class for clusterers that use a single base clusterer.
+    """
+
+    def __init__(self, classname=None, jobject=None):
+        """
+        Initializes the specified clusterer using either the classname or the supplied JB_Object.
+        :param classname: the classname of the clusterer
+        :param jobject: the JB_Object to use
+        """
+        if jobject is None:
+            jobject = Clusterer.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
+        jobject = SingleClustererEnhancer.new_instance(classname)
+        self.enforce_type(jobject, "weka.clusterers.SingleClustererEnhancer")
+        super(SingleClustererEnhancer, self).__init__(classname, jobject)
+
+    def set_clusterer(self, clusterer):
+        """
+        Sets the base clusterer.
+        :param clusterer: the base clusterer to use
+        """
+        javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
+
+    def get_clusterer(self):
+        """
+        Returns the base clusterer.
+        :rtype: Clusterer
+        """
+        return Clusterer(javabridge.call(self.jobject, "getClusterer", "()Lweka/clusterers/Clusterer;"))
+
+
+class FilteredClusterer(SingleClustererEnhancer):
+    """
+    Wrapper class for the filtered clusterer.
+    """
+
+    def __init__(self, jobject=None):
+        """
+        Initializes the specified clusterer using either the classname or the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        """
+        if jobject is None:
+            classname = "weka.clusterers.FilteredClusterer"
+            jobject   = Clusterer.new_instance(classname)
+        else:
+            classname = utils.get_classname(jobject)
+        jobject = FilteredClusterer.new_instance(classname)
+        self.enforce_type(jobject, "weka.clusterers.FilteredClusterer")
+        super(FilteredClusterer, self).__init__(classname, jobject)
+
+    def set_filter(self, filtr):
+        """
+        Sets the filter.
+        :param filtr: the filter to use
+        """
+        javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
+
+    def get_filter(self):
+        """
+        Returns the filter.
+        :rtype: Filter
+        """
+        return Filter(javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
 
 
 class ClusterEvaluation(JavaObject):

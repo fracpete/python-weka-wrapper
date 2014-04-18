@@ -41,6 +41,20 @@ def main():
     print(iris_data.get_instance(0))
     print(iris_data.get_instance(0).get_values())
 
+    # load dataset incrementally
+    iris_file = helper.get_data_dir() + os.sep + "iris.arff"
+    helper.print_info("Loading dataset incrementally: " + iris_file)
+    loader = Loader("weka.core.converters.ArffLoader")
+    iris_data = loader.load_file(iris_file, incremental=True)
+    iris_data.set_class_index(iris_data.num_attributes() - 1)
+    helper.print_title("Iris dataset")
+    print(iris_data)
+    while True:
+        inst = loader.next_instance(iris_data)
+        if inst is None:
+            break
+        print(inst)
+
     # create attributes
     helper.print_title("Creating attributes")
     num_att = Attribute.create_numeric("num")

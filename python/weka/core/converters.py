@@ -18,7 +18,7 @@ import javabridge
 import weka.core.jvm as jvm
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
-from weka.core.dataset import Instances
+from weka.core.dataset import Instances, Instance
 import weka.core.utils as utils
 
 
@@ -40,27 +40,52 @@ class Loader(OptionHandler):
         self.enforce_type(jobject, "weka.core.converters.Loader")
         super(Loader, self).__init__(jobject)
 
-    def load_file(self, dfile):
+    def load_file(self, dfile, incremental=False):
         """
         Loads the specified file and returns the Instances object.
+        In case of incremental loading, only the structure.
         :param dfile: the file to load
+        :param incremental: whether to load the dataset incrementally
+        :rtype: Instances
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
             dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)
-        return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
+        if incremental:
+            return Instances(javabridge.call(self.jobject, "getStructure", "()Lweka/core/Instances;"))
+        else:
+            return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
         
-    def load_url(self, url):
+    def load_url(self, url, incremental=False):
         """
         Loads the specified URL and returns the Instances object.
+        In case of incremental loading, only the structure.
         :param url: the URL to load the data from
+        :param incremental: whether to load the dataset incrementally
+        :rtype: Instances
         """
         self.enforce_type(self.jobject, "weka.core.converters.URLSourcedLoader")
         javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setURL", "(Ljava/lang/String;)V", str(url))
-        return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
+        if incremental:
+            return Instances(javabridge.call(self.jobject, "getStructure", "()Lweka/core/Instances;"))
+        else:
+            return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
+
+    def next_instance(self, structure):
+        """
+        Returns the next Instance object in case the dataset is being loaded incrementally.
+        Returns None if there are no more instances available.
+        :param structure: the Instances object this instance belongs to
+        :rtype: Instance
+        """
+        inst = javabridge.call(self.jobject, "getNextInstance", "(Lweka/core/Instances;)Lweka/core/Instance;", structure.jobject)
+        if inst is None:
+            return None
+        else:
+            return Instance(inst)
 
 
 class Saver(OptionHandler):

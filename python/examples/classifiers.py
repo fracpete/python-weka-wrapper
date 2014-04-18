@@ -47,6 +47,20 @@ def main():
     print(classifier.graph())
     plot_cls.plot_dot_graph(classifier.graph())
 
+    # load a dataset incrementally and build classifier incrementally
+    helper.print_info("Loading dataset: " + iris_file)
+    loader = Loader("weka.core.converters.ArffLoader")
+    iris_inc = loader.load_file(iris_file, incremental=True)
+    iris_inc.set_class_index(iris_inc.num_attributes() - 1)
+    classifier = Classifier("weka.classifiers.bayes.NaiveBayesUpdateable")
+    classifier.build_classifier(iris_inc)
+    while True:
+        inst = loader.next_instance(iris_inc)
+        if inst is None:
+            break
+        classifier.update_classifier(inst)
+    print(classifier)
+
     # construct meta-classifiers
     helper.print_title("Meta classifiers")
     # generic FilteredClassifier instantiation

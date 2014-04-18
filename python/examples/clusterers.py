@@ -18,7 +18,7 @@ import os
 import weka.core.jvm as jvm
 import examples.helper as helper
 from weka.core.converters import Loader
-from weka.clusterers import Clusterer
+from weka.clusterers import Clusterer, FilteredClusterer
 from weka.filters import Filter
 
 
@@ -28,10 +28,10 @@ def main():
     """
 
     # load a dataset
-    iris = helper.get_data_dir() + os.sep + "iris.arff"
-    helper.print_info("Loading dataset: " + iris)
+    iris_file = helper.get_data_dir() + os.sep + "iris.arff"
+    helper.print_info("Loading dataset: " + iris_file)
     loader = Loader("weka.core.converters.ArffLoader")
-    data = loader.load_file(iris)
+    data = loader.load_file(iris_file)
 
     # remove class attribute
     helper.print_info("Removing class attribute")
@@ -45,6 +45,41 @@ def main():
     clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans")
     clusterer.set_options(["-N", "3"])
     clusterer.build_clusterer(data)
+    print(clusterer)
+
+    # using a filtered clusterer
+    helper.print_title("Filtered clusterer")
+    loader = Loader("weka.core.converters.ArffLoader")
+    data = loader.load_file(iris_file)
+    clusterer = Clusterer("weka.clusterers.SimpleKMeans")
+    clusterer.set_options(["-N", "3"])
+    remove = Filter("weka.filters.unsupervised.attribute.Remove")
+    remove.set_options(["-R", "last"])
+    fclusterer = FilteredClusterer()
+    fclusterer.set_clusterer(clusterer)
+    fclusterer.set_filter(remove)
+    fclusterer.build_clusterer(data)
+    print(fclusterer)
+
+    # load a dataset incrementally and build clusterer incrementally
+    helper.print_title("Incremental clusterer")
+    loader = Loader("weka.core.converters.ArffLoader")
+    iris_inc = loader.load_file(iris_file, incremental=True)
+    clusterer = Clusterer("weka.clusterers.Cobweb")
+    remove = Filter("weka.filters.unsupervised.attribute.Remove")
+    remove.set_options(["-R", "last"])
+    remove.set_inputformat(iris_inc)
+    iris_filtered = remove.get_outputformat()
+    clusterer.build_clusterer(iris_filtered)
+    while True:
+        inst = loader.next_instance(iris_filtered)
+        if inst is None:
+            break
+        remove.input(inst)
+        inst_filtered = remove.output()
+        clusterer.update_clusterer(inst_filtered)
+    clusterer.update_finished()
+    print(clusterer.to_commandline())
     print(clusterer)
 
 
