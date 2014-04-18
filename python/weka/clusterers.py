@@ -190,7 +190,7 @@ class ClusterEvaluation(JavaObject):
         """
         javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
 
-    def evaluate_model(self, test):
+    def test_model(self, test):
         """ Evaluates the currently set clusterer on the test set.
         :param test: the test set to use for evaluating
         """

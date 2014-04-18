@@ -18,7 +18,7 @@ import os
 import weka.core.jvm as jvm
 import examples.helper as helper
 from weka.core.converters import Loader
-from weka.clusterers import Clusterer, FilteredClusterer
+from weka.clusterers import Clusterer, FilteredClusterer, ClusterEvaluation
 from weka.filters import Filter
 
 
@@ -46,6 +46,11 @@ def main():
     clusterer.set_options(["-N", "3"])
     clusterer.build_clusterer(data)
     print(clusterer)
+    helper.print_info("Evaluating on data")
+    evaluation = ClusterEvaluation()
+    evaluation.set_model(clusterer)
+    evaluation.test_model(data)
+    print(evaluation.get_cluster_results())
 
     # using a filtered clusterer
     helper.print_title("Filtered clusterer")
