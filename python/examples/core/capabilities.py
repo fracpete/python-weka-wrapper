@@ -14,10 +14,13 @@
 # capabilities.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
+import os
 import weka.core.jvm as jvm
 import examples.helper as helper
 from weka.core.capabilities import Capability
 from weka.classifiers import Classifier
+from weka.core.converters import Loader
+from weka.core.capabilities import Capabilities
 
 
 def main():
@@ -31,11 +34,24 @@ def main():
     capabilities = classifier.get_capabilities()
     print(capabilities)
 
+    # load a dataset
+    iris_file = helper.get_data_dir() + os.sep + "iris.arff"
+    helper.print_info("Loading dataset: " + iris_file)
+    loader = Loader("weka.core.converters.ArffLoader")
+    iris_data = loader.load_file(iris_file)
+    iris_data.set_class_index(iris_data.num_attributes() - 1)
+    data_capabilities = Capabilities.for_instances(iris_data)
+    print(data_capabilities)
+    print("classifier handles dataset: " + str(capabilities.supports(data_capabilities)))
+
+    # disable/enable
     helper.print_title("Disable/Enable")
     capability = Capability.parse("UNARY_ATTRIBUTES")
     capabilities.disable(capability)
+    capabilities.set_min_instances(10)
     print("Removing: " + str(capability))
     print(capabilities)
+
 
 
 if __name__ == "__main__":
