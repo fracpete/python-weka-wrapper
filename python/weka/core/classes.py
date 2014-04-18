@@ -17,6 +17,7 @@
 import arrays
 import javabridge
 from javabridge.jutil import JavaException
+import weka.core.jvm as jvm
 
 
 class JavaObject(object):
@@ -194,3 +195,102 @@ class OptionHandler(JavaObject):
         :rtype: str
         """
         return javabridge.to_string(self.jobject)
+
+
+class SingleIndex(JavaObject):
+    """
+    Wrapper for a Weka SingleIndex object.
+    """
+
+    def __init__(self, jobject=None, index=None):
+        """
+        Initializes the wrapper with the specified Java object or string index.
+        :param jobject: the java object to wrap
+        :param index: the string index to use
+        """
+        if jobject is None:
+            if index is None:
+                jobject = javabridge.make_instance("weka/core/SingleIndex", "()V")
+            else:
+                jobject = javabridge.make_instance("weka/core/SingleIndex", "(Ljava/lang/String;)V", index)
+        else:
+            self.enforce_type(jobject, "weka.core.SingleIndex")
+        super(SingleIndex, self).__init__(jobject)
+
+    def set_upper(self, upper):
+        """
+        Sets the upper limit.
+        :param upper: the upper limit
+        """
+        javabridge.call(self.jobject, "setUpper", "(I)V", upper)
+
+    def get_index(self):
+        """
+        Returns the integer index.
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "getIndex", "()I")
+
+    def get_single_index(self):
+        """
+        Returns the string index.
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "getSingleIndex", "()Ljava/lang/String;")
+
+    def set_single_index(self, index):
+        """
+        Sets the string index.
+        :rtype: str
+        """
+        javabridge.call(self.jobject, "setSingleIndex", "(Ljava/lang/String;)V", index)
+
+
+class Range(JavaObject):
+    """
+    Wrapper for a Weka Range object.
+    """
+
+    def __init__(self, jobject=None, ranges=None):
+        """
+        Initializes the wrapper with the specified Java object or string range.
+        :param jobject: the java object to wrap
+        :param ranges: the string range to use
+        """
+        if jobject is None:
+            if ranges is None:
+                jobject = javabridge.make_instance("weka/core/Range", "()V")
+            else:
+                jobject = javabridge.make_instance("weka/core/Range", "(Ljava/lang/String;)V", ranges)
+        else:
+            self.enforce_type(jobject, "weka.core.Range")
+        super(Range, self).__init__(jobject)
+
+    def set_upper(self, upper):
+        """
+        Sets the upper limit.
+        :param upper: the upper limit
+        """
+        javabridge.call(self.jobject, "setUpper", "(I)V", upper)
+
+    def get_selection(self):
+        """
+        Returns the selection list.
+        :rtype: list
+        """
+        return jvm.ENV.get_int_array_elements(javabridge.call(self.jobject, "getSelection", "()[I"))
+
+    def get_ranges(self):
+        """
+        Returns the string rage.
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "getRanges", "()Ljava/lang/String;")
+
+    def set_ranges(self, range):
+        """
+        Sets the string range.
+        :param range: the range to set
+        :rtype: str
+        """
+        javabridge.call(self.jobject, "setRanges", "(Ljava/lang/String;)V", range)
