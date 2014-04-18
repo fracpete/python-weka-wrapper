@@ -348,22 +348,28 @@ class Evaluation(JavaObject):
 
     def test_model(self, classifier, data):
         """
-        Evaluates the built model using the specified test data.
+        Evaluates the built model using the specified test data and returns the classifications.
         :param classifier: the trained classifier to evaluate
         :param data: the data to evaluate on
+        :rtype: ndarray
         """
-        javabridge.call(
+        array = javabridge.call(
             self.jobject, "evaluateModel",
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;[Ljava/lang/Object;)[D",
             classifier.jobject, data.jobject, [])
+        if array is None:
+            return None
+        else:
+            return jvm.ENV.get_double_array_elements(array)
 
     def test_model_once(self, classifier, inst):
         """
-        Evaluates the built model using the specified test instance.
+        Evaluates the built model using the specified test instance and returns the classification.
         :param classifier: the classifier to cross-validate
         :param inst: the Instance to evaluate on
+        :rtype: float
         """
-        javabridge.call(
+        return javabridge.call(
             self.jobject, "evaluateModelOnce",
             "(Lweka/classifiers/Classifier;Lweka/core/Instance;)D",
             classifier.jobject, inst.jobject)

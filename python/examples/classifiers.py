@@ -50,7 +50,8 @@ def main():
     # evaluate model on test set
     helper.print_title("Evaluating J48 classifier on iris")
     evaluation = Evaluation(iris_data)
-    evaluation.test_model(classifier, iris_data)
+    evl = evaluation.test_model(classifier, iris_data)
+    print(evl)
     print(evaluation.to_summary())
 
     # load a dataset incrementally and build classifier incrementally
