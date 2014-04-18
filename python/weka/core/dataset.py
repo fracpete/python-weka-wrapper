@@ -53,10 +53,23 @@ class Instances(JavaObject):
     def get_attribute(self, index):
         """
         Returns the specified attribute.
+        :param index: the 0-based index of the attribute
         :rtype: Attribute
         """
         return Attribute(javabridge.call(self.jobject, "attribute", "(I)Lweka/core/Attribute;"))
-        
+
+    def get_attribute_by_name(self, name):
+        """
+        Returns the specified attribute, None if not found.
+        :param name: the name of the attribute
+        :rtype: Attribute
+        """
+        att = javabridge.call(self.jobject, "attribute", "(Ljava/lang/String;)Lweka/core/Attribute;", name)
+        if att is None:
+            return None
+        else:
+            return Attribute(att)
+
     def num_instances(self):
         """
         Returns the number of instances.
