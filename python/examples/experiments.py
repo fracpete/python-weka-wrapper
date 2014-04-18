@@ -17,9 +17,10 @@
 import os
 import tempfile
 import weka.core.jvm as jvm
+import weka.core.converters as converters
 import examples.helper as helper
 from weka.classifiers import Classifier
-from weka.experiments import SimpleCrossValidationExperiment, SimpleRandomSplitExperiment
+from weka.experiments import SimpleCrossValidationExperiment, SimpleRandomSplitExperiment, Tester, ResultMatrix
 
 
 def main():
@@ -42,6 +43,21 @@ def main():
     exp.setup()
     exp.run()
 
+    # evaluate
+    loader = converters.loader_for_file(outfile)
+    data   = loader.load_file(outfile)
+    matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
+    tester = Tester("weka.experiment.PairedCorrectedTTester")
+    tester.set_run_column("Key_Run")
+    tester.set_fold_column("Key_Fold")
+    tester.set_dataset_columns(["Key_Dataset"])
+    tester.set_result_columns(["Key_Scheme", "Key_Scheme_options", "Key_Scheme_version_ID"])
+    tester.set_resultmatrix(matrix)
+    comparison_col = data.get_attribute_by_name("Percent_correct").get_index()
+    tester.set_instances(data)
+    print(tester.header(comparison_col))
+    print(tester.multi_resultset_full(0, comparison_col))
+
     # random split + regression
     helper.print_title("Experiment: Random split + regression")
     datasets = [helper.get_data_dir() + os.sep + "bolts.arff", helper.get_data_dir() + os.sep + "bodyfat.arff"]
@@ -57,6 +73,20 @@ def main():
         result=outfile)
     exp.setup()
     exp.run()
+
+    # evaluate
+    loader = converters.loader_for_file(outfile)
+    data   = loader.load_file(outfile)
+    matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
+    tester = Tester("weka.experiment.PairedCorrectedTTester")
+    tester.set_run_column("Key_Run")
+    tester.set_dataset_columns(["Key_Dataset"])
+    tester.set_result_columns(["Key_Scheme", "Key_Scheme_options", "Key_Scheme_version_ID"])
+    tester.set_resultmatrix(matrix)
+    comparison_col = data.get_attribute_by_name("Correlation_coefficient").get_index()
+    tester.set_instances(data)
+    print(tester.header(comparison_col))
+    print(tester.multi_resultset_full(0, comparison_col))
 
 if __name__ == "__main__":
     try:
