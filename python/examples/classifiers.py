@@ -22,8 +22,8 @@ from weka.classifiers import Classifier, SingleClassifierEnhancer, MultipleClass
 from weka.classifiers import Evaluation
 from weka.filters import Filter
 from weka.core.classes import Random
+from weka.core.dataset import Instances
 import weka.plot.classifiers as plot_cls
-import weka.core.utils as utils
 
 
 def main():
@@ -47,7 +47,14 @@ def main():
     print(classifier.graph())
     plot_cls.plot_dot_graph(classifier.graph())
 
+    # evaluate model on test set
+    helper.print_title("Evaluating J48 classifier on iris")
+    evaluation = Evaluation(iris_data)
+    evaluation.test_model(classifier, iris_data)
+    print(evaluation.to_summary())
+
     # load a dataset incrementally and build classifier incrementally
+    helper.print_title("Build classifier incrementally on iris")
     helper.print_info("Loading dataset: " + iris_file)
     loader = Loader("weka.core.converters.ArffLoader")
     iris_inc = loader.load_file(iris_file, incremental=True)

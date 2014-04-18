@@ -24,6 +24,7 @@ import weka.core.utils as utils
 import weka.core.arrays as arrays
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
+from weka.core.classes import Random
 from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances
 from weka.filters import Filter
@@ -328,6 +329,7 @@ class Evaluation(JavaObject):
         """
         jobject = javabridge.make_instance(
             "weka/classifiers/EvaluationWrapper", "(Lweka/core/Instances;)V", data.jobject)
+        self.wrapper = jobject
         jobject = javabridge.call(jobject, "getEvaluation", "()Lweka/classifiers/Evaluation;")
         super(Evaluation, self).__init__(jobject)
 
@@ -343,6 +345,28 @@ class Evaluation(JavaObject):
             self.jobject, "crossValidateModel",
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V",
             classifier.jobject, data.jobject, num_folds, random.jobject, [])
+
+    def test_model(self, classifier, data):
+        """
+        Evaluates the built model using the specified test data.
+        :param classifier: the trained classifier to evaluate
+        :param data: the data to evaluate on
+        """
+        javabridge.call(
+            self.jobject, "evaluateModel",
+            "(Lweka/classifiers/Classifier;Lweka/core/Instances;[Ljava/lang/Object;)[D",
+            classifier.jobject, data.jobject, [])
+
+    def test_model_once(self, classifier, inst):
+        """
+        Evaluates the built model using the specified test instance.
+        :param classifier: the classifier to cross-validate
+        :param inst: the Instance to evaluate on
+        """
+        javabridge.call(
+            self.jobject, "evaluateModelOnce",
+            "(Lweka/classifiers/Classifier;Lweka/core/Instance;)D",
+            classifier.jobject, inst.jobject)
 
     def to_summary(self, title=None):
         """
