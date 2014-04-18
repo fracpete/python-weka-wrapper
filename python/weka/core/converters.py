@@ -19,6 +19,7 @@ import weka.core.jvm as jvm
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances
+import weka.core.utils as utils
 
 
 class Loader(OptionHandler):
@@ -26,12 +27,16 @@ class Loader(OptionHandler):
     Wrapper class for Loaders.
     """
     
-    def __init__(self, classname="weka.core.converters.ArffLoader"):
+    def __init__(self, classname="weka.core.converters.ArffLoader", jobject=None):
         """
-        Initializes the specified loader.
+        Initializes the specified loader either using the classname or the JB_Object.
         :param classname: the classname of the loader
+        :param jobject: the JB_Object to use
         """
-        jobject = Loader.new_instance(classname)
+        if jobject is None:
+            jobject = Loader.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.core.converters.Loader")
         super(Loader, self).__init__(jobject)
 
@@ -63,12 +68,16 @@ class Saver(OptionHandler):
     Wrapper class for Savers.
     """
     
-    def __init__(self, classname="weka.core.converters.ArffSaver"):
+    def __init__(self, classname="weka.core.converters.ArffSaver", jobject=None):
         """
-        Initializes the specified saver.
+        Initializes the specified saver either using the classname or the provided JB_Object.
         :param classname: the classname of the saver
+        :param jobject: the JB_Object to use
         """
-        jobject = Saver.new_instance(classname)
+        if jobject is None:
+            jobject = Saver.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.core.converters.Saver")
         super(Saver, self).__init__(jobject)
 
@@ -91,3 +100,33 @@ class Saver(OptionHandler):
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)
         javabridge.call(self.jobject, "setInstances", "(Lweka/core/Instances;)V", data.jobject)
         javabridge.call(self.jobject, "writeBatch", "()V")
+
+
+def loader_for_file(filename):
+    """
+    Returns a Loader that can load the specified file, based on the file extension. None if failed to determine.
+    :param filename: the filename to get the loader for
+    :rtype: Loader
+    """
+    loader = javabridge.static_call(
+        "weka/core/converters/ConverterUtils", "getLoaderForFile",
+        "(Ljava/lang/String;)Lweka/core/converters/AbstractFileLoader;", filename)
+    if loader is None:
+        return None
+    else:
+        return Loader(jobject=loader)
+
+
+def saver_for_file(filename):
+    """
+    Returns a Saver that can load the specified file, based on the file extension. None if failed to determine.
+    :param filename: the filename to get the saver for
+    :rtype: Saver
+    """
+    saver = javabridge.static_call(
+        "weka/core/converters/ConverterUtils", "getSaverForFile",
+        "(Ljava/lang/String;)Lweka/core/converters/AbstractFileSaver;", filename)
+    if saver is None:
+        return None
+    else:
+        return Saver(jobject=saver)
