@@ -50,7 +50,9 @@ def main():
     evaluation = ClusterEvaluation()
     evaluation.set_model(clusterer)
     evaluation.test_model(data)
-    print(evaluation.get_cluster_results())
+    print("# clusters: " + str(evaluation.get_num_clusters()))
+    print("log likelihood: " + str(evaluation.get_log_likelihood()))
+    print("cluster assignments:\n" + str(evaluation.get_cluster_assignments()))
 
     # using a filtered clusterer
     helper.print_title("Filtered clusterer")

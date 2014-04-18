@@ -181,30 +181,72 @@ class ClusterEvaluation(JavaObject):
     """
 
     def __init__(self):
-        """ Initializes a ClusterEvaluation object. """
+        """
+        Initializes a ClusterEvaluation object.
+        """
         super(ClusterEvaluation, self).__init__(ClusterEvaluation.new_instance("weka.clusterers.ClusterEvaluation"))
 
     def set_model(self, clusterer):
-        """ Sets the built clusterer to evaluate.
+        """
+        Sets the built clusterer to evaluate.
         :param clusterer: the clusterer to evaluate
         """
         javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
 
     def test_model(self, test):
-        """ Evaluates the currently set clusterer on the test set.
+        """
+        Evaluates the currently set clusterer on the test set.
         :param test: the test set to use for evaluating
         """
         javabridge.call(self.jobject, "evaluateClusterer", "(Lweka/core/Instances;)V", test.jobject)
 
     def get_cluster_results(self):
-        """ The cluster results as string. 
+        """
+        The cluster results as string.
         :rtype : str
         """
         return javabridge.call(self.jobject, "clusterResultsToString", "()Ljava/lang/String;")
 
+    def get_cluster_assignments(self):
+        """
+        Return an array of cluster assignments corresponding to the most recent set of instances clustered.
+        :rtype : ndarray
+        """
+        array = javabridge.call(self.jobject, "getClusterAssignments", "()[D")
+        if array is None:
+            return None
+        else:
+            return jvm.ENV.get_double_array_elements(array)
+
+    def get_num_clusters(self):
+        """
+        Returns the number of clusters.
+        :rtype : int
+        """
+        return javabridge.call(self.jobject, "getNumClusters", "()I")
+
+    def get_log_likelihood(self):
+        """
+        Returns the log likelihood.
+        :rtype : float
+        """
+        return javabridge.call(self.jobject, "getLogLikelihood", "()D")
+
+    def get_classes_to_clusters(self):
+        """
+        Return the array (ordered by cluster number) of minimum error class to cluster mappings..
+        :rtype : ndarray
+        """
+        array = javabridge.call(self.jobject, "getClassesToClusters", "()[I")
+        if array is None:
+            return None
+        else:
+            return jvm.ENV.get_int_array_elements(array)
+
     @classmethod
     def evaluate_clusterer(cls, clusterer, args):
-        """ Evaluates the clusterer with the given options.
+        """
+        Evaluates the clusterer with the given options.
         :rtype : str
         :param clusterer: the clusterer instance to evaluate
         :param args: the command-line arguments
