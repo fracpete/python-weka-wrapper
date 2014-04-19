@@ -81,7 +81,7 @@ def start(class_path=[], bundled=True, packages=False, system_cp=False, max_heap
     :param bundled: whether to add jars from the "lib" directory
     :param packages: whether to add jars from Weka packages as well
     :param system_cp: whether to add the system classpath as well
-    :param max_heap_size: the maximum heap size
+    :param max_heap_size: the maximum heap size (-Xmx parameter, eg 512m or 4g)
     """
     global ENV
 
