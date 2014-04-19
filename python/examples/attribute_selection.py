@@ -20,6 +20,7 @@ import examples.helper as helper
 from weka.core.converters import Loader
 from weka.attribute_selection import ASSearch
 from weka.attribute_selection import ASEvaluation
+from weka.attribute_selection import AttributeSelection
 
 
 def main():
@@ -38,7 +39,12 @@ def main():
     search = ASSearch("weka.attributeSelection.BestFirst")
     search.set_options(["-D", "1", "-N", "5"])
     evaluation = ASEvaluation("weka.attributeSelection.CfsSubsetEval")
-    evaluation.set_options(["-P", "-1", "-E", "1"])
+    evaluation.set_options(["-P", "1", "-E", "1"])
+    attsel = AttributeSelection()
+    attsel.select_attributes(anneal_data)
+    print("# attributes: " + str(attsel.get_number_attributes_selected()))
+    print("attributes: " + str(attsel.get_selected_attributes()))
+    print("result string:\n" + attsel.to_results_string())
 
 
 if __name__ == "__main__":

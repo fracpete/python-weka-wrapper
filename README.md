@@ -68,3 +68,30 @@ weka.datagenerators \
     -o /tmp/out.arff \
     weka.datagenerators.classifiers.classification.Agrawal
 </pre>
+
+Associator
+----------
+
+Associators, like Apriori, can be run like this:
+
+<pre>
+weka.associators \
+    -t /my/datasets/iris.arff \
+    weka.associations.Apriori -N 9 -I
+</pre>
+
+Attribute selection
+-------------------
+
+You can perform attribute selection as follows:
+
+<pre>
+weka.attribute_selection \
+    -i /my/datasets/iris.arff \
+    -x 5 \
+    -n 42 \
+    -s "weka.attributeSelection.BestFirst -D 1 -N 5"
+    weka.attributeSelection.CfsSubsetEval \
+    -P 1 \
+    -E 1
+</pre>
