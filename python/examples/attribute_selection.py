@@ -18,6 +18,8 @@ import os
 import weka.core.jvm as jvm
 import examples.helper as helper
 from weka.core.converters import Loader
+from weka.attribute_selection import ASSearch
+from weka.attribute_selection import ASEvaluation
 
 
 def main():
@@ -26,11 +28,17 @@ def main():
     """
 
     # load a dataset
-    iris_file = helper.get_data_dir() + os.sep + "iris.arff"
-    helper.print_info("Loading dataset: " + iris_file)
+    anneal_file = helper.get_data_dir() + os.sep + "anneal.arff"
+    helper.print_info("Loading dataset: " + anneal_file)
     loader = Loader("weka.core.converters.ArffLoader")
-    iris_data = loader.load_file(iris_file)
-    iris_data.set_class_index(iris_data.num_attributes() - 1)
+    anneal_data = loader.load_file(anneal_file)
+    anneal_data.set_class_index(anneal_data.num_attributes() - 1)
+
+    # perform attribute selection
+    search = ASSearch("weka.attributeSelection.BestFirst")
+    search.set_options(["-D", "1", "-N", "5"])
+    evaluation = ASEvaluation("weka.attributeSelection.CfsSubsetEval")
+    evaluation.set_options(["-P", "-1", "-E", "1"])
 
 
 if __name__ == "__main__":
