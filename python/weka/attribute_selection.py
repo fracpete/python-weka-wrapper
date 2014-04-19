@@ -124,54 +124,47 @@ class AttributeSelection(JavaObject):
         jobject = AttributeSelection.new_instance("weka.attributeSelection.AttributeSelection")
         super(AttributeSelection, self).__init__(jobject)
 
-        self.evaluator = None
-        self.search = None
-        self.folds = 10
-        self.ranking = False
-        self.seed = 1
-        self.crossvalidation = False
-
     def set_evaluator(self, evaluator):
         """
         Sets the evaluator to use.
         :param evaluator: the evaluator to use.
         """
-        self.evaluator = evaluator
+        javabridge.call(self.jobject, "setEvaluator", "(Lweka/attributeSelection/ASEvaluation;)V", evaluator.jobject)
 
     def set_search(self, search):
         """
         Sets the search algorithm to use.
         :param search: the search algorithm
         """
-        self.search = search
+        javabridge.call(self.jobject, "setSearch", "(Lweka/attributeSelection/ASSearch;)V", search.jobject)
 
     def set_folds(self, folds):
         """
         Sets the number of folds to use for cross-validation.
         :param folds: the number of folds
         """
-        self.folds = folds
+        javabridge.call(self.jobject, "setFolds", "(I)V", folds)
 
     def set_ranking(self, ranking):
         """
         Sets whether to perform a ranking, if possible.
         :param ranking: whether to perform a ranking
         """
-        self.ranking = ranking
+        javabridge.call(self.jobject, "setRanking", "(Z)V", ranking)
 
     def set_seed(self, seed):
         """
         Sets the seed for cross-validation.
         :param seed: the seed value
         """
-        self.seed = seed
+        javabridge.call(self.jobject, "setSeed", "(I)V", seed)
 
     def set_crossvalidation(self, crossvalidation):
         """
         Sets whether to perform cross-validation.
         :param crossvalidation: whether to perform cross-validation
         """
-        self.crossvalidation = crossvalidation
+        javabridge.call(self.jobject, "setXval", "(Z)V", crossvalidation)
 
     def select_attributes(self, instances):
         """

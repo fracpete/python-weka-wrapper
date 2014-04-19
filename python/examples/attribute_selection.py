@@ -36,16 +36,34 @@ def main():
     anneal_data.set_class_index(anneal_data.num_attributes() - 1)
 
     # perform attribute selection
+    helper.print_title("Attribute selection")
     search = ASSearch("weka.attributeSelection.BestFirst")
     search.set_options(["-D", "1", "-N", "5"])
     evaluation = ASEvaluation("weka.attributeSelection.CfsSubsetEval")
     evaluation.set_options(["-P", "1", "-E", "1"])
     attsel = AttributeSelection()
+    attsel.set_search(search)
+    attsel.set_evaluator(evaluation)
     attsel.select_attributes(anneal_data)
     print("# attributes: " + str(attsel.get_number_attributes_selected()))
     print("attributes: " + str(attsel.get_selected_attributes()))
     print("result string:\n" + attsel.to_results_string())
 
+    # perform ranking
+    helper.print_title("Attribute ranking (2-fold CV)")
+    search = ASSearch("weka.attributeSelection.Ranker")
+    search.set_options(["-N", "-1"])
+    evaluation = ASEvaluation("weka.attributeSelection.InfoGainAttributeEval")
+    attsel = AttributeSelection()
+    attsel.set_ranking(True)
+    attsel.set_folds(2)
+    attsel.set_crossvalidation(True)
+    attsel.set_seed(42)
+    attsel.set_search(search)
+    attsel.set_evaluator(evaluation)
+    attsel.select_attributes(anneal_data)
+    print("ranked attributes:\n" + str(attsel.get_ranked_attributes()))
+    print("result string:\n" + attsel.to_results_string())
 
 if __name__ == "__main__":
     try:
