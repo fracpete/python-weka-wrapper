@@ -48,7 +48,7 @@ def string_list_to_array(l):
     return result
 
 
-def double_matrix_to_list(m):
+def double_matrix_to_ndarray(m):
     """
     Turns the Java matrix (2-dim array) of doubles into a numpy 2-dim array.
     :param m: the double matrix

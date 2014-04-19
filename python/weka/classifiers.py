@@ -314,7 +314,7 @@ class NumericPrediction(Prediction):
         Returns the prediction intervals.
         :rtype: ndarray
         """
-        return arrays.double_matrix_to_list(javabridge.call(self.jobject, "predictionIntervals", "()[[D"))
+        return arrays.double_matrix_to_ndarray(javabridge.call(self.jobject, "predictionIntervals", "()[[D"))
 
 
 class Evaluation(JavaObject):
@@ -458,7 +458,7 @@ class Evaluation(JavaObject):
         Returns the confusion matrix.
         :rtype: float[][]
         """
-        return arrays.double_matrix_to_list(javabridge.call(self.jobject, "confusionMatrix", "()[[D"))
+        return arrays.double_matrix_to_ndarray(javabridge.call(self.jobject, "confusionMatrix", "()[[D"))
 
     def correct(self):
         """
