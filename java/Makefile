@@ -5,7 +5,7 @@
 SRCDIR        = src
 BUILDDIR      = build
 DISTDIR       = dist
-LIBDIR        = ../lib
+LIBDIR        = ../python/lib
 
 all: clean compile dist
 
@@ -24,5 +24,7 @@ dist:
 	@echo creating jar archive...
 	mkdir -p $(DISTDIR)
 	jar -cf $(DISTDIR)/python-weka-wrapper.jar -C $(BUILDDIR) weka
+	jar -cf $(DISTDIR)/python-weka-wrapper-src.jar -C $(SRCDIR) weka
 	cp $(DISTDIR)/python-weka-wrapper.jar $(LIBDIR)
+	cp $(DISTDIR)/python-weka-wrapper-src.jar $(LIBDIR)
 

@@ -30,10 +30,17 @@ setup(
         'Programming Language :: Python',
     ],
     license='GNU General Public License version 3.0 (GPLv3)',
+    package_dir={'': 'python'},
     packages=[
         "weka",
-        "weka.core"
+        "weka.core",
+        "data",
+        "lib"
     ],
+    include_package_data=True,
+    package_data={
+        '': ['*.arff', '*.jar'],
+    },
     version="0.1.0",
     author='Peter "fracpete" Reutemann',
     install_requires=[
