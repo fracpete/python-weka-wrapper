@@ -1,5 +1,4 @@
-python-weka-wrapper
-===================
+# python-weka-wrapper
 
 Python wrapper for Weka (http://www.cs.waikato.ac.nz/~ml/weka/) 
 using javabridge (https://pypi.python.org/pypi/javabridge).
@@ -7,20 +6,22 @@ using javabridge (https://pypi.python.org/pypi/javabridge).
 Requirements:
 
 * javabridge (>= 1.0.0)
+* matplotlib (>= 1.7.0)
+* pygraphviz (>= 1.2)
+* PIL (>= 1.1.0)
 * numpy
 
+Included:
+* Weka (3.7.10)
 
-Examples
---------
+## Code examples
+See **python/examples** for example code on the various APIs.
 
-See **python/examples** for some example code.
+## Command-line examples
 
+### Classifiers
 
-Classifiers
------------
-
-Example on how to cross-validate a J48 classifier (with confidence factor 0.3)
-on the iris UCI dataset:
+Example on how to cross-validate a `J48` classifier (with confidence factor 0.3) on the iris UCI dataset:
 
 <pre>
 weka.classifiers \
@@ -30,11 +31,9 @@ weka.classifiers \
     -C 0.3
 </pre>
 
-Clusterers
-----------
+### Clusterers
 
-Example on how to perform classes-to-clusters evaluation for SimpleKMeans (with 3 clusters)
-using the iris UCI dataset:
+Example on how to perform classes-to-clusters evaluation for `SimpleKMeans` (with 3 clusters) using the iris UCI dataset:
 
 <pre>
 weka.clusterers \
@@ -44,10 +43,9 @@ weka.clusterers \
     -N 3
 </pre>
 
-Filters
--------
+### Filters
 
-Filtering a single ARFF dataset, removing the last attribute using the Remove filter:
+Filtering a single ARFF dataset, removing the last attribute using the `Remove` filter:
 
 <pre>
 weka.filters \
@@ -58,10 +56,9 @@ weka.filters \
     -R last
 </pre>
 
-Data generators
----------------
+### Data generators
 
-Artifical data can be generated using one of Weka' data generators, e.g., the Agrawal classification generator:
+Artifical data can be generated using one of Weka's data generators, e.g., the `Agrawal` classification generator:
 
 <pre>
 weka.datagenerators \
@@ -69,10 +66,9 @@ weka.datagenerators \
     weka.datagenerators.classifiers.classification.Agrawal
 </pre>
 
-Associator
-----------
+### Associator
 
-Associators, like Apriori, can be run like this:
+Associators, like `Apriori`, can be run like this:
 
 <pre>
 weka.associators \
@@ -80,10 +76,9 @@ weka.associators \
     weka.associations.Apriori -N 9 -I
 </pre>
 
-Attribute selection
--------------------
+### Attribute selection
 
-You can perform attribute selection as follows:
+You can perform attribute selection using `BestFirst` as search algorithm and `CfsSubsetEval` as evaluator as follows:
 
 <pre>
 weka.attribute_selection \
@@ -95,3 +90,4 @@ weka.attribute_selection \
     -P 1 \
     -E 1
 </pre>
+
