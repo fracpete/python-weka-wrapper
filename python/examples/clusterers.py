@@ -20,6 +20,7 @@ import examples.helper as helper
 from weka.core.converters import Loader
 from weka.clusterers import Clusterer, FilteredClusterer, ClusterEvaluation
 from weka.filters import Filter
+import weka.plot.graph as plot_graph
 
 
 def main():
@@ -88,6 +89,8 @@ def main():
     clusterer.update_finished()
     print(clusterer.to_commandline())
     print(clusterer)
+    print(clusterer.graph())
+    plot_graph.plot_dot_graph(clusterer.graph())
 
 
 if __name__ == "__main__":

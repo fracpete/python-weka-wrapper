@@ -24,6 +24,7 @@ from weka.filters import Filter
 from weka.core.classes import Random
 from weka.core.dataset import Instances
 import weka.plot.classifiers as plot_cls
+import weka.plot.graph as plot_graph
 
 
 def main():
@@ -45,7 +46,7 @@ def main():
     classifier.build_classifier(iris_data)
     print(classifier)
     print(classifier.graph())
-    plot_cls.plot_dot_graph(classifier.graph())
+    plot_graph.plot_dot_graph(classifier.graph())
 
     # evaluate model on test set
     helper.print_title("Evaluating J48 classifier on iris")

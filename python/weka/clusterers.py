@@ -47,6 +47,7 @@ class Clusterer(OptionHandler):
             classname = utils.get_classname(jobject)
         self.classname     = classname
         self.is_updateable = self.check_type(jobject, "weka.clusterers.UpdateableClusterer")
+        self.is_drawable   = self.check_type(jobject, "weka.core.Drawable")
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject)
 
@@ -105,6 +106,26 @@ class Clusterer(OptionHandler):
         :rtype: int
         """
         return javabridge.call(self.jobject, "numberOfClusters", "()I")
+
+    def graph_type(self):
+        """
+        Returns the graph type if classifier implements weka.core.Drawable, otherwise -1.
+        :rtype: int
+        """
+        if self.is_drawable:
+            return javabridge.call(self.jobject, "graphType", "()I")
+        else:
+            return -1
+
+    def graph(self):
+        """
+        Returns the graph if classifier implements weka.core.Drawable, otherwise None.
+        :rtype: str
+        """
+        if self.is_drawable:
+            return javabridge.call(self.jobject, "graph", "()Ljava/lang/String;")
+        else:
+            return None
 
 
 class SingleClustererEnhancer(Clusterer):
