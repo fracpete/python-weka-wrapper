@@ -918,6 +918,9 @@ def main(args):
         elif opt[0] == "-T":
             params.append(opt[0])
             params.append(opt[1])
+        elif opt[0] == "-c":
+            params.append(opt[0])
+            params.append(opt[1])
         elif opt[0] == "-d":
             params.append(opt[0])
             params.append(opt[1])
