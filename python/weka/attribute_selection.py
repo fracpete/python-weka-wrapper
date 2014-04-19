@@ -257,7 +257,8 @@ def main(args):
     """
     Runs attribute selection from the command-line. Calls JVM start/stop automatically.
     Options:
-        -j jar1[:jar2...]
+        [-j jar1[:jar2...]]
+        [-X max heap size]
         -i train
         [-c classindex]
         [-s search method]
@@ -266,11 +267,12 @@ def main(args):
         evaluator classname
     """
 
-    usage = "Usage: weka.attribute_selection -j jar1[" + os.pathsep + "jar2...] -i input file [-c classindex] " \
+    usage = "Usage: weka.attribute_selection [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] " \
+            + "-i input file [-c classindex] " \
             + "[-s search method][-x num folds] [-n seed] " \
             + "evaluator classname [evaluator options]"
 
-    optlist, optargs = getopt.getopt(args, "j:i:c:s:x:n:")
+    optlist, optargs = getopt.getopt(args, "j:X:i:c:s:x:n:h")
     if len(optargs) == 0:
         raise Exception("No evaluator classname provided!\n" + usage)
     for opt in optlist:
@@ -281,10 +283,12 @@ def main(args):
     jars   = []
     params = []
     input  = None
-    search = None
+    heap   = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
+        elif opt[0] == "-X":
+            heap = opt[1]
         elif opt[0] == "-i":
             params.append(opt[0])
             params.append(opt[1])
@@ -306,7 +310,7 @@ def main(args):
     if input is None:
         raise Exception("No input file provided ('-i ...')!")
 
-    jvm.start(jars)
+    jvm.start(jars, max_heap_size=heap)
 
     logger.debug("Commandline: " + utils.join_options(args))
 

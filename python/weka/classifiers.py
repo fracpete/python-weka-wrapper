@@ -873,7 +873,8 @@ def main(args):
     """
     Runs a classifier from the command-line. Calls JVM start/stop automatically.
     Options:
-        -j jar1[:jar2...]
+        [-j jar1[:jar2...]]
+        [-X max heap size]
         -t train
         [-T test]
         [-c classindex]
@@ -891,13 +892,14 @@ def main(args):
         [classifier options]
     """
 
-    usage = "Usage: weka.classifiers -j jar1[" + os.pathsep + "jar2...] -t train [-T test] [-c classindex] " \
+    usage = "Usage: weka.classifiers [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] -t train " \
+            + "[-T test] [-c classindex] " \
             + "[-d output model file] [-l input model file] [-x num folds] [-s seed] [-v # no stats for training] " \
             + "[-o # only stats, no model] [-i # information-retrieval stats per class] " \
             + "-kl # information-theoretic stats] [-m cost matrix file] [-g graph file] " \
             + "classifier classname [classifier options]"
 
-    optlist, optargs = getopt.getopt(args, "j:t:T:c:d:l:x:s:voikm:g:")
+    optlist, optargs = getopt.getopt(args, "j:X:t:T:c:d:l:x:s:voikm:g:h")
     if len(optargs) == 0:
         raise Exception("No classifier classname provided!\n" + usage)
     for opt in optlist:
@@ -908,9 +910,12 @@ def main(args):
     jars   = []
     params = []
     train  = None
+    heap   = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
+        elif opt[0] == "-X":
+            heap = opt[1]
         elif opt[0] == "-t":
             params.append(opt[0])
             params.append(opt[1])
@@ -952,7 +957,7 @@ def main(args):
     if train is None:
         raise Exception("No train file provided ('-t ...')!")
 
-    jvm.start(jars)
+    jvm.start(jars, max_heap_size=heap)
 
     logger.debug("Commandline: " + utils.join_options(args))
 

@@ -106,7 +106,8 @@ def main(args):
     """
     Runs a filter from the command-line. Calls JVM start/stop automatically.
     Options:
-        -j jar1[:jar2...]
+        [-j jar1[:jar2...]]
+        [-X max heap size]
         -i input1
         -o output1
         [-r input2]
@@ -116,10 +117,10 @@ def main(args):
         [filter options]
     """
 
-    usage = "Usage: weka.filters -j jar1[" + os.pathsep + "jar2...] -i input1 -o output1 " \
+    usage = "Usage: weka.filters [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] -i input1 -o output1 " \
             + "[-r input2 -s output2] [-c classindex] filterclass [filter options]"
 
-    optlist, optargs = getopt.getopt(args, "j:i:o:r:s:c:h")
+    optlist, optargs = getopt.getopt(args, "j:X:i:o:r:s:c:h")
     if len(optargs) == 0:
         raise Exception("No filter classname provided!\n" + usage)
     for opt in optlist:
@@ -133,9 +134,12 @@ def main(args):
     input2  = None
     output2 = None
     cls     = "-1"
+    heap    = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
+        elif opt[0] == "-X":
+            heap = opt[1]
         elif opt[0] == "-i":
             input1 = opt[1]
         elif opt[0] == "-o":
@@ -155,7 +159,7 @@ def main(args):
     if not input2 is None and output2 is None:
         raise Exception("No 2nd output file provided ('-s ...')!")
 
-    jvm.start(jars)
+    jvm.start(jars, max_heap_size=heap)
 
     logger.debug("Commandline: " + utils.join_options(args))
 

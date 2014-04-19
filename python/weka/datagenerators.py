@@ -64,7 +64,8 @@ def main(args):
     """
     Runs a datagenerator from the command-line. Calls JVM start/stop automatically.
     Options:
-        -j jar1[:jar2...]
+        [-j jar1[:jar2...]]
+        [-X max heap size]
         -o output
         [-S seed]
         [-r relation]
@@ -72,10 +73,10 @@ def main(args):
         [datagenerator options]
     """
 
-    usage = "Usage: weka.datagenerators -l jar1[" + os.pathsep + "jar2...] " \
+    usage = "Usage: weka.datagenerators [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] " \
             + "datagenerator classname -o output [-S seed] [-r relation] [datagenerator options]"
 
-    optlist, optargs = getopt.getopt(args, "j:")
+    optlist, optargs = getopt.getopt(args, "j:X:h")
     if len(optargs) == 0:
         raise Exception("No datagenerator classname provided!\n" + usage)
     for opt in optlist:
@@ -84,11 +85,14 @@ def main(args):
             return
 
     jars = []
+    heap = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
+        elif opt[0] == "-X":
+            heap = opt[1]
 
-    jvm.start(jars)
+    jvm.start(jars, max_heap_size=heap)
 
     logger.debug("Commandline: " + utils.join_options(args))
 

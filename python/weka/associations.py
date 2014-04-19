@@ -68,16 +68,17 @@ def main(args):
     """
     Runs a associator from the command-line. Calls JVM start/stop automatically.
     Options:
-        -j jar1[:jar2...]
+        [-j jar1[:jar2...]]
+        [-X max heap size]
         -t train
         associator classname
         [associator options]
     """
 
-    usage = "Usage: weka.associators -j jar1[" + os.pathsep + "jar2...] -t train [-T test] " \
+    usage = "Usage: weka.associators [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] -t train [-T test] " \
             + "associator classname [associator options]"
 
-    optlist, optargs = getopt.getopt(args, "j:t:")
+    optlist, optargs = getopt.getopt(args, "j:X:t:h")
     if len(optargs) == 0:
         raise Exception("No associator classname provided!\n" + usage)
     for opt in optlist:
@@ -88,9 +89,12 @@ def main(args):
     jars   = []
     params = []
     train  = None
+    heap   = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
+        elif opt[0] == "-X":
+            heap = opt[1]
         elif opt[0] == "-t":
             params.append(opt[0])
             params.append(opt[1])
@@ -100,7 +104,7 @@ def main(args):
     if train is None:
         raise Exception("No train file provided ('-t ...')!")
 
-    jvm.start(jars)
+    jvm.start(jars, max_heap_size=heap)
 
     logger.debug("Commandline: " + utils.join_options(args))
 
