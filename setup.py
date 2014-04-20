@@ -43,6 +43,7 @@ setup(
     },
     version="0.1.0",
     author='Peter "fracpete" Reutemann',
+    author_email='fracpete at gmail dot com',
     install_requires=[
         "javabridge",
         "matplotlib",
