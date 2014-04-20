@@ -19,12 +19,35 @@ See **python/examples** for example code on the various APIs.
 
 ## Command-line examples
 
+### Data generators
+
+Artifical data can be generated using one of Weka's data generators, e.g., the `Agrawal` classification generator:
+
+<pre>
+python weka/datagenerators.py \
+    -o /tmp/out.arff \
+    weka.datagenerators.classifiers.classification.Agrawal
+</pre>
+
+### Filters
+
+Filtering a single ARFF dataset, removing the last attribute using the `Remove` filter:
+
+<pre>
+python weka/filters.py \
+    -i /my/datasets/iris.arff \
+    -o /tmp/out.arff \
+    -c last \
+    weka.filters.unsupervised.attribute.Remove \
+    -R last
+</pre>
+
 ### Classifiers
 
 Example on how to cross-validate a `J48` classifier (with confidence factor 0.3) on the iris UCI dataset:
 
 <pre>
-weka.classifiers \
+python weka/classifiers.py \
     -t /my/datasets/iris.arff \
     -c last \
     weka.classifiers.trees.J48
@@ -36,44 +59,11 @@ weka.classifiers \
 Example on how to perform classes-to-clusters evaluation for `SimpleKMeans` (with 3 clusters) using the iris UCI dataset:
 
 <pre>
-weka.clusterers \
+python weka/clusterers.py \
     -t /my/datasets/iris.arff \
     -c last \
     weka.clusterers.SimpleKMeans
     -N 3
-</pre>
-
-### Filters
-
-Filtering a single ARFF dataset, removing the last attribute using the `Remove` filter:
-
-<pre>
-weka.filters \
-    -i /my/datasets/iris.arff \
-    -o /tmp/out.arff \
-    -c last \
-    weka.filters.unsupervised.attribute.Remove \
-    -R last
-</pre>
-
-### Data generators
-
-Artifical data can be generated using one of Weka's data generators, e.g., the `Agrawal` classification generator:
-
-<pre>
-weka.datagenerators \
-    -o /tmp/out.arff \
-    weka.datagenerators.classifiers.classification.Agrawal
-</pre>
-
-### Associator
-
-Associators, like `Apriori`, can be run like this:
-
-<pre>
-weka.associators \
-    -t /my/datasets/iris.arff \
-    weka.associations.Apriori -N 9 -I
 </pre>
 
 ### Attribute selection
@@ -81,7 +71,7 @@ weka.associators \
 You can perform attribute selection using `BestFirst` as search algorithm and `CfsSubsetEval` as evaluator as follows:
 
 <pre>
-weka.attribute_selection \
+python weka/attribute_selection.py \
     -i /my/datasets/iris.arff \
     -x 5 \
     -n 42 \
@@ -91,3 +81,12 @@ weka.attribute_selection \
     -E 1
 </pre>
 
+### Associator
+
+Associators, like `Apriori`, can be run like this:
+
+<pre>
+python weka/associators.py \
+    -t /my/datasets/iris.arff \
+    weka.associations.Apriori -N 9 -I
+</pre>
