@@ -92,7 +92,7 @@ def main(args):
         elif opt[0] == "-X":
             heap = opt[1]
 
-    jvm.start(jars, max_heap_size=heap)
+    jvm.start(jars, max_heap_size=heap, packages=True)
 
     logger.debug("Commandline: " + utils.join_options(args))
 

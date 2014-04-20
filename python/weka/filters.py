@@ -159,7 +159,7 @@ def main(args):
     if not input2 is None and output2 is None:
         raise Exception("No 2nd output file provided ('-s ...')!")
 
-    jvm.start(jars, max_heap_size=heap)
+    jvm.start(jars, max_heap_size=heap, packages=True)
 
     logger.debug("Commandline: " + utils.join_options(args))
 

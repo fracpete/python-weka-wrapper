@@ -352,7 +352,7 @@ def main(args):
     if train is None:
         raise Exception("No train file provided ('-t ...')!")
 
-    jvm.start(jars, max_heap_size=heap)
+    jvm.start(jars, max_heap_size=heap, packages=True)
 
     logger.debug("Commandline: " + utils.join_options(args))
 
