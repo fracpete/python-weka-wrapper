@@ -353,10 +353,6 @@ Here is an example for performing a cross-validated classification experiment:
    >>> data   = loader.load_file(outfile)
    >>> matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
    >>> tester = Tester("weka.experiment.PairedCorrectedTTester")
-   >>> tester.set_run_column("Key_Run")
-   >>> tester.set_fold_column("Key_Fold")
-   >>> tester.set_dataset_columns(["Key_Dataset"])
-   >>> tester.set_result_columns(["Key_Scheme", "Key_Scheme_options", "Key_Scheme_version_ID"])
    >>> tester.set_resultmatrix(matrix)
    >>> comparison_col = data.get_attribute_by_name("Percent_correct").get_index()
    >>> tester.set_instances(data)
@@ -389,9 +385,6 @@ And a setup for performing regression experiments on random splits on the datase
    >>> data   = loader.load_file(outfile)
    >>> matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
    >>> tester = Tester("weka.experiment.PairedCorrectedTTester")
-   >>> tester.set_run_column("Key_Run")
-   >>> tester.set_dataset_columns(["Key_Dataset"])
-   >>> tester.set_result_columns(["Key_Scheme", "Key_Scheme_options", "Key_Scheme_version_ID"])
    >>> tester.set_resultmatrix(matrix)
    >>> comparison_col = data.get_attribute_by_name("Correlation_coefficient").get_index()
    >>> tester.set_instances(data)
@@ -402,7 +395,7 @@ And a setup for performing regression experiments on random splits on the datase
 virtualenv
 ==========
 
-If you want to merely test out the library, you can do easily in a *virtual environment*
+If you want to merely test out the library, you can do that easily in a *virtual python environment*
 created with `virtualenv`.
 
 

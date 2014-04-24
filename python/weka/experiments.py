@@ -393,10 +393,10 @@ class Tester(OptionHandler):
         self.classname = classname
         self.enforce_type(jobject, "weka.experiment.Tester")
         self.columns_determined = False
-        self.dataset_columns = None
-        self.run_column = None
-        self.fold_column = None
-        self.result_columns = None
+        self.dataset_columns = ["Key_Dataset"]
+        self.run_column = "Key_Run"
+        self.fold_column = "Key_Fold"
+        self.result_columns = ["Key_Scheme", "Key_Scheme_options", "Key_Scheme_version_ID"]
         super(Tester, self).__init__(jobject)
 
     def set_resultmatrix(self, matrix):
@@ -498,9 +498,11 @@ class Tester(OptionHandler):
         if not self.fold_column is None:
             att = data.get_attribute_by_name(self.fold_column)
             if att is None:
-                raise Exception("Fold column not found: " + self.fold_column)
+                index = -1
+            else:
+                index = att.get_index()
             javabridge.call(
-                self.jobject, "setFoldColumn", "(I)V", att.get_index())
+                self.jobject, "setFoldColumn", "(I)V", index)
 
         # result
         if self.result_columns is None:
