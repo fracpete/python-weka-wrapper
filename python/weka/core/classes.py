@@ -43,8 +43,12 @@ class JavaObject(object):
         """
         Attempts to set the value (jobject, a Java object) of the provided (bean) property path.
         :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
-        :param jobject: the Java object to set
+        :param jobject: the Java object to set; if instance of JavaObject class, the jobject member is automatically used
         """
+        # unwrap?
+        if isinstance(jobject, JavaObject):
+            jobject = jobject.jobject
+
         javabridge.static_call(
             "Lweka/core/PropertyPath;", "setValue",
             "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)V",
