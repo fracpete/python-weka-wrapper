@@ -200,6 +200,20 @@ Artifical data can be generated using one of Weka's data generators, e.g., the
    >>> generator.set_options(["-B", "-P", "0.05"])
    >>> DataGenerator.make_data(generator, ["-o", "/some/where/outputfile.arff"])
 
+Or using the low-level API (outputting data to stdout):
+
+.. code-block:: python
+
+   >>> generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
+   >>> generator.set_options(["-n", "10", "-r", "agrawal"])
+   >>> generator.set_dataset_format(generator.define_data_format())
+   >>> print(generator.get_dataset_format())
+   >>> if generator.get_single_mode_flag():
+   >>>     for i in xrange(generator.get_num_examples_act()):
+   >>>         print(generator.generate_example())
+   >>> else:
+   >>>     print(generator.generate_examples())
+
 
 Loaders and Savers
 ------------------

@@ -22,7 +22,7 @@ import getopt
 import weka.core.jvm as jvm
 import weka.core.utils as utils
 from weka.core.classes import OptionHandler
-from weka.core.dataset import Instances
+from weka.core.dataset import Instances, Instance
 
 # logging setup
 logger = logging.getLogger("weka.datagenerators")
@@ -46,6 +46,85 @@ class DataGenerator(OptionHandler):
         self.classname = classname
         self.enforce_type(jobject, "weka.datagenerators.DataGenerator")
         super(DataGenerator, self).__init__(jobject)
+
+    def define_data_format(self):
+        """
+        Returns the data format.
+        :rtype: Instances
+        """
+        data = javabridge.call(self.jobject, "defineDataFormat", "()Lweka/core/Instances;")
+        if data is None:
+            return None
+        else:
+            return Instances(data)
+
+    def get_single_mode_flag(self):
+        """
+        Returns whether data is generated row by row (True) or in one go (False).
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "getSingleModeFlag", "()Z")
+
+    def get_dataset_format(self):
+        """
+        Returns the dataset format.
+        :rtype: Instances
+        """
+        data = javabridge.call(self.jobject, "getDatasetFormat", "()Lweka/core/Instances;")
+        if data is None:
+            return None
+        else:
+            return Instances(data)
+
+    def set_dataset_format(self, inst):
+        """
+        Sets the dataset format.
+        :param inst: the Instances to use as dataset format
+        """
+        javabridge.call(self.jobject, "setDatasetFormat", "(Lweka/core/Instances;)V", inst.jobject)
+
+    def generate_start(self):
+        """
+        Returns a "start" string.
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "generateStart", "()Ljava/lang/String;")
+
+    def get_num_examples_act(self):
+        """
+        Returns a actual number of examples to generate.
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "getNumExamplesAct", "()I")
+
+    def generate_example(self):
+        """
+        Returns a single Instance.
+        :rtype: Instance
+        """
+        data = javabridge.call(self.jobject, "generateExample", "()Lweka/core/Instance;")
+        if data is None:
+            return None
+        else:
+            return Instance(data)
+
+    def generate_examples(self):
+        """
+        Returns complete dataset.
+        :rtype: Instances
+        """
+        data = javabridge.call(self.jobject, "generateExamples", "()Lweka/core/Instances;")
+        if data is None:
+            return None
+        else:
+            return Instances(data)
+
+    def generate_finish(self):
+        """
+        Returns a "finish" string.
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "generateFinish", "()Ljava/lang/String;")
 
     @classmethod
     def make_data(cls, generator, args):
