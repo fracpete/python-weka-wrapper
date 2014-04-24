@@ -15,7 +15,8 @@ Included:
 * Weka (3.7.10)
 
 ## Code examples
-See **python/examples** for example code on the various APIs.
+See **python/wekaexamples** for example code on the various APIs.
+Also, check out the sphinx documentation in **doc**.
 
 ## Command-line examples
 

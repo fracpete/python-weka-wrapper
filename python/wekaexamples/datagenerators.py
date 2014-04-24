@@ -11,14 +11,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# associations.py
+# datagenerators.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
-import os
 import weka.core.jvm as jvm
-import examples.helper as helper
-from weka.core.converters import Loader
-from weka.associations import Associator
+import wekaexamples.helper as helper
+from weka.datagenerators import DataGenerator
 
 
 def main():
@@ -26,18 +24,16 @@ def main():
     Just runs some example code.
     """
 
-    # load a dataset
-    vote_file = helper.get_data_dir() + os.sep + "vote.arff"
-    helper.print_info("Loading dataset: " + vote_file)
-    loader = Loader("weka.core.converters.ArffLoader")
-    vote_data = loader.load_file(vote_file)
-    vote_data.set_class_index(vote_data.num_attributes() - 1)
-
-    # train and output associator
-    associator = Associator("weka.associations.Apriori")
-    associator.set_options(["-N", "9", "-I"])
-    associator.build_associations(vote_data)
-    print(associator)
+    helper.print_title("Generate data")
+    generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
+    generator.set_options(["-n", "10", "-r", "agrawal"])
+    generator.set_dataset_format(generator.define_data_format())
+    print(generator.get_dataset_format())
+    if generator.get_single_mode_flag():
+        for i in xrange(generator.get_num_examples_act()):
+            print(generator.generate_example())
+    else:
+        print(generator.generate_examples())
 
 if __name__ == "__main__":
     try:

@@ -11,13 +11,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# datagenerators.py
+# filters.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import os
 import weka.core.jvm as jvm
-import examples.helper as helper
-from weka.datagenerators import DataGenerator
+import wekaexamples.helper as helper
+from weka.core.converters import Loader
+from weka.filters import Filter
 
 
 def main():
@@ -25,16 +26,24 @@ def main():
     Just runs some example code.
     """
 
-    helper.print_title("Generate data")
-    generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
-    generator.set_options(["-n", "10", "-r", "agrawal"])
-    generator.set_dataset_format(generator.define_data_format())
-    print(generator.get_dataset_format())
-    if generator.get_single_mode_flag():
-        for i in xrange(generator.get_num_examples_act()):
-            print(generator.generate_example())
-    else:
-        print(generator.generate_examples())
+    # load a dataset
+    iris = helper.get_data_dir() + os.sep + "iris.arff"
+    helper.print_info("Loading dataset: " + iris)
+    loader = Loader("weka.core.converters.ArffLoader")
+    data = loader.load_file(iris)
+
+    # remove class attribute
+    helper.print_info("Removing class attribute")
+    remove = Filter(classname="weka.filters.unsupervised.attribute.Remove")
+    remove.set_options(["-R", "last"])
+    remove.set_inputformat(data)
+    filtered = remove.filter(data)
+
+    # output datasets
+    helper.print_title("Input")
+    print(data)
+    helper.print_title("Output")
+    print(filtered)
 
 if __name__ == "__main__":
     try:

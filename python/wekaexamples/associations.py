@@ -11,14 +11,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# filters.py
+# associations.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import os
 import weka.core.jvm as jvm
-import examples.helper as helper
+import wekaexamples.helper as helper
 from weka.core.converters import Loader
-from weka.filters import Filter
+from weka.associations import Associator
 
 
 def main():
@@ -27,23 +27,17 @@ def main():
     """
 
     # load a dataset
-    iris = helper.get_data_dir() + os.sep + "iris.arff"
-    helper.print_info("Loading dataset: " + iris)
+    vote_file = helper.get_data_dir() + os.sep + "vote.arff"
+    helper.print_info("Loading dataset: " + vote_file)
     loader = Loader("weka.core.converters.ArffLoader")
-    data = loader.load_file(iris)
+    vote_data = loader.load_file(vote_file)
+    vote_data.set_class_index(vote_data.num_attributes() - 1)
 
-    # remove class attribute
-    helper.print_info("Removing class attribute")
-    remove = Filter(classname="weka.filters.unsupervised.attribute.Remove")
-    remove.set_options(["-R", "last"])
-    remove.set_inputformat(data)
-    filtered = remove.filter(data)
-
-    # output datasets
-    helper.print_title("Input")
-    print(data)
-    helper.print_title("Output")
-    print(filtered)
+    # train and output associator
+    associator = Associator("weka.associations.Apriori")
+    associator.set_options(["-N", "9", "-I"])
+    associator.build_associations(vote_data)
+    print(associator)
 
 if __name__ == "__main__":
     try:

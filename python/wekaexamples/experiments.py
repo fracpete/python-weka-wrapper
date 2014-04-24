@@ -18,7 +18,7 @@ import os
 import tempfile
 import weka.core.jvm as jvm
 import weka.core.converters as converters
-import examples.helper as helper
+import wekaexamples.helper as helper
 from weka.classifiers import Classifier
 from weka.experiments import SimpleCrossValidationExperiment, SimpleRandomSplitExperiment, Tester, ResultMatrix
 
