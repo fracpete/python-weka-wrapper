@@ -323,6 +323,42 @@ Associators, like `Apriori`, can be built and output like this:
    >>> print(associator)
 
 
+Serialization
+-------------
+
+You can easily serialize and de-serialize as well.
+
+Here we just save a trained classifier to a file, load it again from disk and output the model:
+
+.. code-block:: python
+
+   >>> import weka.core.serialization as serialization
+   >>> from weka.classifiers import Classifier
+   >>> classifier = ...  # previously built classifier
+   >>> serialization.write("/some/where/out.model", classifier)
+   >>> ...
+   >>> classifier2 = Classifier(jobject=serialization.read("/some/where/out.model"))
+   >>> print(classifier2)
+
+Weka usually saves the header of the dataset that was used for training as well (e.g., in order to determine
+whether test data is commpatible). This is done as follows:
+
+.. code-block:: python
+
+   >>> import weka.core.serialization as serialization
+   >>> from weka.classifiers import Classifier
+   >>> from weka.core.dataset import Instances
+   >>> classifier = ...  # previously built Classifier
+   >>> data = ... # previously loaded/generated Instances
+   >>> serialization.write_all("/some/where/out.model", [classifier, Instances.template_instances(data)])
+   >>> ...
+   >>> objects = serialization.read_all("/some/where/out.model")
+   >>> classifier2 = Classifier(jobject=objects[0])
+   >>> data2 = Instances(jobject=objects[1])
+   >>> print(classifier2)
+   >>> print(data2)
+
+
 Experiments
 -----------
 
