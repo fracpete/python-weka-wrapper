@@ -15,7 +15,6 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import logging
-import numpy
 import weka.core.jvm as jvm
 
 # logging setup
