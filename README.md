@@ -12,7 +12,7 @@ Requirements:
 * numpy
 
 Included:
-* Weka (3.7.10)
+* Weka (3.7.11)
 
 ## Code examples
 See **python/wekaexamples** for example code on the various APIs.
