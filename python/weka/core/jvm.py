@@ -82,6 +82,10 @@ def start(class_path=[], bundled=True, packages=False, system_cp=False, max_heap
     """
     global ENV
 
+    if not ENV is None:
+        logger.info("JVM already running, call jvm.stop() first")
+        return
+
     # add user-defined jars first
     for cp in class_path:
         logger.debug("Adding user-supplied classpath=" + class_path)
