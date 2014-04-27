@@ -89,6 +89,10 @@ setup(
         "weka.plot",
         "wekaexamples"
     ],
+    package_data={
+        "weka": ["lib/*.jar"],
+        "wekaexamples": ["data/*.arff"],
+    },
     include_package_data=True,
     version="0.1.0",
     author='Peter "fracpete" Reutemann',
