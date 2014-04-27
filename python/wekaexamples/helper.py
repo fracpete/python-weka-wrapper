@@ -22,11 +22,8 @@ def get_data_dir():
     Returns the data directory.
     :rtype: str
     """
-    rootdir = os.path.split(os.path.dirname(__file__))[0]
-    if os.path.exists(rootdir + os.sep + "data"):
-        libdir = rootdir + os.sep + "data"
-    else:
-        libdir = os.path.split(rootdir)[0] + os.sep + "data"
+    rootdir = os.path.dirname(__file__)
+    libdir = rootdir + os.sep + "data"
     return libdir
 
 

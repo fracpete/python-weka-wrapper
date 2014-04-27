@@ -32,11 +32,8 @@ def add_bundled_jars():
      Adds the bundled jars to the JVM's classpath.
     """
     # determine lib directory with jars
-    rootdir = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
-    if os.path.exists(rootdir + os.sep + "lib"):
-        libdir = rootdir + os.sep + "lib"
-    else:
-        libdir = os.path.split(rootdir)[0] + os.sep + "lib"
+    rootdir = os.path.split(os.path.dirname(__file__))[0]
+    libdir = rootdir + os.sep + "lib"
 
     # add jars from lib directory
     for l in glob.glob(libdir + os.sep + "*.jar"):
