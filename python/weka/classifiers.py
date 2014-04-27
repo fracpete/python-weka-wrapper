@@ -844,7 +844,7 @@ class Evaluation(JavaObject):
         :rtype: list
         """
         preds = javabridge.get_collection_wrapper(
-            javabridge.call(self.jobject, "predictions", "()Lweka/core/FastVector;"))
+            javabridge.call(self.jobject, "predictions", "()Ljava/util/ArrayList;"))
         result = []
         for pred in preds:
             if javabridge.is_instance_of(pred, "weka/classifiers/evaluation/NominalPrediction"):
