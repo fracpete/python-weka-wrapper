@@ -16,7 +16,7 @@
 
 import os
 import weka.core.jvm as jvm
-import examples.helper as helper
+import wekaexamples.helper as helper
 from weka.core.capabilities import Capability
 from weka.classifiers import Classifier
 from weka.core.converters import Loader

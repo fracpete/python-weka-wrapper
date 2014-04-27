@@ -29,7 +29,7 @@ from weka.core.dataset import Instances
 from weka.core.dataset import Instance
 
 # logging setup
-logger = logging.getLogger("weka.classifiers")
+logger = logging.getLogger("weka.filters")
 
 
 class Filter(OptionHandler):

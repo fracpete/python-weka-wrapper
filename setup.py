@@ -14,7 +14,57 @@
 # setup.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
+import os
 from setuptools import setup
+from urllib2 import urlopen, URLError, HTTPError
+
+
+def download_file(url, outfile):
+    """
+    Downloads the file associated with the URL and saves it to the specified output file.
+    Taken from here: http://stackoverflow.com/a/4028894
+    :param url: the URL to download
+    :type url: str
+    :param outfile: the name of the output file
+    :type outfile: str
+    :returns: whether the download was successful
+    :rtype: bool
+    """
+    try:
+        # Open the url
+        f = urlopen(url)
+        print "Downloading '" + url + "' to '" + outfile + "'"
+        # Open our local file for writing
+        with open(outfile, "wb") as local_file:
+            local_file.write(f.read())
+    # handle errors
+    except HTTPError, e:
+        print "HTTP Error:", e.code, url
+        return False
+    except URLError, e:
+        print "URL Error:", e.reason, url
+        return False
+    return True
+
+
+def download_weka():
+    """
+    Downloads the monolithic Weka jar from sourceforget.net if nececssary.
+    """
+    url = "http://sourceforge.net/projects/weka/files/weka-3-7/3.7.11/weka-monolithic.jar/download"
+    outfile = os.path.join(os.path.dirname(__file__), "python", "weka", "lib", "weka.jar")
+    if not os.path.exists(outfile):
+        if not download_file(url, outfile):
+            print("Failed to download Weka jar '" + url + "' to '" + outfile + "'!")
+        else:
+            print("Download of Weka jar successful!")
+
+
+def ext_modules():
+    """
+    Initiates Weka jar download.
+    """
+    download_weka()
 
 setup(
     name="python-weka-wrapper",
@@ -30,17 +80,30 @@ setup(
         'Programming Language :: Python',
     ],
     license='GNU General Public License version 3.0 (GPLv3)',
-    package_dir={'': 'python'},
+    package_dir={
+        '': 'python'
+    },
     packages=[
         "weka",
         "weka.core",
-        "data",
-        "lib"
+        "weka.plot",
+        "wekaexamples"
     ],
-    include_package_data=True,
-    package_data={
-        '': ['*.arff', '*.jar'],
-    },
+    data_files=[
+        ("arff", [
+            "python/wekaexamples/data/anneal.arff",
+            "python/wekaexamples/data/bodyfat.arff",
+            "python/wekaexamples/data/bolts.arff",
+            "python/wekaexamples/data/iris.arff",
+            "python/wekaexamples/data/vote.arff"
+        ]),
+        ("jar", [
+            "python/weka/lib/python-weka-wrapper.jar",
+            "python/weka/lib/python-weka-wrapper-src.jar",
+            "python/weka/lib/weka.jar",
+            "python/weka/lib/weka-src.jar",
+        ])
+    ],
     version="0.1.0",
     author='Peter "fracpete" Reutemann',
     author_email='fracpete at gmail dot com',
@@ -50,5 +113,6 @@ setup(
         "pygraphviz",
         "PIL"
     ],
+    ext_modules=ext_modules(),
 )
 

@@ -16,9 +16,6 @@
 
 import matplotlib.pyplot as plt
 from weka.classifiers import NumericPrediction
-from pygraphviz.agraph import AGraph
-import tempfile
-from PIL import Image
 
 
 def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, outfile=None):

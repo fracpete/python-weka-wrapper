@@ -22,7 +22,6 @@ from weka.classifiers import Classifier, SingleClassifierEnhancer, MultipleClass
 from weka.classifiers import Evaluation
 from weka.filters import Filter
 from weka.core.classes import Random
-from weka.core.dataset import Instances
 import weka.plot.classifiers as plot_cls
 import weka.plot.graph as plot_graph
 

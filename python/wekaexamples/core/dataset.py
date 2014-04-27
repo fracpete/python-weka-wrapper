@@ -17,7 +17,7 @@
 import os
 import numpy
 import weka.core.jvm as jvm
-import examples.helper as helper
+import wekaexamples.helper as helper
 from weka.core.converters import Loader
 from weka.core.dataset import Instances
 from weka.core.dataset import Instance

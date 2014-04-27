@@ -16,6 +16,7 @@
 
 import logging
 import weka.core.jvm as jvm
+import numpy
 
 # logging setup
 logger = logging.getLogger(__name__)
