@@ -89,19 +89,7 @@ setup(
         "weka.plot",
         "wekaexamples"
     ],
-    data_files=[
-        ("arff", [
-            "python/wekaexamples/data/anneal.arff",
-            "python/wekaexamples/data/bodyfat.arff",
-            "python/wekaexamples/data/bolts.arff",
-            "python/wekaexamples/data/iris.arff",
-            "python/wekaexamples/data/vote.arff"
-        ]),
-        ("jar", [
-            "python/weka/lib/python-weka-wrapper.jar",
-            "python/weka/lib/weka.jar",
-        ])
-    ],
+    include_package_data=True,
     version="0.1.0",
     author='Peter "fracpete" Reutemann',
     author_email='fracpete at gmail dot com',
