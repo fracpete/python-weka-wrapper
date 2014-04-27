@@ -25,6 +25,8 @@ communicating with and shutting down the Java Virtual Machine in which the Weka 
 *python-weka-wrapper* provides a thin wrapper around the basic (non-GUI) functionality of Weka.
 You can automatically add all your Weka packages to the classpath. Additional jars can be added as well.
 
+Project homepage: https://github.com/fracpete/python-weka-wrapper
+
 
 Requirements
 ============
