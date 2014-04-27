@@ -99,9 +99,7 @@ setup(
         ]),
         ("jar", [
             "python/weka/lib/python-weka-wrapper.jar",
-            "python/weka/lib/python-weka-wrapper-src.jar",
             "python/weka/lib/weka.jar",
-            "python/weka/lib/weka-src.jar",
         ])
     ],
     version="0.1.0",
