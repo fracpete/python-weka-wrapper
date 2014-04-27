@@ -442,20 +442,20 @@ The following steps set up an evironment:
 
 * create a directory and initialize the environment
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   $ mkdir pwwtest
-   $ virtualenv pwwtest
+     $ mkdir pwwtest
+     $ virtualenv pwwtest
 
 * install the required packages
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   $ pwwtest/bin/pip install numpy
-   $ pwwtest/bin/pip install PIL
-   $ pwwtest/bin/pip install matplotlib
-   $ pwwtest/bin/pip install pygraphviz
-   $ pwwtest/bin/pip install javabridge
+     $ pwwtest/bin/pip install numpy
+     $ pwwtest/bin/pip install PIL
+     $ pwwtest/bin/pip install matplotlib
+     $ pwwtest/bin/pip install pygraphviz
+     $ pwwtest/bin/pip install javabridge
 
 
 Troubleshooting
@@ -469,25 +469,25 @@ Troubleshooting
 
 * Before you can install `matplotlib`, you may have to upgrade your `distribute` library as follows:
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   $  bin/easy_install -U distribute
+     $  bin/easy_install -U distribute
 
 * On Ubuntu, follow `this post <http://www.sandersnewmedia.com/why/2012/04/16/installing-pil-virtualenv-ubuntu-1204-precise-pangolin/>`_
   to install all the required dependencies for PIL:
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   $ sudo apt-get build-dep python-imaging
+     $ sudo apt-get build-dep python-imaging
 
 * To enable support for PIL on Ubuntu, see
-`this post <http://www.sandersnewmedia.com/why/2012/04/16/installing-pil-virtualenv-ubuntu-1204-precise-pangolin/>`_:
+  `this post <http://www.sandersnewmedia.com/why/2012/04/16/installing-pil-virtualenv-ubuntu-1204-precise-pangolin/>`_:
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   $ sudo ln -s /usr/lib/`uname -i`-linux-gnu/libfreetype.so /usr/lib/
-   $ sudo ln -s /usr/lib/`uname -i`-linux-gnu/libjpeg.so /usr/lib/
-   $ sudo ln -s /usr/lib/`uname -i`-linux-gnu/libz.so /usr/lib/
+     $ sudo ln -s /usr/lib/`uname -i`-linux-gnu/libfreetype.so /usr/lib/
+     $ sudo ln -s /usr/lib/`uname -i`-linux-gnu/libjpeg.so /usr/lib/
+     $ sudo ln -s /usr/lib/`uname -i`-linux-gnu/libz.so /usr/lib/
 
 
 Source code
