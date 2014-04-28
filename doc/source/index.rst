@@ -27,6 +27,8 @@ You can automatically add all your Weka packages to the classpath. Additional ja
 
 Project homepage: https://github.com/fracpete/python-weka-wrapper
 
+MLOSS homepage: https://mloss.org/software/view/548/
+
 
 Requirements
 ============
