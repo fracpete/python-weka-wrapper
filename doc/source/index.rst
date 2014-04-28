@@ -459,6 +459,13 @@ The following steps set up an evironment:
      $ pwwtest/bin/pip install pygraphviz
      $ pwwtest/bin/pip install javabridge
 
+* as an alternative, you can also use all currently installed packages on your
+  host system in the virtual environment
+
+  .. code-block:: bash
+
+     $ virtualenv --system-site-packages pwwtest
+
 
 Troubleshooting
 ---------------
