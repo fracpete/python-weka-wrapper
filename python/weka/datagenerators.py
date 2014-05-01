@@ -33,11 +33,13 @@ class DataGenerator(OptionHandler):
     Wrapper class for datagenerators.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified datagenerator using either the classname or the supplied JB_Object.
         :param classname: the classname of the datagenerator
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
         """
         if jobject is None:
             jobject = DataGenerator.new_instance(classname)
@@ -45,11 +47,12 @@ class DataGenerator(OptionHandler):
             classname = utils.get_classname(jobject)
         self.classname = classname
         self.enforce_type(jobject, "weka.datagenerators.DataGenerator")
-        super(DataGenerator, self).__init__(jobject)
+        super(DataGenerator, self).__init__(jobject=jobject, options=options)
 
     def define_data_format(self):
         """
         Returns the data format.
+        :return: the data format
         :rtype: Instances
         """
         data = javabridge.call(self.jobject, "defineDataFormat", "()Lweka/core/Instances;")
@@ -61,6 +64,7 @@ class DataGenerator(OptionHandler):
     def get_single_mode_flag(self):
         """
         Returns whether data is generated row by row (True) or in one go (False).
+        :return: whether incremental
         :rtype: bool
         """
         return javabridge.call(self.jobject, "getSingleModeFlag", "()Z")
@@ -68,6 +72,7 @@ class DataGenerator(OptionHandler):
     def get_dataset_format(self):
         """
         Returns the dataset format.
+        :return: the format
         :rtype: Instances
         """
         data = javabridge.call(self.jobject, "getDatasetFormat", "()Lweka/core/Instances;")
@@ -80,12 +85,14 @@ class DataGenerator(OptionHandler):
         """
         Sets the dataset format.
         :param inst: the Instances to use as dataset format
+        :type inst: Instances
         """
         javabridge.call(self.jobject, "setDatasetFormat", "(Lweka/core/Instances;)V", inst.jobject)
 
     def generate_start(self):
         """
         Returns a "start" string.
+        :return: the start comment
         :rtype: str
         """
         return javabridge.call(self.jobject, "generateStart", "()Ljava/lang/String;")
@@ -93,6 +100,7 @@ class DataGenerator(OptionHandler):
     def get_num_examples_act(self):
         """
         Returns a actual number of examples to generate.
+        :return: the number of examples
         :rtype: int
         """
         return javabridge.call(self.jobject, "getNumExamplesAct", "()I")
@@ -100,6 +108,7 @@ class DataGenerator(OptionHandler):
     def generate_example(self):
         """
         Returns a single Instance.
+        :return: the next example
         :rtype: Instance
         """
         data = javabridge.call(self.jobject, "generateExample", "()Lweka/core/Instance;")
@@ -111,6 +120,7 @@ class DataGenerator(OptionHandler):
     def generate_examples(self):
         """
         Returns complete dataset.
+        :return: the generated dataset
         :rtype: Instances
         """
         data = javabridge.call(self.jobject, "generateExamples", "()Lweka/core/Instances;")
@@ -122,18 +132,21 @@ class DataGenerator(OptionHandler):
     def generate_finish(self):
         """
         Returns a "finish" string.
+        :return: a finish comment
         :rtype: str
         """
         return javabridge.call(self.jobject, "generateFinish", "()Ljava/lang/String;")
 
     @classmethod
     def make_data(cls, generator, args):
-        """ Generates data using the generator and commandline arguments.
-        :rtype : Instances
-        :param generator: the generator instance to use
-        :param args: the command-line arguments
         """
-        return javabridge.static_call(
+        Generates data using the generator and commandline arguments.
+        :param generator: the generator instance to use
+        :type generator: DataGenerator
+        :param args: the command-line arguments
+        :type args: list
+        """
+        javabridge.static_call(
             "Lweka/datagenerators/DataGenerator;", "makeData",
             "(Lweka/datagenerators/DataGenerator;[Ljava/lang/String;)V",
             generator.jobject, args)
