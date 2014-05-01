@@ -27,6 +27,8 @@ def split_options(cmdline):
     """
     Splits the commandline into a list of options.
     :param cmdline: the commandline string to split into individual options
+    :type cmdline: str
+    :return: the split list of commandline options
     :rtype: list
     """
     return arrays.string_array_to_list(
@@ -40,6 +42,8 @@ def join_options(options):
     """
     Turns the list of options back into a single commandline string.
     :param options: the list of options to process
+    :type options: list
+    :return: the combined options
     :rtype: str
     """
     return javabridge.static_call(
@@ -52,6 +56,8 @@ def to_commandline(optionhandler):
     """
     Generates a commandline string from the OptionHandler instance.
     :param optionhandler: the OptionHandler instance to turn into a commandline
+    :type optionhandler: OptionHandler
+    :return: the commandline string
     :rtype: str
     """
     return javabridge.static_call(
@@ -64,6 +70,8 @@ def from_commandline(cmdline):
     """
     Creates an OptionHandler based on the provided commandline string.
     :param cmdline: the commandline string to use
+    :type cmdline: str
+    :return: the  generated option handler instance
     :rtype: OptionHandler
     """
     params = split_options(cmdline)
@@ -77,6 +85,7 @@ def from_commandline(cmdline):
 def get_classname(jobject):
     """
     Returns the classname of the JB_Object.
+    :return: the classname
     :rtype: str
     """
     cls = javabridge.call(jobject, "getClass", "()Ljava/lang/Class;")
