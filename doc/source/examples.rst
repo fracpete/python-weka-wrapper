@@ -65,8 +65,8 @@ Build classifier incrementally with data and print model
    print(cls)
 
 
-Cross-validate filtered classifier and print evaluation
--------------------------------------------------------
+Cross-validate filtered classifier and print evaluation and display ROC
+-----------------------------------------------------------------------
 
 .. code-block:: python
 
@@ -94,9 +94,10 @@ Cross-validate filtered classifier and print evaluation
    print(evl.percent_correct())
    print(evl.to_summary())
    print(evl.to_class_details())
+   plcls.plot_roc(evl, wait=True)
 
 
-cross-validate regressor and display classifier errors
+Cross-validate regressor and display classifier errors
 ------------------------------------------------------
 
 .. code-block:: python
@@ -112,7 +113,7 @@ cross-validate regressor and display classifier errors
    print(evl.to_summary())
 
    import weka.plot.classifiers as plcls
-   plcls.plot_classifier_errors(evl.predictions())
+   plcls.plot_classifier_errors(evl.predictions(), wait=False)
 
 
 Experiments

@@ -14,16 +14,27 @@
 # classifiers.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
+import javabridge
 import matplotlib.pyplot as plt
+from weka.core.classes import JavaObject
+from weka.core.dataset import Instances
 from weka.classifiers import NumericPrediction
 
 
-def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, outfile=None):
+def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, outfile=None, wait=True):
     """
     Plots the classifers for the given list of predictions.
     NB: The plot window blocks execution till closed.
     :param predictions: the predictions to plot
+    :type predictions: list
     :param absolute: whether to use absolute errors as size or relative ones
+    :type absolute: bool
+    :param max_relative_size: the maximum size in point in case of relative mode
+    :type max_relative_size: int
+    :param outfile: the output file, ignored if None
+    :type outfile: str
+    :param wait: whether to wait for the user to close the plot
+    :type wait: bool
     """
     actual    = []
     predicted = []
@@ -54,4 +65,46 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, out
     plt.draw()
     if not outfile is None:
         plt.savefig(outfile)
-    plt.show()
+    if wait:
+        plt.show()
+
+
+def plot_roc(evaluation, class_index=0, outfile=None, wait=True):
+    """
+    Plots the ROC (receiver operator characteristics) curve for the given predictions.
+    :param evaluation: the evaluation to obtain the predictions from
+    :type evaluation: Evaluation
+    :param class_index: the 0-based index of the class-label to create the plot for
+    :type class_index: int
+    :param outfile: the output file, ignored if None
+    :type outfile: str
+    :param wait: whether to wait for the user to close the plot
+    :type wait: bool
+    """
+    jtc = JavaObject.new_instance("weka.classifiers.evaluation.ThresholdCurve")
+    pred = javabridge.call(evaluation.jobject, "predictions", "()Ljava/util/ArrayList;")
+    data = Instances(javabridge.call(jtc, "getCurve", "(Ljava/util/ArrayList;I)Lweka/core/Instances;", pred, class_index))
+    area = javabridge.static_call(
+        "weka/classifiers/evaluation/ThresholdCurve", "getROCArea", "(Lweka/core/Instances;)D", data.jobject)
+    xi   = data.get_attribute_by_name("False Positive Rate").get_index()
+    yi   = data.get_attribute_by_name("True Positive Rate").get_index()
+    x    = []
+    y    = []
+    for i in xrange(data.num_instances()):
+        inst = data.get_instance(i)
+        x.append(inst.get_value(xi))
+        y.append(inst.get_value(yi))
+    fig, ax = plt.subplots()
+    ax.plot(x, y)
+    ax.set_xlabel("False Positive Rate")
+    ax.set_ylabel("True Positive Rate")
+    ax.set_title("ROC (%0.4f)" % area)
+    ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
+    ax.grid(True)
+    plt.xlim([-0.05, 1.05])
+    plt.ylim([-0.05, 1.05])
+    plt.draw()
+    if not outfile is None:
+        plt.savefig(outfile)
+    if wait:
+        plt.show()

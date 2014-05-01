@@ -98,11 +98,16 @@ def main():
     print(meta.to_commandline())
 
     # cross-validate nominal classifier
-    helper.print_title("Cross-validating SMO on iris")
+    helper.print_title("Cross-validating SMO on anneal")
+    anneal_file = helper.get_data_dir() + os.sep + "anneal.arff"
+    helper.print_info("Loading dataset: " + anneal_file)
+    loader = Loader("weka.core.converters.ArffLoader")
+    anneal_data = loader.load_file(anneal_file)
+    anneal_data.set_class_index(anneal_data.num_attributes() - 1)
     classifier = Classifier(classname="weka.classifiers.functions.SMO")
     classifier.set_options(["-M"])
-    evaluation = Evaluation(iris_data)
-    evaluation.crossvalidate_model(classifier, iris_data, 10, Random(42))
+    evaluation = Evaluation(anneal_data)
+    evaluation.crossvalidate_model(classifier, anneal_data, 10, Random(42))
     print(evaluation.to_summary())
     print(evaluation.to_class_details())
     print(evaluation.to_matrix())
@@ -151,7 +156,7 @@ def main():
     print("SFMeanSchemeEntropy: " + str(evaluation.sf_mean_scheme_entropy()))
     print("matthewsCorrelationCoefficient: " + str(evaluation.matthews_correlation_coefficient(1)))
     print("weightedMatthewsCorrelation: " + str(evaluation.weighted_matthews_correlation()))
-    print("class priors: " + str(evaluation.get_class_priors()))
+    #print("class priors: " + str(evaluation.get_class_priors()))
     print("numInstances: " + str(evaluation.num_instances()))
     print("meanAbsoluteError: " + str(evaluation.mean_absolute_error()))
     print("meanPriorAbsoluteError: " + str(evaluation.mean_prior_absolute_error()))
@@ -159,6 +164,7 @@ def main():
     print("rootMeanSquaredError: " + str(evaluation.root_mean_squared_error()))
     print("rootMeanPriorSquaredError: " + str(evaluation.root_mean_prior_squared_error()))
     print("rootRelativeSquaredError: " + str(evaluation.root_relative_squared_error()))
+    plot_cls.plot_roc(evaluation, wait=False)
 
     # load a numeric dataset
     bolts_file = helper.get_data_dir() + os.sep + "bolts.arff"
@@ -191,7 +197,7 @@ def main():
     for pred in preds:
         i += 1
         print(str(i) + ": " + str(pred) + " -> error=" + str(pred.error()))
-    plot_cls.plot_classifier_errors(preds, outfile="/tmp/out2.png")
+    plot_cls.plot_classifier_errors(preds, wait=True)
 
 
 if __name__ == "__main__":
