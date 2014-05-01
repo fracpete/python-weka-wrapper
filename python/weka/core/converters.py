@@ -27,25 +27,32 @@ class Loader(OptionHandler):
     Wrapper class for Loaders.
     """
     
-    def __init__(self, classname="weka.core.converters.ArffLoader", jobject=None):
+    def __init__(self, classname="weka.core.converters.ArffLoader", jobject=None, options=[]):
         """
         Initializes the specified loader either using the classname or the JB_Object.
         :param classname: the classname of the loader
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
         """
         if jobject is None:
             jobject = Loader.new_instance(classname)
         if classname is None:
             classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.core.converters.Loader")
-        super(Loader, self).__init__(jobject)
+        super(Loader, self).__init__(jobject=jobject, options=options)
 
     def load_file(self, dfile, incremental=False):
         """
         Loads the specified file and returns the Instances object.
         In case of incremental loading, only the structure.
         :param dfile: the file to load
+        :type dfile: str
         :param incremental: whether to load the dataset incrementally
+        :type incremental: bool
+        :return: the full dataset or the header (if incremental)
         :rtype: Instances
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
@@ -63,7 +70,10 @@ class Loader(OptionHandler):
         Loads the specified URL and returns the Instances object.
         In case of incremental loading, only the structure.
         :param url: the URL to load the data from
+        :type url: str
         :param incremental: whether to load the dataset incrementally
+        :type incremental: bool
+        :return: the full dataset or the header (if incremental)
         :rtype: Instances
         """
         self.enforce_type(self.jobject, "weka.core.converters.URLSourcedLoader")
@@ -79,6 +89,8 @@ class Loader(OptionHandler):
         Returns the next Instance object in case the dataset is being loaded incrementally.
         Returns None if there are no more instances available.
         :param structure: the Instances object this instance belongs to
+        :type structure: Instances
+        :return: the next instance, None if no more available
         :rtype: Instance
         """
         inst = javabridge.call(self.jobject, "getNextInstance", "(Lweka/core/Instances;)Lweka/core/Instance;", structure.jobject)
@@ -93,22 +105,27 @@ class Saver(OptionHandler):
     Wrapper class for Savers.
     """
     
-    def __init__(self, classname="weka.core.converters.ArffSaver", jobject=None):
+    def __init__(self, classname="weka.core.converters.ArffSaver", jobject=None, options=[]):
         """
         Initializes the specified saver either using the classname or the provided JB_Object.
         :param classname: the classname of the saver
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to use
+        :type options: list
         """
         if jobject is None:
             jobject = Saver.new_instance(classname)
         if classname is None:
             classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.core.converters.Saver")
-        super(Saver, self).__init__(jobject)
+        super(Saver, self).__init__(jobject=jobject, options=options)
 
     def get_capabilities(self):
         """
         Returns the capabilities of the saver.
+        :return: the capabilities
         :rtype: Capabilities
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
@@ -117,7 +134,9 @@ class Saver(OptionHandler):
         """
         Saves the Instances object in the specified file.
         :param data: the data to save
+        :type data: Instances
         :param dfile: the file to save the data to
+        :type dfile: str
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
@@ -131,6 +150,8 @@ def loader_for_file(filename):
     """
     Returns a Loader that can load the specified file, based on the file extension. None if failed to determine.
     :param filename: the filename to get the loader for
+    :type filename: str
+    :return: the assoicated loader instance or None if none found
     :rtype: Loader
     """
     loader = javabridge.static_call(
@@ -146,6 +167,8 @@ def saver_for_file(filename):
     """
     Returns a Saver that can load the specified file, based on the file extension. None if failed to determine.
     :param filename: the filename to get the saver for
+    :type filename: str
+    :return: the associated saver instance or None if none found
     :rtype: Saver
     """
     saver = javabridge.static_call(
