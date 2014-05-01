@@ -66,7 +66,7 @@ def main():
     loader = Loader("weka.core.converters.ArffLoader")
     iris_inc = loader.load_file(iris_file, incremental=True)
     iris_inc.set_class_index(iris_inc.num_attributes() - 1)
-    classifier = Classifier("weka.classifiers.bayes.NaiveBayesUpdateable")
+    classifier = Classifier(classname="weka.classifiers.bayes.NaiveBayesUpdateable")
     classifier.build_classifier(iris_inc)
     while True:
         inst = loader.next_instance(iris_inc)
