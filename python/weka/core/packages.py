@@ -184,6 +184,14 @@ class Dependency(JavaObject):
             javabridge.call(self.jobject, "getTarget", "()Lorg/pentaho/packageManagement/PackageConstraint;"))
 
 
+def establish_cache():
+    """
+    Establishes the package cache if necessary.
+    """
+    javabridge.static_call(
+        "weka/core/WekaPackageManager", "establishCacheIfNeeded", "([Ljava/io/PrintStream;)Ljava/lang/Exception;", [])
+
+
 def get_all_packages():
     """
     Returns a list of all packages.
@@ -229,21 +237,29 @@ def get_installed_packages():
     return result
 
 
-def install_packages(pkgs):
+def install_package(pkge, version="Latest"):
     """
     The list of packages to install.
-    :param pkgs: the list of packages
-    :param pkgs: list
+    :param pkge: the name of the repository package, a URL (http/https) or a zip file
+    :param pkge: str
+    :param version: in case of the repository packages, the version
+    :param version: str
     :return: whether successfully installed
     :rtype: bool
     """
-    lst = []
-    for pkge in pkgs:
-        lst.append(pkge.jobject)
-    jpkgs = javabridge.make_list(lst)
-    return javabridge.static_call(
-        "weka/core/WekaPackageManager", "installPackages", "(Ljava/util/List;[Ljava/io/PrintStream;)Z",
-        jpkgs, [])
+    if pkge.startswith("http://") or pkge.startswith("https://"):
+        url = javabridge.make_instance("java/net/URL", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(pkge))
+        return not javabridge.static_call(
+            "weka/core/WekaPackageManager", "installPackageFromURL",
+            "(Ljava/net/URL;[Ljava/io/PrintStream;)Ljava/lang/String;", url, []) is None
+    elif pkge.lower().endswith(".zip"):
+        return not javabridge.static_call(
+            "weka/core/WekaPackageManager", "installPackageFromArchive",
+            "(Ljava/lang/String;[Ljava/io/PrintStream;)Ljava/lang/String;", pkge, []) is None
+    else:
+        return javabridge.static_call(
+            "weka/core/WekaPackageManager", "installPackageFromRepository",
+            "(Ljava/lang/String;Ljava/lang/String;[Ljava/io/PrintStream;)Z", pkge, [])
 
 
 def uninstall_package(name):
@@ -255,12 +271,15 @@ def uninstall_package(name):
     :rtype: bool
     """
     javabridge.static_call(
-        "weka/core/WekaPackageManager", "uninstallPackage", "(Ljava/lang/String;Z[Ljava/io/PrintStream;)V",
-        p.jobject, True, [])
+        "weka/core/WekaPackageManager", "uninstallPackage",
+        "(Ljava/lang/String;Z[Ljava/io/PrintStream;)V", name, True, [])
 
 if __name__ == "__main__":
+    jvm.start()
     try:
-        jvm.start()
+        print("Establish cache")
+        print("===============")
+        establish_cache()
 
         print("All packages")
         print("============")
@@ -291,11 +310,11 @@ if __name__ == "__main__":
         print("Install/Uninstall")
         print("=================")
         print("Install: " + p.get_name())
-        print(install_packages([p]))
+        print(install_package(p.get_url()))
 
         print("Uninstall: " + p.get_name())
         uninstall_package(p.get_name())
-
-        jvm.stop()
     except Exception, e:
         print(e)
+    finally:
+        jvm.stop()
