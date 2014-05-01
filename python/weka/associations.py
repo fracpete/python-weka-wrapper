@@ -35,11 +35,15 @@ class Associator(OptionHandler):
     Wrapper class for associators.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified associator using either the classname or the supplied JB_Object.
         :param classname: the classname of the associator
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
         """
         if jobject is None:
             jobject = Associator.new_instance(classname)
@@ -47,11 +51,12 @@ class Associator(OptionHandler):
             classname = utils.get_classname(jobject)
         self.classname = classname
         self.enforce_type(jobject, "weka.associations.Associator")
-        super(Associator, self).__init__(jobject)
+        super(Associator, self).__init__(jobject=jobject, options=options)
 
     def get_capabilities(self):
         """
         Returns the capabilities of the associator.
+        :return: the capabilities
         :rtype: Capabilities
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
@@ -60,6 +65,7 @@ class Associator(OptionHandler):
         """
         Builds the associator with the data.
         :param data: the data to train the associator with
+        :type data: Instances
         """
         javabridge.call(self.jobject, "buildAssociations", "(Lweka/core/Instances;)V", data.jobject)
 
