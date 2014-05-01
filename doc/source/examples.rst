@@ -1,17 +1,35 @@
 Examples
 ========
 
+The following examples are meant to be executed in sequence, as they rely on previous steps,
+e.g., on data present.
+
+
 Start up JVM
 ------------
 
 .. code-block:: python
 
    import weka.core.jvm as jvm
-
    jvm.start()
+
+For more information, check out the help of the `jvm` module:
+
+.. code-block:: python
 
    help(jvm.start)
    help(jvm.stop)
+
+
+Location of the datasets
+------------------------
+
+The following examples assume the datasets to be present in the `data_dir` directory. For instance,
+this could be the following directory:
+
+.. code-block:: python
+
+   data_dir = "/my/datasets/"
 
 
 Load dataset and print it
@@ -21,7 +39,7 @@ Load dataset and print it
 
    from weka.core.converters import Loader
    loader = Loader("weka.core.converters.ArffLoader")
-   data = loader.load_file("datasets/uci/nominal/iris.arff")
+   data = loader.load_file(data_dir + "iris.arff")
    data.set_class_index(data.num_attributes() - 1)
 
    print(data)
@@ -49,7 +67,7 @@ Build classifier incrementally with data and print model
 .. code-block:: python
 
    loader = Loader("weka.core.converters.ArffLoader")
-   iris_inc = loader.load_file("datasets/uci/nominal/iris.arff", incremental=True)
+   iris_inc = loader.load_file(data_dir + "iris.arff", incremental=True)
    iris_inc.set_class_index(iris_inc.num_attributes() - 1)
 
    print(iris_inc)
@@ -70,7 +88,7 @@ Cross-validate filtered classifier and print evaluation and display ROC
 
 .. code-block:: python
 
-   data = loader.load_file("datasets/uci/nominal/anneal.arff")
+   data = loader.load_file(data_dir + "anneal.arff")
    data.set_class_index(data.num_attributes() - 1)
 
    from weka.filters import Filter
@@ -89,11 +107,11 @@ Cross-validate filtered classifier and print evaluation and display ROC
    evl = Evaluation(data)
    evl.crossvalidate_model(cls, data, 10, Random(1))
 
-   help(evl)
-
    print(evl.percent_correct())
    print(evl.to_summary())
    print(evl.to_class_details())
+
+   import weka.plot.classifiers as plcls
    plcls.plot_roc(evl, wait=True)
 
 
@@ -102,7 +120,7 @@ Cross-validate regressor and display classifier errors
 
 .. code-block:: python
 
-   data = loader.load_file("datasets/uci/numeric/bolts.arff")
+   data = loader.load_file(data_dir + "bolts.arff")
    data.set_class_index(data.num_attributes() - 1)
 
    cls = Classifier("weka.classifiers.functions.LinearRegression")
@@ -122,9 +140,9 @@ Experiments
 .. code-block:: python
 
    datasets = [
-       "datasets/uci/nominal/iris.arff",
-       "datasets/uci/nominal/vote.arff",
-       "datasets/uci/nominal/anneal.arff"
+       data_dir + "iris.arff",
+       data_dir + "vote.arff",
+       data_dir + "anneal.arff"
    ]
    classifiers = [
        Classifier("weka.classifiers.rules.ZeroR"),
@@ -143,7 +161,7 @@ Experiments
    exp.setup()
    exp.run()
 
-   loader = Loader.loader_for_file(result)
+   loader = weka.core.converters.loader_for_file(result)
    data = loader.load_file(result)
    from weka.experiments import Tester, ResultMatrix
    matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
@@ -162,7 +180,7 @@ Clustering
 
 .. code-block:: python
 
-   data = loader.load_file("datasets/uci/nominal/vote.arff")
+   data = loader.load_file(data_dir + "vote.arff")
    data.delete_attribute(data.num_attributes() - 1)
 
    from weka.clusterers import Clusterer
@@ -178,7 +196,7 @@ Associations
 
 .. code-block:: python
 
-   data = loader.load_file("datasets/uci/nominal/vote.arff")
+   data = loader.load_file(data_dir + "vote.arff")
    data.set_class_index(data.num_attributes() - 1)
 
    from weka.associations import Associator
@@ -194,7 +212,7 @@ Attribute selection
 
 .. code-block:: python
 
-   data = loader.load_file("datasets/uci/nominal/vote.arff")
+   data = loader.load_file(data_dir + "vote.arff")
    data.set_class_index(data.num_attributes() - 1)
 
    from weka.attribute_selection import ASSearch, ASEvaluation, AttributeSelection
@@ -238,7 +256,7 @@ Filters
 
 .. code-block:: python
 
-   data = loader.load_file("datasets/uci/nominal/vote.arff")
+   data = loader.load_file(data_dir + "vote.arff")
 
    from weka.filters import Filter
    remove = Filter(classname="weka.filters.unsupervised.attribute.Remove")
@@ -248,3 +266,10 @@ Filters
 
    print(filtered)
 
+
+Stop JVM
+--------
+
+.. code-block:: python
+
+   jvm.stop()

@@ -10,8 +10,8 @@ Most of the general options are available, as well as the following:
   E.g., `-X 512m` for 512 MB of heap size.
 
 The following examples are all for a Linux bash environment. Windows users have to replace
-forwarding slashes `/` with backslashes `\` and place the command on a single line with the
-backslashes `\` at the end of the lines removed.
+forwarding slashes `/` with backslashes `\\` and place the command on a single line with the
+backslashes `\\` at the end of the lines removed.
 
 
 Data generators
