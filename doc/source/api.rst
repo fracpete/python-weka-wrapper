@@ -1,7 +1,7 @@
-Python
-======
+API
+===
 
-The following sections explain in more detail of how to use *python-weka-wrapper* from Python.
+The following sections explain in more detail of how to use *python-weka-wrapper* from Python using the API.
 
 A lot more examples you will find in the (aptly named) `examples` module.
 
