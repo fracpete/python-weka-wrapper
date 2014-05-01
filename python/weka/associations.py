@@ -24,7 +24,6 @@ import weka.core.utils as utils
 import weka.core.converters as converters
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
-from weka.core.converters import Loader
 
 # logging setup
 logger = logging.getLogger("weka.associations")

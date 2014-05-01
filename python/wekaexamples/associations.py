@@ -34,8 +34,7 @@ def main():
     vote_data.set_class_index(vote_data.num_attributes() - 1)
 
     # train and output associator
-    associator = Associator("weka.associations.Apriori")
-    associator.set_options(["-N", "9", "-I"])
+    associator = Associator(classname="weka.associations.Apriori", options=["-N", "9", "-I"])
     associator.build_associations(vote_data)
     print(associator)
 
