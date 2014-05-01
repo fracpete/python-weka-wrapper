@@ -157,19 +157,40 @@ class Instances(JavaObject):
         """
         Sorts the dataset using the specified attribute index.
         :param index: the index of the attribute
+        :type index: int
         """
         javabridge.call(self.jobject, "sort", "(I)V", index)
 
-    @classmethod
-    def copy_instances(cls, dataset):
+    def randomize(self, random):
         """
-        Creates a copy of the Instances.
+        Randomizes the dataset using the random number generator.
+        :param random: the random number generator to use
+        :type random: Random
+        """
+        javabridge.call(self.jobject, "randomize", "(Ljava/util/Random;)V", random.jobject)
+
+    @classmethod
+    def copy_instances(cls, dataset, from_row=None, num_rows=None):
+        """
+        Creates a copy of the Instances. If either from_row or num_rows are None, then all of
+        the data is being copied.
         :param dataset: the original dataset
+        :type dataset: Instances
+        :param from_row: the 0-based start index of the rows to copy
+        :type from_row: int
+        :param num_rows: the number of rows to copy
+        :type num_rows: int
+        :return: the copy of the data
         :rtype: Instances
         """
-        return Instances(
-            javabridge.make_instance(
-                "weka/core/Instances", "(Lweka/core/Instances;)V", dataset.jobject))
+        if from_row is None or num_rows is None:
+            return Instances(
+                javabridge.make_instance(
+                    "weka/core/Instances", "(Lweka/core/Instances;)V", dataset.jobject))
+        else:
+            return Instances(
+                javabridge.make_instance(
+                    "weka/core/Instances", "(Lweka/core/Instances;II)V", dataset.jobject, from_row, num_rows))
 
     @classmethod
     def template_instances(cls, dataset, capacity=0):
