@@ -34,8 +34,7 @@ def main():
 
     # remove class attribute
     helper.print_info("Removing class attribute")
-    remove = Filter(classname="weka.filters.unsupervised.attribute.Remove")
-    remove.set_options(["-R", "last"])
+    remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "last"])
     remove.set_inputformat(data)
     filtered = remove.filter(data)
 
