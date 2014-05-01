@@ -26,6 +26,8 @@ def string_array_to_list(a):
     """
     Turns the Java string array into Python unicode string list.
     :param a: the string array to convert
+    :type a: JB_Object
+    :return: the string list
     :rtype: list
     """
     result  = []
@@ -40,7 +42,9 @@ def string_list_to_array(l):
     """
     Turns a Python unicode string list into a Java String array.
     :param l: the string list
+    :type: list
     :rtype: java string array
+    :return: JB_Object
     """
     result = jvm.ENV.make_object_array(len(l), jvm.ENV.find_class("java/lang/String"))
     for i in xrange(len(l)):
@@ -52,6 +56,8 @@ def double_matrix_to_ndarray(m):
     """
     Turns the Java matrix (2-dim array) of doubles into a numpy 2-dim array.
     :param m: the double matrix
+    :type: JB_Object
+    :return: Numpy array
     :rtype: numpy.darray
     """
     rows   = jvm.ENV.get_object_array_elements(m)
