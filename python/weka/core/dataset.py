@@ -188,6 +188,7 @@ class Instances(JavaObject):
                 javabridge.make_instance(
                     "weka/core/Instances", "(Lweka/core/Instances;)V", dataset.jobject))
         else:
+            dataset = cls.copy_instances(dataset)
             return Instances(
                 javabridge.make_instance(
                     "weka/core/Instances", "(Lweka/core/Instances;II)V", dataset.jobject, from_row, num_rows))
