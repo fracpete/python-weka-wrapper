@@ -238,7 +238,7 @@ Data generators
    from weka.datagenerators import DataGenerator
    generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
    generator.set_options(["-B", "-P", "0.05"])
-   DataGenerator.make_data(generator, ["-o", "generated.arff"])
+   DataGenerator.make_data(generator, ["-o", data_dir + "generated.arff"])
 
    generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
    generator.set_options(["-n", "10", "-r", "agrawal"])
