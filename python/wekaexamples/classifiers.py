@@ -40,8 +40,7 @@ def main():
 
     # build a classifier and output model
     helper.print_title("Training J48 classifier on iris")
-    classifier = Classifier(classname="weka.classifiers.trees.J48")
-    classifier.set_options(["-C", "0.3"])
+    classifier = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
     classifier.build_classifier(iris_data)
     print(classifier)
     print(classifier.graph())
@@ -56,8 +55,7 @@ def main():
 
     # evaluate model on train/test split
     helper.print_title("Evaluating J48 classifier on iris (random split 66%)")
-    classifier = Classifier(classname="weka.classifiers.trees.J48")
-    classifier.set_options(["-C", "0.3"])
+    classifier = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
     evaluation = Evaluation(iris_data)
     evaluation.evaluate_train_test_split(classifier, iris_data, 66.0, Random(1))
     print(evaluation.to_summary())
@@ -112,8 +110,7 @@ def main():
     loader = Loader("weka.core.converters.ArffLoader")
     anneal_data = loader.load_file(anneal_file)
     anneal_data.set_class_index(anneal_data.num_attributes() - 1)
-    classifier = Classifier(classname="weka.classifiers.functions.SMO")
-    classifier.set_options(["-M"])
+    classifier = Classifier(classname="weka.classifiers.functions.SMO", options=["-M"])
     evaluation = Evaluation(anneal_data)
     evaluation.crossvalidate_model(classifier, anneal_data, 10, Random(42))
     print(evaluation.to_summary())
@@ -183,15 +180,13 @@ def main():
 
     # build a classifier and output model
     helper.print_title("Training LinearRegression on bolts")
-    classifier = Classifier(classname="weka.classifiers.functions.LinearRegression")
-    classifier.set_options(["-S", "1", "-C"])
+    classifier = Classifier(classname="weka.classifiers.functions.LinearRegression", options=["-S", "1", "-C"])
     classifier.build_classifier(bolts_data)
     print(classifier)
 
     # cross-validate numeric classifier
     helper.print_title("Cross-validating LinearRegression on bolts")
-    classifier = Classifier(classname="weka.classifiers.functions.LinearRegression")
-    classifier.set_options(["-S", "1", "-C"])
+    classifier = Classifier(classname="weka.classifiers.functions.LinearRegression", options=["-S", "1", "-C"])
     evaluation = Evaluation(bolts_data)
     evaluation.crossvalidate_model(classifier, bolts_data, 10, Random(42))
     print(evaluation.to_summary())

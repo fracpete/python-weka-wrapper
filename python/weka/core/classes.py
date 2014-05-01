@@ -27,6 +27,7 @@ class JavaObject(object):
         """
         Initializes the wrapper with the specified Java object.
         :param jobject: the Java object to wrap
+        :type jobject: JB_Object
         """
         if jobject is None:
             raise Exception("No Java object supplied!")
@@ -43,7 +44,9 @@ class JavaObject(object):
         """
         Attempts to set the value (jobject, a Java object) of the provided (bean) property path.
         :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
+        :type path: str
         :param jobject: the Java object to set; if instance of JavaObject class, the jobject member is automatically used
+        :type jobject: JB_Object
         """
         # unwrap?
         if isinstance(jobject, JavaObject):
@@ -58,6 +61,8 @@ class JavaObject(object):
         """
         Attempts to get the value (jobject, a Java object) of the provided (bean) property path.
         :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
+        :type path: str
+        :return the wrapped Java object
         :rtype: JavaObject
         """
         return JavaObject(javabridge.static_call(
@@ -72,8 +77,12 @@ class JavaObject(object):
         E.g.: self._check_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
         or self._check_type('weka.core.converters.AbstractFileLoader')
         :param jobject: the Java object to check
+        :type jobject: JB_Object
         :param intf_or_class: the classname in Java notation (eg "weka.core.Instance")
+        :type intf_or_class: str
         :param jni_intf_or_class: the classname in JNI notation (eg "Lweka/core/Instance;")
+        :type jni_intf_or_class: str
+        :return: whether object implements interface or is subclass
         :rtype: bool
         """
         if jni_intf_or_class is None:
@@ -87,8 +96,11 @@ class JavaObject(object):
         E.g.: self._enforce_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
         or self._enforce_type('weka.core.converters.AbstractFileLoader')
         :param jobject: the Java object to check
+        :type jobject: JB_Object
         :param intf_or_class: the classname in Java notation (eg "weka.core.Instance")
+        :type intf_or_class: str
         :param jni_intf_or_class: the classname in JNI notation (eg "Lweka/core/Instance;")
+        :type jni_intf_or_class: str
         """
         if not cls.check_type(jobject, intf_or_class, jni_intf_or_class):
             raise TypeError("Object does not implement or subclass " + intf_or_class + "!")
@@ -98,8 +110,11 @@ class JavaObject(object):
         """
         Creates a new object from the given classname using the default constructor, None in case of error.
         :param classname: the classname in Java notation (eg "weka.core.Instance")
+        :type classname: str
         :param jni_classname: the classname in JNI notation (eg "Lweka/core/Instance;")
-        :rtype: object
+        :type jni_classname: str
+        :return: the Java object
+        :rtype: JB_Object
         """
         if jni_classname is None:
             jni_classname = classname.replace(".", "/")
@@ -119,6 +134,7 @@ class Random(JavaObject):
         """
         The seed value.
         :param seed: the seed value
+        :type seed: int
         """
         super(Random, self).__init__(javabridge.make_instance("Ljava/util/Random;", "(J)V", seed))
 
@@ -126,6 +142,8 @@ class Random(JavaObject):
         """
         Next random integer. if n is provided, then between 0 and n-1.
         :param n: the upper limit (minus 1) for the random integer
+        :type n: int
+        :return: the next random integer
         :rtype: int
         """
         if n is None:
@@ -136,6 +154,7 @@ class Random(JavaObject):
     def next_double(self):
         """
         Next random double.
+        :return: the next random double
         :rtype: double
         """
         return javabridge.call(self.jobject, "nextDouble", "()D")
@@ -147,13 +166,18 @@ class OptionHandler(JavaObject):
     Classes should implement the weka.core.OptionHandler interface to have any effect.
     """
     
-    def __init__(self, jobject):
+    def __init__(self, jobject, options=[]):
         """
         Initializes the wrapper with the specified Java object.
         :param jobject: the java object to wrap
+        :type jobject: JB_Object
+        :param options: the options to set
+        :type options: list
         """
         super(OptionHandler, self).__init__(jobject)
         self.is_optionhandler = OptionHandler.check_type(jobject, "weka.core.OptionHandler")
+        if len(options) > 0:
+            self.set_options(options)
         
     def global_info(self):
         """
@@ -169,6 +193,7 @@ class OptionHandler(JavaObject):
         """
         Sets the command-line options (as list).
         :param options: the list of command-line options to set
+        :type options: list
         """
         if self.is_optionhandler:
             javabridge.call(self.jobject, "setOptions", "([Ljava/lang/String;)V", arrays.string_list_to_array(options))
@@ -176,6 +201,7 @@ class OptionHandler(JavaObject):
     def get_options(self):
         """
         Obtains the currently set options as list.
+        :return: the list of options
         :rtype: list
         """
         if self.is_optionhandler:
@@ -186,6 +212,7 @@ class OptionHandler(JavaObject):
     def to_commandline(self):
         """
         Generates a commandline string from the JavaObject instance.
+        :return: the commandline string
         :rtype: str
         """
         return javabridge.static_call(
@@ -195,7 +222,8 @@ class OptionHandler(JavaObject):
 
     def __str__(self):
         """
-        Obtains the currently set options as list.
+        Calls the toString() method of the java object.
+        :return: the result of the toString() method
         :rtype: str
         """
         return javabridge.to_string(self.jobject)
@@ -210,7 +238,9 @@ class SingleIndex(JavaObject):
         """
         Initializes the wrapper with the specified Java object or string index.
         :param jobject: the java object to wrap
+        :type jobject: JB_Object
         :param index: the string index to use
+        :type index: str
         """
         if jobject is None:
             if index is None:
@@ -225,12 +255,14 @@ class SingleIndex(JavaObject):
         """
         Sets the upper limit.
         :param upper: the upper limit
+        :type upper: int
         """
         javabridge.call(self.jobject, "setUpper", "(I)V", upper)
 
     def get_index(self):
         """
         Returns the integer index.
+        :return: the 0-based integer index
         :rtype: int
         """
         return javabridge.call(self.jobject, "getIndex", "()I")
@@ -238,6 +270,7 @@ class SingleIndex(JavaObject):
     def get_single_index(self):
         """
         Returns the string index.
+        :return: the 1-based string index
         :rtype: str
         """
         return javabridge.call(self.jobject, "getSingleIndex", "()Ljava/lang/String;")
@@ -245,7 +278,8 @@ class SingleIndex(JavaObject):
     def set_single_index(self, index):
         """
         Sets the string index.
-        :rtype: str
+        :param index: the 1-based string index
+        ::type index: str
         """
         javabridge.call(self.jobject, "setSingleIndex", "(Ljava/lang/String;)V", index)
 
@@ -259,7 +293,9 @@ class Range(JavaObject):
         """
         Initializes the wrapper with the specified Java object or string range.
         :param jobject: the java object to wrap
+        :type jobject: JB_Object
         :param ranges: the string range to use
+        :type ranges: str
         """
         if jobject is None:
             if ranges is None:
@@ -274,19 +310,22 @@ class Range(JavaObject):
         """
         Sets the upper limit.
         :param upper: the upper limit
+        :type upper: int
         """
         javabridge.call(self.jobject, "setUpper", "(I)V", upper)
 
     def get_selection(self):
         """
         Returns the selection list.
+        :return: the list of 0-based integer indices
         :rtype: list
         """
         return jvm.ENV.get_int_array_elements(javabridge.call(self.jobject, "getSelection", "()[I"))
 
     def get_ranges(self):
         """
-        Returns the string rage.
+        Returns the string range.
+        :return: the string range of 1-based indices
         :rtype: str
         """
         return javabridge.call(self.jobject, "getRanges", "()Ljava/lang/String;")
@@ -295,6 +334,6 @@ class Range(JavaObject):
         """
         Sets the string range.
         :param range: the range to set
-        :rtype: str
+        :type range: str
         """
         javabridge.call(self.jobject, "setRanges", "(Ljava/lang/String;)V", range)

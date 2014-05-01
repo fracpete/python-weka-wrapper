@@ -5,7 +5,7 @@ using javabridge (https://pypi.python.org/pypi/javabridge).
 
 Requirements:
 
-* javabridge (>= 1.0.0)
+* javabridge (>= 1.0.1)
 * matplotlib (>= 1.7.0)
 * pygraphviz (>= 1.2)
 * PIL (>= 1.1.0)

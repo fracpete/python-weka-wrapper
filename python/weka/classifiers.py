@@ -38,11 +38,15 @@ class Classifier(OptionHandler):
     Wrapper class for classifiers.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
         """
         if jobject is None:
             jobject = Classifier.new_instance(classname)
@@ -52,11 +56,12 @@ class Classifier(OptionHandler):
         self.enforce_type(jobject, "weka.classifiers.Classifier")
         self.is_updateable = self.check_type(jobject, "weka.classifiers.UpdateableClassifier")
         self.is_drawable   = self.check_type(jobject, "weka.core.Drawable")
-        super(Classifier, self).__init__(jobject)
+        super(Classifier, self).__init__(jobject=jobject, options=options)
 
     def get_capabilities(self):
         """
         Returns the capabilities of the classifier.
+        :return: the capabilities
         :rtype: Capabilities
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
@@ -65,6 +70,7 @@ class Classifier(OptionHandler):
         """
         Builds the classifier with the data.
         :param data: the data to train the classifier with
+        :type data: Instances
         """
         javabridge.call(self.jobject, "buildClassifier", "(Lweka/core/Instances;)V", data.jobject)
 
@@ -72,6 +78,7 @@ class Classifier(OptionHandler):
         """
         Updates the classifier with the instance.
         :param inst: the Instance to update the classifier with
+        :type inst: Instance
         """
         if self.is_updateable:
             javabridge.call(self.jobject, "updateClassifier", "(Lweka/core/Instance;)V", inst.jobject)
@@ -82,6 +89,8 @@ class Classifier(OptionHandler):
         """
         Peforms a prediction.
         :param inst: the Instance to get a prediction for
+        :type inst: Instance
+        :return: the classification (either regression value or 0-based label index)
         :rtype: float
         """
         return javabridge.call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)D", inst.jobject)
@@ -90,6 +99,8 @@ class Classifier(OptionHandler):
         """
         Peforms a prediction, returning the class distribution.
         :param inst: the Instance to get the class distribution for
+        :type inst: Instance
+        :return: the class distribution array
         :rtype: float[]
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
@@ -98,6 +109,7 @@ class Classifier(OptionHandler):
     def graph_type(self):
         """
         Returns the graph type if classifier implements weka.core.Drawable, otherwise -1.
+        :return: the type
         :rtype: int
         """
         if self.is_drawable:
@@ -108,6 +120,7 @@ class Classifier(OptionHandler):
     def graph(self):
         """
         Returns the graph if classifier implements weka.core.Drawable, otherwise None.
+        :return: the generated graph string
         :rtype: str
         """
         if self.is_drawable:
@@ -135,11 +148,15 @@ class SingleClassifierEnhancer(Classifier):
     Wrapper class for classifiers that use a single base classifier.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
         """
         if jobject is None:
             jobject = Classifier.new_instance(classname)
@@ -147,7 +164,7 @@ class SingleClassifierEnhancer(Classifier):
             classname = utils.get_classname(jobject)
         jobject = SingleClassifierEnhancer.new_instance(classname)
         self.enforce_type(jobject, "weka.classifiers.SingleClassifierEnhancer")
-        super(SingleClassifierEnhancer, self).__init__(classname, jobject)
+        super(SingleClassifierEnhancer, self).__init__(classname=classname, jobject=jobject, options=options)
 
     def set_classifier(self, classifier):
         """
@@ -169,10 +186,13 @@ class FilteredClassifier(SingleClassifierEnhancer):
     Wrapper class for the filtered classifier.
     """
 
-    def __init__(self, jobject=None):
+    def __init__(self, jobject=None, options=[]):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
         """
         if jobject is None:
             classname = "weka.classifiers.meta.FilteredClassifier"
@@ -181,18 +201,20 @@ class FilteredClassifier(SingleClassifierEnhancer):
             classname = utils.get_classname(jobject)
         jobject = FilteredClassifier.new_instance(classname)
         self.enforce_type(jobject, "weka.classifiers.meta.FilteredClassifier")
-        super(FilteredClassifier, self).__init__(classname, jobject)
+        super(FilteredClassifier, self).__init__(classname=classname, jobject=jobject, options=options)
 
     def set_filter(self, filtr):
         """
         Sets the filter.
         :param filtr: the filter to use
+        :type filtr: Filter
         """
         javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
 
     def get_filter(self):
         """
         Returns the filter.
+        :return: the filter in use
         :rtype: Filter
         """
         return Filter(javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
@@ -203,11 +225,15 @@ class MultipleClassifiersCombiner(Classifier):
     Wrapper class for classifiers that use a multiple base classifiers.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: list of commandline options
+        :type options: list
         """
         if jobject is None:
             jobject = Classifier.new_instance(classname)
@@ -221,6 +247,7 @@ class MultipleClassifiersCombiner(Classifier):
         """
         Sets the base classifiers.
         :param classifiers: the list of base classifiers to use
+        :type classifiers: list
         """
         obj = []
         for classifier in classifiers:
@@ -230,6 +257,7 @@ class MultipleClassifiersCombiner(Classifier):
     def get_classifiers(self):
         """
         Returns the list of base classifiers.
+        :return: the classifier list
         :rtype: list
         """
         objects = javabridge.get_object_array_elements(
@@ -249,6 +277,7 @@ class Prediction(JavaObject):
         """
         Initializes the wrapper.
         :param jobject: the prediction to wrap
+        :type jobject: JB_Object
         """
         self.enforce_type(jobject, "weka.classifiers.evaluation.Prediction")
         super(Prediction, self).__init__(jobject)
@@ -256,6 +285,7 @@ class Prediction(JavaObject):
     def actual(self):
         """
         Returns the actual value.
+        :return: the actual value (internal representation)
         :rtype: float
         """
         return javabridge.call(self.jobject, "actual", "()D")
@@ -263,6 +293,7 @@ class Prediction(JavaObject):
     def predicted(self):
         """
         Returns the predicted value.
+        :return: the predicted value (internal representation)
         :rtype: float
         """
         return javabridge.call(self.jobject, "predicted", "()D")
@@ -270,6 +301,7 @@ class Prediction(JavaObject):
     def weight(self):
         """
         Returns the weight.
+        :return: the weight of the Instance that was used
         :rtype: float
         """
         return javabridge.call(self.jobject, "weight", "()D")
@@ -284,6 +316,7 @@ class NominalPrediction(Prediction):
         """
         Initializes the wrapper.
         :param jobject: the prediction to wrap
+        :type jobject: JB_Object
         """
         self.enforce_type(jobject, "weka.classifiers.evaluation.NominalPrediction")
         super(NominalPrediction, self).__init__(jobject)
@@ -291,6 +324,7 @@ class NominalPrediction(Prediction):
     def distribution(self):
         """
         Returns the class distribution.
+        :return: the class distribution list
         :rtype: list
         """
         return javabridge.call(self.jobject, "distribution", "()[D")
@@ -298,6 +332,7 @@ class NominalPrediction(Prediction):
     def margin(self):
         """
         Returns the margin.
+        :return: the margin
         :rtype: float
         """
         return javabridge.call(self.jobject, "margin", "()D")
@@ -312,6 +347,7 @@ class NumericPrediction(Prediction):
         """
         Initializes the wrapper.
         :param jobject: the prediction to wrap
+        :type jobject: JB_Object
         """
         self.enforce_type(jobject, "weka.classifiers.evaluation.NumericPrediction")
         super(NumericPrediction, self).__init__(jobject)
@@ -319,6 +355,7 @@ class NumericPrediction(Prediction):
     def error(self):
         """
         Returns the error.
+        :return: the error
         :rtype: float
         """
         return javabridge.call(self.jobject, "error", "()D")
@@ -326,6 +363,7 @@ class NumericPrediction(Prediction):
     def prediction_intervals(self):
         """
         Returns the prediction intervals.
+        :return: the intervals
         :rtype: ndarray
         """
         return arrays.double_matrix_to_ndarray(javabridge.call(self.jobject, "predictionIntervals", "()[[D"))
@@ -340,6 +378,7 @@ class Evaluation(JavaObject):
         """
         Initializes an Evaluation object.
         :param data: the data to use to initialize the priors with
+        :type data: Instances
         """
         jobject = javabridge.make_instance(
             "weka/classifiers/EvaluationWrapper", "(Lweka/core/Instances;)V", data.jobject)
@@ -351,9 +390,13 @@ class Evaluation(JavaObject):
         """
         Crossvalidates the model using the specified data, number of folds and random number generator wrapper.
         :param classifier: the classifier to cross-validate
+        :type classifier: Classifier
         :param data: the data to evaluate on
+        :type data: Instances
         :param num_folds: the number of folds
+        :type num_folds: int
         :param random: the random number generator to use
+        :type random: Random
         """
         javabridge.call(
             self.jobject, "crossValidateModel",
@@ -387,7 +430,10 @@ class Evaluation(JavaObject):
         """
         Evaluates the built model using the specified test data and returns the classifications.
         :param classifier: the trained classifier to evaluate
+        :type classifier: Classifier
         :param data: the data to evaluate on
+        :type data: Instances
+        :return: the classifications
         :rtype: ndarray
         """
         array = javabridge.call(
@@ -403,7 +449,10 @@ class Evaluation(JavaObject):
         """
         Evaluates the built model using the specified test instance and returns the classification.
         :param classifier: the classifier to cross-validate
+        :type classifier: Classifier
         :param inst: the Instance to evaluate on
+        :type inst: Instances
+        :return: the classification
         :rtype: float
         """
         return javabridge.call(
@@ -415,6 +464,8 @@ class Evaluation(JavaObject):
         """
         Generates a summary.
         :param title: optional title
+        :type title: str
+        :return: the summary
         :rtype: str
         """
         if title is None:
@@ -426,6 +477,8 @@ class Evaluation(JavaObject):
         """
         Generates the class details.
         :param title: optional title
+        :type title: str
+        :return: the details
         :rtype: str
         """
         if title is None:
@@ -439,6 +492,8 @@ class Evaluation(JavaObject):
         """
         Generates the confusion matrix.
         :param title: optional title
+        :type title: str
+        :return: the matrix
         :rtype: str
         """
         if title is None:
@@ -450,6 +505,8 @@ class Evaluation(JavaObject):
         """
         Returns the area under precision recall curve.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the area
         :rtype: float
         """
         return javabridge.call(self.jobject, "areaUnderPRC", "(I)D", class_index)
@@ -457,6 +514,7 @@ class Evaluation(JavaObject):
     def weighted_area_under_prc(self):
         """
         Returns the weighted area under precision recall curve.
+        :return: the weighted area
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedAreaUnderPRC", "()D")
@@ -465,6 +523,8 @@ class Evaluation(JavaObject):
         """
         Returns the area under receiver operators characteristics curve.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the area
         :rtype: float
         """
         return javabridge.call(self.jobject, "areaUnderROC", "(I)D", class_index)
@@ -472,6 +532,7 @@ class Evaluation(JavaObject):
     def weighted_area_under_roc(self):
         """
         Returns the weighted area under receiver operator characteristic curve.
+        :return: the weighted area
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedAreaUnderROC", "()D")
@@ -479,6 +540,7 @@ class Evaluation(JavaObject):
     def avg_cost(self):
         """
         Returns the average cost.
+        :return: the cost
         :rtype: float
         """
         return javabridge.call(self.jobject, "avgCost", "()D")
@@ -486,6 +548,7 @@ class Evaluation(JavaObject):
     def total_cost(self):
         """
         Returns the total cost.
+        :return: the cost
         :rtype: float
         """
         return javabridge.call(self.jobject, "totalCost", "()D")
@@ -493,13 +556,15 @@ class Evaluation(JavaObject):
     def confusion_matrix(self):
         """
         Returns the confusion matrix.
-        :rtype: float[][]
+        :return: the matrix
+        :rtype: ndarray
         """
         return arrays.double_matrix_to_ndarray(javabridge.call(self.jobject, "confusionMatrix", "()[[D"))
 
     def correct(self):
         """
         Returns the correct count (nominal classes).
+        :return: the count
         :rtype: float
         """
         return javabridge.call(self.jobject, "correct", "()D")
@@ -507,6 +572,7 @@ class Evaluation(JavaObject):
     def incorrect(self):
         """
         Returns the incorrect count (nominal classes).
+        :return: the count
         :rtype: float
         """
         return javabridge.call(self.jobject, "incorrect", "()D")
@@ -514,13 +580,15 @@ class Evaluation(JavaObject):
     def unclassified(self):
         """
         Returns the unclassified count.
+        :return: the count
         :rtype: float
         """
         return javabridge.call(self.jobject, "unclassified", "()D")
 
     def num_instances(self):
         """
-        Returns the number of instances that had a know class value.
+        Returns the number of instances that had a known class value.
+        :return: the number of instances
         :rtype: float
         """
         return javabridge.call(self.jobject, "numInstances", "()D")
@@ -528,6 +596,7 @@ class Evaluation(JavaObject):
     def percent_correct(self):
         """
         Returns the percent correct (nominal classes).
+        :return: the percentage
         :rtype: float
         """
         return javabridge.call(self.jobject, "pctCorrect", "()D")
@@ -535,6 +604,7 @@ class Evaluation(JavaObject):
     def percent_incorrect(self):
         """
         Returns the percent incorrect (nominal classes).
+        :return: the percentage
         :rtype: float
         """
         return javabridge.call(self.jobject, "pctIncorrect", "()D")
@@ -542,6 +612,7 @@ class Evaluation(JavaObject):
     def percent_unclassified(self):
         """
         Returns the percent unclassified.
+        :return: the percentage
         :rtype: float
         """
         return javabridge.call(self.jobject, "pctUnclassified", "()D")
@@ -549,6 +620,7 @@ class Evaluation(JavaObject):
     def correlation_coefficient(self):
         """
         Returns the correlation coefficient (numeric classes).
+        :return: the coefficient
         :rtype: float
         """
         return javabridge.call(self.jobject, "correlationCoefficient", "()D")
@@ -557,6 +629,8 @@ class Evaluation(JavaObject):
         """
         Returns the Matthews correlation coefficient (nominal classes).
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the coefficient
         :rtype: float
         """
         return javabridge.call(self.jobject, "matthewsCorrelationCoefficient", "(I)D", class_index)
@@ -564,6 +638,7 @@ class Evaluation(JavaObject):
     def weighted_matthews_correlation(self):
         """
         Returns the weighted Matthews correlation (nominal classes).
+        :return: the correlation
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedMatthewsCorrelation", "()D")
@@ -572,6 +647,7 @@ class Evaluation(JavaObject):
         """
         Returns the coverage of the test cases by the predicted regions at the confidence level
         specified when evaluation was performed.
+        :return: the coverage
         :rtype: float
         """
         return javabridge.call(self.jobject, "coverageOfTestCasesByPredictedRegions", "()D")
@@ -580,6 +656,7 @@ class Evaluation(JavaObject):
         """
         Returns  the average size of the predicted regions, relative to the range of the target in the
         training data, at the confidence level specified when evaluation was performed.
+        :return:the size of the regions
         :rtype: float
         """
         return javabridge.call(self.jobject, "sizeOfPredictedRegions", "()D")
@@ -587,6 +664,7 @@ class Evaluation(JavaObject):
     def error_rate(self):
         """
         Returns the error rate (numeric classes).
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "errorRate", "()D")
@@ -594,6 +672,7 @@ class Evaluation(JavaObject):
     def mean_absolute_error(self):
         """
         Returns the mean absolute error.
+        :return: the error
         :rtype: float
         """
         return javabridge.call(self.jobject, "meanAbsoluteError", "()D")
@@ -601,6 +680,7 @@ class Evaluation(JavaObject):
     def relative_absolute_error(self):
         """
         Returns the relative absolute error.
+        :return: the error
         :rtype: float
         """
         return javabridge.call(self.jobject, "relativeAbsoluteError", "()D")
@@ -608,6 +688,7 @@ class Evaluation(JavaObject):
     def root_mean_squared_error(self):
         """
         Returns the root mean squared error.
+        :return: the error
         :rtype: float
         """
         return javabridge.call(self.jobject, "rootMeanSquaredError", "()D")
@@ -615,6 +696,7 @@ class Evaluation(JavaObject):
     def root_relative_squared_error(self):
         """
         Returns the root relative squared error.
+        :return: the error
         :rtype: float
         """
         return javabridge.call(self.jobject, "rootRelativeSquaredError", "()D")
@@ -622,6 +704,7 @@ class Evaluation(JavaObject):
     def root_mean_prior_squared_error(self):
         """
         Returns the root mean prior squared error.
+        :return: the error
         :rtype: float
         """
         return javabridge.call(self.jobject, "rootMeanPriorSquaredError", "()D")
@@ -629,6 +712,7 @@ class Evaluation(JavaObject):
     def mean_prior_absolute_error(self):
         """
         Returns the mean prior absolute error.
+        :return: the error
         :rtype: float
         """
         return javabridge.call(self.jobject, "meanPriorAbsoluteError", "()D")
@@ -637,6 +721,8 @@ class Evaluation(JavaObject):
         """
         Returns the false negative rate.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "falseNegativeRate", "(I)D", class_index)
@@ -644,6 +730,7 @@ class Evaluation(JavaObject):
     def weighted_false_negative_rate(self):
         """
         Returns the weighted false negative rate.
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedFalseNegativeRate", "()D")
@@ -652,6 +739,8 @@ class Evaluation(JavaObject):
         """
         Returns the false positive rate.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "falsePositiveRate", "(I)D", class_index)
@@ -659,6 +748,7 @@ class Evaluation(JavaObject):
     def weighted_false_positive_rate(self):
         """
         Returns the weighted false positive rate.
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedFalsePositiveRate", "()D")
@@ -667,6 +757,8 @@ class Evaluation(JavaObject):
         """
         Returns the number of false negatives.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the count
         :rtype: float
         """
         return javabridge.call(self.jobject, "numFalseNegatives", "(I)D", class_index)
@@ -675,6 +767,8 @@ class Evaluation(JavaObject):
         """
         Returns the true negative rate.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "trueNegativeRate", "(I)D", class_index)
@@ -682,6 +776,7 @@ class Evaluation(JavaObject):
     def weighted_true_negative_rate(self):
         """
         Returns the weighted true negative rate.
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedTrueNegativeRate", "()D")
@@ -690,6 +785,8 @@ class Evaluation(JavaObject):
         """
         Returns the number of true negatives.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the count
         :rtype: float
         """
         return javabridge.call(self.jobject, "numTrueNegatives", "(I)D", class_index)
@@ -698,6 +795,8 @@ class Evaluation(JavaObject):
         """
         Returns the number of false positives.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the count
         :rtype: float
         """
         return javabridge.call(self.jobject, "numFalsePositives", "(I)D", class_index)
@@ -706,6 +805,8 @@ class Evaluation(JavaObject):
         """
         Returns the true positive rate.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "truePositiveRate", "(I)D", class_index)
@@ -713,6 +814,7 @@ class Evaluation(JavaObject):
     def weighted_true_positive_rate(self):
         """
         Returns the weighted true positive rate.
+        :return: the rate
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedTruePositiveRate", "()D")
@@ -721,6 +823,8 @@ class Evaluation(JavaObject):
         """
         Returns the number of true positives.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the count
         :rtype: float
         """
         return javabridge.call(self.jobject, "numTruePositives", "(I)D", class_index)
@@ -729,6 +833,8 @@ class Evaluation(JavaObject):
         """
         Returns the f measure.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the measure
         :rtype: float
         """
         return javabridge.call(self.jobject, "fMeasure", "(I)D", class_index)
@@ -736,6 +842,7 @@ class Evaluation(JavaObject):
     def weighted_f_measure(self):
         """
         Returns the weighted f measure.
+        :return: the measure
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedFMeasure", "()D")
@@ -743,6 +850,7 @@ class Evaluation(JavaObject):
     def unweighted_macro_f_measure(self):
         """
         Returns the unweighted macro-averaged F-measure.
+        :return: the measure
         :rtype: float
         """
         return javabridge.call(self.jobject, "unweightedMacroFmeasure", "()D")
@@ -750,6 +858,7 @@ class Evaluation(JavaObject):
     def unweighted_micro_f_measure(self):
         """
         Returns the unweighted micro-averaged F-measure.
+        :return: the measure
         :rtype: float
         """
         return javabridge.call(self.jobject, "unweightedMicroFmeasure", "()D")
@@ -758,6 +867,8 @@ class Evaluation(JavaObject):
         """
         Returns the precision.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the precision
         :rtype: float
         """
         return javabridge.call(self.jobject, "precision", "(I)D", class_index)
@@ -765,6 +876,7 @@ class Evaluation(JavaObject):
     def weighted_precision(self):
         """
         Returns the weighted precision.
+        :return: the precision
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedPrecision", "()D")
@@ -773,6 +885,8 @@ class Evaluation(JavaObject):
         """
         Returns the recall.
         :param class_index: the 0-based index of the class label
+        :type class_index: int
+        :return: the recall
         :rtype: float
         """
         return javabridge.call(self.jobject, "recall", "(I)D", class_index)
@@ -780,6 +894,7 @@ class Evaluation(JavaObject):
     def weighted_recall(self):
         """
         Returns the weighted recall.
+        :return: the recall
         :rtype: float
         """
         return javabridge.call(self.jobject, "weightedRecall", "()D")
@@ -787,6 +902,7 @@ class Evaluation(JavaObject):
     def kappa(self):
         """
         Returns kappa.
+        :return: kappa
         :rtype: float
         """
         return javabridge.call(self.jobject, "kappa", "()D")
@@ -794,6 +910,7 @@ class Evaluation(JavaObject):
     def kb_information(self):
         """
         Returns KB information.
+        :return: the information
         :rtype: float
         """
         return javabridge.call(self.jobject, "KBInformation", "()D")
@@ -801,6 +918,7 @@ class Evaluation(JavaObject):
     def kb_mean_information(self):
         """
         Returns KB mean information.
+        :return: the information
         :rtype: float
         """
         return javabridge.call(self.jobject, "KBMeanInformation", "()D")
@@ -808,6 +926,7 @@ class Evaluation(JavaObject):
     def kb_relative_information(self):
         """
         Returns KB relative information.
+        :return: the information
         :rtype: float
         """
         return javabridge.call(self.jobject, "KBRelativeInformation", "()D")
@@ -815,6 +934,7 @@ class Evaluation(JavaObject):
     def sf_entropy_gain(self):
         """
         Returns the total SF, which is the null model entropy minus the scheme entropy.
+        :return: the gain
         :rtype: float
         """
         return javabridge.call(self.jobject, "SFEntropyGain", "()D")
@@ -822,6 +942,7 @@ class Evaluation(JavaObject):
     def sf_mean_entropy_gain(self):
         """
         Returns the SF per instance, which is the null model entropy minus the scheme entropy, per instance.
+        :return: the gain
         :rtype: float
         """
         return javabridge.call(self.jobject, "SFMeanEntropyGain", "()D")
@@ -829,6 +950,7 @@ class Evaluation(JavaObject):
     def sf_mean_prior_entropy(self):
         """
         Returns the entropy per instance for the null model.
+        :return: the entropy
         :rtype: float
         """
         return javabridge.call(self.jobject, "SFMeanPriorEntropy", "()D")
@@ -836,6 +958,7 @@ class Evaluation(JavaObject):
     def sf_mean_scheme_entropy(self):
         """
         Returns the entropy per instance for the scheme.
+        :return: the entropy
         :rtype: float
         """
         return javabridge.call(self.jobject, "SFMeanSchemeEntropy", "()D")
@@ -844,12 +967,14 @@ class Evaluation(JavaObject):
         """
         Sets the class priors derived from the dataset.
         :param data: the dataset to derive the priors from
+        :type data: Instances
         """
         return javabridge.call(self.jobject, "setClassPriors", "(Lweka/core/Instances;)V", data)
 
     def get_class_priors(self):
         """
         Returns the class priors.
+        :return: the priors
         :rtype: ndarray
         """
         return jvm.ENV.get_float_array_elements(javabridge.call(self.jobject, "getClassPriors", "()[D"))
@@ -857,6 +982,7 @@ class Evaluation(JavaObject):
     def header(self):
         """
         Returns the header format.
+        :return: the header format
         :rtype: Instances
         """
         return Instances(javabridge.call(self.jobject, "getHeader", "()Lweka/core/Instances;"))
@@ -865,12 +991,14 @@ class Evaluation(JavaObject):
         """
         Sets whether to discard predictions (saves memory).
         :param discard: True if to discard predictions
+        :type discard: bool
         """
         javabridge.call(self.jobject, "setDiscardPredictions", "(Z)V", discard)
 
     def get_discard_predictions(self):
         """
         Returns whether to discard predictions (saves memory).
+        :return: True if to discard
         :rtype: bool
         """
         return javabridge.call(self.jobject, "getDiscardPredictions", "()Z")
@@ -878,6 +1006,7 @@ class Evaluation(JavaObject):
     def predictions(self):
         """
         Returns the predictions.
+        :return: the predictions
         :rtype: list
         """
         preds = javabridge.get_collection_wrapper(
@@ -896,9 +1025,12 @@ class Evaluation(JavaObject):
     def evaluate_model(cls, classifier, args):
         """
         Evaluates the classifier with the given options.
-        :rtype : str
         :param classifier: the classifier instance to use
+        :type classifier: Classifier
         :param args: the command-line arguments to use
+        :type args: list
+        :return: the evaluation string
+        :rtype : str
         """
         return javabridge.static_call(
             "Lweka/classifiers/Evaluation;", "evaluateModel",
