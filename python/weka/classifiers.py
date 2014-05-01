@@ -115,6 +115,20 @@ class Classifier(OptionHandler):
         else:
             return None
 
+    @classmethod
+    def make_copy(cls, classifier):
+        """
+        Creates a copy of the classifier.
+        :param classifier: the classifier to copy
+        :type classifier: Classifier
+        :return: the copy of the classifier
+        :rtype: object
+        """
+        return Classifier(
+            jobject=javabridge.static_call(
+                "weka/classifiers/AbstractClassifier", "makeCopy",
+                "(Lweka/classifiers/Classifier;)Lweka/classifiers/Classifier;", classifier.jobject))
+
 
 class SingleClassifierEnhancer(Classifier):
     """
@@ -345,6 +359,29 @@ class Evaluation(JavaObject):
             self.jobject, "crossValidateModel",
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V",
             classifier.jobject, data.jobject, num_folds, random.jobject, [])
+
+    def evaluate_train_test_split(self, classifier, data, percentage, random):
+        """
+        Splits the data into train and test, builds the classifier with the training data and
+        evaluates it against the test set.
+        :param classifier: the classifier to cross-validate
+        :type classifier: Classifier
+        :param data: the data to evaluate on
+        :type data: Instances
+        :param percentage: the percentage split to use (amount to use for training)
+        :type percentage: double
+        :param random: the random number generator to use, if None the order gets preserved
+        :type random: Random
+        """
+        if not random is None:
+            data.randomize(random)
+        train_size = round(data.num_instances() * percentage / 100)
+        test_size  = data.num_instances() - train_size
+        train_inst = Instances.copy_instances(data, 0, train_size)
+        test_inst  = Instances.copy_instances(data, train_size, test_size)
+        cls = Classifier.make_copy(classifier)
+        cls.build_classifier(train_inst)
+        self.test_model(cls, test_inst)
 
     def test_model(self, classifier, data):
         """

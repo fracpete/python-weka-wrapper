@@ -54,6 +54,14 @@ def main():
     print(evl)
     print(evaluation.to_summary())
 
+    # evaluate model on train/test split
+    helper.print_title("Evaluating J48 classifier on iris (random split 66%)")
+    classifier = Classifier(classname="weka.classifiers.trees.J48")
+    classifier.set_options(["-C", "0.3"])
+    evaluation = Evaluation(iris_data)
+    evaluation.evaluate_train_test_split(classifier, iris_data, 66.0, Random(1))
+    print(evaluation.to_summary())
+
     # load a dataset incrementally and build classifier incrementally
     helper.print_title("Build classifier incrementally on iris")
     helper.print_info("Loading dataset: " + iris_file)
