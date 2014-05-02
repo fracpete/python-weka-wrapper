@@ -23,7 +23,9 @@ def plot_dot_graph(graph, filename=None):
     """
     Plots a graph in graphviz dot notation.
     :param graph: the dot notation graph
+    :type graph: str
     :param filename: the (optional) file to save the generated plot to. The extension determines the file format.
+    :type filename: str
     """
     agraph = AGraph(graph)
     agraph.layout(prog='dot')
