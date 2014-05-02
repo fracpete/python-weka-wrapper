@@ -257,6 +257,28 @@ Filters
    print(filtered)
 
 
+Packages
+--------
+
+.. code-block:: python
+
+   import weka.core.packages as packages
+   items = packages.get_all_packages()
+   for item in items:
+       if item.get_name() == "CLOPE":
+           print item.get_name(), item.get_url()
+
+   packages.install_package("CLOPE")
+   items = packages.get_installed_packages()
+   for item in items:
+       print item.get_name(), item.get_url()
+
+   packages.uninstall_package("CLOPE")
+   items = packages.get_installed_packages()
+   for item in items:
+       print item.get_name(), item.get_url()
+
+
 Stop JVM
 --------
 

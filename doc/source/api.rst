@@ -271,3 +271,28 @@ And a setup for performing regression experiments on random splits on the datase
    >>> print(tester.header(comparison_col))
    >>> print(tester.multi_resultset_full(0, comparison_col))
 
+
+Packages
+--------
+
+Packages can be listed, installed and uninstalled using the `weka.core.packages` module:
+
+.. code-block:: python
+
+   # list all packages (name and URL)
+   import weka.core.packages as packages
+   items = packages.get_all_packages()
+   for item in items:
+       print item.get_name(), item.get_url()
+
+   # install CLOPE package
+   packages.install_package("CLOPE")
+   items = packages.get_installed_packages()
+   for item in items:
+       print item.get_name(), item.get_url()
+
+   # uninstall CLOPE package
+   packages.uninstall_package("CLOPE")
+   items = packages.get_installed_packages()
+   for item in items:
+       print item.get_name(), item.get_url()
