@@ -241,9 +241,9 @@ def install_package(pkge, version="Latest"):
     """
     The list of packages to install.
     :param pkge: the name of the repository package, a URL (http/https) or a zip file
-    :param pkge: str
+    :type pkge: str
     :param version: in case of the repository packages, the version
-    :param version: str
+    :type version: str
     :return: whether successfully installed
     :rtype: bool
     """
@@ -266,7 +266,7 @@ def uninstall_package(name):
     """
     Uninstalls a package.
     :param name: the name of the package
-    :param name: str
+    :type name: str
     :return: whether successfully uninstalled
     :rtype: bool
     """
