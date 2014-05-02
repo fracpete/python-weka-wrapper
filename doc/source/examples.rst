@@ -87,13 +87,13 @@ Cross-validate filtered classifier and print evaluation and display ROC
 
 .. code-block:: python
 
-   data = loader.load_file(data_dir + "anneal.arff")
+   data = loader.load_file(data_dir + "diabetes.arff")
    data.set_class_index(data.num_attributes() - 1)
 
    from weka.filters import Filter
    remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1-3"])
 
-   cls = Classifier(classname="weka.classifiers.functions.SMO")
+   cls = Classifier(classname="weka.classifiers.bayes.NaiveBayes")
 
    from weka.classifiers import FilteredClassifier
    fc = FilteredClassifier()
@@ -110,7 +110,7 @@ Cross-validate filtered classifier and print evaluation and display ROC
    print(evl.to_class_details())
 
    import weka.plot.classifiers as plcls
-   plcls.plot_roc(evl, wait=True)
+   plcls.plot_roc(evl, class_index=0, wait=True)
 
 
 Cross-validate regressor and display classifier errors
