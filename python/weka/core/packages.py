@@ -259,7 +259,7 @@ def install_package(pkge, version="Latest"):
     else:
         return javabridge.static_call(
             "weka/core/WekaPackageManager", "installPackageFromRepository",
-            "(Ljava/lang/String;Ljava/lang/String;[Ljava/io/PrintStream;)Z", pkge, [])
+            "(Ljava/lang/String;Ljava/lang/String;[Ljava/io/PrintStream;)Z", pkge, version, [])
 
 
 def uninstall_package(name):
