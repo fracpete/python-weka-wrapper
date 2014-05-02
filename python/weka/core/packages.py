@@ -198,6 +198,7 @@ def get_all_packages():
     :return: the list of packages
     :rtype: list
     """
+    establish_cache()
     result = []
     pkgs   = javabridge.get_collection_wrapper(
         javabridge.static_call(
@@ -213,6 +214,7 @@ def get_available_packages():
     :return: the list of packages
     :rtype: list
     """
+    establish_cache()
     result = []
     pkgs   = javabridge.get_collection_wrapper(
         javabridge.static_call(
@@ -228,6 +230,7 @@ def get_installed_packages():
     :return: the list of packages
     :rtype: list
     """
+    establish_cache()
     result = []
     pkgs   = javabridge.get_collection_wrapper(
         javabridge.static_call(
@@ -247,6 +250,7 @@ def install_package(pkge, version="Latest"):
     :return: whether successfully installed
     :rtype: bool
     """
+    establish_cache()
     if pkge.startswith("http://") or pkge.startswith("https://"):
         url = javabridge.make_instance("java/net/URL", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(pkge))
         return not javabridge.static_call(
@@ -270,6 +274,7 @@ def uninstall_package(name):
     :return: whether successfully uninstalled
     :rtype: bool
     """
+    establish_cache()
     javabridge.static_call(
         "weka/core/WekaPackageManager", "uninstallPackage",
         "(Ljava/lang/String;Z[Ljava/io/PrintStream;)V", name, True, [])
