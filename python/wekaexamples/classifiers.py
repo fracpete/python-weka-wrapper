@@ -104,13 +104,13 @@ def main():
     print(meta.to_commandline())
 
     # cross-validate nominal classifier
-    helper.print_title("Cross-validating SMO on anneal")
-    anneal_file = helper.get_data_dir() + os.sep + "anneal.arff"
+    helper.print_title("Cross-validating NaiveBayes on diabetes")
+    anneal_file = helper.get_data_dir() + os.sep + "diabetes.arff"
     helper.print_info("Loading dataset: " + anneal_file)
     loader = Loader("weka.core.converters.ArffLoader")
     anneal_data = loader.load_file(anneal_file)
     anneal_data.set_class_index(anneal_data.num_attributes() - 1)
-    classifier = Classifier(classname="weka.classifiers.functions.SMO", options=["-M"])
+    classifier = Classifier(classname="weka.classifiers.bayes.NaiveBayes")
     evaluation = Evaluation(anneal_data)
     evaluation.crossvalidate_model(classifier, anneal_data, 10, Random(42))
     print(evaluation.to_summary())
