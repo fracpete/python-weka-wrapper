@@ -38,7 +38,7 @@ Load dataset and print it
 .. code-block:: python
 
    from weka.core.converters import Loader
-   loader = Loader("weka.core.converters.ArffLoader")
+   loader = Loader(classname="weka.core.converters.ArffLoader")
    data = loader.load_file(data_dir + "iris.arff")
    data.set_class_index(data.num_attributes() - 1)
 
@@ -51,8 +51,7 @@ Build classifier on dataset, print model and draw graph
 .. code-block:: python
 
    from weka.classifiers import Classifier
-   cls = Classifier("weka.classifiers.trees.J48")
-   cls.set_options(["-C", "0.3"])
+   cls = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
    cls.build_classifier(data)
 
    print(cls)
@@ -66,13 +65,13 @@ Build classifier incrementally with data and print model
 
 .. code-block:: python
 
-   loader = Loader("weka.core.converters.ArffLoader")
+   loader = Loader(classname="weka.core.converters.ArffLoader")
    iris_inc = loader.load_file(data_dir + "iris.arff", incremental=True)
    iris_inc.set_class_index(iris_inc.num_attributes() - 1)
 
    print(iris_inc)
 
-   cls = Classifier("weka.classifiers.bayes.NaiveBayesUpdateable")
+   cls = Classifier(classname="weka.classifiers.bayes.NaiveBayesUpdateable")
    cls.build_classifier(iris_inc)
    while True:
        inst = loader.next_instance(iris_inc)
@@ -92,10 +91,9 @@ Cross-validate filtered classifier and print evaluation and display ROC
    data.set_class_index(data.num_attributes() - 1)
 
    from weka.filters import Filter
-   remove = Filter("weka.filters.unsupervised.attribute.Remove")
-   remove.set_options(["-R", "1-3"])
+   remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1-3"])
 
-   cls = Classifier("weka.classifiers.functions.SMO")
+   cls = Classifier(classname="weka.classifiers.functions.SMO")
 
    from weka.classifiers import FilteredClassifier
    fc = FilteredClassifier()
@@ -123,15 +121,14 @@ Cross-validate regressor and display classifier errors
    data = loader.load_file(data_dir + "bolts.arff")
    data.set_class_index(data.num_attributes() - 1)
 
-   cls = Classifier("weka.classifiers.functions.LinearRegression")
-   cls.set_options(["-S", "1", "-C"])
+   cls = Classifier(classname="weka.classifiers.functions.LinearRegression", options=["-S", "1", "-C"])
    evl = Evaluation(data)
    evl.crossvalidate_model(cls, data, 10, Random(1))
 
    print(evl.to_summary())
 
    import weka.plot.classifiers as plcls
-   plcls.plot_classifier_errors(evl.predictions(), wait=False)
+   plcls.plot_classifier_errors(evl.predictions(), wait=True)
 
 
 Experiments
@@ -145,9 +142,9 @@ Experiments
        data_dir + "anneal.arff"
    ]
    classifiers = [
-       Classifier("weka.classifiers.rules.ZeroR"),
-       Classifier("weka.classifiers.trees.J48"),
-       Classifier("weka.classifiers.trees.REPTree"),
+       Classifier(classname="weka.classifiers.rules.ZeroR"),
+       Classifier(classname="weka.classifiers.trees.J48"),
+       Classifier(classname="weka.classifiers.trees.REPTree"),
    ]
    result = "exp.arff"
    from weka.experiments import SimpleCrossValidationExperiment
@@ -164,8 +161,8 @@ Experiments
    loader = weka.core.converters.loader_for_file(result)
    data = loader.load_file(result)
    from weka.experiments import Tester, ResultMatrix
-   matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
-   tester = Tester("weka.experiment.PairedCorrectedTTester")
+   matrix = ResultMatrix(classname="weka.experiment.ResultMatrixPlainText")
+   tester = Tester(classname="weka.experiment.PairedCorrectedTTester")
    tester.set_resultmatrix(matrix)
    comparison_col = data.get_attribute_by_name("Percent_correct").get_index()
    tester.set_instances(data)
@@ -184,8 +181,7 @@ Clustering
    data.delete_attribute(data.num_attributes() - 1)
 
    from weka.clusterers import Clusterer
-   clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans")
-   clusterer.set_options(["-N", "3"])
+   clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans", options=["-N", "3"])
    clusterer.build_clusterer(data)
 
    print(clusterer)
@@ -200,8 +196,7 @@ Associations
    data.set_class_index(data.num_attributes() - 1)
 
    from weka.associations import Associator
-   associator = Associator("weka.associations.Apriori")
-   associator.set_options(["-N", "9", "-I"])
+   associator = Associator(classname="weka.associations.Apriori", options=["-N", "9", "-I"])
    associator.build_associations(data)
 
    print(associator)
@@ -216,10 +211,8 @@ Attribute selection
    data.set_class_index(data.num_attributes() - 1)
 
    from weka.attribute_selection import ASSearch, ASEvaluation, AttributeSelection
-   search = ASSearch("weka.attributeSelection.BestFirst")
-   search.set_options(["-D", "1", "-N", "5"])
-   evaluator = ASEvaluation("weka.attributeSelection.CfsSubsetEval")
-   evaluator.set_options(["-P", "1", "-E", "1"])
+   search = ASSearch(classname="weka.attributeSelection.BestFirst", options=["-D", "1", "-N", "5"])
+   evaluator = ASEvaluation(classname="weka.attributeSelection.CfsSubsetEval", options=["-P", "1", "-E", "1"])
    attsel = AttributeSelection()
    attsel.set_search(search)
    attsel.set_evaluator(evaluator)
@@ -236,12 +229,10 @@ Data generators
 .. code-block:: python
 
    from weka.datagenerators import DataGenerator
-   generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
-   generator.set_options(["-B", "-P", "0.05"])
+   generator = DataGenerator(classname="weka.datagenerators.classifiers.classification.Agrawal", options=["-B", "-P", "0.05"])
    DataGenerator.make_data(generator, ["-o", data_dir + "generated.arff"])
 
-   generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
-   generator.set_options(["-n", "10", "-r", "agrawal"])
+   generator = DataGenerator(classname="weka.datagenerators.classifiers.classification.Agrawal", options=["-n", "10", "-r", "agrawal"])
    generator.set_dataset_format(generator.define_data_format())
    print(generator.get_dataset_format())
    if generator.get_single_mode_flag():
@@ -259,8 +250,7 @@ Filters
    data = loader.load_file(data_dir + "vote.arff")
 
    from weka.filters import Filter
-   remove = Filter(classname="weka.filters.unsupervised.attribute.Remove")
-   remove.set_options(["-R", "last"])
+   remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "last"])
    remove.set_inputformat(data)
    filtered = remove.filter(data)
 
