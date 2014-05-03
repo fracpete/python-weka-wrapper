@@ -22,6 +22,7 @@ from weka.core.converters import Loader
 from weka.core.dataset import Instances
 from weka.core.dataset import Instance
 from weka.core.dataset import Attribute
+import weka.plot.dataset as pld
 
 
 def main():
@@ -80,6 +81,12 @@ def main():
     dataset.add_instance(inst)
     print("Instance:\n" + str(inst))
     print("Dataset:\n" + str(dataset))
+
+    # simple scatterplot of iris dataset: petalwidth x petallength
+    pld.scatter_plot(
+        iris_data, iris_data.get_attribute_by_name("petalwidth").get_index(),
+        iris_data.get_attribute_by_name("petallength").get_index(),
+        wait=True)
 
 
 if __name__ == "__main__":
