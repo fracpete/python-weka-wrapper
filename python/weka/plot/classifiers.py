@@ -18,10 +18,10 @@ import javabridge
 import matplotlib.pyplot as plt
 from weka.core.classes import JavaObject
 from weka.core.dataset import Instances
-from weka.classifiers import NumericPrediction
+from weka.classifiers import NumericPrediction, NominalPrediction
 
 
-def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, outfile=None, wait=True):
+def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, absolute_size=50, outfile=None, wait=True):
     """
     Plots the classifers for the given list of predictions.
     NB: The plot window blocks execution till closed.
@@ -31,6 +31,8 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, out
     :type absolute: bool
     :param max_relative_size: the maximum size in point in case of relative mode
     :type max_relative_size: int
+    :param absolute_size: the size in point in case of absolute mode
+    :type absolute_size: int
     :param outfile: the output file, ignored if None
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -39,6 +41,7 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, out
     actual    = []
     predicted = []
     error     = None
+    cls       = None
     for pred in predictions:
         actual.append(pred.actual())
         predicted.append(pred.predicted())
@@ -46,10 +49,19 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, out
             if error is None:
                 error = []
             error.append(abs(pred.error()))
+        elif isinstance(pred, NominalPrediction):
+            if cls is None:
+                cls = []
+            if pred.actual() != pred.predicted():
+                cls.append(1)
+            else:
+                cls.append(0)
     fig, ax = plt.subplots()
-    if error is None:
-        ax.scatter(actual, predicted)
-    else:
+    if error is None and cls is None:
+        ax.scatter(actual, predicted, s=absolute_size)
+    elif not cls is None:
+        ax.scatter(actual, predicted, c=cls, s=absolute_size)
+    elif not error is None:
         if not absolute:
             min_err = min(error)
             max_err = max(error)

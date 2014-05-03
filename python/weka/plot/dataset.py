@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from weka.core.dataset import Instances
 
 
-def scatter_plot(data, index_x, index_y, outfile=None, wait=True):
+def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
     """
     Plots two attributes against each other.
     :param data: the dataset
@@ -27,6 +27,8 @@ def scatter_plot(data, index_x, index_y, outfile=None, wait=True):
     :type index_x: int
     :param index_y: the 0-based index of the attribute on the y axis
     :type index_y: int
+    :param size: the size of the circles in point
+    :type size: int
     :param outfile: the (optional) file to save the generated plot to. The extension determines the file format.
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -46,9 +48,9 @@ def scatter_plot(data, index_x, index_y, outfile=None, wait=True):
             c.append(inst.get_value(inst.get_class_index()))
     fig, ax = plt.subplots()
     if c is None:
-        ax.scatter(x, y)
+        ax.scatter(x, y, s=size)
     else:
-        ax.scatter(x, y, c=c)
+        ax.scatter(x, y, c=c, s=size)
     ax.set_xlabel(data.get_attribute(index_x).get_name())
     ax.set_ylabel(data.get_attribute(index_y).get_name())
     ax.set_title("Attribute scatter plot")
