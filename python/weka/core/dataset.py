@@ -70,6 +70,14 @@ class Instances(JavaObject):
         else:
             return Attribute(att)
 
+    def get_attribute_stats(self, index):
+        """
+        Returns the specified attribute statistics.
+        :param index: the 0-based index of the attribute
+        :rtype: AttributeStats
+        """
+        return AttributeStats(javabridge.call(self.jobject, "attributeStats", "(I)Lweka/core/AttributeStats;", index))
+
     def num_instances(self):
         """
         Returns the number of instances.
@@ -509,3 +517,153 @@ class Attribute(JavaObject):
         return Attribute(
             javabridge.make_instance(
                 "weka/core/Attribute", "(Ljava/lang/String;Ljava/util/List;)V", name, javabridge.make_list(labels)))
+
+
+class AttributeStats(JavaObject):
+    """
+    Container for attribute statistics.
+    """
+
+    def __init__(self, jobject):
+        """
+        Initializes the container.
+        :param jobject: The Java object to wrap
+        :type jobject: JB_Object
+        """
+        self.enforce_type(jobject, "weka.core.AttributeStats")
+        super(AttributeStats, self).__init__(jobject)
+
+    def distinct_count(self):
+        """
+        The number of distinct values.
+        :return: The number of distinct values
+        :rtype: int
+        """
+        return javabridge.get_field(self.jobject, "distinctCount", "I")
+
+    def int_count(self):
+        """
+        The number of int-like values.
+        :return: The number of int-like values
+        :rtype: int
+        """
+        return javabridge.get_field(self.jobject, "intCount", "I")
+
+    def missing_count(self):
+        """
+        The number of missing values.
+        :return: The number of missing values
+        :rtype: int
+        """
+        return javabridge.get_field(self.jobject, "missingCount", "I")
+
+    def nominal_counts(self):
+        """
+        Counts of each nominal value.
+        :return: Counts of each nominal value
+        :rtype: ndarray
+        """
+        return jvm.ENV.get_int_array_elements(javabridge.get_field(self.jobject, "nominalCounts", "[I"))
+
+    def nominal_weights(self):
+        """
+        Weight mass for each nominal value.
+        :return: Weight mass for each nominal value
+        :rtype: ndarray
+        """
+        return jvm.ENV.get_double_array_elements(javabridge.get_field(self.jobject, "nominalWeights", "[D"))
+
+    def numeric_stats(self):
+        """
+        Stats on numeric value distributions.
+        :return: Stats on numeric value distributions
+        :rtype: NumericStats
+        """
+        return Stats(javabridge.get_field(self.jobject, "numericStats", "Lweka/experiment/Stats;"))
+
+    def total_count(self):
+        """
+        The total number of values.
+        :return: The total number of values
+        :rtype: int
+        """
+        return javabridge.get_field(self.jobject, "totalCount", "I")
+
+    def unique_count(self):
+        """
+        The number of values that only appear once.
+        :return: The number of values that only appear once
+        :rtype: int
+        """
+        return javabridge.get_field(self.jobject, "uniqueCount", "I")
+
+
+class Stats(JavaObject):
+    """
+    Container for numeric attribute stats.
+    """
+
+    def __init__(self, jobject):
+        """
+        Initializes the container.
+        :param jobject: The Java object to wrap
+        :type jobject: JB_Object
+        """
+        self.enforce_type(jobject, "weka.experiment.Stats")
+        super(Stats, self).__init__(jobject)
+
+    def count(self):
+        """
+        The number of values seen.
+        :return: The number of values seen
+        :rtype: float
+        """
+        return javabridge.get_field(self.jobject, "count", "D")
+
+    def min(self):
+        """
+        The minimum value seen, or Double.NaN if no values seen.
+        :return: The minimum value seen, or Double.NaN if no values seen
+        :rtype: float
+        """
+        return javabridge.get_field(self.jobject, "min", "D")
+
+    def max(self):
+        """
+        The maximum value seen, or Double.NaN if no values seen.
+        :return: The maximum value seen, or Double.NaN if no values seen
+        :rtype: float
+        """
+        return javabridge.get_field(self.jobject, "max", "D")
+
+    def mean(self):
+        """
+        The mean of values at the last calculateDerived() call.
+        :return: The mean of values at the last calculateDerived() call
+        :rtype: float
+        """
+        return javabridge.get_field(self.jobject, "mean", "D")
+
+    def stddev(self):
+        """
+        The std deviation of values at the last calculateDerived() call
+        :return: The std deviation of values at the last calculateDerived() call
+        :rtype: float
+        """
+        return javabridge.get_field(self.jobject, "stdDev", "D")
+
+    def sum(self):
+        """
+        The sum of values seen.
+        :return: The sum of values seen
+        :rtype: float
+        """
+        return javabridge.get_field(self.jobject, "sum", "D")
+
+    def sumsq(self):
+        """
+        The sum of values squared seen.
+        :return: The sum of values squared seen
+        :rtype: float
+        """
+        return javabridge.get_field(self.jobject, "sumsq", "D")
