@@ -45,7 +45,8 @@ def add_weka_packages():
     """
     Adds the jars from all Weka packages to the JVM's classpath.
     """
-    package_dir = os.path.expanduser("~" + os.sep + "wekafiles" + os.sep + "packages")
+    prefix = os.getenv("WEKA_HOME", "~")
+    package_dir = os.path.expanduser(prefix + os.sep + "wekafiles" + os.sep + "packages")
     logger.debug("package_dir=" + package_dir)
     # traverse packages
     for p in os.listdir(package_dir):
@@ -75,10 +76,15 @@ def start(class_path=[], bundled=True, packages=False, system_cp=False, max_heap
     """
     Initializes the javabridge connection (starts up the JVM).
     :param class_path: the additional classpath elements to add
+    :type class_path: str
     :param bundled: whether to add jars from the "lib" directory
+    :type bundled: bool
     :param packages: whether to add jars from Weka packages as well
+    :type packages: bool
     :param system_cp: whether to add the system classpath as well
+    :type system_cp: bool
     :param max_heap_size: the maximum heap size (-Xmx parameter, eg 512m or 4g)
+    :type max_heap_size: str
     """
     global ENV
 

@@ -37,10 +37,8 @@ def main():
 
     # perform attribute selection
     helper.print_title("Attribute selection")
-    search = ASSearch("weka.attributeSelection.BestFirst")
-    search.set_options(["-D", "1", "-N", "5"])
-    evaluation = ASEvaluation("weka.attributeSelection.CfsSubsetEval")
-    evaluation.set_options(["-P", "1", "-E", "1"])
+    search = ASSearch(classname="weka.attributeSelection.BestFirst", options=["-D", "1", "-N", "5"])
+    evaluation = ASEvaluation(classname="weka.attributeSelection.CfsSubsetEval", options=["-P", "1", "-E", "1"])
     attsel = AttributeSelection()
     attsel.set_search(search)
     attsel.set_evaluator(evaluation)
@@ -51,8 +49,7 @@ def main():
 
     # perform ranking
     helper.print_title("Attribute ranking (2-fold CV)")
-    search = ASSearch("weka.attributeSelection.Ranker")
-    search.set_options(["-N", "-1"])
+    search = ASSearch(classname="weka.attributeSelection.Ranker", options=["-N", "-1"])
     evaluation = ASEvaluation("weka.attributeSelection.InfoGainAttributeEval")
     attsel = AttributeSelection()
     attsel.set_ranking(True)

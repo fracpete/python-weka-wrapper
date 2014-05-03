@@ -35,11 +35,15 @@ class Clusterer(OptionHandler):
     Wrapper class for clusterers.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
         :param classname: the classname of the clusterer
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to use
+        :type options: list
         """
         if jobject is None:
             jobject = Clusterer.new_instance(classname)
@@ -49,11 +53,12 @@ class Clusterer(OptionHandler):
         self.is_updateable = self.check_type(jobject, "weka.clusterers.UpdateableClusterer")
         self.is_drawable   = self.check_type(jobject, "weka.core.Drawable")
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
-        super(Clusterer, self).__init__(jobject)
+        super(Clusterer, self).__init__(jobject=jobject, options=options)
 
     def get_capabilities(self):
         """
         Returns the capabilities of the clusterer.
+        :return: the capabilities
         :rtype: Capabilities
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
@@ -62,6 +67,7 @@ class Clusterer(OptionHandler):
         """
         Builds the clusterer with the data.
         :param data: the data to use for training the clusterer
+        :type data: Instances
         """
         javabridge.call(self.jobject, "buildClusterer", "(Lweka/core/Instances;)V", data.jobject)
 
@@ -69,6 +75,7 @@ class Clusterer(OptionHandler):
         """
         Updates the clusterer with the instance.
         :param inst: the Instance to update the clusterer with
+        :type inst: Instance
         """
         if self.is_updateable:
             javabridge.call(self.jobject, "updateClusterer", "(Lweka/core/Instance;)V", inst.jobject)
@@ -88,6 +95,9 @@ class Clusterer(OptionHandler):
         """
         Peforms a prediction.
         :param inst: the instance to determine the cluster for
+        :type inst: Instance
+        :return: the clustering result
+        :rtype: float
         """
         return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)D", inst.jobject)
 
@@ -95,6 +105,8 @@ class Clusterer(OptionHandler):
         """
         Peforms a prediction, returning the cluster distribution.
         :param inst: the Instance to get the cluster distribution for
+        :type inst: Instance
+        :return: the cluster distribution
         :rtype: float[]
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
@@ -103,6 +115,7 @@ class Clusterer(OptionHandler):
     def number_of_clusters(self, inst):
         """
         Returns the number of clusters found.
+        :return: the number fo clusters
         :rtype: int
         """
         return javabridge.call(self.jobject, "numberOfClusters", "()I")
@@ -110,6 +123,7 @@ class Clusterer(OptionHandler):
     def graph_type(self):
         """
         Returns the graph type if classifier implements weka.core.Drawable, otherwise -1.
+        :return: the type
         :rtype: int
         """
         if self.is_drawable:
@@ -120,6 +134,7 @@ class Clusterer(OptionHandler):
     def graph(self):
         """
         Returns the graph if classifier implements weka.core.Drawable, otherwise None.
+        :return: the graph or None if not available
         :rtype: str
         """
         if self.is_drawable:
@@ -133,11 +148,15 @@ class SingleClustererEnhancer(Clusterer):
     Wrapper class for clusterers that use a single base clusterer.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
         :param classname: the classname of the clusterer
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to use
+        :type options: list
         """
         if jobject is None:
             jobject = Clusterer.new_instance(classname)
@@ -145,18 +164,20 @@ class SingleClustererEnhancer(Clusterer):
             classname = utils.get_classname(jobject)
         jobject = SingleClustererEnhancer.new_instance(classname)
         self.enforce_type(jobject, "weka.clusterers.SingleClustererEnhancer")
-        super(SingleClustererEnhancer, self).__init__(classname, jobject)
+        super(SingleClustererEnhancer, self).__init__(classname=classname, jobject=jobject, options=options)
 
     def set_clusterer(self, clusterer):
         """
         Sets the base clusterer.
         :param clusterer: the base clusterer to use
+        :type clusterer: Clusterer
         """
         javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
 
     def get_clusterer(self):
         """
         Returns the base clusterer.
+        :return: the clusterer
         :rtype: Clusterer
         """
         return Clusterer(javabridge.call(self.jobject, "getClusterer", "()Lweka/clusterers/Clusterer;"))
@@ -167,10 +188,13 @@ class FilteredClusterer(SingleClustererEnhancer):
     Wrapper class for the filtered clusterer.
     """
 
-    def __init__(self, jobject=None):
+    def __init__(self, jobject=None, options=[]):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to use
+        :type options: list
         """
         if jobject is None:
             classname = "weka.clusterers.FilteredClusterer"
@@ -179,18 +203,20 @@ class FilteredClusterer(SingleClustererEnhancer):
             classname = utils.get_classname(jobject)
         jobject = FilteredClusterer.new_instance(classname)
         self.enforce_type(jobject, "weka.clusterers.FilteredClusterer")
-        super(FilteredClusterer, self).__init__(classname, jobject)
+        super(FilteredClusterer, self).__init__(classname=classname, jobject=jobject, options=options)
 
     def set_filter(self, filtr):
         """
         Sets the filter.
         :param filtr: the filter to use
+        :type filtr: Filter
         """
         javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
 
     def get_filter(self):
         """
         Returns the filter.
+        :return: the filter
         :rtype: Filter
         """
         return Filter(javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
@@ -211,6 +237,7 @@ class ClusterEvaluation(JavaObject):
         """
         Sets the built clusterer to evaluate.
         :param clusterer: the clusterer to evaluate
+        :type clusterer: Clusterer
         """
         javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
 
@@ -218,20 +245,23 @@ class ClusterEvaluation(JavaObject):
         """
         Evaluates the currently set clusterer on the test set.
         :param test: the test set to use for evaluating
+        :type test: Instances
         """
         javabridge.call(self.jobject, "evaluateClusterer", "(Lweka/core/Instances;)V", test.jobject)
 
     def get_cluster_results(self):
         """
         The cluster results as string.
-        :rtype : str
+        :return: the results string
+        :rtype: str
         """
         return javabridge.call(self.jobject, "clusterResultsToString", "()Ljava/lang/String;")
 
     def get_cluster_assignments(self):
         """
         Return an array of cluster assignments corresponding to the most recent set of instances clustered.
-        :rtype : ndarray
+        :return: the cluster assignments
+        :rtype: ndarray
         """
         array = javabridge.call(self.jobject, "getClusterAssignments", "()[D")
         if array is None:
@@ -242,21 +272,24 @@ class ClusterEvaluation(JavaObject):
     def get_num_clusters(self):
         """
         Returns the number of clusters.
-        :rtype : int
+        :return: the number of clusters
+        :rtype: int
         """
         return javabridge.call(self.jobject, "getNumClusters", "()I")
 
     def get_log_likelihood(self):
         """
         Returns the log likelihood.
-        :rtype : float
+        :return: the log likelihood
+        :rtype: float
         """
         return javabridge.call(self.jobject, "getLogLikelihood", "()D")
 
     def get_classes_to_clusters(self):
         """
         Return the array (ordered by cluster number) of minimum error class to cluster mappings..
-        :rtype : ndarray
+        :return: the mappings
+        :rtype: ndarray
         """
         array = javabridge.call(self.jobject, "getClassesToClusters", "()[I")
         if array is None:
@@ -268,9 +301,12 @@ class ClusterEvaluation(JavaObject):
     def evaluate_clusterer(cls, clusterer, args):
         """
         Evaluates the clusterer with the given options.
-        :rtype : str
         :param clusterer: the clusterer instance to evaluate
+        :type clusterer: Clusterer
         :param args: the command-line arguments
+        :type args: list
+        :return: the evaluation result
+        :rtype: str
         """
         return javabridge.static_call(
             "Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer",

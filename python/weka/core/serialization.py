@@ -27,6 +27,8 @@ def read(filename):
     """
     Reads the serialized object from disk. Caller must wrap object in appropriate Python wrapper class.
     :param filename: the file with the serialized object
+    :type filename: str
+    :return: JB_Object
     :rtype: object
     """
     return javabridge.static_call(
@@ -39,6 +41,8 @@ def read_all(filename):
     """
     Reads the serialized objects from disk. Caller must wrap objects in appropriate Python wrapper classes.
     :param filename: the file with the serialized objects
+    :type filename: str
+    :return: the list of JB_OBjects
     :rtype: list
     """
     array = javabridge.static_call(
@@ -55,7 +59,9 @@ def write(filename, jobject):
     """
     Serializes the object to disk. JavaObject instances get automatically unwrapped
     :param filename: the file to serialize the object to
+    :type filename: str
     :param jobject: the object to serialize
+    :type jobject: JB_Object
     """
     if isinstance(jobject, JavaObject):
         jobject = jobject.jobject
@@ -69,7 +75,9 @@ def write_all(filename, jobjects):
     """
     Serializes the list of objects to disk. JavaObject instances get automatically unwrapped
     :param filename: the file to serialize the object to
+    :type filename: str
     :param jobjects: the list of objects to serialize
+    :type jobjects: list
     """
     array = jvm.ENV.make_object_array(len(jobjects), jvm.ENV.find_class("java/lang/Object"))
     for i in xrange(len(jobjects)):

@@ -31,18 +31,22 @@ class Experiment(OptionHandler):
     Wrapper class for an experiment.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified experiment using either the classname or the supplied JB_Object.
         :param classname: the classname of the experiment
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to use
+        :type options: list
         """
         if jobject is None:
             jobject = Experiment.new_instance(classname)
         if classname is None:
             classname = utils.get_classname(jobject)
         self.classname = classname
-        super(Experiment, self).__init__(jobject)
+        super(Experiment, self).__init__(jobject=jobject, options=options)
 
 
 class SimpleExperiment(OptionHandler):
@@ -55,11 +59,18 @@ class SimpleExperiment(OptionHandler):
     def __init__(self, jobject=None, classification=True, runs=10, datasets=[], classifiers=[], result=None):
         """
         Initializes the experiment.
+        :param jobject: the Java Object to use
+        :type jobject: JB_Object
         :param classification: whether to perform classification or regression
+        :type classification:bool
         :param runs: the number of runs to perform
+        :type runs: int
         :param datasets: the filenames of datasets to use in the experiment
+        :type datasets: list
         :param classifiers: the Classifier objects or commandline strings to use in the experiment
+        :type classifiers: list
         :param result: the filename of the file to store the results in
+        :type result: str
         """
 
         if not jobject is None:
@@ -75,6 +86,7 @@ class SimpleExperiment(OptionHandler):
     def configure_splitevaluator(self):
         """
         Configures and returns the SplitEvaluator and Classifier instance as tuple.
+        :return: evaluator and classifier
         :rtype: tuple
         """
         if self.classification:
@@ -87,6 +99,7 @@ class SimpleExperiment(OptionHandler):
     def configure_resultproducer(self):
         """
         Configures and returns the ResultProducer and PropertyPath as tuple.
+        :return: producer and property path
         :rtype: tuple
         """
         raise Exception("Not implemented!")
@@ -164,6 +177,7 @@ class SimpleExperiment(OptionHandler):
     def get_experiment(self):
         """
         Returns the internal experiment, if set up, otherwise None.
+        :return: the internal experiment
         :rtype: Experiment
         """
         if self.jobject is None:
@@ -176,6 +190,8 @@ class SimpleExperiment(OptionHandler):
         """
         Loads the experiment from disk.
         :param filename: the filename of the experiment to load
+        :type filename: str
+        :return: the experiment
         :rtype: Experiment
         """
         jobject = javabridge.static_call(
@@ -188,7 +204,9 @@ class SimpleExperiment(OptionHandler):
         """
         Saves the experiment to disk.
         :param filename: the filename to save the experiment to
+        :type filename: str
         :param experiment: the Experiment to save
+        :type experiment: Experiment
         """
         javabridge.static_call(
             "weka/experiment/Experiment", "write", "(Ljava/lang/String;Lweka/experiment/Experiment;)V",
@@ -203,11 +221,18 @@ class SimpleCrossValidationExperiment(SimpleExperiment):
     def __init__(self, classification=True, runs=10, folds=10, datasets=[], classifiers=[], result=None):
         """
         Initializes the experiment.
+        :param classification: whether to perform classification
+        :type classification: bool
         :param runs: the number of runs to perform
+        :type runs: int
         :param folds: the number folds to use for CV
+        :type folds: int
         :param datasets: the filenames of datasets to use in the experiment
+        :type datasets: list
         :param classifiers: the Classifier objects to use in the experiment
+        :type classifiers: list
         :param result: the filename of the file to store the results in
+        :type result: str
         """
 
         if runs < 1:
@@ -230,6 +255,7 @@ class SimpleCrossValidationExperiment(SimpleExperiment):
     def configure_resultproducer(self):
         """
         Configures and returns the ResultProducer and PropertyPath as tuple.
+        :return: producer and property path
         :rtype: tuple
         """
         rproducer = javabridge.make_instance("weka/experiment/CrossValidationResultProducer", "()V")
@@ -263,12 +289,20 @@ class SimpleRandomSplitExperiment(SimpleExperiment):
     def __init__(self, classification=True, runs=10, percentage=66.6, preserve_order=False, datasets=[], classifiers=[], result=None):
         """
         Initializes the experiment.
+        :param classification: whether to perform classification or regression
+        :type classification: bool
         :param runs: the number of runs to perform
+        :type runs: int
         :param percentage: the percentage to use for training
+        :type percentage: float
         :param preserve_order: whether to preserve the order in the datasets
+        :type preserve_order: bool
         :param datasets: the filenames of datasets to use in the experiment
+        :type datasets: list
         :param classifiers: the Classifier objects to use in the experiment
+        :type classifiers: list
         :param result: the filename of the file to store the results in
+        :type result: str
         """
 
         if runs < 1:
@@ -294,6 +328,7 @@ class SimpleRandomSplitExperiment(SimpleExperiment):
     def configure_resultproducer(self):
         """
         Configures and returns the ResultProducer and PropertyPath as tuple.
+        :return: producer and property path
         :rtype: tuple
         """
         rproducer = javabridge.make_instance("weka/experiment/RandomSplitResultProducer", "()V")
@@ -325,11 +360,15 @@ class ResultMatrix(OptionHandler):
     For generating results from an Experiment run.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified ResultMatrix using either the classname or the supplied JB_Object.
         :param classname: the classname of the ResultMatrix
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to use
+        :type options: list
         """
         if jobject is None:
             jobject = ResultMatrix.new_instance(classname)
@@ -337,11 +376,12 @@ class ResultMatrix(OptionHandler):
             classname = utils.get_classname(jobject)
         self.classname = classname
         self.enforce_type(jobject, "weka.experiment.ResultMatrix")
-        super(ResultMatrix, self).__init__(jobject)
+        super(ResultMatrix, self).__init__(jobject=jobject, options=options)
 
     def to_string_matrix(self):
         """
         Returns the matrix as a string.
+        :return: the generated output
         :rtype: str
         """
         return javabridge.call(self.jobject, "toStringMatrix", "()V")
@@ -349,6 +389,7 @@ class ResultMatrix(OptionHandler):
     def to_string_key(self):
         """
         Returns a key for all the col names, for better readability if the names got cut off.
+        :return: the key
         :rtype: str
         """
         return javabridge.call(self.jobject, "toStringKey", "()V")
@@ -356,6 +397,7 @@ class ResultMatrix(OptionHandler):
     def to_string_header(self):
         """
         Returns the header of the matrix as a string.
+        :return: the header
         :rtype: str
         """
         return javabridge.call(self.jobject, "toStringHeader", "()V")
@@ -363,6 +405,7 @@ class ResultMatrix(OptionHandler):
     def to_string_summary(self):
         """
         returns the summary as string.
+        :return: the summary
         :rtype: str
         """
         return javabridge.call(self.jobject, "toStringSummary", "()V")
@@ -370,6 +413,7 @@ class ResultMatrix(OptionHandler):
     def to_string_ranking(self):
         """
         Returns the ranking in a string representation.
+        :return: the ranking
         :rtype: str
         """
         return javabridge.call(self.jobject, "toStringRanking", "()V")
@@ -380,11 +424,15 @@ class Tester(OptionHandler):
     For generating statistical results from an experiment.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified tester using either the classname or the supplied JB_Object.
         :param classname: the classname of the tester
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
         """
         if jobject is None:
             jobject = Tester.new_instance(classname)
@@ -397,18 +445,20 @@ class Tester(OptionHandler):
         self.run_column = "Key_Run"
         self.fold_column = "Key_Fold"
         self.result_columns = ["Key_Scheme", "Key_Scheme_options", "Key_Scheme_version_ID"]
-        super(Tester, self).__init__(jobject)
+        super(Tester, self).__init__(jobject=jobject, options=options)
 
     def set_resultmatrix(self, matrix):
         """
         Sets the ResultMatrix to use.
         :param matrix: the ResultMatrix instance to use
+        :type matrix: ResultMatrix
         """
         javabridge.call(self.jobject, "setResultMatrix", "(Lweka/experiment/ResultMatrix;)V", matrix.jobject)
 
     def get_resultmatrix(self):
         """
         Returns the ResultMatrix instance in use.
+        :return: the matrix in use
         :rtype: ResultMatrix
         """
         return ResultMatrix(javabridge.call(self.jobject, "getResultMatrix", "()Lweka/experiment/ResultMatrix;"))
@@ -416,14 +466,16 @@ class Tester(OptionHandler):
     def set_instances(self, data):
         """
         Sets the data to use for analysis.
-        :param inst: the Instances to analyze
+        :param data: the Instances to analyze
+        :type data: Instances
         """
         javabridge.call(self.jobject, "setInstances", "(Lweka/core/Instances;)V", data.jobject)
         self.columns_determined = False
 
     def get_instances(self):
         """
-        Retruns the data used in the analysis.
+        Returns the data used in the analysis.
+        :return: the data in use
         :rtype: Instances
         """
         inst = javabridge.call(self.jobject, "getInstances", "()Lweka/core/Instances;")
@@ -436,6 +488,7 @@ class Tester(OptionHandler):
         """
         Sets the list of column names that identify uniquely a dataset.
         :param col_names: the list of attribute names
+        :type col_names: list
         """
         self.dataset_columns = col_names[:]
 
@@ -443,6 +496,7 @@ class Tester(OptionHandler):
         """
         Sets the column name that holds the Run number.
         :param col_name: the attribute name
+        :type col_name: str
         """
         self.run_column = col_name
 
@@ -450,6 +504,7 @@ class Tester(OptionHandler):
         """
         Sets the column name that holds the Fold number.
         :param col_name: the attribute name
+        :type col_name: str
         """
         self.fold_column = col_name
 
@@ -457,6 +512,7 @@ class Tester(OptionHandler):
         """
         Sets the list of column names that identify uniquely a result (eg classifier + options + ID).
         :param col_names: the list of attribute names
+        :type col_names: list
         """
         self.result_columns = col_names[:]
 
@@ -524,6 +580,8 @@ class Tester(OptionHandler):
         """
         Creates a "header" string describing the current resultsets.
         :param comparison_column: the index of the column to compare against
+        :type comparison_column: int
+        :return: the header
         :rtype: str
         """
         self.init_columns()
@@ -533,8 +591,11 @@ class Tester(OptionHandler):
     def multi_resultset_full(self, base_resultset, comparison_column):
         """
         Creates a comparison table where a base resultset is compared to the other resultsets.
-        :param base_resultset: the index of the base resultset
-        :param comparison_column: the index of the column to compare against
+        :param base_resultset: the 0-based index of the base resultset (eg classifier to compare against)
+        :type base_resultset: int
+        :param comparison_column: the 0-based index of the column to compare against
+        :type comparison_column: int
+        :return: the comparison
         :rtype: str
         """
         return javabridge.call(
@@ -543,7 +604,9 @@ class Tester(OptionHandler):
     def multi_resultset_ranking(self, comparison_column):
         """
         Creates a ranking.
-        :param comparison_column: the index of the column to compare against
+        :param comparison_column: the 0-based index of the column to compare against
+        :type comparison_column: int
+        :return: the ranking
         :rtype: str
         """
         return javabridge.call(
@@ -553,7 +616,9 @@ class Tester(OptionHandler):
         """
         Carries out a comparison between all resultsets, counting the number of datsets where one resultset
         outperforms the other.
-        :param comparison_column: the index of the column to compare against
+        :param comparison_column: the 0-based index of the column to compare against
+        :type comparison_column: int
+        :return: the summary
         :rtype: str
         """
         return javabridge.call(

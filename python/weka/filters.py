@@ -37,11 +37,15 @@ class Filter(OptionHandler):
     Wrapper class for filters.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified filter using either the classname or the supplied JB_Object.
         :param classname: the classname of the filter
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
         """
         if jobject is None:
             jobject = Filter.new_instance(classname)
@@ -49,11 +53,12 @@ class Filter(OptionHandler):
             classname = utils.get_classname(jobject)
         self.classname = classname
         self.enforce_type(jobject, "weka.filters.Filter")
-        super(Filter, self).__init__(jobject)
+        super(Filter, self).__init__(jobject=jobject, options=options)
 
     def get_capabilities(self):
         """
         Returns the capabilities of the filter.
+        :return: the capabilities
         :rtype: Capabilities
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
@@ -62,6 +67,7 @@ class Filter(OptionHandler):
         """
         Sets the input format.
         :param data: the data to use as input
+        :type data: Instances
         """
         return javabridge.call(self.jobject, "setInputFormat", "(Lweka/core/Instances;)Z", data.jobject)
 
@@ -69,12 +75,14 @@ class Filter(OptionHandler):
         """
         Inputs the Instance.
         :param inst: the instance to filter
+        :type inst: Instance
         """
         return javabridge.call(self.jobject, "input", "(Lweka/core/Instance;)Z", inst.jobject)
 
     def get_outputformat(self):
         """
         Returns the output format.
+        :return: the output format
         :rtype: Instances
         """
         inst = javabridge.call(self.jobject, "getOutputFormat", "()Lweka/core/Instances;")
@@ -86,7 +94,8 @@ class Filter(OptionHandler):
     def output(self):
         """
         Outputs the filtered Instance.
-        :rtype : an Instance object
+        :return: the filtered instance
+        :rtype: an Instance object
         """
         return Instance(javabridge.call(self.jobject, "output", "()Lweka/core/Instance;"))
 
@@ -94,7 +103,9 @@ class Filter(OptionHandler):
         """
         Filters the dataset.
         :param data: the Instances to filter
-        :rtype : the filtered Instances object
+        :type data: Instances
+        :return: the filtered Instances object
+        :rtype: Instances
         """
         return Instances(javabridge.static_call(
             "Lweka/filters/Filter;", "useFilter",

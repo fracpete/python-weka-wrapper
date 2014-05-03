@@ -100,13 +100,13 @@ class PackageConstraint(JavaObject):
         self.enforce_type(jobject, "org.pentaho.packageManagement.PackageConstraint")
         super(PackageConstraint, self).__init__(jobject)
 
-    def set_package(self, pkg):
+    def set_package(self, pkge):
         """
         Sets the package.
-        :param pkg: the package
-        :type pkg: Package
+        :param pkge: the package
+        :type pkge: Package
         """
-        javabridge.call(self.jobject, "setPackage", "(Lorg/pentaho/packageManagement/Package;)V", pkg.jobject)
+        javabridge.call(self.jobject, "setPackage", "(Lorg/pentaho/packageManagement/Package;)V", pkge.jobject)
 
     def get_package(self):
         """
@@ -116,20 +116,20 @@ class PackageConstraint(JavaObject):
         """
         return Package(javabridge.call(self.jobject, "getPackage", "()Lorg/pentaho/packageManagement/Package;"))
 
-    def check_constraint(self, pkg=None, constr=None):
+    def check_constraint(self, pkge=None, constr=None):
         """
         Checks the constraing.
-        :param pkg: the package to check
-        :type pkg: Package
+        :param pkge: the package to check
+        :type pkge: Package
         :param constr: the package constraint to check
         :type constr: PackageConstraint
         """
-        if not pkg is None:
+        if not pkge is None:
             return javabridge.call(
-                self.jobject, "checkConstraint", "(Lorg/pentaho/packageManagement/Package;)Z", pkg.jobject)
+                self.jobject, "checkConstraint", "(Lorg/pentaho/packageManagement/Package;)Z", pkge.jobject)
         if not constr is None:
             return javabridge.call(
-                self.jobject, "checkConstraint", "(Lorg/pentaho/packageManagement/PackageConstraint;)Z", pkg.jobject)
+                self.jobject, "checkConstraint", "(Lorg/pentaho/packageManagement/PackageConstraint;)Z", pkge.jobject)
         raise Exception("Either package or package constraing must be provided!")
 
 
@@ -147,14 +147,14 @@ class Dependency(JavaObject):
         self.enforce_type(jobject, "org.pentaho.packageManagement.Dependency")
         super(Dependency, self).__init__(jobject)
 
-    def set_source(self, pkg):
+    def set_source(self, pkge):
         """
         Sets the source package.
-        :param pkg: the package
-        :type pkg: Package
+        :param pkge: the package
+        :type pkge: Package
         """
         javabridge.call(
-            self.jobject, "setSource", "(Lorg/pentaho/packageManagement/Package;)V", pkg.jobject)
+            self.jobject, "setSource", "(Lorg/pentaho/packageManagement/Package;)V", pkge.jobject)
 
     def get_source(self):
         """
@@ -184,18 +184,27 @@ class Dependency(JavaObject):
             javabridge.call(self.jobject, "getTarget", "()Lorg/pentaho/packageManagement/PackageConstraint;"))
 
 
+def establish_cache():
+    """
+    Establishes the package cache if necessary.
+    """
+    javabridge.static_call(
+        "weka/core/WekaPackageManager", "establishCacheIfNeeded", "([Ljava/io/PrintStream;)Ljava/lang/Exception;", [])
+
+
 def get_all_packages():
     """
     Returns a list of all packages.
     :return: the list of packages
     :rtype: list
     """
+    establish_cache()
     result = []
     pkgs   = javabridge.get_collection_wrapper(
         javabridge.static_call(
             "weka/core/WekaPackageManager", "getAllPackages", "()Ljava/util/List;"))
-    for p in pkgs:
-        result.append(Package(p))
+    for pkge in pkgs:
+        result.append(Package(pkge))
     return result
 
 
@@ -205,12 +214,13 @@ def get_available_packages():
     :return: the list of packages
     :rtype: list
     """
+    establish_cache()
     result = []
     pkgs   = javabridge.get_collection_wrapper(
         javabridge.static_call(
             "weka/core/WekaPackageManager", "getAvailablePackages", "()Ljava/util/List;"))
-    for p in pkgs:
-        result.append(Package(p))
+    for pkge in pkgs:
+        result.append(Package(pkge))
     return result
 
 
@@ -220,45 +230,61 @@ def get_installed_packages():
     :return: the list of packages
     :rtype: list
     """
+    establish_cache()
     result = []
     pkgs   = javabridge.get_collection_wrapper(
         javabridge.static_call(
             "weka/core/WekaPackageManager", "getInstalledPackages", "()Ljava/util/List;"))
-    for p in pkgs:
-        result.append(Package(p))
+    for pkge in pkgs:
+        result.append(Package(pkge))
     return result
 
 
-def install_packages(pkgs):
+def install_package(pkge, version="Latest"):
     """
     The list of packages to install.
-    :param pkgs: the list of packages
-    :param pkgs: list
+    :param pkge: the name of the repository package, a URL (http/https) or a zip file
+    :type pkge: str
+    :param version: in case of the repository packages, the version
+    :type version: str
     :return: whether successfully installed
     :rtype: bool
     """
-    lst = []
-    for p in pkgs:
-        lst.append(p.jobject)
-    jpkgs = javabridge.make_list(lst)
-    return javabridge.static_call(
-        "weka/core/WekaPackageManager", "installPackages", "(Ljava/util/List;[Ljava/io/PrintStream;)Z", jpkgs, [])
+    establish_cache()
+    if pkge.startswith("http://") or pkge.startswith("https://"):
+        url = javabridge.make_instance("java/net/URL", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(pkge))
+        return not javabridge.static_call(
+            "weka/core/WekaPackageManager", "installPackageFromURL",
+            "(Ljava/net/URL;[Ljava/io/PrintStream;)Ljava/lang/String;", url, []) is None
+    elif pkge.lower().endswith(".zip"):
+        return not javabridge.static_call(
+            "weka/core/WekaPackageManager", "installPackageFromArchive",
+            "(Ljava/lang/String;[Ljava/io/PrintStream;)Ljava/lang/String;", pkge, []) is None
+    else:
+        return javabridge.static_call(
+            "weka/core/WekaPackageManager", "installPackageFromRepository",
+            "(Ljava/lang/String;Ljava/lang/String;[Ljava/io/PrintStream;)Z", pkge, version, [])
 
 
 def uninstall_package(name):
     """
     Uninstalls a package.
     :param name: the name of the package
-    :param name: str
+    :type name: str
     :return: whether successfully uninstalled
     :rtype: bool
     """
-    return javabridge.static_call(
-        "weka/core/WekaPackageManager", "uninstallPackage", "(Ljava/lang/String;Z[Ljava/io/PrintStream;)V", p.jobject, False, [])
+    establish_cache()
+    javabridge.static_call(
+        "weka/core/WekaPackageManager", "uninstallPackage",
+        "(Ljava/lang/String;Z[Ljava/io/PrintStream;)V", name, True, [])
 
 if __name__ == "__main__":
+    jvm.start()
     try:
-        jvm.start()
+        print("Establish cache")
+        print("===============")
+        establish_cache()
 
         print("All packages")
         print("============")
@@ -285,12 +311,15 @@ if __name__ == "__main__":
             print("  url: " + pkg.get_url())
             print("")
 
+
+        print("Install/Uninstall")
+        print("=================")
         print("Install: " + p.get_name())
-        print(install_packages([p]))
+        print(install_package(p.get_url()))
 
         print("Uninstall: " + p.get_name())
-        print(uninstall_package(p.get_name()))
-
-        jvm.stop()
+        uninstall_package(p.get_name())
     except Exception, e:
         print(e)
+    finally:
+        jvm.stop()

@@ -25,8 +25,8 @@ def main():
     """
 
     helper.print_title("Generate data")
-    generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
-    generator.set_options(["-n", "10", "-r", "agrawal"])
+    generator = DataGenerator(
+        classname="weka.datagenerators.classifiers.classification.Agrawal", options=["-n", "10", "-r", "agrawal"])
     generator.set_dataset_format(generator.define_data_format())
     print(generator.get_dataset_format())
     if generator.get_single_mode_flag():

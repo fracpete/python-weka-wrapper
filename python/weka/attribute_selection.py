@@ -36,11 +36,15 @@ class ASSearch(OptionHandler):
     Wrapper class for attribute selection search algorithm.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified search algorithm using either the classname or the supplied JB_Object.
         :param classname: the classname of the search algorithms
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the commandline options to use
+        :type options: list
         """
         if jobject is None:
             jobject = ASSearch.new_instance(classname)
@@ -48,13 +52,16 @@ class ASSearch(OptionHandler):
             classname = utils.get_classname(jobject)
         self.classname = classname
         self.enforce_type(jobject, "weka.attributeSelection.ASSearch")
-        super(ASSearch, self).__init__(jobject)
+        super(ASSearch, self).__init__(jobject=jobject, options=options)
 
     def search(self, evaluation, data):
         """
         Performs the search and returns the indices of the selected attributes.
         :param evaluation: the evaluation algorithm to use
+        :type evaluation: ASEvaluation
         :param data: the data to use
+        :type data: Instances
+        :return: the selected attributes (0-based indices)
         :rtype: ndarray
         """
         array = javabridge.call(
@@ -71,11 +78,15 @@ class ASEvaluation(OptionHandler):
     Wrapper class for attribute selection evaluation algorithm.
     """
 
-    def __init__(self, classname=None, jobject=None):
+    def __init__(self, classname=None, jobject=None, options=[]):
         """
         Initializes the specified search algorithm using either the classname or the supplied JB_Object.
         :param classname: the classname of the search algorithms
+        :type classname: str
         :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
         """
         if jobject is None:
             jobject = ASEvaluation.new_instance(classname)
@@ -83,11 +94,12 @@ class ASEvaluation(OptionHandler):
             classname = utils.get_classname(jobject)
         self.classname = classname
         self.enforce_type(jobject, "weka.attributeSelection.ASEvaluation")
-        super(ASEvaluation, self).__init__(jobject)
+        super(ASEvaluation, self).__init__(jobject=jobject, options=options)
 
     def get_capabilities(self):
         """
         Returns the capabilities of the classifier.
+        :return: the capabilities
         :rtype: Capabilities
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
@@ -96,6 +108,7 @@ class ASEvaluation(OptionHandler):
         """
         Builds the evaluator with the data.
         :param data: the data to use
+        :type data: Instances
         """
         javabridge.call(self.jobject, "buildEvaluator", "(Lweka/core/Instances;)V", data.jobject)
 
@@ -103,6 +116,8 @@ class ASEvaluation(OptionHandler):
         """
         Post-processes the evaluator with the selected attribute indices.
         :param indices: the attribute indices list to use
+        :type indices: ndarray
+        :return: the processed indices
         :rtype: ndarray
         """
         array = javabridge.call(self.jobject, "postProcess", "([I)[I", indices)
@@ -128,6 +143,7 @@ class AttributeSelection(JavaObject):
         """
         Sets the evaluator to use.
         :param evaluator: the evaluator to use.
+        :type evaluator: ASEvaluation
         """
         javabridge.call(self.jobject, "setEvaluator", "(Lweka/attributeSelection/ASEvaluation;)V", evaluator.jobject)
 
@@ -135,6 +151,7 @@ class AttributeSelection(JavaObject):
         """
         Sets the search algorithm to use.
         :param search: the search algorithm
+        :type search: ASSearch
         """
         javabridge.call(self.jobject, "setSearch", "(Lweka/attributeSelection/ASSearch;)V", search.jobject)
 
@@ -142,6 +159,7 @@ class AttributeSelection(JavaObject):
         """
         Sets the number of folds to use for cross-validation.
         :param folds: the number of folds
+        :type folds: int
         """
         javabridge.call(self.jobject, "setFolds", "(I)V", folds)
 
@@ -149,6 +167,7 @@ class AttributeSelection(JavaObject):
         """
         Sets whether to perform a ranking, if possible.
         :param ranking: whether to perform a ranking
+        :type ranking: bool
         """
         javabridge.call(self.jobject, "setRanking", "(Z)V", ranking)
 
@@ -156,6 +175,7 @@ class AttributeSelection(JavaObject):
         """
         Sets the seed for cross-validation.
         :param seed: the seed value
+        :type seed: int
         """
         javabridge.call(self.jobject, "setSeed", "(I)V", seed)
 
@@ -163,6 +183,7 @@ class AttributeSelection(JavaObject):
         """
         Sets whether to perform cross-validation.
         :param crossvalidation: whether to perform cross-validation
+        :type crossvalidation: bool
         """
         javabridge.call(self.jobject, "setXval", "(Z)V", crossvalidation)
 
@@ -170,6 +191,7 @@ class AttributeSelection(JavaObject):
         """
         Performs attribute selection on the given dataset.
         :param instances: the data to process
+        :type instances; Instances
         """
         javabridge.call(self.jobject, "SelectAttributes", "(Lweka/core/Instances;)V", instances.jobject)
 
@@ -177,12 +199,14 @@ class AttributeSelection(JavaObject):
         """
         Performs attribute selection on the given cross-validation split.
         :param instances: the data to process
+        :type instances: Instances
         """
         javabridge.call(self.jobject, "selectAttributesCVSplit", "(Lweka/core/Instances;)V", instances.jobject)
 
     def get_selected_attributes(self):
         """
         Returns the selected attributes from the last run.
+        :return: the Numpy array of 0-based indices
         :rtype: ndarray
         """
         array = javabridge.call(self.jobject, "selectedAttributes", "()[I")
@@ -194,6 +218,7 @@ class AttributeSelection(JavaObject):
     def to_results_string(self):
         """
         Generates a results string from the last attribute selection.
+        :return: the results string
         :rtype: str
         """
         return javabridge.call(self.jobject, "toResultsString", "()Ljava/lang/String;")
@@ -201,6 +226,7 @@ class AttributeSelection(JavaObject):
     def get_cv_results_string(self):
         """
         Generates a results string from the last cross-validation attribute selection.
+        :return: the results string
         :rtype: str
         """
         return javabridge.call(self.jobject, "CVResultsString", "()Ljava/lang/String;")
@@ -208,6 +234,7 @@ class AttributeSelection(JavaObject):
     def get_number_attributes_selected(self):
         """
         Returns the number of attributes that were selected.
+        :return: the number of attributes
         :rtype: int
         """
         return javabridge.call(self.jobject, "numberAttributesSelected", "()I")
@@ -215,6 +242,7 @@ class AttributeSelection(JavaObject):
     def get_ranked_attributes(self):
         """
         Returns the matrix of ranked attributes from the last run.
+        :return: the Numpy matrix
         :rtype: ndarray
         """
         matrix = javabridge.call(self.jobject, "rankedAttributes", "()[[D")
@@ -226,7 +254,10 @@ class AttributeSelection(JavaObject):
     def reduce_dimensionality(self, data):
         """
         Reduces the dimensionality of the provided Instance or Instances object.
-        :rtype: same as input
+        :param data: the data to process
+        :type data: Instances
+        :return: the reduced dataset
+        :rtype: Instances
         """
         if type(data) is Instance:
             return Instance(
@@ -244,7 +275,10 @@ class AttributeSelection(JavaObject):
         """
         Performs attribute selection using the given attribute evaluator and options.
         :param evaluator: the evaluator to use
+        :type evaluator: ASEvaluation
         :param args: the command-line args for the attribute selection
+        :type args: list
+        :return: the results string
         :rtype; str
         """
         return javabridge.static_call(

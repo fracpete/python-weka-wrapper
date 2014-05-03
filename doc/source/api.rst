@@ -48,16 +48,14 @@ Artifical data can be generated using one of Weka's data generators, e.g., the
 .. code-block:: python
 
    >>> from weka.datagenerators import DataGenerator
-   >>> generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
-   >>> generator.set_options(["-B", "-P", "0.05"])
+   >>> generator = DataGenerator(classname="weka.datagenerators.classifiers.classification.Agrawal", options=["-B", "-P", "0.05"])
    >>> DataGenerator.make_data(generator, ["-o", "/some/where/outputfile.arff"])
 
 Or using the low-level API (outputting data to stdout):
 
 .. code-block:: python
 
-   >>> generator = DataGenerator("weka.datagenerators.classifiers.classification.Agrawal")
-   >>> generator.set_options(["-n", "10", "-r", "agrawal"])
+   >>> generator = DataGenerator(classname="weka.datagenerators.classifiers.classification.Agrawal", options=["-n", "10", "-r", "agrawal"])
    >>> generator.set_dataset_format(generator.define_data_format())
    >>> print(generator.get_dataset_format())
    >>> if generator.get_single_mode_flag():
@@ -77,10 +75,10 @@ The following example loads an ARFF file and saves it as CSV:
 .. code-block:: python
 
    >>> from weka.core.converters import Loader, Saver
-   >>> loader = Loader("weka.core.converters.ArffLoader")
+   >>> loader = Loader(classname="weka.core.converters.ArffLoader")
    >>> data = loader.load_file("/some/where/iris.arff")
    >>> print(data)
-   >>> saver = Saver("weka.core.converters.CSVSaver")
+   >>> saver = Saver(classname="weka.core.converters.CSVSaver")
    >>> saver.save_file(data, "/some/where/iris.csv")
 
 
@@ -94,8 +92,7 @@ removing the last attribute using the `Remove` filter:
 
    >>> from weka.filters import Filter
    >>> data = ...                       # previously loaded data
-   >>> remove = Filter(classname="weka.filters.unsupervised.attribute.Remove")
-   >>> remove.set_options(["-R", "last"])
+   >>> remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "last"])
    >>> remove.set_inputformat(data)     # let the filter know about the type of data to filter
    >>> filtered = remove.filter(data)   # filter the data
    >>> print(filtered)                  # output the filtered data
@@ -112,8 +109,7 @@ on a dataset and output the summary and some specific statistics:
    >>> from weka.core.classes import Random
    >>> data = ...                                        # previously loaded data
    >>> data.set_class_index(data.num_attributes() - 1)   # set class attribute
-   >>> classifier = Classifier("weka.classifiers.trees.J48")
-   >>> classifier.set_options(["-C", "0.3"])
+   >>> classifier = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
    >>> evaluation = Evaluation(data)                     # initialize with priors
    >>> evaluation.crossvalidate_model(classifier, iris_data, 10, Random(42))  # 10-fold CV
    >>> print(evaluation.to_summary())
@@ -131,8 +127,7 @@ using a previously loaded dataset without a class attribute:
 
    >>> from weka.clusterers import Clusterer
    >>> data = ... # previously loaded dataset
-   >>> clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans")
-   >>> clusterer.set_options(["-N", "3"])
+   >>> clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans", options=["-N", "3"])
    >>> clusterer.build_clusterer(data)
    >>> print(clusterer)
 
@@ -147,10 +142,8 @@ You can perform attribute selection using `BestFirst` as search algorithm and
 
    >>> from weka.attribute_selection import ASSearch, ASEvaluation, AttributeSelection
    >>> data = ...   # previously loaded dataset
-   >>> search = ASSearch("weka.attributeSelection.BestFirst")
-   >>> search.set_options(["-D", "1", "-N", "5"])
-   >>> evaluator = ASEvaluation("weka.attributeSelection.CfsSubsetEval")
-   >>> evaluator.set_options(["-P", "1", "-E", "1"])
+   >>> search = ASSearch(classname="weka.attributeSelection.BestFirst", options=["-D", "1", "-N", "5"])
+   >>> evaluator = ASEvaluation(classname="weka.attributeSelection.CfsSubsetEval", options=["-P", "1", "-E", "1"])
    >>> attsel = AttributeSelection()
    >>> attsel.set_search(search)
    >>> attsel.set_evaluator(evaluator)
@@ -169,8 +162,7 @@ Associators, like `Apriori`, can be built and output like this:
 
    >>> from weka.associations import Associator
    >>> data = ...   # previously loaded dataset
-   >>> associator = Associator("weka.associations.Apriori")
-   >>> associator.set_options(["-N", "9", "-I"])
+   >>> associator = Associator(classname="weka.associations.Apriori", options=["-N", "9", "-I"])
    >>> associator.build_associations(data)
    >>> print(associator)
 
@@ -225,7 +217,7 @@ Here is an example for performing a cross-validated classification experiment:
    >>> import weka.core.converters as converters
    >>> # configure experiment
    >>> datasets = ["iris.arff", "anneal.arff"]
-   >>> classifiers = [Classifier("weka.classifiers.rules.ZeroR"), Classifier("weka.classifiers.trees.J48")]
+   >>> classifiers = [Classifier(classname="weka.classifiers.rules.ZeroR"), Classifier(classname="weka.classifiers.trees.J48")]
    >>> outfile = "results-cv.arff"   # store results for later analysis
    >>> exp = SimpleCrossValidationExperiment(
    >>>     classification=True,
@@ -239,8 +231,8 @@ Here is an example for performing a cross-validated classification experiment:
    >>> # evaluate previous run
    >>> loader = converters.loader_for_file(outfile)
    >>> data   = loader.load_file(outfile)
-   >>> matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
-   >>> tester = Tester("weka.experiment.PairedCorrectedTTester")
+   >>> matrix = ResultMatrix(classname="weka.experiment.ResultMatrixPlainText")
+   >>> tester = Tester(classname="weka.experiment.PairedCorrectedTTester")
    >>> tester.set_resultmatrix(matrix)
    >>> comparison_col = data.get_attribute_by_name("Percent_correct").get_index()
    >>> tester.set_instances(data)
@@ -256,7 +248,7 @@ And a setup for performing regression experiments on random splits on the datase
    >>> import weka.core.converters as converters
    >>> # configure experiment
    >>> datasets = ["bolts.arff", "bodyfat.arff"]
-   >>> classifiers = [Classifier("weka.classifiers.rules.ZeroR"), Classifier("weka.classifiers.functions.LinearRegression")]
+   >>> classifiers = [Classifier(classname="weka.classifiers.rules.ZeroR"), Classifier(classname="weka.classifiers.functions.LinearRegression")]
    >>> outfile = "results-rs.arff"   # store results for later analysis
    >>> exp = SimpleRandomSplitExperiment(
    >>>     classification=False,
@@ -271,11 +263,36 @@ And a setup for performing regression experiments on random splits on the datase
    >>> # evaluate previous run
    >>> loader = converters.loader_for_file(outfile)
    >>> data   = loader.load_file(outfile)
-   >>> matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
-   >>> tester = Tester("weka.experiment.PairedCorrectedTTester")
+   >>> matrix = ResultMatrix(classname="weka.experiment.ResultMatrixPlainText")
+   >>> tester = Tester(classname="weka.experiment.PairedCorrectedTTester")
    >>> tester.set_resultmatrix(matrix)
    >>> comparison_col = data.get_attribute_by_name("Correlation_coefficient").get_index()
    >>> tester.set_instances(data)
    >>> print(tester.header(comparison_col))
    >>> print(tester.multi_resultset_full(0, comparison_col))
 
+
+Packages
+--------
+
+Packages can be listed, installed and uninstalled using the `weka.core.packages` module:
+
+.. code-block:: python
+
+   # list all packages (name and URL)
+   import weka.core.packages as packages
+   items = packages.get_all_packages()
+   for item in items:
+       print item.get_name(), item.get_url()
+
+   # install CLOPE package
+   packages.install_package("CLOPE")
+   items = packages.get_installed_packages()
+   for item in items:
+       print item.get_name(), item.get_url()
+
+   # uninstall CLOPE package
+   packages.uninstall_package("CLOPE")
+   items = packages.get_installed_packages()
+   for item in items:
+       print item.get_name(), item.get_url()
