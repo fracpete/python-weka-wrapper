@@ -48,9 +48,9 @@ def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
             c.append(inst.get_value(inst.get_class_index()))
     fig, ax = plt.subplots()
     if c is None:
-        ax.scatter(x, y, s=size)
+        ax.scatter(x, y, s=size, alpha=0.5)
     else:
-        ax.scatter(x, y, c=c, s=size)
+        ax.scatter(x, y, c=c, s=size, alpha=0.5)
     ax.set_xlabel(data.get_attribute(index_x).get_name())
     ax.set_ylabel(data.get_attribute(index_y).get_name())
     ax.set_title("Attribute scatter plot")

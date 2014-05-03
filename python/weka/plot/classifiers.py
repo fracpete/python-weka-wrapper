@@ -58,9 +58,9 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, abs
                 cls.append(0)
     fig, ax = plt.subplots()
     if error is None and cls is None:
-        ax.scatter(actual, predicted, s=absolute_size)
+        ax.scatter(actual, predicted, s=absolute_size, alpha=0.5)
     elif not cls is None:
-        ax.scatter(actual, predicted, c=cls, s=absolute_size)
+        ax.scatter(actual, predicted, c=cls, s=absolute_size, alpha=0.5)
     elif not error is None:
         if not absolute:
             min_err = min(error)
@@ -68,7 +68,7 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, abs
             factor  = (max_err  - min_err) / max_relative_size
             for i in xrange(len(error)):
                 error[i] = error[i] / factor * max_relative_size
-        ax.scatter(actual, predicted, s=error)
+        ax.scatter(actual, predicted, s=error, alpha=0.5)
     ax.set_xlabel("actual")
     ax.set_ylabel("predicted")
     ax.set_title("Classifier errors")
