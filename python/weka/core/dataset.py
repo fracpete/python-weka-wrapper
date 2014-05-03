@@ -18,6 +18,7 @@ import javabridge
 import logging
 import weka.core.jvm as jvm
 from weka.core.classes import JavaObject
+import weka.core.types as types
 
 # logging setup
 logger = logging.getLogger(__name__)
@@ -32,6 +33,7 @@ class Instances(JavaObject):
         """
         Initializes the weka.core.Instances wrapper.
         :param jobject: the weka.core.Instances object to wrap
+        :type jobject: JB_Object
         """
         self.enforce_type(jobject, "weka.core.Instances")
         super(Instances, self).__init__(jobject)
@@ -39,6 +41,7 @@ class Instances(JavaObject):
     def get_relationname(self):
         """
         Returns the name of the dataset.
+        :return: the name
         :rtype: str
         """
         return javabridge.call(self.jobject, "relationName", "()Ljava/lang/String;")
@@ -46,6 +49,7 @@ class Instances(JavaObject):
     def num_attributes(self):
         """
         Returns the number of attributes.
+        :return: the number of attributes
         :rtype: int
         """
         return javabridge.call(self.jobject, "numAttributes", "()I")
@@ -54,14 +58,18 @@ class Instances(JavaObject):
         """
         Returns the specified attribute.
         :param index: the 0-based index of the attribute
+        :type index: int
+        :return: the attribute
         :rtype: Attribute
         """
-        return Attribute(javabridge.call(self.jobject, "attribute", "(I)Lweka/core/Attribute;"))
+        return Attribute(javabridge.call(self.jobject, "attribute", "(I)Lweka/core/Attribute;", index))
 
     def get_attribute_by_name(self, name):
         """
         Returns the specified attribute, None if not found.
         :param name: the name of the attribute
+        :type name: str
+        :return: the attribute or None
         :rtype: Attribute
         """
         att = javabridge.call(self.jobject, "attribute", "(Ljava/lang/String;)Lweka/core/Attribute;", name)
@@ -74,6 +82,8 @@ class Instances(JavaObject):
         """
         Returns the specified attribute statistics.
         :param index: the 0-based index of the attribute
+        :type index: int
+        :return: the attribute statistics
         :rtype: AttributeStats
         """
         return AttributeStats(javabridge.call(self.jobject, "attributeStats", "(I)Lweka/core/AttributeStats;", index))
@@ -81,6 +91,7 @@ class Instances(JavaObject):
     def num_instances(self):
         """
         Returns the number of instances.
+        :return: the number of instances
         :rtype: int
         """
         return javabridge.call(self.jobject, "numInstances", "()I")
@@ -88,6 +99,7 @@ class Instances(JavaObject):
     def get_class_attribute(self):
         """
         Returns the currently set class attribute.
+        :return: the class attribute
         :rtype: Attribute
         """
         return Attribute(javabridge.call(self.jobject, "classAttribute", "()Lweka/core/Attribute;"))
@@ -95,18 +107,25 @@ class Instances(JavaObject):
     def get_class_index(self):
         """
         Returns the currently set class index (0-based).
+        :return: the class index, -1 if not set
         :rtype: int
         """
         return javabridge.call(self.jobject, "classIndex", "()I")
         
     def set_class_index(self, index):
-        """ Sets the class index (0-based). """
+        """
+        Sets the class index (0-based).
+        :param index: the new index, use -1 to unset
+        :type index: int
+        """
         return javabridge.call(self.jobject, "setClassIndex", "(I)V", index)
         
     def get_instance(self, index):
         """
         Returns the Instance object at the specified location.
         :param index: the 0-based index of the instance
+        :type index: int
+        :return: the instance
         :rtype: Instance
         """
         return Instance(javabridge.call(self.jobject, "instance", "(I)Lweka/core/Instance;", index))
@@ -114,8 +133,10 @@ class Instances(JavaObject):
     def add_instance(self, inst, index=None):
         """
         Adds the specified instance to the dataset.
-        :param inst: Instance
+        :param inst: the Instance to add
+        :type inst: Instance
         :param index: the 0-based index where to add the Instance
+        :type index: int
         """
         if index is None:
             javabridge.call(self.jobject, "add", "(Lweka/core/Instance;)Z", inst.jobject)
@@ -126,7 +147,10 @@ class Instances(JavaObject):
         """
         Sets the Instance at the specified location in the dataset.
         :param index: the 0-based index of the instance to replace
+        :type index; int
         :param inst: the Instance to set
+        :type inst: Instance
+        :return: the instance
         :rtype: Instance
         """
         return Instance(javabridge.call(self.jobject, "set", "(ILweka/core/Instance;)Lweka/core/Instance;", index, inst.jobject))
@@ -135,6 +159,7 @@ class Instances(JavaObject):
         """
         Removes either the specified Instance or all Instance objects.
         :param index: the 0-based index of the instance to remove
+        :type index: int
         """
         if index is None:
             javabridge.call(self.jobject, "delete", "()V")
@@ -145,6 +170,7 @@ class Instances(JavaObject):
         """
         Deletes an attribute at the given position.
         :param index: the 0-based index of the attribute to remove
+        :type index: int
         """
         javabridge.call(self.jobject, "deleteAttributeAt", "(I)V", index)
 
@@ -152,6 +178,7 @@ class Instances(JavaObject):
         """
         Deletes all attributes of the given type in the dataset.
         :param type: the attribute type to remove, see weka.core.Attribute Javadoc
+        :type type: int
         """
         javabridge.call(self.jobject, "deleteAttributeType", "(I)V", type)
 
@@ -206,7 +233,10 @@ class Instances(JavaObject):
         """
         Uses the Instances as template to create an empty dataset.
         :param dataset: the original dataset
+        :type dataset: Instances
         :param capacity: how many data rows to reserve initially (see compactify)
+        :type capacity: int
+        :return: the empty dataset
         :rtype: Instances
         """
         return Instances(
@@ -218,8 +248,12 @@ class Instances(JavaObject):
         """
         Creates a new Instances.
         :param name: the relation name
+        :type name: str
         :param atts: the list of attributes to use for the dataset
+        :type atts: list of Attribute
         :param capacity: how many data rows to reserve initially (see compactify)
+        :type capacity: int
+        :return: the dataset
         :rtype: Instances
         """
         attributes = []
@@ -240,6 +274,7 @@ class Instance(JavaObject):
         """
         Initializes the weka.core.Instance wrapper.
         :param jobject: the weka.core.Instance object to initialize with
+        :type jobject: JB_Object
         """
         self.enforce_type(jobject, "weka.core.Instance")
         super(Instance, self).__init__(jobject)
@@ -248,19 +283,26 @@ class Instance(JavaObject):
         """
         Sets the dataset that this instance belongs to (for attribute information).
         :param dataset: the dataset this instance belongs to.
+        :type dataset: Instances
         """
         javabridge.call(self.jobject, "setDataset", "(Lweka/core/Instances;)V", dataset.jobject)
 
     def get_dataset(self):
         """
         Returns the dataset that this instance belongs to.
+        :return: the dataset or None if no dataset set
         :rtype: Instances
         """
-        return Instances(javabridge.call(self.jobject, "dataset", "()Lweka/core/Instances"))
+        dataset = javabridge.call(self.jobject, "dataset", "()Lweka/core/Instances")
+        if dataset is None:
+            return None
+        else:
+            return Instances(dataset)
 
     def num_attributes(self):
         """
         Returns the number of attributes.
+        :return: the numer of attributes
         :rtype: int
         """
         return javabridge.call(self.jobject, "numAttributes", "()I")
@@ -268,6 +310,7 @@ class Instance(JavaObject):
     def get_class_index(self):
         """
         Returns the currently set class index.
+        :return: the class index, -1 if not set
         :rtype: int
         """
         return javabridge.call(self.jobject, "classIndex", "()I")
@@ -276,6 +319,8 @@ class Instance(JavaObject):
         """
         Returns the internal value at the specified position (0-based).
         :param index: the 0-based index of the inernal value
+        :type index: int
+        :return: the internal value
         :rtype: float
         """
         return javabridge.call(self.jobject, "value", "(I)D", index)
@@ -284,13 +329,16 @@ class Instance(JavaObject):
         """
         Sets the internal value at the specified position (0-based).
         :param index: the 0-based index of the attribute
+        :type index: int
         :param value: the internal float value to set
+        :type value: float
         """
         javabridge.call(self.jobject, "value", "(ID)V", index, value)
         
     def get_weight(self):
         """
         Returns the currently set weight.
+        :return: the weight
         :rtype: float
         """
         return javabridge.call(self.jobject, "weight", "()D")
@@ -298,13 +346,15 @@ class Instance(JavaObject):
     def set_weight(self, weight):
         """
         Sets the weight.
-        :param weight: the float weight to set
+        :param weight: the weight to set
+        :type weight: float
         """
         javabridge.call(self.jobject, "setWeight", "(D)V", weight)
 
     def get_values(self):
         """
         Returns the internal values of this instance.
+        :return: the values as numpy array
         :rtype: ndarray
         """
         return jvm.ENV.get_double_array_elements(javabridge.call(self.jobject, "toDoubleArray", "()[D"))
@@ -313,9 +363,12 @@ class Instance(JavaObject):
     def create_instance(cls, values, classname="weka.core.DenseInstance", weight=1.0):
         """
         Creates a new instance.
-        :param values: the double values (internal format) to use (numpy array)
+        :param values: the float values (internal format) to use (numpy array)
+        :type values: ndarray
         :param classname: the classname of the instance (eg weka.core.DenseInstance).
+        :type classname: str
         :param weight: the weight of the instance
+        :type weight: float
         """
         jni_classname = classname.replace(".", "/")
         return Instance(javabridge.make_instance(jni_classname, "(D[D)V", weight, jvm.ENV.make_double_array(values)))
@@ -334,6 +387,7 @@ class Attribute(JavaObject):
     def get_name(self):
         """
         Returns the name of the attribute.
+        :return: the name
         :rtype: str
         """
         return javabridge.call(self.jobject, "name", "()Ljava/lang/String;")
@@ -341,6 +395,7 @@ class Attribute(JavaObject):
     def get_index(self):
         """
         Returns the index of this attribute.
+        :return: the index
         :rtype: int
         """
         return javabridge.call(self.jobject, "index", "()I")
@@ -349,12 +404,14 @@ class Attribute(JavaObject):
         """
         Sets the weight of the attribute.
         :param weight: the weight of the attribute
+        :type weight: float
         """
         javabridge.call(self.jobject, "setWeight", "(D)V")
 
     def get_weight(self):
         """
         Returns the weight of the attribute.
+        :return: the weight
         :rtype: float
         """
         return javabridge.call(self.jobject, "weight", "()D")
@@ -363,6 +420,8 @@ class Attribute(JavaObject):
         """
         Returns the index of the label in this attribute.
         :param label: the string label to get the index for
+        :type label: str
+        :return: the 0-based index
         :rtype: int
         """
         return javabridge.call(self.jobject, "indexOf", "(Ljava/lang/String;)I")
@@ -371,20 +430,75 @@ class Attribute(JavaObject):
         """
         Returns the label for the index.
         :param index: the 0-based index of the label to  return
+        :type index: int
+        :return: the label
         :rtype: str
         """
-        return javabridge.call(self.jobject, "value", "(I)Ljava/lang/String;")
+        return javabridge.call(self.jobject, "value", "(I)Ljava/lang/String;", index)
+
+    def num_values(self):
+        """
+        Returns the number of labels.
+        :return: the number of labels
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "numValues", "()I")
+
+    def get_values(self):
+        """
+        Returns the labels, strings or relation-values.
+        :return: all the values, None if not NOMINAL, STRING, or RELATION
+        :rtype: list
+        """
+        enm = javabridge.call(self.jobject, "enumerateValues", "()Ljava/util/Enumeration;")
+        if enm is None:
+            return None
+        else:
+            return types.enumeration_to_list(enm)
+
+    def ordering(self):
+        """
+        Returns the ordering of the attribute.
+        :return: the ordering (ORDERING_SYMBOLIC, ORDERING_ORDERED, ORDERING_MODULO)
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "ordering", "()I")
 
     def get_type(self):
         """
-        Returns the type of the attribute.
+        Returns the type of the attribute. See weka.core.Attribute Javadoc.
+        :return: the type
         :rtype: int
         """
         return javabridge.call(self.jobject, "type", "()I")
 
+    def get_type_str(self, short=False):
+        """
+        Returns the type of the attribute as string.
+        :return: the type
+        :rtype: str
+        """
+        if short:
+            return javabridge.static_call(
+                "weka/core/Attribute", "typeToStringShort", "(Lweka/core/Attribute;)Ljava/lang/String;",
+                self.jobject)
+        else:
+            return javabridge.static_call(
+                "weka/core/Attribute", "typeToString", "(Lweka/core/Attribute;)Ljava/lang/String;",
+                self.jobject)
+
+    def is_averagable(self):
+        """
+        Returns whether the attribute is averagable.
+        :return: whether averagable
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "isAveragable", "()Z")
+
     def is_date(self):
         """
         Returns whether the attribute is a date one.
+        :return: whether date attribute
         :rtype: bool
         """
         return javabridge.call(self.jobject, "isDate", "()Z")
@@ -392,13 +506,15 @@ class Attribute(JavaObject):
     def is_nominal(self):
         """
         Returns whether the attribute is a nominal one.
+        :return: whether nominal attribute
         :rtype: bool
         """
         return javabridge.call(self.jobject, "isNominal", "()Z")
 
     def is_numeric(self):
         """
-        Returns whether the attribute is a numeric one.
+        Returns whether the attribute is a numeric one (date or numeric).
+        :return: whether numeric attribute
         :rtype: bool
         """
         return javabridge.call(self.jobject, "isNumeric", "()Z")
@@ -406,6 +522,7 @@ class Attribute(JavaObject):
     def is_relation_valued(self):
         """
         Returns whether the attribute is a relation valued one.
+        :return: whether relation valued attribute
         :rtype: bool
         """
         return javabridge.call(self.jobject, "isRelationValued", "()Z")
@@ -413,13 +530,15 @@ class Attribute(JavaObject):
     def is_string(self):
         """
         Returns whether the attribute is a string attribute.
+        :return: whether string attribute
         :rtype: bool
         """
         return javabridge.call(self.jobject, "isString", "()Z")
 
     def get_date_format(self):
         """
-        Returns the format of this data attribute.
+        Returns the format of this data attribute. See java.text.SimpleDateFormat Javadoc.
+        :return: the format string
         :rtype: str
         """
         return javabridge.call(self.jobject, "getDateFormat", "()Ljava/lang/String;")
@@ -427,6 +546,7 @@ class Attribute(JavaObject):
     def get_lower_numeric_bound(self):
         """
         Returns the lower numeric bound of the numeric attribute.
+        :return: the lower bound
         :rtype: float
         """
         return javabridge.call(self.jobject, "getLowerNumericBound", "()D")
@@ -434,6 +554,7 @@ class Attribute(JavaObject):
     def get_upper_numeric_bound(self):
         """
         Returns the upper numeric bound of the numeric attribute.
+        :return: the upper bound
         :rtype: float
         """
         return javabridge.call(self.jobject, "getUpperNumericBound", "()D")
@@ -442,6 +563,8 @@ class Attribute(JavaObject):
         """
         Checks whether the value is within the bounds of the numeric attribute.
         :param value: the numeric value to check
+        :type value: float
+        :return: whether between lower and upper bound
         :rtype: bool
         """
         return javabridge.call(self.jobject, "isInRange", "(D)Z", value)
@@ -450,6 +573,8 @@ class Attribute(JavaObject):
         """
         Adds the string value, returns the index.
         :param s: the string to add
+        :type s: str
+        :return: the index
         :rtype: int
         """
         return javabridge.call(self.jobject, "addStringValue", "(S)I", s)
@@ -458,6 +583,8 @@ class Attribute(JavaObject):
         """
         Adds the relation value, returns the index.
         :param instances: the Instances object to add
+        :type instances: Instances
+        :return: the index
         :rtype: int
         """
         return javabridge.call(self.jobject, "addRelation", "(Lweka/core/Instances;)I", instances.jobject)
@@ -466,6 +593,8 @@ class Attribute(JavaObject):
         """
         Parses the date string and returns the internal format value.
         :param s: the date string
+        :type s: str
+        :return: the internal format
         :rtype: float
         """
         return javabridge.call(self.jobject, "parseDate", "(Ljava/lang/String;)D", s)
@@ -474,6 +603,8 @@ class Attribute(JavaObject):
         """
         Checks whether this attributes is the same as the provided one.
         :param att: the Attribute to check against
+        :type att: Attribute
+        :return: whether the same
         :rtype: bool
         """
         return javabridge.call(self.jobject, "equals", "(Lweka/core/Attribute;)Z", att.jobject)
@@ -483,15 +614,33 @@ class Attribute(JavaObject):
         Checks whether this attributes is the same as the provided one.
         Returns None if the same, otherwise error message.
         :param att: the Attribute to check against
+        :type att: Attribute
+        :return: None if the same, otherwise error message
         :rtype: str
         """
         return javabridge.call(self.jobject, "equalsMsg", "(Lweka/core/Attribute;)Ljava/lang/String;", att.jobject)
+
+    def copy(self, name=None):
+        """
+        Creates a copy of this attribute.
+        :param name: the new name, uses the old one if None
+        :type name: str
+        :return: the copy of the attribute
+        :rtype: Attribute
+        """
+        if name is None:
+            return Attribute(
+                javabridge.call(self.jobject, "copy", "()Ljava/lang/Object;", self.jobject))
+        else:
+            return Attribute(
+                javabridge.call(self.jobject, "copy", "(Ljava/lang/String;)Lweka/core/Attribute;", self.jobject))
 
     @classmethod
     def create_numeric(cls, name):
         """
         Creates a numeric attribute.
         :param name: the name of the attribute
+        :type name: str
         """
         return Attribute(
             javabridge.make_instance(
@@ -502,7 +651,9 @@ class Attribute(JavaObject):
         """
         Creates a date attribute.
         :param name: the name of the attribute
+        :type name: str
         :param format: the date format, see Javadoc for java.text.SimpleDateFormat
+        :type format: str
         """
         return Attribute(
             javabridge.make_instance(
@@ -513,7 +664,9 @@ class Attribute(JavaObject):
         """
         Creates a date attribute.
         :param name: the name of the attribute
+        :type name: str
         :param labels: the list of string labels to use
+        :type labels: list
         """
         return Attribute(
             javabridge.make_instance(

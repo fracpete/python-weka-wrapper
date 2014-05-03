@@ -21,7 +21,7 @@ import sys
 import getopt
 import weka.core.jvm as jvm
 import weka.core.utils as utils
-import weka.core.arrays as arrays
+import weka.core.types as arrays
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities

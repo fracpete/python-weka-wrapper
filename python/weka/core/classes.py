@@ -14,7 +14,7 @@
 # classes.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
-import arrays
+import types
 import javabridge
 from javabridge.jutil import JavaException
 import weka.core.jvm as jvm
@@ -196,7 +196,7 @@ class OptionHandler(JavaObject):
         :type options: list
         """
         if self.is_optionhandler:
-            javabridge.call(self.jobject, "setOptions", "([Ljava/lang/String;)V", arrays.string_list_to_array(options))
+            javabridge.call(self.jobject, "setOptions", "([Ljava/lang/String;)V", types.string_list_to_array(options))
                                                        
     def get_options(self):
         """
@@ -205,7 +205,7 @@ class OptionHandler(JavaObject):
         :rtype: list
         """
         if self.is_optionhandler:
-            return arrays.string_array_to_list(javabridge.call(self.jobject, "getOptions", "()[Ljava/lang/String;"))
+            return types.string_array_to_list(javabridge.call(self.jobject, "getOptions", "()[Ljava/lang/String;"))
         else:
             return []
 

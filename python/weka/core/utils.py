@@ -16,7 +16,7 @@
 
 import javabridge
 import logging
-import weka.core.arrays as arrays
+import weka.core.types as arrays
 from weka.core.classes import OptionHandler
 
 # logging setup

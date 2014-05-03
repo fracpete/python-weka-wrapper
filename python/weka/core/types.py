@@ -11,9 +11,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# arrays.py
+# types.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
+import javabridge
 import logging
 import weka.core.jvm as jvm
 import numpy
@@ -71,4 +72,18 @@ def double_matrix_to_ndarray(m):
             result[i][n] = element
             n += 1
         i += 1
+    return result
+
+
+def enumeration_to_list(enm):
+    """
+    Turns the java,util.Enumeration into a list.
+    :param enm: the enumeration to convert
+    :type enm: JB_Object
+    :return: the list
+    :rtype: list
+    """
+    result = []
+    while javabridge.call(enm, "hasMoreElements", "()Z"):
+        result.append(javabridge.call(enm, "nextElement", "()Ljava/lang/Object;"))
     return result
