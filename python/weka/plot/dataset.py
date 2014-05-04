@@ -21,6 +21,7 @@ from weka.core.dataset import Instances
 def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
     """
     Plots two attributes against each other.
+    TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
     :param data: the dataset
     :type data: Instances
     :param index_x: the 0-based index of the attribute on the x axis

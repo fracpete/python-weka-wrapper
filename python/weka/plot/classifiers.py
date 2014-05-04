@@ -24,7 +24,7 @@ from weka.classifiers import NumericPrediction, NominalPrediction
 def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, absolute_size=50, outfile=None, wait=True):
     """
     Plots the classifers for the given list of predictions.
-    NB: The plot window blocks execution till closed.
+    TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
     :param predictions: the predictions to plot
     :type predictions: list
     :param absolute: whether to use absolute errors as size or relative ones
@@ -84,6 +84,7 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, abs
 def plot_roc(evaluation, class_index=0, outfile=None, wait=True):
     """
     Plots the ROC (receiver operator characteristics) curve for the given predictions.
+    TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
     :param evaluation: the evaluation to obtain the predictions from
     :type evaluation: Evaluation
     :param class_index: the 0-based index of the class-label to create the plot for
