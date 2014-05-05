@@ -24,6 +24,7 @@ from weka.filters import Filter
 from weka.core.classes import Random
 import weka.plot.classifiers as plot_cls
 import weka.plot.graph as plot_graph
+import weka.core.types as types
 
 
 def main():
@@ -40,7 +41,11 @@ def main():
 
     # build a classifier and output model
     helper.print_title("Training J48 classifier on iris")
-    classifier = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
+    classifier = Classifier(classname="weka.classifiers.trees.J48")
+    # Instead of using 'options=["-C", "0.3"]' in the constructor, we can also set the "confidenceFactor"
+    # property of the J48 classifier itself. However, being of type float rather than double, we need
+    # to convert it to the correct type first using the double_to_float function:
+    classifier.set_property("confidenceFactor", types.double_to_float(0.3))
     classifier.build_classifier(iris_data)
     print(classifier)
     print(classifier.graph())

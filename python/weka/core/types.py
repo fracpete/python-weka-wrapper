@@ -86,3 +86,14 @@ def enumeration_to_list(enm):
     while javabridge.call(enm, "hasMoreElements", "()Z"):
         result.append(javabridge.call(enm, "nextElement", "()Ljava/lang/Object;"))
     return result
+
+
+def double_to_float(d):
+    """
+    Turns the Python float into a Java java.lang.Float object.
+    :param d: the Python float
+    :type d: float
+    :return: the Float object
+    :rtype: JB_Object
+    """
+    return javabridge.make_instance("java/lang/Float", "(D)V", d)
