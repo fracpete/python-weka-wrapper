@@ -16,7 +16,6 @@
 
 import javabridge
 import logging
-import weka.core.jvm as jvm
 from weka.core.classes import JavaObject
 
 # logging setup
@@ -52,7 +51,7 @@ def read_all(filename):
     if array is None:
         return None
     else:
-        return jvm.ENV.get_object_array_elements(array)
+        return javabridge.get_env().get_object_array_elements(array)
 
 
 def write(filename, jobject):
@@ -79,12 +78,12 @@ def write_all(filename, jobjects):
     :param jobjects: the list of objects to serialize
     :type jobjects: list
     """
-    array = jvm.ENV.make_object_array(len(jobjects), jvm.ENV.find_class("java/lang/Object"))
+    array = javabridge.get_env().make_object_array(len(jobjects), javabridge.get_env().find_class("java/lang/Object"))
     for i in xrange(len(jobjects)):
         obj = jobjects[i]
         if isinstance(obj, JavaObject):
             obj = obj.jobject
-        jvm.ENV.set_object_array_element(array, i, obj)
+        javabridge.get_env().set_object_array_element(array, i, obj)
     javabridge.static_call(
         "Lweka/core/SerializationHelper;", "writeAll",
         "(Ljava/lang/String;[Ljava/lang/Object;)V",

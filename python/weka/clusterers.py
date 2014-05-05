@@ -110,7 +110,7 @@ class Clusterer(OptionHandler):
         :rtype: float[]
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
-        return jvm.ENV.get_float_array_elements(pred)
+        return javabridge.get_env().get_float_array_elements(pred)
 
     def number_of_clusters(self, inst):
         """
@@ -267,7 +267,7 @@ class ClusterEvaluation(JavaObject):
         if array is None:
             return None
         else:
-            return jvm.ENV.get_double_array_elements(array)
+            return javabridge.get_env().get_double_array_elements(array)
 
     def get_num_clusters(self):
         """
@@ -295,7 +295,7 @@ class ClusterEvaluation(JavaObject):
         if array is None:
             return None
         else:
-            return jvm.ENV.get_int_array_elements(array)
+            return javabridge.get_env().get_int_array_elements(array)
 
     @classmethod
     def evaluate_clusterer(cls, clusterer, args):

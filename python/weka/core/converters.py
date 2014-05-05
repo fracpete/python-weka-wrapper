@@ -15,7 +15,6 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
-import weka.core.jvm as jvm
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances, Instance
@@ -57,7 +56,7 @@ class Loader(OptionHandler):
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
-            dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(str(dfile)))
+            dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)
         if incremental:
@@ -140,7 +139,7 @@ class Saver(OptionHandler):
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
-            dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(str(dfile)))
+            dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)
         javabridge.call(self.jobject, "setInstances", "(Lweka/core/Instances;)V", data.jobject)
         javabridge.call(self.jobject, "writeBatch", "()V")

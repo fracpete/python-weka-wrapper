@@ -16,7 +16,6 @@
 
 import javabridge
 import logging
-import weka.core.jvm as jvm
 from weka.core.classes import JavaObject
 import weka.core.types as types
 
@@ -357,7 +356,7 @@ class Instance(JavaObject):
         :return: the values as numpy array
         :rtype: ndarray
         """
-        return jvm.ENV.get_double_array_elements(javabridge.call(self.jobject, "toDoubleArray", "()[D"))
+        return javabridge.get_env().get_double_array_elements(javabridge.call(self.jobject, "toDoubleArray", "()[D"))
 
     @classmethod
     def create_instance(cls, values, classname="weka.core.DenseInstance", weight=1.0):
@@ -371,7 +370,7 @@ class Instance(JavaObject):
         :type weight: float
         """
         jni_classname = classname.replace(".", "/")
-        return Instance(javabridge.make_instance(jni_classname, "(D[D)V", weight, jvm.ENV.make_double_array(values)))
+        return Instance(javabridge.make_instance(jni_classname, "(D[D)V", weight, javabridge.get_env().make_double_array(values)))
 
 
 class Attribute(JavaObject):
@@ -717,7 +716,7 @@ class AttributeStats(JavaObject):
         :return: Counts of each nominal value
         :rtype: ndarray
         """
-        return jvm.ENV.get_int_array_elements(javabridge.get_field(self.jobject, "nominalCounts", "[I"))
+        return javabridge.get_env().get_int_array_elements(javabridge.get_field(self.jobject, "nominalCounts", "[I"))
 
     def nominal_weights(self):
         """
@@ -725,7 +724,7 @@ class AttributeStats(JavaObject):
         :return: Weight mass for each nominal value
         :rtype: ndarray
         """
-        return jvm.ENV.get_double_array_elements(javabridge.get_field(self.jobject, "nominalWeights", "[D"))
+        return javabridge.get_env().get_double_array_elements(javabridge.get_field(self.jobject, "nominalWeights", "[D"))
 
     def numeric_stats(self):
         """

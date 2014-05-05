@@ -17,7 +17,6 @@
 import types
 import javabridge
 from javabridge.jutil import JavaException
-import weka.core.jvm as jvm
 
 
 class JavaObject(object):
@@ -320,7 +319,7 @@ class Range(JavaObject):
         :return: the list of 0-based integer indices
         :rtype: list
         """
-        return jvm.ENV.get_int_array_elements(javabridge.call(self.jobject, "getSelection", "()[I"))
+        return javabridge.get_env().get_int_array_elements(javabridge.call(self.jobject, "getSelection", "()[I"))
 
     def get_ranges(self):
         """

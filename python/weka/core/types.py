@@ -16,7 +16,6 @@
 
 import javabridge
 import logging
-import weka.core.jvm as jvm
 import numpy
 
 # logging setup
@@ -32,10 +31,10 @@ def string_array_to_list(a):
     :rtype: list
     """
     result  = []
-    len     = jvm.ENV.get_array_length(a)
-    wrapped = jvm.ENV.get_object_array_elements(a)
+    len     = javabridge.get_env().get_array_length(a)
+    wrapped = javabridge.get_env().get_object_array_elements(a)
     for i in xrange(len):
-        result.append(jvm.ENV.get_string(wrapped[i]))
+        result.append(javabridge.get_env().get_string(wrapped[i]))
     return result
 
 
@@ -47,9 +46,9 @@ def string_list_to_array(l):
     :rtype: java string array
     :return: JB_Object
     """
-    result = jvm.ENV.make_object_array(len(l), jvm.ENV.find_class("java/lang/String"))
+    result = javabridge.get_env().make_object_array(len(l), javabridge.get_env().find_class("java/lang/String"))
     for i in xrange(len(l)):
-        jvm.ENV.set_object_array_element(result, i, jvm.ENV.new_string_utf(l[i]))
+        javabridge.get_env().set_object_array_element(result, i, javabridge.get_env().new_string_utf(l[i]))
     return result
 
 
@@ -61,12 +60,12 @@ def double_matrix_to_ndarray(m):
     :return: Numpy array
     :rtype: numpy.darray
     """
-    rows   = jvm.ENV.get_object_array_elements(m)
-    num    = jvm.ENV.get_array_length(m)
+    rows   = javabridge.get_env().get_object_array_elements(m)
+    num    = javabridge.get_env().get_array_length(m)
     result = numpy.zeros(num * num).reshape((num, num))
     i      = 0
     for row in rows:
-        elements = jvm.ENV.get_double_array_elements(row)
+        elements = javabridge.get_env().get_double_array_elements(row)
         n        = 0
         for element in elements:
             result[i][n] = element

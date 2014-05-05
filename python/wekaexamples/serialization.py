@@ -16,6 +16,7 @@
 
 import os
 import tempfile
+import javabridge
 import weka.core.jvm as jvm
 import wekaexamples.helper as helper
 from weka.core.converters import Loader
@@ -53,9 +54,9 @@ def main():
     objects = serialization.read_all(outfile)
     for i, obj in enumerate(objects):
         helper.print_info("Object #" + str(i+1) + ":")
-        if jvm.ENV.is_instance_of(obj, jvm.ENV.find_class("weka/core/Instances")):
+        if javabridge.get_env().is_instance_of(obj, javabridge.get_env().find_class("weka/core/Instances")):
             obj = Instances(jobject=obj)
-        elif jvm.ENV.is_instance_of(obj, jvm.ENV.find_class("weka/classifiers/Classifier")):
+        elif javabridge.get_env().is_instance_of(obj, javabridge.get_env().find_class("weka/classifiers/Classifier")):
             obj = Classifier(jobject=obj)
         print(obj)
 

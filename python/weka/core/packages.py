@@ -252,7 +252,7 @@ def install_package(pkge, version="Latest"):
     """
     establish_cache()
     if pkge.startswith("http://") or pkge.startswith("https://"):
-        url = javabridge.make_instance("java/net/URL", "(Ljava/lang/String;)V", jvm.ENV.new_string_utf(pkge))
+        url = javabridge.make_instance("java/net/URL", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(pkge))
         return not javabridge.static_call(
             "weka/core/WekaPackageManager", "installPackageFromURL",
             "(Ljava/net/URL;[Ljava/io/PrintStream;)Ljava/lang/String;", url, []) is None

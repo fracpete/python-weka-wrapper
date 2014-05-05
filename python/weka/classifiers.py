@@ -104,7 +104,7 @@ class Classifier(OptionHandler):
         :rtype: float[]
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
-        return jvm.ENV.get_float_array_elements(pred)
+        return javabridge.get_env().get_float_array_elements(pred)
 
     def graph_type(self):
         """
@@ -443,7 +443,7 @@ class Evaluation(JavaObject):
         if array is None:
             return None
         else:
-            return jvm.ENV.get_double_array_elements(array)
+            return javabridge.get_env().get_double_array_elements(array)
 
     def test_model_once(self, classifier, inst):
         """
@@ -977,7 +977,7 @@ class Evaluation(JavaObject):
         :return: the priors
         :rtype: ndarray
         """
-        return jvm.ENV.get_float_array_elements(javabridge.call(self.jobject, "getClassPriors", "()[D"))
+        return javabridge.get_env().get_float_array_elements(javabridge.call(self.jobject, "getClassPriors", "()[D"))
 
     def header(self):
         """

@@ -70,7 +70,7 @@ class ASSearch(OptionHandler):
         if array is None:
             return None
         else:
-            jvm.ENV.get_int_array_elements(array)
+            javabridge.get_env().get_int_array_elements(array)
 
 
 class ASEvaluation(OptionHandler):
@@ -124,7 +124,7 @@ class ASEvaluation(OptionHandler):
         if array is None:
             return None
         else:
-            return jvm.ENV.get_int_array_elements(array)
+            return javabridge.get_env().get_int_array_elements(array)
 
 
 class AttributeSelection(JavaObject):
@@ -213,7 +213,7 @@ class AttributeSelection(JavaObject):
         if array is None:
             return None
         else:
-            return jvm.ENV.get_int_array_elements(array)
+            return javabridge.get_env().get_int_array_elements(array)
 
     def to_results_string(self):
         """

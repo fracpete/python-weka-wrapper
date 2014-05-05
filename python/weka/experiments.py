@@ -116,7 +116,7 @@ class SimpleExperiment(OptionHandler):
         # basic options
         javabridge.call(
             self.jobject, "setPropertyArray", "(Ljava/lang/Object;)V",
-            jvm.ENV.make_object_array(0, jvm.ENV.find_class("weka/classifiers/Classifier")))
+            javabridge.get_env().make_object_array(0, javabridge.get_env().find_class("weka/classifiers/Classifier")))
         javabridge.call(
             self.jobject, "setUsePropertyIterator", "(Z)V", True)
         javabridge.call(
@@ -132,12 +132,12 @@ class SimpleExperiment(OptionHandler):
             self.jobject, "setPropertyPath", "([Lweka/experiment/PropertyNode;)V", prop_path)
 
         # classifiers
-        classifiers = jvm.ENV.make_object_array(len(self.classifiers), jvm.ENV.find_class("weka/classifiers/Classifier"))
+        classifiers = javabridge.get_env().make_object_array(len(self.classifiers), javabridge.get_env().find_class("weka/classifiers/Classifier"))
         for i, classifier in enumerate(self.classifiers):
             if type(classifier) is Classifier:
-                jvm.ENV.set_object_array_element(classifiers, i, classifier.jobject)
+                javabridge.get_env().set_object_array_element(classifiers, i, classifier.jobject)
             else:
-                jvm.ENV.set_object_array_element(classifiers, i, utils.from_commandline(classifier).jobject)
+                javabridge.get_env().set_object_array_element(classifiers, i, utils.from_commandline(classifier).jobject)
         javabridge.call(
             self.jobject, "setPropertyArray", "(Ljava/lang/Object;)V",
             classifiers)
@@ -262,21 +262,21 @@ class SimpleCrossValidationExperiment(SimpleExperiment):
         javabridge.call(rproducer, "setNumFolds", "(I)V", self.folds)
         speval, classifier = self.configure_splitevaluator()
         javabridge.call(rproducer, "setSplitEvaluator", "(Lweka/experiment/SplitEvaluator;)V", speval)
-        prop_path = jvm.ENV.make_object_array(2, jvm.ENV.find_class("weka/experiment/PropertyNode"))
-        cls  = jvm.ENV.find_class("weka/experiment/CrossValidationResultProducer")
+        prop_path = javabridge.get_env().make_object_array(2, javabridge.get_env().find_class("weka/experiment/PropertyNode"))
+        cls  = javabridge.get_env().find_class("weka/experiment/CrossValidationResultProducer")
         desc = javabridge.make_instance(
             "java/beans/PropertyDescriptor", "(Ljava/lang/String;Ljava/lang/Class;)V", "splitEvaluator", cls)
         node = javabridge.make_instance(
             "weka/experiment/PropertyNode", "(Ljava/lang/Object;Ljava/beans/PropertyDescriptor;Ljava/lang/Class;)V",
             speval, desc, cls)
-        jvm.ENV.set_object_array_element(prop_path, 0, node)
-        cls  = jvm.ENV.get_object_class(speval)
+        javabridge.get_env().set_object_array_element(prop_path, 0, node)
+        cls  = javabridge.get_env().get_object_class(speval)
         desc = javabridge.make_instance(
             "java/beans/PropertyDescriptor", "(Ljava/lang/String;Ljava/lang/Class;)V", "classifier", cls)
         node = javabridge.make_instance(
             "weka/experiment/PropertyNode", "(Ljava/lang/Object;Ljava/beans/PropertyDescriptor;Ljava/lang/Class;)V",
-            jvm.ENV.get_object_class(speval), desc, cls)
-        jvm.ENV.set_object_array_element(prop_path, 1, node)
+            javabridge.get_env().get_object_class(speval), desc, cls)
+        javabridge.get_env().set_object_array_element(prop_path, 1, node)
 
         return rproducer, prop_path
 
@@ -336,21 +336,21 @@ class SimpleRandomSplitExperiment(SimpleExperiment):
         javabridge.call(rproducer, "setTrainPercent", "(D)V", self.percentage)
         speval, classifier = self.configure_splitevaluator()
         javabridge.call(rproducer, "setSplitEvaluator", "(Lweka/experiment/SplitEvaluator;)V", speval)
-        prop_path = jvm.ENV.make_object_array(2, jvm.ENV.find_class("weka/experiment/PropertyNode"))
-        cls  = jvm.ENV.find_class("weka/experiment/RandomSplitResultProducer")
+        prop_path = javabridge.get_env().make_object_array(2, javabridge.get_env().find_class("weka/experiment/PropertyNode"))
+        cls  = javabridge.get_env().find_class("weka/experiment/RandomSplitResultProducer")
         desc = javabridge.make_instance(
             "java/beans/PropertyDescriptor", "(Ljava/lang/String;Ljava/lang/Class;)V", "splitEvaluator", cls)
         node = javabridge.make_instance(
             "weka/experiment/PropertyNode", "(Ljava/lang/Object;Ljava/beans/PropertyDescriptor;Ljava/lang/Class;)V",
             speval, desc, cls)
-        jvm.ENV.set_object_array_element(prop_path, 0, node)
-        cls  = jvm.ENV.get_object_class(speval)
+        javabridge.get_env().set_object_array_element(prop_path, 0, node)
+        cls  = javabridge.get_env().get_object_class(speval)
         desc = javabridge.make_instance(
             "java/beans/PropertyDescriptor", "(Ljava/lang/String;Ljava/lang/Class;)V", "classifier", cls)
         node = javabridge.make_instance(
             "weka/experiment/PropertyNode", "(Ljava/lang/Object;Ljava/beans/PropertyDescriptor;Ljava/lang/Class;)V",
-            jvm.ENV.get_object_class(speval), desc, cls)
-        jvm.ENV.set_object_array_element(prop_path, 1, node)
+            javabridge.get_env().get_object_class(speval), desc, cls)
+        javabridge.get_env().set_object_array_element(prop_path, 1, node)
 
         return rproducer, prop_path
 

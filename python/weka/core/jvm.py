@@ -20,7 +20,7 @@ import glob
 import logging
 
 
-ENV = None
+started = None
 
 # logging setup
 logging.basicConfig(level=logging.DEBUG)
@@ -86,9 +86,9 @@ def start(class_path=[], bundled=True, packages=False, system_cp=False, max_heap
     :param max_heap_size: the maximum heap size (-Xmx parameter, eg 512m or 4g)
     :type max_heap_size: str
     """
-    global ENV
+    global started
 
-    if not ENV is None:
+    if not started is None:
         logger.info("JVM already running, call jvm.stop() first")
         return
 
@@ -114,12 +114,12 @@ def start(class_path=[], bundled=True, packages=False, system_cp=False, max_heap
 
     javabridge.start_vm(run_headless=True, max_heap_size=max_heap_size)
     javabridge.attach()
-    ENV = javabridge.get_env()
+    started = True
 
 
 def stop():
     """ Kills the JVM. """
-    global ENV
-    if not ENV is None:
-        ENV = None
+    global started
+    if not started is None:
+        started = None
         javabridge.kill_vm()
