@@ -386,7 +386,7 @@ class Evaluation(JavaObject):
         jobject = javabridge.call(jobject, "getEvaluation", "()Lweka/classifiers/Evaluation;")
         super(Evaluation, self).__init__(jobject)
 
-    def crossvalidate_model(self, classifier, data, num_folds, random):
+    def crossvalidate_model(self, classifier, data, num_folds, random, output=None):
         """
         Crossvalidates the model using the specified data, number of folds and random number generator wrapper.
         :param classifier: the classifier to cross-validate
@@ -397,13 +397,19 @@ class Evaluation(JavaObject):
         :type num_folds: int
         :param random: the random number generator to use
         :type random: Random
+        :param output: the output generator to use
+        :type output: PredictionOutput
         """
+        if output is None:
+            generator = []
+        else:
+            generator = [output.jobject]
         javabridge.call(
             self.jobject, "crossValidateModel",
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V",
-            classifier.jobject, data.jobject, num_folds, random.jobject, [])
+            classifier.jobject, data.jobject, num_folds, random.jobject, generator)
 
-    def evaluate_train_test_split(self, classifier, data, percentage, random):
+    def evaluate_train_test_split(self, classifier, data, percentage, random, output=None):
         """
         Splits the data into train and test, builds the classifier with the training data and
         evaluates it against the test set.
@@ -415,6 +421,8 @@ class Evaluation(JavaObject):
         :type percentage: double
         :param random: the random number generator to use, if None the order gets preserved
         :type random: Random
+        :param output: the output generator to use
+        :type output: PredictionOutput
         """
         if not random is None:
             data.randomize(random)
@@ -424,22 +432,28 @@ class Evaluation(JavaObject):
         test_inst  = Instances.copy_instances(data, train_size, test_size)
         cls = Classifier.make_copy(classifier)
         cls.build_classifier(train_inst)
-        self.test_model(cls, test_inst)
+        self.test_model(cls, test_inst, output=output)
 
-    def test_model(self, classifier, data):
+    def test_model(self, classifier, data, output=None):
         """
         Evaluates the built model using the specified test data and returns the classifications.
         :param classifier: the trained classifier to evaluate
         :type classifier: Classifier
         :param data: the data to evaluate on
         :type data: Instances
+        :param output: the output generator to use
+        :type output: PredictionOutput
         :return: the classifications
         :rtype: ndarray
         """
+        if output is None:
+            generator = []
+        else:
+            generator = [output.jobject]
         array = javabridge.call(
             self.jobject, "evaluateModel",
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;[Ljava/lang/Object;)[D",
-            classifier.jobject, data.jobject, [])
+            classifier.jobject, data.jobject, generator)
         if array is None:
             return None
         else:
@@ -1036,6 +1050,107 @@ class Evaluation(JavaObject):
             "Lweka/classifiers/Evaluation;", "evaluateModel",
             "(Lweka/classifiers/Classifier;[Ljava/lang/String;)Ljava/lang/String;",
             classifier.jobject, args)
+
+
+class PredictionOutput(OptionHandler):
+    """
+    For collecting predictions and generating output from.
+    Must be derived from weka.classifiers.evaluation.output.prediction.AbstractOutput
+    """
+
+    def __init__(self, classname=None, jobject=None, options=[]):
+        """
+        Initializes the specified output generator using either the classname or the supplied JB_Object.
+        :param classname: the classname of the generator
+        :type classname: str
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        if jobject is None:
+            jobject = PredictionOutput.new_instance(classname)
+        if classname is None:
+            classname = utils.get_classname(jobject)
+        self.classname = classname
+        self.enforce_type(jobject, "weka.classifiers.evaluation.output.prediction.AbstractOutput")
+        super(PredictionOutput, self).__init__(jobject=jobject, options=options)
+        buf = javabridge.make_instance("java/lang/StringBuffer", "()V")
+        javabridge.call(self.jobject, "setBuffer", "(Ljava/lang/StringBuffer;)V", buf)
+
+    def set_header(self, data):
+        """
+        Sets the header format.
+        :param data: The dataset format
+        :type data: Instances
+        """
+        javabridge.call(self.jobject, "setHeader", "(Lweka/core/Instances;)V", data)
+
+    def get_header(self):
+        """
+        Returns the header format.
+        :return: The dataset format
+        :rtype: Instances
+        """
+        return javabridge.call(self.jobject, "getHeader", "()Lweka/core/Instances;")
+
+    def print_header(self):
+        """
+        Prints the header to the buffer.
+        """
+        javabridge.call(self.jobject, "printHeader", "()V")
+
+    def print_footer(self):
+        """
+        Prints the footer to the buffer.
+        """
+        javabridge.call(self.jobject, "printFooter", "()V")
+
+    def print_all(self, cls, data):
+        """
+        Prints the header, classifications and footer to the buffer.
+        :param cls: the classifier
+        :type cls: Classifier
+        :param data: the test data
+        :type data: Instances
+        """
+        javabridge.call(
+            self.jobject, "print", "(Lweka/classifiers/Classifier;Lweka/core/Instances;)V",
+            cls.jobject, data.jobject)
+
+    def print_classifications(self, cls, data):
+        """
+        Prints the classifications to the buffer.
+        :param cls: the classifier
+        :type cls: Classifier
+        :param data: the test data
+        :type data: Instances
+        """
+        javabridge.call(
+            self.jobject, "printClassifications", "(Lweka/classifiers/Classifier;Lweka/core/Instances;)V",
+            cls.jobject, data.jobject)
+
+    def print_classification(self, cls, inst, index):
+        """
+        Prints the classification to the buffer.
+        :param cls: the classifier
+        :type cls: Classifier
+        :param inst: the test instance
+        :type inst: Instance
+        :param index: the 0-based index of the test instance
+        :type index: int
+        """
+        javabridge.call(
+            self.jobject, "printClassification", "(Lweka/classifiers/Classifier;Lweka/core/Instance;I)V",
+            cls.jobject, inst.jobject, index)
+
+    def get_buffer_content(self):
+        """
+        Returns the content of the buffer as string.
+        :return: The buffer content
+        :rtype: str
+        """
+        return javabridge.to_string(javabridge.call(self.jobject, "getBuffer", "()Ljava/lang/StringBuffer;"))
 
 
 def main(args):

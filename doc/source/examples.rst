@@ -113,19 +113,22 @@ Cross-validate filtered classifier and print evaluation and display ROC
    plcls.plot_roc(evl, class_index=0, wait=True)
 
 
-Cross-validate regressor and display classifier errors
-------------------------------------------------------
+Cross-validate regressor, display classifier errors and predictions
+-------------------------------------------------------------------
 
 .. code-block:: python
 
+   from weka.classifiers import PredictionOutput
    data = loader.load_file(data_dir + "bolts.arff")
    data.set_class_index(data.num_attributes() - 1)
 
    cls = Classifier(classname="weka.classifiers.functions.LinearRegression", options=["-S", "1", "-C"])
+   pout = PredictionOutput(classname="weka.classifiers.evaluation.output.prediction.PlainText")
    evl = Evaluation(data)
-   evl.crossvalidate_model(cls, data, 10, Random(1))
+   evl.crossvalidate_model(cls, data, 10, Random(1), pout)
 
    print(evl.to_summary())
+   print(pout.get_buffer_content())
 
    import weka.plot.classifiers as plcls
    plcls.plot_classifier_errors(evl.predictions(), wait=True)
