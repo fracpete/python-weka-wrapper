@@ -279,6 +279,21 @@ def uninstall_package(name):
         "weka/core/WekaPackageManager", "uninstallPackage",
         "(Ljava/lang/String;Z[Ljava/io/PrintStream;)V", name, True, [])
 
+
+def is_installed(name):
+    """
+    Checks whether a package with the name is already installed.
+    :param name: the name of the package
+    :type name: str
+    :return: whether the package is installed
+    :rtype: bool
+    """
+    pkgs = get_installed_packages()
+    for pkge in pkgs:
+        if pkge.get_name() == name:
+            return True
+    return False
+
 if __name__ == "__main__":
     jvm.start()
     try:
