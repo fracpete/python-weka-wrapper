@@ -313,17 +313,7 @@ class Instance(JavaObject):
         :rtype: int
         """
         return javabridge.call(self.jobject, "classIndex", "()I")
-    
-    def get_value(self, index):
-        """
-        Returns the internal value at the specified position (0-based).
-        :param index: the 0-based index of the inernal value
-        :type index: int
-        :return: the internal value
-        :rtype: float
-        """
-        return javabridge.call(self.jobject, "value", "(I)D", index)
-    
+
     def set_value(self, index, value):
         """
         Sets the internal value at the specified position (0-based).
@@ -333,7 +323,45 @@ class Instance(JavaObject):
         :type value: float
         """
         javabridge.call(self.jobject, "value", "(ID)V", index, value)
-        
+
+    def get_value(self, index):
+        """
+        Returns the internal value at the specified position (0-based).
+        :param index: the 0-based index of the inernal value
+        :type index: int
+        :return: the internal value
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "value", "(I)D", index)
+
+    def get_string_value(self, index):
+        """
+        Returns the string value at the specified position (0-based).
+        :param index: the 0-based index of the inernal value
+        :type index: int
+        :return: the string value
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "stringValue", "(I)Ljava/lang/String;", index)
+
+    def get_relational_value(self, index):
+        """
+        Returns the relational value at the specified position (0-based).
+        :param index: the 0-based index of the inernal value
+        :type index: int
+        :return: the relational value
+        :rtype: Instances
+        """
+        return Instances(javabridge.call(self.jobject, "relationalValue", "(I)Lweka/core/Instances;", index))
+
+    def set_missing(self, index):
+        """
+        Sets the attribute at the specified index to missing.
+        :param index: the 0-based index of the attribute
+        :type index: int
+        """
+        javabridge.call(self.jobject, "setMissing", "(I)V", index)
+
     def get_weight(self):
         """
         Returns the currently set weight.
