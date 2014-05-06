@@ -305,7 +305,23 @@ class Instance(JavaObject):
         :rtype: int
         """
         return javabridge.call(self.jobject, "numAttributes", "()I")
-        
+
+    def num_classes(self):
+        """
+        Returns the number of class labels.
+        :return: the numer of class labels
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "numClasses", "()I")
+
+    def get_class_attribute(self):
+        """
+        Returns the currently set class attribute.
+        :return: the class attribute
+        :rtype: Attribute
+        """
+        return Attribute(javabridge.call(self.jobject, "classAttribute", "()Lweka/core/Attribute;"))
+
     def get_class_index(self):
         """
         Returns the currently set class index.
@@ -334,6 +350,16 @@ class Instance(JavaObject):
         """
         return javabridge.call(self.jobject, "value", "(I)D", index)
 
+    def set_string_value(self, index, s):
+        """
+        Sets the string value at the specified position (0-based).
+        :param index: the 0-based index of the inernal value
+        :type index: int
+        :param s: the string value
+        :type s: str
+        """
+        return javabridge.call(self.jobject, "setValue", "(ILjava/lang/String;)V", index)
+
     def get_string_value(self, index):
         """
         Returns the string value at the specified position (0-based).
@@ -361,6 +387,24 @@ class Instance(JavaObject):
         :type index: int
         """
         javabridge.call(self.jobject, "setMissing", "(I)V", index)
+
+    def is_missing(self, index):
+        """
+        Returns whether the attribute at the specified index is missing.
+        :param index: the 0-based index of the attribute
+        :type index: int
+        :return: whether the value is missing
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "isMissing", "(I)Z", index)
+
+    def has_missing(self):
+        """
+        Returns whether at least one attribute has a missing value.
+        :return: whether at least one value is missing
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "hasMissingValue", "()Z")
 
     def get_weight(self):
         """
