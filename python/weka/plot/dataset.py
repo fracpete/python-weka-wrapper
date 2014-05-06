@@ -57,6 +57,59 @@ def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
     ax.set_title("Attribute scatter plot")
     ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     ax.grid(True)
+    fig.canvas.set_window_title(data.get_relationname())
+    plt.draw()
+    if not outfile is None:
+        plt.savefig(outfile)
+    if wait:
+        plt.show()
+
+
+def matrix_plot(data, size=10, outfile=None, wait=True):
+    """
+    Plots all attributes against each other.
+    TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
+    :param data: the dataset
+    :type data: Instances
+    :param size: the size of the circles in point
+    :type size: int
+    :param outfile: the (optional) file to save the generated plot to. The extension determines the file format.
+    :type outfile: str
+    :param wait: whether to wait for the user to close the plot
+    :type wait: bool
+    """
+    fig = plt.figure()
+
+    if data.get_class_index() == -1:
+        c = None
+    else:
+        c = []
+        for i in xrange(data.num_instances()):
+            inst = data.get_instance(i)
+            c.append(inst.get_value(inst.get_class_index()))
+
+    for index_x in xrange(data.num_attributes()):
+        x = []
+        for i in xrange(data.num_instances()):
+            inst = data.get_instance(i)
+            x.append(inst.get_value(index_x))
+        for index_y in xrange(data.num_attributes()):
+            y = []
+            for i in xrange(data.num_instances()):
+                inst = data.get_instance(i)
+                y.append(inst.get_value(index_y))
+            ax = fig.add_subplot(data.num_attributes(), data.num_attributes(), index_x * data.num_attributes() + index_y + 1)
+            if c is None:
+                ax.scatter(x, y, s=size, alpha=0.5)
+            else:
+                ax.scatter(x, y, c=c, s=size, alpha=0.5)
+            ax.set_xlabel(data.get_attribute(index_x).get_name())
+            ax.set_ylabel(data.get_attribute(index_y).get_name())
+            ax.get_yaxis().set_ticklabels([])
+            ax.get_xaxis().set_ticklabels([])
+            ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
+            ax.grid(True)
+    fig.canvas.set_window_title(data.get_relationname())
     plt.draw()
     if not outfile is None:
         plt.savefig(outfile)
