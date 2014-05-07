@@ -15,10 +15,29 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import matplotlib.pyplot as plt
+from weka.core.classes import Random
 from weka.core.dataset import Instances
 
 
-def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
+def create_subsample(data, percent, seed=1):
+    """
+    Generates a subsample of the dataset.
+    :param data: the data to create the subsample from
+    :type data: Instances
+    :param percent: the percentage (0-100)
+    :type percent: float
+    :param seed: the seed value to use
+    :type seed: int
+    """
+    if percent <= 0 or percent >= 100:
+        return data
+    data = Instances.copy_instances(data)
+    data.randomize(Random(seed))
+    data = Instances.copy_instances(data, 0, round(data.num_instances() * percent / 100.0))
+    return data
+
+
+def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, outfile=None, wait=True):
     """
     Plots two attributes against each other.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
@@ -28,6 +47,10 @@ def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
     :type index_x: int
     :param index_y: the 0-based index of the attribute on the y axis
     :type index_y: int
+    :param percent: the percentage of the dataset to use for plotting
+    :type percent: float
+    :param seed: the seed value to use for subsampling
+    :type seed: int
     :param size: the size of the circles in point
     :type size: int
     :param outfile: the (optional) file to save the generated plot to. The extension determines the file format.
@@ -35,6 +58,10 @@ def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
     :param wait: whether to wait for the user to close the plot
     :type wait: bool
     """
+    # create subsample
+    data = create_subsample(data, percent=percent, seed=seed)
+
+    # collect data
     x = []
     y = []
     if data.get_class_index() == -1:
@@ -47,6 +74,8 @@ def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
         y.append(inst.get_value(index_y))
         if not c is None:
             c.append(inst.get_value(inst.get_class_index()))
+
+    # plot data
     fig, ax = plt.subplots()
     if c is None:
         ax.scatter(x, y, s=size, alpha=0.5)
@@ -65,12 +94,16 @@ def scatter_plot(data, index_x, index_y, size=50, outfile=None, wait=True):
         plt.show()
 
 
-def matrix_plot(data, size=10, outfile=None, wait=True):
+def matrix_plot(data, percent=100.0, seed=1, size=10, outfile=None, wait=True):
     """
     Plots all attributes against each other.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
     :param data: the dataset
     :type data: Instances
+    :param percent: the percentage of the dataset to use for plotting
+    :type percent: float
+    :param seed: the seed value to use for subsampling
+    :type seed: int
     :param size: the size of the circles in point
     :type size: int
     :param outfile: the (optional) file to save the generated plot to. The extension determines the file format.
@@ -78,6 +111,9 @@ def matrix_plot(data, size=10, outfile=None, wait=True):
     :param wait: whether to wait for the user to close the plot
     :type wait: bool
     """
+    # create subsample
+    data = create_subsample(data, percent=percent, seed=seed)
+
     fig = plt.figure()
 
     if data.get_class_index() == -1:

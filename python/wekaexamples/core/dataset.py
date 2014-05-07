@@ -88,12 +88,13 @@ def main():
     pld.scatter_plot(
         iris_data, iris_data.get_attribute_by_name("petalwidth").get_index(),
         iris_data.get_attribute_by_name("petallength").get_index(),
+        percent=50,
         wait=False)
 
     # matrix plot of iris dataset
     iris_data = loader.load_file(iris_file)
     iris_data.set_class_index(iris_data.num_attributes() - 1)
-    pld.matrix_plot(iris_data, wait=True)
+    pld.matrix_plot(iris_data, percent=50, wait=True)
 
 
 if __name__ == "__main__":
