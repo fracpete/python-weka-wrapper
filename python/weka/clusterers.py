@@ -49,9 +49,9 @@ class Clusterer(OptionHandler):
             jobject = Clusterer.new_instance(classname)
         if classname is None:
             classname = utils.get_classname(jobject)
-        self.classname     = classname
+        self.classname = classname
         self.is_updateable = self.check_type(jobject, "weka.clusterers.UpdateableClusterer")
-        self.is_drawable   = self.check_type(jobject, "weka.core.Drawable")
+        self.is_drawable = self.check_type(jobject, "weka.core.Drawable")
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject=jobject, options=options)
 
@@ -162,7 +162,6 @@ class SingleClustererEnhancer(Clusterer):
             jobject = Clusterer.new_instance(classname)
         if classname is None:
             classname = utils.get_classname(jobject)
-        jobject = SingleClustererEnhancer.new_instance(classname)
         self.enforce_type(jobject, "weka.clusterers.SingleClustererEnhancer")
         super(SingleClustererEnhancer, self).__init__(classname=classname, jobject=jobject, options=options)
 
@@ -196,13 +195,10 @@ class FilteredClusterer(SingleClustererEnhancer):
         :param options: the list of commandline options to use
         :type options: list
         """
+        classname = "weka.clusterers.FilteredClusterer"
         if jobject is None:
-            classname = "weka.clusterers.FilteredClusterer"
-            jobject   = Clusterer.new_instance(classname)
-        else:
-            classname = utils.get_classname(jobject)
-        jobject = FilteredClusterer.new_instance(classname)
-        self.enforce_type(jobject, "weka.clusterers.FilteredClusterer")
+            jobject = Clusterer.new_instance(classname)
+        self.enforce_type(jobject, classname)
         super(FilteredClusterer, self).__init__(classname=classname, jobject=jobject, options=options)
 
     def set_filter(self, filtr):

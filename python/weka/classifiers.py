@@ -193,13 +193,12 @@ class FilteredClassifier(SingleClassifierEnhancer):
         :param options: the list of commandline options to set
         :type options: list
         """
+        classname = "weka.classifiers.meta.FilteredClassifier"
         if jobject is None:
-            classname = "weka.classifiers.meta.FilteredClassifier"
-            jobject   = Classifier.new_instance(classname)
+            jobject = Classifier.new_instance(classname)
         else:
-            classname = utils.get_classname(jobject)
-        self.enforce_type(jobject, "weka.classifiers.meta.FilteredClassifier")
-        super(FilteredClassifier, self).__init__(classname=classname, jobject=jobject, options=options)
+            self.enforce_type(jobject, classname)
+        super(FilteredClassifier, self).__init__(jobject=jobject, options=options)
 
     def set_filter(self, filtr):
         """
@@ -238,7 +237,7 @@ class MultipleClassifiersCombiner(Classifier):
         if classname is None:
             classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.classifiers.MultipleClassifiersCombiner")
-        super(MultipleClassifiersCombiner, self).__init__(classname, jobject)
+        super(MultipleClassifiersCombiner, self).__init__(classname=classname, jobject=jobject)
 
     def set_classifiers(self, classifiers):
         """
