@@ -162,7 +162,6 @@ class SingleClassifierEnhancer(Classifier):
             jobject = Classifier.new_instance(classname)
         if classname is None:
             classname = utils.get_classname(jobject)
-        jobject = SingleClassifierEnhancer.new_instance(classname)
         self.enforce_type(jobject, "weka.classifiers.SingleClassifierEnhancer")
         super(SingleClassifierEnhancer, self).__init__(classname=classname, jobject=jobject, options=options)
 
@@ -199,7 +198,6 @@ class FilteredClassifier(SingleClassifierEnhancer):
             jobject   = Classifier.new_instance(classname)
         else:
             classname = utils.get_classname(jobject)
-        jobject = FilteredClassifier.new_instance(classname)
         self.enforce_type(jobject, "weka.classifiers.meta.FilteredClassifier")
         super(FilteredClassifier, self).__init__(classname=classname, jobject=jobject, options=options)
 
@@ -239,7 +237,6 @@ class MultipleClassifiersCombiner(Classifier):
             jobject = Classifier.new_instance(classname)
         if classname is None:
             classname = utils.get_classname(jobject)
-        jobject = MultipleClassifiersCombiner.new_instance(classname)
         self.enforce_type(jobject, "weka.classifiers.MultipleClassifiersCombiner")
         super(MultipleClassifiersCombiner, self).__init__(classname, jobject)
 
