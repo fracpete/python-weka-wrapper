@@ -113,6 +113,50 @@ class Filter(OptionHandler):
             data.jobject, self.jobject))
 
 
+class MultiFilter(Filter):
+    """
+    Wrapper class for weka.filters.MultiFilter.
+    """
+
+    def __init__(self, jobject=None, options=[]):
+        """
+        Initializes the MultiFilter instance using either creating new instance or using the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: list of commandline options
+        :type options: list
+        """
+        if jobject is None:
+            classname = "weka.filters.MultiFilter"
+            jobject = MultiFilter.new_instance(classname)
+        self.enforce_type(jobject, "weka.filters.MultiFilter")
+        super(MultiFilter, self).__init__(jobject=jobject)
+
+    def set_filters(self, filters):
+        """
+        Sets the base filters.
+        :param filters: the list of base filters to use
+        :type filters: list
+        """
+        obj = []
+        for fltr in filters:
+            obj.append(fltr.jobject)
+        javabridge.call(self.jobject, "setFilters", "([Lweka/filters/Filter;)V", obj)
+
+    def get_filters(self):
+        """
+        Returns the list of base filters.
+        :return: the filter list
+        :rtype: list
+        """
+        objects = javabridge.get_object_array_elements(
+            javabridge.call(self.jobject, "getFilters", "()[Lweka/filters/Filter;"))
+        result = []
+        for obj in objects:
+            result.append(Filter(jobject=obj))
+        return result
+
+
 def main(args):
     """
     Runs a filter from the command-line. Calls JVM start/stop automatically.

@@ -18,7 +18,7 @@ import os
 import weka.core.jvm as jvm
 import wekaexamples.helper as helper
 from weka.core.converters import Loader
-from weka.filters import Filter
+from weka.filters import Filter, MultiFilter
 
 
 def main():
@@ -38,11 +38,22 @@ def main():
     remove.set_inputformat(data)
     filtered = remove.filter(data)
 
+    # use MultiFilter
+    helper.print_info("Use MultiFilter")
+    remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "first"])
+    std = Filter(classname="weka.filters.unsupervised.attribute.Standardize")
+    multi = MultiFilter()
+    multi.set_filters([remove, std])
+    multi.set_inputformat(data)
+    filtered_multi = multi.filter(data)
+
     # output datasets
     helper.print_title("Input")
     print(data)
     helper.print_title("Output")
     print(filtered)
+    helper.print_title("Output (MultiFilter)")
+    print(filtered_multi)
 
 if __name__ == "__main__":
     try:
