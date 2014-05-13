@@ -5,14 +5,25 @@ using javabridge (https://pypi.python.org/pypi/javabridge).
 
 Requirements:
 
-* javabridge (>= 1.0.1)
-* matplotlib (>= 1.7.0)
-* pygraphviz (>= 1.2)
-* PIL (>= 1.1.0)
-* numpy
+* Python
+ * javabridge (>= 1.0.1)
+ * matplotlib (>= 1.7.0)
+ * pygraphviz (>= 1.2)
+ * PIL (>= 1.1.0)
+ * numpy
+* JDK 1.6+
 
 Included:
 * Weka (3.7.11)
+
+The Python libraries you can either install using `pip install <name>` or use pre-built packages available for
+your platform.
+
+For Ubuntu this could look as follows:
+<pre>
+$ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygraphviz
+$ sudo pip install javabridge
+</pre>
 
 ## Code examples
 See **python/wekaexamples** for example code on the various APIs.

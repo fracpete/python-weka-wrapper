@@ -24,12 +24,22 @@ Requirements
 
 The library has the following requirements:
 
-* javabridge
-* pygraphviz
-* matplotlib
-* PIL
+* Python
+ * javabridge
+ * pygraphviz
+ * matplotlib
+ * PIL
 * JDK 1.6+
 
+The Python libraries you can either install using `pip install <name>` or use pre-built packages available for
+your platform.
+
+For Ubuntu this could look as follows:
+
+  .. code-block:: bash
+
+     $ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygraphviz
+     $ sudo pip install javabridge
 
 Contents
 ========

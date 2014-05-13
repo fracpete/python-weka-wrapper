@@ -28,7 +28,15 @@ The following steps set up an evironment:
      $ pwwtest/bin/pip install javabridge
 
 * as an alternative, you can also use all currently installed packages on your
-  host system in the virtual environment
+  host system in the virtual environment. For instance, on Ubuntu, run the following
+  commands to install all the dependencies:
+
+  .. code-block:: bash
+
+     $ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygraphviz
+     $ sudo pip install javabridge
+
+  after that, you can create the virtual environment as follows:
 
   .. code-block:: bash
 
