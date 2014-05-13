@@ -25,6 +25,9 @@ $ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygr
 $ sudo pip install javabridge
 </pre>
 
+A build environment is required to build libraries, like `javabridge`, from source. For Ubuntu that would
+be the `build-essential` meta-package and Xcode for Mac OSX.
+
 ## Code examples
 See **python/wekaexamples** for example code on the various APIs.
 Also, check out the sphinx documentation in **doc**.

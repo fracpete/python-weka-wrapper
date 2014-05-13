@@ -41,6 +41,10 @@ For Ubuntu this could look as follows:
      $ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygraphviz
      $ sudo pip install javabridge
 
+A build environment is required to build libraries, like `javabridge`, from source. For Ubuntu that would
+be the `build-essential` meta-package and Xcode for Mac OSX.
+
+
 Contents
 ========
 

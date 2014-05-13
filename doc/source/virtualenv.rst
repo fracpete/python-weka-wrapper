@@ -42,6 +42,9 @@ The following steps set up an evironment:
 
      $ virtualenv --system-site-packages pwwtest
 
+* a build environment is required to build libraries, like `javabridge`, from source. For Ubuntu that would
+  be the `build-essential` meta-package and Xcode for Mac OSX.
+
 
 Troubleshooting
 ---------------
