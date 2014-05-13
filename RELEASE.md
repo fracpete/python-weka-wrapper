@@ -26,3 +26,15 @@ Steps:
 * enter release notes, i.e., significant changes since last release
 * upload `python-weka-wrapper-X.Y.Z.tar.gz` previously generated with `setyp.py`
 * publish
+
+
+MLOSS
+=====
+
+Steps:
+* login
+* goto project page https://mloss.org/software/view/548/
+* click on `Update project`
+* update `Version` and `Download URL`
+* re-use release notes from Github release in `Changes since last revision`
+* save
