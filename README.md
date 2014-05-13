@@ -29,10 +29,21 @@ A build environment is required to build libraries, like `javabridge`, from sour
 be the `build-essential` meta-package and Xcode for Mac OSX.
 
 ## Code examples
-See **python/wekaexamples** for example code on the various APIs.
-Also, check out the sphinx documentation in **doc**.
+See **python/wekaexamples** for example code on the various APIs. Also, check out the sphinx documentation
+in the **doc** directory. You can generate HTML documentation using the `make html` command in the **doc**
+directory.
+
+Available online documentation:
+* [Full documentation](http://pythonhosted.org/python-weka-wrapper/)
+* Shortcuts
+ * [Command-line](http://pythonhosted.org/python-weka-wrapper/commandline.html)
+ * [API](http://pythonhosted.org/python-weka-wrapper/api.html)
+ * [Examples](http://pythonhosted.org/python-weka-wrapper/examples.html)
 
 ## Command-line examples
+
+Below are some examples of command-line use of the library. You can find these also
+on [PyPi](http://pythonhosted.org/python-weka-wrapper/commandline.html).
 
 ### Data generators
 
