@@ -110,14 +110,14 @@ def main():
 
     # cross-validate nominal classifier
     helper.print_title("Cross-validating NaiveBayes on diabetes")
-    anneal_file = helper.get_data_dir() + os.sep + "diabetes.arff"
-    helper.print_info("Loading dataset: " + anneal_file)
+    diabetes_file = helper.get_data_dir() + os.sep + "diabetes.arff"
+    helper.print_info("Loading dataset: " + diabetes_file)
     loader = Loader("weka.core.converters.ArffLoader")
-    anneal_data = loader.load_file(anneal_file)
-    anneal_data.set_class_index(anneal_data.num_attributes() - 1)
+    diabetes_data = loader.load_file(diabetes_file)
+    diabetes_data.set_class_index(diabetes_data.num_attributes() - 1)
     classifier = Classifier(classname="weka.classifiers.bayes.NaiveBayes")
-    evaluation = Evaluation(anneal_data)
-    evaluation.crossvalidate_model(classifier, anneal_data, 10, Random(42))
+    evaluation = Evaluation(diabetes_data)
+    evaluation.crossvalidate_model(classifier, diabetes_data, 10, Random(42))
     print(evaluation.to_summary())
     print(evaluation.to_class_details())
     print(evaluation.to_matrix())
@@ -175,6 +175,7 @@ def main():
     print("rootMeanPriorSquaredError: " + str(evaluation.root_mean_prior_squared_error()))
     print("rootRelativeSquaredError: " + str(evaluation.root_relative_squared_error()))
     plot_cls.plot_roc(evaluation, wait=False)
+    plot_cls.plot_prc(evaluation, wait=False)
 
     # load a numeric dataset
     bolts_file = helper.get_data_dir() + os.sep + "bolts.arff"
