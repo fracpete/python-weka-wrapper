@@ -243,7 +243,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'python-weka-wrapper', u'python-weka-wrapper Documentation',
-   u'Peter "fracpete" Reutemann', 'python-weka-wrapper', 'One line description of project.',
+   u'Peter "fracpete" Reutemann', 'python-weka-wrapper', 'Allows the execution of Weka algorithms from within Python.',
    'Miscellaneous'),
 ]
 

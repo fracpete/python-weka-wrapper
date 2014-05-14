@@ -70,7 +70,7 @@ setup(
     name="python-weka-wrapper",
     description="Python wrapper for the Weka Machine Learning Workbench",
     long_description='''The python-weka-wrapper package makes it easy to run
-    Weka algorihtms and filters from within Python. It offers access to Weka
+    Weka algorithms and filters from within Python. It offers access to Weka
     API using thin wrappers around JNI calls using the "javabridge" package.''',
     url="https://github.com/fracpete/python-weka-wrapper",
     classifiers=[
