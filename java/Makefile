@@ -5,7 +5,7 @@
 SRCDIR        = src
 BUILDDIR      = build
 DISTDIR       = dist
-LIBDIR        = ../python/lib
+LIBDIR        = ../python/weka/lib
 
 all: clean compile dist
 
