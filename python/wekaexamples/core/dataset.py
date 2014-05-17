@@ -44,7 +44,8 @@ def main():
     print("Attribute stats (first):\n" + str(iris_data.get_attribute_stats(0)))
     print("total count (first attribute):\n" + str(iris_data.get_attribute_stats(0).total_count()))
     print("numeric stats (first attribute):\n" + str(iris_data.get_attribute_stats(0).numeric_stats()))
-    print("nominal counts (last attribute):\n" + str(iris_data.get_attribute_stats(iris_data.num_attributes() - 1).nominal_counts()))
+    print("nominal counts (last attribute):\n"
+          + str(iris_data.get_attribute_stats(iris_data.num_attributes() - 1).nominal_counts()))
 
     # load dataset incrementally
     iris_file = helper.get_data_dir() + os.sep + "iris.arff"

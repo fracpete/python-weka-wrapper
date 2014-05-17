@@ -21,7 +21,7 @@ from weka.core.dataset import Instances
 from weka.classifiers import NumericPrediction, NominalPrediction
 
 
-def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, absolute_size=50, outfile=None, wait=True):
+def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, absolute_size=50, outfile=None, wait=True):
     """
     Plots the classifers for the given list of predictions.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
@@ -38,10 +38,10 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, abs
     :param wait: whether to wait for the user to close the plot
     :type wait: bool
     """
-    actual    = []
+    actual = []
     predicted = []
-    error     = None
-    cls       = None
+    error = None
+    cls = None
     for pred in predictions:
         actual.append(pred.actual())
         predicted.append(pred.predicted())
@@ -65,7 +65,7 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=20, abs
         if not absolute:
             min_err = min(error)
             max_err = max(error)
-            factor  = (max_err  - min_err) / max_relative_size
+            factor = (max_err - min_err) / max_relative_size
             for i in xrange(len(error)):
                 error[i] = error[i] / factor * max_relative_size
         ax.scatter(actual, predicted, s=error, alpha=0.5)

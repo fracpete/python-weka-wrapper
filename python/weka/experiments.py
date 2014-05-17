@@ -16,7 +16,6 @@
 
 import logging
 import javabridge
-import weka.core.jvm as jvm
 import weka.core.utils as utils
 from weka.core.classes import OptionHandler, Range
 from weka.core.dataset import Instances
@@ -31,7 +30,7 @@ class Experiment(OptionHandler):
     Wrapper class for an experiment.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified experiment using either the classname or the supplied JB_Object.
         :param classname: the classname of the experiment
@@ -43,9 +42,6 @@ class Experiment(OptionHandler):
         """
         if jobject is None:
             jobject = Experiment.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         super(Experiment, self).__init__(jobject=jobject, options=options)
 
 
@@ -56,19 +52,19 @@ class SimpleExperiment(OptionHandler):
     http://weka.wikispaces.com/Using+the+Experiment+API
     """
 
-    def __init__(self, jobject=None, classification=True, runs=10, datasets=[], classifiers=[], result=None):
+    def __init__(self, datasets, classifiers, jobject=None, classification=True, runs=10, result=None):
         """
         Initializes the experiment.
+        :param datasets: the filenames of datasets to use in the experiment
+        :type datasets: list
+        :param classifiers: the Classifier objects or commandline strings to use in the experiment
+        :type classifiers: list
         :param jobject: the Java Object to use
         :type jobject: JB_Object
         :param classification: whether to perform classification or regression
         :type classification:bool
         :param runs: the number of runs to perform
         :type runs: int
-        :param datasets: the filenames of datasets to use in the experiment
-        :type datasets: list
-        :param classifiers: the Classifier objects or commandline strings to use in the experiment
-        :type classifiers: list
         :param result: the filename of the file to store the results in
         :type result: str
         """
@@ -77,11 +73,11 @@ class SimpleExperiment(OptionHandler):
             self.enforce_type(jobject, "weka.experiment.Experiment")
 
         self.classification = classification
-        self.runs           = runs
-        self.datasets       = datasets[:]
-        self.classifiers    = classifiers[:]
-        self.result         = result
-        self.jobject        = jobject
+        self.runs = runs
+        self.datasets = datasets[:]
+        self.classifiers = classifiers[:]
+        self.result = result
+        self.jobject = jobject
 
     def configure_splitevaluator(self):
         """
@@ -132,12 +128,15 @@ class SimpleExperiment(OptionHandler):
             self.jobject, "setPropertyPath", "([Lweka/experiment/PropertyNode;)V", prop_path)
 
         # classifiers
-        classifiers = javabridge.get_env().make_object_array(len(self.classifiers), javabridge.get_env().find_class("weka/classifiers/Classifier"))
+        classifiers = javabridge.get_env().make_object_array(
+            len(self.classifiers), javabridge.get_env().find_class("weka/classifiers/Classifier"))
         for i, classifier in enumerate(self.classifiers):
             if type(classifier) is Classifier:
-                javabridge.get_env().set_object_array_element(classifiers, i, classifier.jobject)
+                javabridge.get_env().set_object_array_element(
+                    classifiers, i, classifier.jobject)
             else:
-                javabridge.get_env().set_object_array_element(classifiers, i, utils.from_commandline(classifier).jobject)
+                javabridge.get_env().set_object_array_element(
+                    classifiers, i, utils.from_commandline(classifier).jobject)
         javabridge.call(
             self.jobject, "setPropertyArray", "(Ljava/lang/Object;)V",
             classifiers)
@@ -183,7 +182,7 @@ class SimpleExperiment(OptionHandler):
         if self.jobject is None:
             return None
         else:
-            return Experiment(self.jobject)
+            return Experiment(jobject=self.jobject)
 
     @classmethod
     def load(cls, filename):
@@ -218,19 +217,19 @@ class SimpleCrossValidationExperiment(SimpleExperiment):
     Performs a simple cross-validation experiment. Can output the results either in ARFF or CSV.
     """
 
-    def __init__(self, classification=True, runs=10, folds=10, datasets=[], classifiers=[], result=None):
+    def __init__(self, datasets, classifiers, classification=True, runs=10, folds=10, result=None):
         """
         Initializes the experiment.
+        :param datasets: the filenames of datasets to use in the experiment
+        :type datasets: list
+        :param classifiers: the Classifier objects to use in the experiment
+        :type classifiers: list
         :param classification: whether to perform classification
         :type classification: bool
         :param runs: the number of runs to perform
         :type runs: int
         :param folds: the number folds to use for CV
         :type folds: int
-        :param datasets: the filenames of datasets to use in the experiment
-        :type datasets: list
-        :param classifiers: the Classifier objects to use in the experiment
-        :type classifiers: list
         :param result: the filename of the file to store the results in
         :type result: str
         """
@@ -262,15 +261,16 @@ class SimpleCrossValidationExperiment(SimpleExperiment):
         javabridge.call(rproducer, "setNumFolds", "(I)V", self.folds)
         speval, classifier = self.configure_splitevaluator()
         javabridge.call(rproducer, "setSplitEvaluator", "(Lweka/experiment/SplitEvaluator;)V", speval)
-        prop_path = javabridge.get_env().make_object_array(2, javabridge.get_env().find_class("weka/experiment/PropertyNode"))
-        cls  = javabridge.get_env().find_class("weka/experiment/CrossValidationResultProducer")
+        prop_path = javabridge.get_env().make_object_array(
+            2, javabridge.get_env().find_class("weka/experiment/PropertyNode"))
+        cls = javabridge.get_env().find_class("weka/experiment/CrossValidationResultProducer")
         desc = javabridge.make_instance(
             "java/beans/PropertyDescriptor", "(Ljava/lang/String;Ljava/lang/Class;)V", "splitEvaluator", cls)
         node = javabridge.make_instance(
             "weka/experiment/PropertyNode", "(Ljava/lang/Object;Ljava/beans/PropertyDescriptor;Ljava/lang/Class;)V",
             speval, desc, cls)
         javabridge.get_env().set_object_array_element(prop_path, 0, node)
-        cls  = javabridge.get_env().get_object_class(speval)
+        cls = javabridge.get_env().get_object_class(speval)
         desc = javabridge.make_instance(
             "java/beans/PropertyDescriptor", "(Ljava/lang/String;Ljava/lang/Class;)V", "classifier", cls)
         node = javabridge.make_instance(
@@ -286,7 +286,8 @@ class SimpleRandomSplitExperiment(SimpleExperiment):
     Performs a simple random split experiment. Can output the results either in ARFF or CSV.
     """
 
-    def __init__(self, classification=True, runs=10, percentage=66.6, preserve_order=False, datasets=[], classifiers=[], result=None):
+    def __init__(self, datasets, classifiers, classification=True, runs=10, percentage=66.6, preserve_order=False,
+                 result=None):
         """
         Initializes the experiment.
         :param classification: whether to perform classification or regression
@@ -322,7 +323,7 @@ class SimpleRandomSplitExperiment(SimpleExperiment):
             classification=classification, runs=runs, datasets=datasets,
             classifiers=classifiers, result=result)
 
-        self.percentage     = percentage
+        self.percentage = percentage
         self.preserve_order = preserve_order
 
     def configure_resultproducer(self):
@@ -336,15 +337,16 @@ class SimpleRandomSplitExperiment(SimpleExperiment):
         javabridge.call(rproducer, "setTrainPercent", "(D)V", self.percentage)
         speval, classifier = self.configure_splitevaluator()
         javabridge.call(rproducer, "setSplitEvaluator", "(Lweka/experiment/SplitEvaluator;)V", speval)
-        prop_path = javabridge.get_env().make_object_array(2, javabridge.get_env().find_class("weka/experiment/PropertyNode"))
-        cls  = javabridge.get_env().find_class("weka/experiment/RandomSplitResultProducer")
+        prop_path = javabridge.get_env().make_object_array(
+            2, javabridge.get_env().find_class("weka/experiment/PropertyNode"))
+        cls = javabridge.get_env().find_class("weka/experiment/RandomSplitResultProducer")
         desc = javabridge.make_instance(
             "java/beans/PropertyDescriptor", "(Ljava/lang/String;Ljava/lang/Class;)V", "splitEvaluator", cls)
         node = javabridge.make_instance(
             "weka/experiment/PropertyNode", "(Ljava/lang/Object;Ljava/beans/PropertyDescriptor;Ljava/lang/Class;)V",
             speval, desc, cls)
         javabridge.get_env().set_object_array_element(prop_path, 0, node)
-        cls  = javabridge.get_env().get_object_class(speval)
+        cls = javabridge.get_env().get_object_class(speval)
         desc = javabridge.make_instance(
             "java/beans/PropertyDescriptor", "(Ljava/lang/String;Ljava/lang/Class;)V", "classifier", cls)
         node = javabridge.make_instance(
@@ -360,7 +362,7 @@ class ResultMatrix(OptionHandler):
     For generating results from an Experiment run.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified ResultMatrix using either the classname or the supplied JB_Object.
         :param classname: the classname of the ResultMatrix
@@ -372,9 +374,6 @@ class ResultMatrix(OptionHandler):
         """
         if jobject is None:
             jobject = ResultMatrix.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.experiment.ResultMatrix")
         super(ResultMatrix, self).__init__(jobject=jobject, options=options)
 
@@ -424,7 +423,7 @@ class Tester(OptionHandler):
     For generating statistical results from an experiment.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified tester using either the classname or the supplied JB_Object.
         :param classname: the classname of the tester
@@ -436,9 +435,6 @@ class Tester(OptionHandler):
         """
         if jobject is None:
             jobject = Tester.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.experiment.Tester")
         self.columns_determined = False
         self.dataset_columns = ["Key_Dataset"]

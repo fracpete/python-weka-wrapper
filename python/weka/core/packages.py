@@ -55,7 +55,7 @@ class Package(JavaObject):
         :return: the list of Dependency objects
         :rtype: list of Dependency
         """
-        result       = []
+        result = []
         dependencies = javabridge.get_collection_wrapper(
             javabridge.call(self.jobject, "getDependencies", "()Ljava/util/List;"))
         for dependency in dependencies:
@@ -200,7 +200,7 @@ def get_all_packages():
     """
     establish_cache()
     result = []
-    pkgs   = javabridge.get_collection_wrapper(
+    pkgs = javabridge.get_collection_wrapper(
         javabridge.static_call(
             "weka/core/WekaPackageManager", "getAllPackages", "()Ljava/util/List;"))
     for pkge in pkgs:
@@ -216,7 +216,7 @@ def get_available_packages():
     """
     establish_cache()
     result = []
-    pkgs   = javabridge.get_collection_wrapper(
+    pkgs = javabridge.get_collection_wrapper(
         javabridge.static_call(
             "weka/core/WekaPackageManager", "getAvailablePackages", "()Ljava/util/List;"))
     for pkge in pkgs:
@@ -232,7 +232,7 @@ def get_installed_packages():
     """
     establish_cache()
     result = []
-    pkgs   = javabridge.get_collection_wrapper(
+    pkgs = javabridge.get_collection_wrapper(
         javabridge.static_call(
             "weka/core/WekaPackageManager", "getInstalledPackages", "()Ljava/util/List;"))
     for pkge in pkgs:
@@ -252,7 +252,8 @@ def install_package(pkge, version="Latest"):
     """
     establish_cache()
     if pkge.startswith("http://") or pkge.startswith("https://"):
-        url = javabridge.make_instance("java/net/URL", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(pkge))
+        url = javabridge.make_instance(
+            "java/net/URL", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(pkge))
         return not javabridge.static_call(
             "weka/core/WekaPackageManager", "installPackageFromURL",
             "(Ljava/net/URL;[Ljava/io/PrintStream;)Ljava/lang/String;", url, []) is None
@@ -325,7 +326,6 @@ if __name__ == "__main__":
             print(pkg.get_name())
             print("  url: " + pkg.get_url())
             print("")
-
 
         print("Install/Uninstall")
         print("=================")

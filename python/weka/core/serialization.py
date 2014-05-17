@@ -27,8 +27,8 @@ def read(filename):
     Reads the serialized object from disk. Caller must wrap object in appropriate Python wrapper class.
     :param filename: the file with the serialized object
     :type filename: str
-    :return: JB_Object
-    :rtype: object
+    :return: the JB_Object
+    :rtype: JB_Object
     """
     return javabridge.static_call(
         "Lweka/core/SerializationHelper;", "read",
@@ -60,7 +60,7 @@ def write(filename, jobject):
     :param filename: the file to serialize the object to
     :type filename: str
     :param jobject: the object to serialize
-    :type jobject: JB_Object
+    :type jobject: JB_Object or JavaObject
     """
     if isinstance(jobject, JavaObject):
         jobject = jobject.jobject

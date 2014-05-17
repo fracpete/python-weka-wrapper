@@ -33,7 +33,7 @@ def create_subsample(data, percent, seed=1):
         return data
     data = Instances.copy_instances(data)
     data.randomize(Random(seed))
-    data = Instances.copy_instances(data, 0, round(data.num_instances() * percent / 100.0))
+    data = Instances.copy_instances(data, 0, int(round(data.num_instances() * percent / 100.0)))
     return data
 
 
@@ -137,7 +137,8 @@ def matrix_plot(data, percent=100.0, seed=1, size=10, outfile=None, wait=True):
             for i in xrange(data.num_instances()):
                 inst = data.get_instance(i)
                 y.append(inst.get_value(index_y))
-            ax = fig.add_subplot(data.num_attributes(), data.num_attributes(), index_x * data.num_attributes() + index_y + 1)
+            ax = fig.add_subplot(
+                data.num_attributes(), data.num_attributes(), index_x * data.num_attributes() + index_y + 1)
             if c is None:
                 ax.scatter(x, y, s=size, alpha=0.5)
             else:

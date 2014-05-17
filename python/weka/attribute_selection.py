@@ -36,7 +36,7 @@ class ASSearch(OptionHandler):
     Wrapper class for attribute selection search algorithm.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified search algorithm using either the classname or the supplied JB_Object.
         :param classname: the classname of the search algorithms
@@ -48,9 +48,6 @@ class ASSearch(OptionHandler):
         """
         if jobject is None:
             jobject = ASSearch.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.attributeSelection.ASSearch")
         super(ASSearch, self).__init__(jobject=jobject, options=options)
 
@@ -78,7 +75,7 @@ class ASEvaluation(OptionHandler):
     Wrapper class for attribute selection evaluation algorithm.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified search algorithm using either the classname or the supplied JB_Object.
         :param classname: the classname of the search algorithms
@@ -90,9 +87,6 @@ class ASEvaluation(OptionHandler):
         """
         if jobject is None:
             jobject = ASEvaluation.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.attributeSelection.ASEvaluation")
         super(ASEvaluation, self).__init__(jobject=jobject, options=options)
 
@@ -314,10 +308,10 @@ def main(args):
             print(usage)
             return
 
-    jars   = []
+    jars = []
     params = []
-    input  = None
-    heap   = None
+    inputf = None
+    heap = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
@@ -326,7 +320,7 @@ def main(args):
         elif opt[0] == "-i":
             params.append(opt[0])
             params.append(opt[1])
-            input = opt[1]
+            inputf = opt[1]
         elif opt[0] == "-c":
             params.append(opt[0])
             params.append(opt[1])
@@ -341,7 +335,7 @@ def main(args):
             params.append(opt[1])
 
     # check parameters
-    if input is None:
+    if inputf is None:
         raise Exception("No input file provided ('-i ...')!")
 
     jvm.start(jars, max_heap_size=heap, packages=True)
@@ -362,5 +356,5 @@ def main(args):
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
-    except Exception, e:
-        print(e)
+    except Exception, ex:
+        print(ex)

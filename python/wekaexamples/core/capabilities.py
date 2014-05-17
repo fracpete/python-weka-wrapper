@@ -53,7 +53,6 @@ def main():
     print(capabilities)
 
 
-
 if __name__ == "__main__":
     try:
         jvm.start()

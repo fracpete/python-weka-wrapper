@@ -37,7 +37,7 @@ class Filter(OptionHandler):
     Wrapper class for filters.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified filter using either the classname or the supplied JB_Object.
         :param classname: the classname of the filter
@@ -49,9 +49,6 @@ class Filter(OptionHandler):
         """
         if jobject is None:
             jobject = Filter.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject=jobject, options=options)
 
@@ -118,7 +115,7 @@ class MultiFilter(Filter):
     Wrapper class for weka.filters.MultiFilter.
     """
 
-    def __init__(self, jobject=None, options=[]):
+    def __init__(self, jobject=None, options=None):
         """
         Initializes the MultiFilter instance using either creating new instance or using the supplied JB_Object.
         :param jobject: the JB_Object to use
@@ -130,7 +127,7 @@ class MultiFilter(Filter):
             classname = "weka.filters.MultiFilter"
             jobject = MultiFilter.new_instance(classname)
         self.enforce_type(jobject, "weka.filters.MultiFilter")
-        super(MultiFilter, self).__init__(jobject=jobject)
+        super(MultiFilter, self).__init__(jobject=jobject, options=options)
 
     def set_filters(self, filters):
         """
@@ -149,7 +146,7 @@ class MultiFilter(Filter):
         :return: the filter list
         :rtype: list
         """
-        objects = javabridge.get_object_array_elements(
+        objects = javabridge.get_env().get_object_array_elements(
             javabridge.call(self.jobject, "getFilters", "()[Lweka/filters/Filter;"))
         result = []
         for obj in objects:
@@ -183,13 +180,13 @@ def main(args):
             print(usage)
             return
 
-    jars    = []
-    input1  = None
+    jars = []
+    input1 = None
     output1 = None
-    input2  = None
+    input2 = None
     output2 = None
-    cls     = "-1"
-    heap    = None
+    cls = "-1"
+    heap = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
@@ -239,13 +236,13 @@ def main(args):
             in2.set_class_index(int(cls))
             out2 = flter.filter(in2)
             saver.save_file(out2, output2)
-    except Exception, ex:
-        print(ex)
+    except Exception, e:
+        print(e)
     finally:
         jvm.stop()
 
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
-    except Exception, e:
-        print(e)
+    except Exception, ex:
+        print(ex)

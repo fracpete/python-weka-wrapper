@@ -75,7 +75,7 @@ def from_commandline(cmdline):
     :rtype: OptionHandler
     """
     params = split_options(cmdline)
-    cls    = params[0]
+    cls = params[0]
     params = params[1:]
     result = OptionHandler(cls)
     result.set_options(params)

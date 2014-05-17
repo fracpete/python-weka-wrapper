@@ -30,10 +30,10 @@ def string_array_to_list(a):
     :return: the string list
     :rtype: list
     """
-    result  = []
-    len     = javabridge.get_env().get_array_length(a)
+    result = []
+    length = javabridge.get_env().get_array_length(a)
     wrapped = javabridge.get_env().get_object_array_elements(a)
-    for i in xrange(len):
+    for i in xrange(length):
         result.append(javabridge.get_env().get_string(wrapped[i]))
     return result
 
@@ -60,13 +60,13 @@ def double_matrix_to_ndarray(m):
     :return: Numpy array
     :rtype: numpy.darray
     """
-    rows   = javabridge.get_env().get_object_array_elements(m)
-    num    = javabridge.get_env().get_array_length(m)
+    rows = javabridge.get_env().get_object_array_elements(m)
+    num = javabridge.get_env().get_array_length(m)
     result = numpy.zeros(num * num).reshape((num, num))
-    i      = 0
+    i = 0
     for row in rows:
         elements = javabridge.get_env().get_double_array_elements(row)
-        n        = 0
+        n = 0
         for element in elements:
             result[i][n] = element
             n += 1

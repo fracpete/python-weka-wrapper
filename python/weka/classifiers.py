@@ -38,7 +38,7 @@ class Classifier(OptionHandler):
     Wrapper class for classifiers.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
@@ -50,12 +50,9 @@ class Classifier(OptionHandler):
         """
         if jobject is None:
             jobject = Classifier.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.classifiers.Classifier")
         self.is_updateable = self.check_type(jobject, "weka.classifiers.UpdateableClassifier")
-        self.is_drawable   = self.check_type(jobject, "weka.core.Drawable")
+        self.is_drawable = self.check_type(jobject, "weka.core.Drawable")
         super(Classifier, self).__init__(jobject=jobject, options=options)
 
     def get_capabilities(self):
@@ -83,7 +80,7 @@ class Classifier(OptionHandler):
         if self.is_updateable:
             javabridge.call(self.jobject, "updateClassifier", "(Lweka/core/Instance;)V", inst.jobject)
         else:
-            logger.critical(self.classname + " is not updateable!")
+            logger.critical(utils.get_classname(self.jobject) + " is not updateable!")
 
     def classify_instance(self, inst):
         """
@@ -135,7 +132,7 @@ class Classifier(OptionHandler):
         :param classifier: the classifier to copy
         :type classifier: Classifier
         :return: the copy of the classifier
-        :rtype: object
+        :rtype: Classifier
         """
         return Classifier(
             jobject=javabridge.static_call(
@@ -148,7 +145,7 @@ class SingleClassifierEnhancer(Classifier):
     Wrapper class for classifiers that use a single base classifier.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
@@ -160,8 +157,6 @@ class SingleClassifierEnhancer(Classifier):
         """
         if jobject is None:
             jobject = Classifier.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.classifiers.SingleClassifierEnhancer")
         super(SingleClassifierEnhancer, self).__init__(classname=classname, jobject=jobject, options=options)
 
@@ -185,7 +180,7 @@ class FilteredClassifier(SingleClassifierEnhancer):
     Wrapper class for the filtered classifier.
     """
 
-    def __init__(self, jobject=None, options=[]):
+    def __init__(self, jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param jobject: the JB_Object to use
@@ -222,7 +217,7 @@ class MultipleClassifiersCombiner(Classifier):
     Wrapper class for classifiers that use a multiple base classifiers.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
@@ -234,10 +229,8 @@ class MultipleClassifiersCombiner(Classifier):
         """
         if jobject is None:
             jobject = Classifier.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.classifiers.MultipleClassifiersCombiner")
-        super(MultipleClassifiersCombiner, self).__init__(classname=classname, jobject=jobject)
+        super(MultipleClassifiersCombiner, self).__init__(classname=classname, jobject=jobject, options=options)
 
     def set_classifiers(self, classifiers):
         """
@@ -256,7 +249,7 @@ class MultipleClassifiersCombiner(Classifier):
         :return: the classifier list
         :rtype: list
         """
-        objects = javabridge.get_object_array_elements(
+        objects = javabridge.get_env().get_object_array_elements(
             javabridge.call(self.jobject, "getClassifiers", "()[Lweka/classifiers/Classifier;"))
         result = []
         for obj in objects:
@@ -422,10 +415,10 @@ class Evaluation(JavaObject):
         """
         if not random is None:
             data.randomize(random)
-        train_size = round(data.num_instances() * percentage / 100)
-        test_size  = data.num_instances() - train_size
+        train_size = int(round(data.num_instances() * percentage / 100))
+        test_size = data.num_instances() - train_size
         train_inst = Instances.copy_instances(data, 0, train_size)
-        test_inst  = Instances.copy_instances(data, train_size, test_size)
+        test_inst = Instances.copy_instances(data, train_size, test_size)
         cls = Classifier.make_copy(classifier)
         cls.build_classifier(train_inst)
         self.test_model(cls, test_inst, output=output)
@@ -1054,7 +1047,7 @@ class PredictionOutput(OptionHandler):
     Must be derived from weka.classifiers.evaluation.output.prediction.AbstractOutput
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified output generator using either the classname or the supplied JB_Object.
         :param classname: the classname of the generator
@@ -1066,9 +1059,6 @@ class PredictionOutput(OptionHandler):
         """
         if jobject is None:
             jobject = PredictionOutput.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.classifiers.evaluation.output.prediction.AbstractOutput")
         super(PredictionOutput, self).__init__(jobject=jobject, options=options)
         buf = javabridge.make_instance("java/lang/StringBuffer", "()V")
@@ -1187,10 +1177,10 @@ def main(args):
             print(usage)
             return
 
-    jars   = []
+    jars = []
     params = []
-    train  = None
-    heap   = None
+    train = None
+    heap = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
@@ -1255,5 +1245,5 @@ def main(args):
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
-    except Exception, e:
-        print(e)
+    except Exception, ex:
+        print(ex)

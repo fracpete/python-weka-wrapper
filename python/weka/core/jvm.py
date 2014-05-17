@@ -67,12 +67,12 @@ def add_system_classpath():
     Adds the system's classpath to the JVM's classpath.
     """
     if not os.environ['CLASSPATH'] is None:
-        parts = not os.environ['CLASSPATH'].split(os.pathsep)
+        parts = os.environ['CLASSPATH'].split(os.pathsep)
         for part in parts:
             javabridge.JARS.append(part)
 
 
-def start(class_path=[], bundled=True, packages=False, system_cp=False, max_heap_size=None):
+def start(class_path=None, bundled=True, packages=False, system_cp=False, max_heap_size=None):
     """
     Initializes the javabridge connection (starts up the JVM).
     :param class_path: the additional classpath elements to add
@@ -93,9 +93,10 @@ def start(class_path=[], bundled=True, packages=False, system_cp=False, max_heap
         return
 
     # add user-defined jars first
-    for cp in class_path:
-        logger.debug("Adding user-supplied classpath=" + class_path)
-        javabridge.JARS.append(cp)
+    if not class_path is None:
+        for cp in class_path:
+            logger.debug("Adding user-supplied classpath=" + class_path)
+            javabridge.JARS.append(cp)
 
     if bundled:
         logger.debug("Adding bundled jars")

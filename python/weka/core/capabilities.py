@@ -16,6 +16,7 @@
 
 import javabridge
 from weka.core.classes import JavaObject
+from weka.core.dataset import Attribute, Instances
 
 
 class Capability(JavaObject):
@@ -25,6 +26,7 @@ class Capability(JavaObject):
         """
         Initializes the wrapper with the specified Capability object.
         :param jobject: the Capability object to wrap
+        :type jobject: JB_Object
         """
         Capability.enforce_type(jobject, "weka.core.Capabilities$Capability")
         super(Capability, self).__init__(jobject)
@@ -34,6 +36,7 @@ class Capability(JavaObject):
         """
         Tries to instantiate a Capability object from the string representation.
         :param s: the string representing a Capability
+        :type s: str
         """
         return Capability(
             javabridge.static_call(
@@ -48,6 +51,7 @@ class Capabilities(JavaObject):
         """
         Initializes the wrapper with the specified Capabilities object.
         :param jobject: the Capabilities object to wrap
+        :type jobject: JB_Object
         """
         Capabilities.enforce_type(jobject, "weka.core.Capabilities")
         super(Capabilities, self).__init__(jobject)
@@ -55,17 +59,19 @@ class Capabilities(JavaObject):
     def capabilities(self):
         """
         Returns all the capabilities.
+        :return: all capabilities
         :rtype: list
         """
         result = []
-        iter   = javabridge.iterate_java(javabridge.call(self.jobject, "capabilities", "()Ljava/util/Iterator;"))
-        for c in iter:
+        iterator = javabridge.iterate_java(javabridge.call(self.jobject, "capabilities", "()Ljava/util/Iterator;"))
+        for c in iterator:
             result.append(Capability(c))
         return result
 
     def get_attribute_capabilities(self):
         """
         Returns all the attribute capabilities.
+        :return: attribute capabilities
         :rtype: Capabilities
         """
         return Capabilities(
@@ -74,6 +80,7 @@ class Capabilities(JavaObject):
     def get_class_capabilities(self):
         """
         Returns all the class capabilities.
+        :return: class capabilities
         :rtype: Capabilities
         """
         return Capabilities(
@@ -82,6 +89,7 @@ class Capabilities(JavaObject):
     def get_other_capabilities(self):
         """
         Returns all other capabilities.
+        :return: all other capabilities
         :rtype: Capabilities
         """
         return Capabilities(
@@ -90,11 +98,12 @@ class Capabilities(JavaObject):
     def dependencies(self):
         """
         Returns all the dependencies.
+        :return: the dependency list
         :rtype: list
         """
         result = []
-        iter   = javabridge.iterate_java(javabridge.call(self.jobject, "dependencies", "()Ljava/util/Iterator;"))
-        for c in iter:
+        iterator = javabridge.iterate_java(javabridge.call(self.jobject, "dependencies", "()Ljava/util/Iterator;"))
+        for c in iterator:
             result.append(Capability(c))
         return result
 
@@ -119,6 +128,8 @@ class Capabilities(JavaObject):
     def enable(self, capability):
         """
         enables the specified capability.
+        :param capability: the capability to enable
+        :type capability: Capability
         """
         javabridge.call(self.jobject, "enable", "(Lweka/core/Capabilities$Capability;)V", capability.jobject)
 
@@ -139,6 +150,7 @@ class Capabilities(JavaObject):
         enables the dependency of the given capability enabling NOMINAL_ATTRIBUTES also enables
         BINARY_ATTRIBUTES, UNARY_ATTRIBUTES and EMPTY_NOMINAL_ATTRIBUTES.
         :param capability: the dependency to enable
+        :type capability: Capability
         """
         javabridge.call(
             self.jobject, "enableDependency", "(Lweka/core/Capabilities$Capability;)V", capability.jobject)
@@ -164,6 +176,8 @@ class Capabilities(JavaObject):
     def disable(self, capability):
         """
         Disables the specified capability.
+        :param capability: the capability to disable
+        :type capability: Capability
         """
         javabridge.call(self.jobject, "disable", "(Lweka/core/Capabilities$Capability;)V", capability.jobject)
 
@@ -184,6 +198,7 @@ class Capabilities(JavaObject):
         Disables the dependency of the given capability Disabling NOMINAL_ATTRIBUTES also disables
         BINARY_ATTRIBUTES, UNARY_ATTRIBUTES and EMPTY_NOMINAL_ATTRIBUTES.
         :param capability: the dependency to disable
+        :type capability: Capability
         """
         javabridge.call(
             self.jobject, "disableDependency", "(Lweka/core/Capabilities$Capability;)V", capability.jobject)
@@ -191,13 +206,17 @@ class Capabilities(JavaObject):
     def has_dependencies(self):
         """
         Returns whether any dependencies are set.
+        :return: whether any dependecies are set
         :rtype: bool
         """
         return javabridge.call(self.jobject, "hasDependencies", "()Z")
 
     def has_dependency(self, capability):
         """
-        Returns whether any dependencies are set.
+        Returns whether the specified dependency is set
+        :param capability: the capability to check
+        :type capability: Capability
+        :return: whether the dependency is set
         :rtype: bool
         """
         return javabridge.call(
@@ -207,6 +226,9 @@ class Capabilities(JavaObject):
         """
         Returns true if the currently set capabilities support at least all of the capabiliites of the given
         Capabilities object (checks only the enum!)
+        :param capabilities: the capabilities to check
+        :type capabilities: Capabilities
+        :return: whether the current capabilities support at least the specified ones
         :rtype: bool
         """
         return javabridge.call(self.jobject, "supports", "(Lweka/core/Capabilities;)Z", capabilities.jobject)
@@ -215,20 +237,25 @@ class Capabilities(JavaObject):
         """
         Returns true if the currently set capabilities support (or have a dependency) at least all of the
         capabilities of the given Capabilities object (checks only the enum!)
+        :param capabilities: the capabilities to check
+        :type capabilities: Capabilities
+        :return: whether the current capabilities (potentially) support the specified ones
         :rtype: bool
         """
         return javabridge.call(self.jobject, "supportsMaybe", "(Lweka/core/Capabilities;)Z", capabilities.jobject)
 
-    def set_min_instances(self, min):
+    def set_min_instances(self, minimum):
         """
         Sets the minimum number of instances that must be supported.
-        :param min: the minimum number
+        :param minimum: the minimum number
+        :type minimum: int
         """
-        javabridge.call(self.jobject, "setMinimumNumberInstances", "(I)V", min)
+        javabridge.call(self.jobject, "setMinimumNumberInstances", "(I)V", minimum)
 
     def get_min_instances(self):
         """
         Returns the minimum number of instances that must be supported.
+        :return: the minimum number
         :rtype: int
         """
         return javabridge.call(self.jobject, "getMinimumNumberInstances", "()I")
@@ -237,8 +264,12 @@ class Capabilities(JavaObject):
         """
         Tests whether the attribute meets the conditions.
         :param att: the Attribute to test
+        :type att: Attribute
         :param is_class: whether this attribute is the class attribute
+        :type is_class: bool
         :param fail: whether to fail with an exception in case the test fails
+        :type fail: bool
+        :return: whether the attribute meets the conditions
         :rtype: bool
         """
         if fail:
@@ -260,8 +291,12 @@ class Capabilities(JavaObject):
         """
         Tests whether the dataset meets the conditions.
         :param data: the Instances to test
+        :type data: Instances
         :param from_index: the first attribute to include
+        :type from_index: int
         :param to_index: the last attribute to include
+        :type to_index: int
+        :return: wether the dataset meets the requirements
         :rtype: bool
         """
         if fail:
@@ -284,6 +319,12 @@ class Capabilities(JavaObject):
         """
         returns a Capabilities object specific for this data. The minimum number of instances is not set, the check
         for multi-instance data is optional.
+        :param data: the data to generate the capabilities for
+        :type data: Instances
+        :param multi: whether to check the structure, too
+        :type multi: bool
+        :return: the generated capabilities
+        :rtype: Capabilities
         """
         if multi is None:
             return Capabilities(javabridge.static_call(

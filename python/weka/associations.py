@@ -34,7 +34,7 @@ class Associator(OptionHandler):
     Wrapper class for associators.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified associator using either the classname or the supplied JB_Object.
         :param classname: the classname of the associator
@@ -46,9 +46,6 @@ class Associator(OptionHandler):
         """
         if jobject is None:
             jobject = Associator.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.associations.Associator")
         super(Associator, self).__init__(jobject=jobject, options=options)
 
@@ -91,10 +88,10 @@ def main(args):
             print(usage)
             return
 
-    jars   = []
+    jars = []
     params = []
-    train  = None
-    heap   = None
+    train = None
+    heap = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
@@ -119,7 +116,7 @@ def main(args):
         if len(optargs) > 0:
             associator.set_options(optargs)
         loader = converters.loader_for_file(train)
-        data   = loader.load_file(train)
+        data = loader.load_file(train)
         associator.build_associations(data)
         print(str(associator))
     except Exception, e:
@@ -130,5 +127,5 @@ def main(args):
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
-    except Exception, e:
-        print(e)
+    except Exception, ex:
+        print(ex)

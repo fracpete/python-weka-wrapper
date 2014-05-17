@@ -44,7 +44,8 @@ class JavaObject(object):
         Attempts to set the value (jobject, a Java object) of the provided (bean) property path.
         :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
         :type path: str
-        :param jobject: the Java object to set; if instance of JavaObject class, the jobject member is automatically used
+        :param jobject: the Java object to set; if instance of JavaObject class, the jobject member is
+        automatically used
         :type jobject: JB_Object
         """
         # unwrap?
@@ -120,7 +121,7 @@ class JavaObject(object):
         try:
             return javabridge.make_instance(jni_classname, "()V")
         except JavaException, e:
-            print("Failed to instantiate " + classname + "/" + jni_classname + ": " + e)
+            print("Failed to instantiate " + classname + "/" + jni_classname + ": " + str(e))
             return None
 
 
@@ -165,7 +166,7 @@ class OptionHandler(JavaObject):
     Classes should implement the weka.core.OptionHandler interface to have any effect.
     """
     
-    def __init__(self, jobject, options=[]):
+    def __init__(self, jobject, options=None):
         """
         Initializes the wrapper with the specified Java object.
         :param jobject: the java object to wrap
@@ -175,7 +176,7 @@ class OptionHandler(JavaObject):
         """
         super(OptionHandler, self).__init__(jobject)
         self.is_optionhandler = OptionHandler.check_type(jobject, "weka.core.OptionHandler")
-        if len(options) > 0:
+        if (not options is None) and (len(options) > 0):
             self.set_options(options)
         
     def global_info(self):
@@ -185,7 +186,7 @@ class OptionHandler(JavaObject):
         """
         try:
             return javabridge.call(self.jobject, "globalInfo", "()Ljava/lang/String;")
-        except JavaException, e:
+        except JavaException:
             return None
         
     def set_options(self, options):
@@ -329,10 +330,10 @@ class Range(JavaObject):
         """
         return javabridge.call(self.jobject, "getRanges", "()Ljava/lang/String;")
 
-    def set_ranges(self, range):
+    def set_ranges(self, rng):
         """
         Sets the string range.
-        :param range: the range to set
-        :type range: str
+        :param rng: the range to set
+        :type rng: str
         """
-        javabridge.call(self.jobject, "setRanges", "(Ljava/lang/String;)V", range)
+        javabridge.call(self.jobject, "setRanges", "(Ljava/lang/String;)V", rng)

@@ -47,7 +47,7 @@ def main():
 
     # evaluate
     loader = converters.loader_for_file(outfile)
-    data   = loader.load_file(outfile)
+    data = loader.load_file(outfile)
     matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
     tester = Tester("weka.experiment.PairedCorrectedTTester")
     tester.set_resultmatrix(matrix)
@@ -59,7 +59,10 @@ def main():
     # random split + regression
     helper.print_title("Experiment: Random split + regression")
     datasets = [helper.get_data_dir() + os.sep + "bolts.arff", helper.get_data_dir() + os.sep + "bodyfat.arff"]
-    classifiers = [Classifier("weka.classifiers.rules.ZeroR"), Classifier("weka.classifiers.functions.LinearRegression")]
+    classifiers = [
+        Classifier("weka.classifiers.rules.ZeroR"),
+        Classifier("weka.classifiers.functions.LinearRegression")
+    ]
     outfile = tempfile.gettempdir() + os.sep + "results-rs.arff"
     exp = SimpleRandomSplitExperiment(
         classification=False,
@@ -74,7 +77,7 @@ def main():
 
     # evaluate
     loader = converters.loader_for_file(outfile)
-    data   = loader.load_file(outfile)
+    data = loader.load_file(outfile)
     matrix = ResultMatrix("weka.experiment.ResultMatrixPlainText")
     tester = Tester("weka.experiment.PairedCorrectedTTester")
     tester.set_resultmatrix(matrix)

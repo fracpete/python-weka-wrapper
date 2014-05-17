@@ -152,7 +152,8 @@ class Instances(JavaObject):
         :return: the instance
         :rtype: Instance
         """
-        return Instance(javabridge.call(self.jobject, "set", "(ILweka/core/Instance;)Lweka/core/Instance;", index, inst.jobject))
+        return Instance(
+            javabridge.call(self.jobject, "set", "(ILweka/core/Instance;)Lweka/core/Instance;", index, inst.jobject))
             
     def delete(self, index=None):
         """
@@ -173,13 +174,13 @@ class Instances(JavaObject):
         """
         javabridge.call(self.jobject, "deleteAttributeAt", "(I)V", index)
 
-    def delete_attribute_type(self, type):
+    def delete_attribute_type(self, typ):
         """
         Deletes all attributes of the given type in the dataset.
-        :param type: the attribute type to remove, see weka.core.Attribute Javadoc
-        :type type: int
+        :param typ: the attribute type to remove, see weka.core.Attribute Javadoc
+        :type typ: int
         """
-        javabridge.call(self.jobject, "deleteAttributeType", "(I)V", type)
+        javabridge.call(self.jobject, "deleteAttributeType", "(I)V", typ)
 
     def compactify(self):
         """
@@ -358,7 +359,7 @@ class Instance(JavaObject):
         :param s: the string value
         :type s: str
         """
-        return javabridge.call(self.jobject, "setValue", "(ILjava/lang/String;)V", index)
+        return javabridge.call(self.jobject, "setValue", "(ILjava/lang/String;)V", index, s)
 
     def get_string_value(self, index):
         """
@@ -442,7 +443,8 @@ class Instance(JavaObject):
         :type weight: float
         """
         jni_classname = classname.replace(".", "/")
-        return Instance(javabridge.make_instance(jni_classname, "(D[D)V", weight, javabridge.get_env().make_double_array(values)))
+        return Instance(
+            javabridge.make_instance(jni_classname, "(D[D)V", weight, javabridge.get_env().make_double_array(values)))
 
 
 class Attribute(JavaObject):
@@ -477,7 +479,7 @@ class Attribute(JavaObject):
         :param weight: the weight of the attribute
         :type weight: float
         """
-        javabridge.call(self.jobject, "setWeight", "(D)V")
+        javabridge.call(self.jobject, "setWeight", "(D)V", weight)
 
     def get_weight(self):
         """
@@ -495,7 +497,7 @@ class Attribute(JavaObject):
         :return: the 0-based index
         :rtype: int
         """
-        return javabridge.call(self.jobject, "indexOf", "(Ljava/lang/String;)I")
+        return javabridge.call(self.jobject, "indexOf", "(Ljava/lang/String;)I", label)
 
     def value(self, index):
         """
@@ -718,17 +720,17 @@ class Attribute(JavaObject):
                 "weka/core/Attribute", "(Ljava/lang/String;)V", name))
 
     @classmethod
-    def create_date(cls, name, format="yyyy-MM-dd'T'HH:mm:ss"):
+    def create_date(cls, name, formt="yyyy-MM-dd'T'HH:mm:ss"):
         """
         Creates a date attribute.
         :param name: the name of the attribute
         :type name: str
-        :param format: the date format, see Javadoc for java.text.SimpleDateFormat
-        :type format: str
+        :param formt: the date format, see Javadoc for java.text.SimpleDateFormat
+        :type formt: str
         """
         return Attribute(
             javabridge.make_instance(
-                "weka/core/Attribute", "(Ljava/lang/String;Ljava/lang/String;)V", name, format))
+                "weka/core/Attribute", "(Ljava/lang/String;Ljava/lang/String;)V", name, formt))
 
     @classmethod
     def create_nominal(cls, name, labels):
@@ -796,7 +798,8 @@ class AttributeStats(JavaObject):
         :return: Weight mass for each nominal value
         :rtype: ndarray
         """
-        return javabridge.get_env().get_double_array_elements(javabridge.get_field(self.jobject, "nominalWeights", "[D"))
+        return javabridge.get_env().get_double_array_elements(
+            javabridge.get_field(self.jobject, "nominalWeights", "[D"))
 
     def numeric_stats(self):
         """

@@ -18,7 +18,6 @@ import javabridge
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances, Instance
-import weka.core.utils as utils
 
 
 class Loader(OptionHandler):
@@ -26,7 +25,7 @@ class Loader(OptionHandler):
     Wrapper class for Loaders.
     """
     
-    def __init__(self, classname="weka.core.converters.ArffLoader", jobject=None, options=[]):
+    def __init__(self, classname="weka.core.converters.ArffLoader", jobject=None, options=None):
         """
         Initializes the specified loader either using the classname or the JB_Object.
         :param classname: the classname of the loader
@@ -38,8 +37,6 @@ class Loader(OptionHandler):
         """
         if jobject is None:
             jobject = Loader.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.core.converters.Loader")
         super(Loader, self).__init__(jobject=jobject, options=options)
 
@@ -56,7 +53,8 @@ class Loader(OptionHandler):
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
-            dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(str(dfile)))
+            dfile = javabridge.make_instance(
+                "Ljava/io/File;", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)
         if incremental:
@@ -92,7 +90,8 @@ class Loader(OptionHandler):
         :return: the next instance, None if no more available
         :rtype: Instance
         """
-        inst = javabridge.call(self.jobject, "getNextInstance", "(Lweka/core/Instances;)Lweka/core/Instance;", structure.jobject)
+        inst = javabridge.call(
+            self.jobject, "getNextInstance", "(Lweka/core/Instances;)Lweka/core/Instance;", structure.jobject)
         if inst is None:
             return None
         else:
@@ -104,7 +103,7 @@ class Saver(OptionHandler):
     Wrapper class for Savers.
     """
     
-    def __init__(self, classname="weka.core.converters.ArffSaver", jobject=None, options=[]):
+    def __init__(self, classname="weka.core.converters.ArffSaver", jobject=None, options=None):
         """
         Initializes the specified saver either using the classname or the provided JB_Object.
         :param classname: the classname of the saver
@@ -116,8 +115,6 @@ class Saver(OptionHandler):
         """
         if jobject is None:
             jobject = Saver.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.core.converters.Saver")
         super(Saver, self).__init__(jobject=jobject, options=options)
 
@@ -139,7 +136,8 @@ class Saver(OptionHandler):
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
-            dfile = javabridge.make_instance("Ljava/io/File;", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(str(dfile)))
+            dfile = javabridge.make_instance(
+                "Ljava/io/File;", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)
         javabridge.call(self.jobject, "setInstances", "(Lweka/core/Instances;)V", data.jobject)
         javabridge.call(self.jobject, "writeBatch", "()V")

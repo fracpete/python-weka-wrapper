@@ -33,7 +33,7 @@ class DataGenerator(OptionHandler):
     Wrapper class for datagenerators.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified datagenerator using either the classname or the supplied JB_Object.
         :param classname: the classname of the datagenerator
@@ -43,9 +43,6 @@ class DataGenerator(OptionHandler):
         """
         if jobject is None:
             jobject = DataGenerator.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.enforce_type(jobject, "weka.datagenerators.DataGenerator")
         super(DataGenerator, self).__init__(jobject=jobject, options=options)
 
@@ -194,13 +191,13 @@ def main(args):
         if len(optargs) > 0:
             generator.set_options(optargs)
         DataGenerator.make_data(generator, optargs)
-    except Exception, ex:
-        print(ex)
+    except Exception, e:
+        print(e)
     finally:
         jvm.stop()
 
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
-    except Exception, e:
-        print(e)
+    except Exception, ex:
+        print(ex)

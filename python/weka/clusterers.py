@@ -35,7 +35,7 @@ class Clusterer(OptionHandler):
     Wrapper class for clusterers.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
         :param classname: the classname of the clusterer
@@ -47,9 +47,6 @@ class Clusterer(OptionHandler):
         """
         if jobject is None:
             jobject = Clusterer.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
-        self.classname = classname
         self.is_updateable = self.check_type(jobject, "weka.clusterers.UpdateableClusterer")
         self.is_drawable = self.check_type(jobject, "weka.core.Drawable")
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
@@ -80,7 +77,7 @@ class Clusterer(OptionHandler):
         if self.is_updateable:
             javabridge.call(self.jobject, "updateClusterer", "(Lweka/core/Instance;)V", inst.jobject)
         else:
-            logger.critical(self.classname + " is not updateable!")
+            logger.critical(utils.get_classname(self.jobject) + " is not updateable!")
 
     def update_finished(self):
         """
@@ -89,7 +86,7 @@ class Clusterer(OptionHandler):
         if self.is_updateable:
             javabridge.call(self.jobject, "updateFinished", "()V")
         else:
-            logger.critical(self.classname + " is not updateable!")
+            logger.critical(utils.get_classname(self.jobject) + " is not updateable!")
 
     def cluster_instance(self, inst):
         """
@@ -112,7 +109,7 @@ class Clusterer(OptionHandler):
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
         return javabridge.get_env().get_float_array_elements(pred)
 
-    def number_of_clusters(self, inst):
+    def number_of_clusters(self):
         """
         Returns the number of clusters found.
         :return: the number fo clusters
@@ -148,7 +145,7 @@ class SingleClustererEnhancer(Clusterer):
     Wrapper class for clusterers that use a single base clusterer.
     """
 
-    def __init__(self, classname=None, jobject=None, options=[]):
+    def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
         :param classname: the classname of the clusterer
@@ -160,8 +157,6 @@ class SingleClustererEnhancer(Clusterer):
         """
         if jobject is None:
             jobject = Clusterer.new_instance(classname)
-        if classname is None:
-            classname = utils.get_classname(jobject)
         self.enforce_type(jobject, "weka.clusterers.SingleClustererEnhancer")
         super(SingleClustererEnhancer, self).__init__(classname=classname, jobject=jobject, options=options)
 
@@ -187,7 +182,7 @@ class FilteredClusterer(SingleClustererEnhancer):
     Wrapper class for the filtered clusterer.
     """
 
-    def __init__(self, jobject=None, options=[]):
+    def __init__(self, jobject=None, options=None):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
         :param jobject: the JB_Object to use
@@ -342,10 +337,10 @@ def main(args):
             print(usage)
             return
 
-    jars   = []
+    jars = []
     params = []
-    train  = None
-    heap   = None
+    train = None
+    heap = None
     for opt in optlist:
         if opt[0] == "-j":
             jars = opt[1].split(os.pathsep)
@@ -394,13 +389,13 @@ def main(args):
         if len(optargs) > 0:
             clusterer.set_options(optargs)
         print(ClusterEvaluation.evaluate_clusterer(clusterer, params))
-    except Exception, ex:
-        print(ex)
+    except Exception, e:
+        print(e)
     finally:
         jvm.stop()
 
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
-    except Exception, e:
-        print(e)
+    except Exception, ex:
+        print(ex)
