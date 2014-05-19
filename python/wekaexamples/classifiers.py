@@ -174,8 +174,8 @@ def main():
     print("rootMeanSquaredError: " + str(evaluation.root_mean_squared_error()))
     print("rootMeanPriorSquaredError: " + str(evaluation.root_mean_prior_squared_error()))
     print("rootRelativeSquaredError: " + str(evaluation.root_relative_squared_error()))
-    plot_cls.plot_roc(evaluation, wait=False)
-    plot_cls.plot_prc(evaluation, wait=False)
+    plot_cls.plot_roc(evaluation, title="ROC diabetes", wait=False)
+    plot_cls.plot_prc(evaluation, title="PRC diabetes", wait=False)
 
     # load a numeric dataset
     bolts_file = helper.get_data_dir() + os.sep + "bolts.arff"

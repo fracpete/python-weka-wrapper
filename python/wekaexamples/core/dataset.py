@@ -95,7 +95,7 @@ def main():
     # matrix plot of iris dataset
     iris_data = loader.load_file(iris_file)
     iris_data.set_class_index(iris_data.num_attributes() - 1)
-    pld.matrix_plot(iris_data, percent=50, wait=True)
+    pld.matrix_plot(iris_data, percent=50, title="Matrix plot iris", wait=True)
 
 
 if __name__ == "__main__":

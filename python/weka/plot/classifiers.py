@@ -27,7 +27,8 @@ from weka.classifiers import NumericPrediction, NominalPrediction
 logger = logging.getLogger(__name__)
 
 
-def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, absolute_size=50, outfile=None, wait=True):
+def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, absolute_size=50, title=None,
+                           outfile=None, wait=True):
     """
     Plots the classifers for the given list of predictions.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
@@ -39,6 +40,8 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, abs
     :type max_relative_size: int
     :param absolute_size: the size in point in case of absolute mode
     :type absolute_size: int
+    :param title: an optional title
+    :type title: str
     :param outfile: the output file, ignored if None
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -80,9 +83,12 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, abs
         ax.scatter(actual, predicted, s=error, alpha=0.5)
     ax.set_xlabel("actual")
     ax.set_ylabel("predicted")
-    ax.set_title("Classifier errors")
+    if title is None:
+        title = "Classifier errors"
+    ax.set_title(title)
     ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     ax.grid(True)
+    fig.canvas.set_window_title(title)
     plt.draw()
     if not outfile is None:
         plt.savefig(outfile)
@@ -131,7 +137,7 @@ def get_thresholdcurve_data(data, xname, yname):
     return x, y
 
 
-def plot_roc(evaluation, class_index=0, outfile=None, wait=True):
+def plot_roc(evaluation, class_index=0, title=None, outfile=None, wait=True):
     """
     Plots the ROC (receiver operator characteristics) curve for the given predictions.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
@@ -139,6 +145,8 @@ def plot_roc(evaluation, class_index=0, outfile=None, wait=True):
     :type evaluation: Evaluation
     :param class_index: the 0-based index of the class-label to create the plot for
     :type class_index: int
+    :param title: an optional title
+    :type title: str
     :param outfile: the output file, ignored if None
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -155,9 +163,13 @@ def plot_roc(evaluation, class_index=0, outfile=None, wait=True):
     ax.plot(x, y)
     ax.set_xlabel("False Positive Rate")
     ax.set_ylabel("True Positive Rate")
-    ax.set_title("ROC (%0.4f)" % area)
+    if title is None:
+        title = "ROC"
+    title += " (%0.4f)" % area
+    ax.set_title(title)
     ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     ax.grid(True)
+    fig.canvas.set_window_title(title)
     plt.xlim([-0.05, 1.05])
     plt.ylim([-0.05, 1.05])
     plt.draw()
@@ -167,7 +179,7 @@ def plot_roc(evaluation, class_index=0, outfile=None, wait=True):
         plt.show()
 
 
-def plot_prc(evaluation, class_index=0, outfile=None, wait=True):
+def plot_prc(evaluation, class_index=0, title=None, outfile=None, wait=True):
     """
     Plots the PRC (precision recall) curve for the given predictions.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
@@ -175,6 +187,8 @@ def plot_prc(evaluation, class_index=0, outfile=None, wait=True):
     :type evaluation: Evaluation
     :param class_index: the 0-based index of the class-label to create the plot for
     :type class_index: int
+    :param title: an optional title
+    :type title: str
     :param outfile: the output file, ignored if None
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -189,9 +203,12 @@ def plot_prc(evaluation, class_index=0, outfile=None, wait=True):
     ax.plot(x, y)
     ax.set_xlabel("Recall")
     ax.set_ylabel("Precision")
-    ax.set_title("PRC")
+    if title is None:
+        title = "PRC"
+    ax.set_title(title)
     ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     ax.grid(True)
+    fig.canvas.set_window_title(title)
     plt.xlim([-0.05, 1.05])
     plt.ylim([-0.05, 1.05])
     plt.draw()

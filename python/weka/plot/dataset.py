@@ -43,7 +43,7 @@ def create_subsample(data, percent, seed=1):
     return data
 
 
-def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, outfile=None, wait=True):
+def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=None, outfile=None, wait=True):
     """
     Plots two attributes against each other.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
@@ -59,6 +59,8 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, outfile
     :type seed: int
     :param size: the size of the circles in point
     :type size: int
+    :param title: an optional title
+    :type title: str
     :param outfile: the (optional) file to save the generated plot to. The extension determines the file format.
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -93,9 +95,10 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, outfile
         ax.scatter(x, y, c=c, s=size, alpha=0.5)
     ax.set_xlabel(data.get_attribute(index_x).get_name())
     ax.set_ylabel(data.get_attribute(index_y).get_name())
-    title = "Attribute scatter plot"
-    if percent != 100:
-        title += " (%0.1f%%)" % percent
+    if title is None:
+        title = "Attribute scatter plot"
+        if percent != 100:
+            title += " (%0.1f%%)" % percent
     ax.set_title(title)
     ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     ax.grid(True)
@@ -107,7 +110,7 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, outfile
         plt.show()
 
 
-def matrix_plot(data, percent=100.0, seed=1, size=10, outfile=None, wait=True):
+def matrix_plot(data, percent=100.0, seed=1, size=10, title=None, outfile=None, wait=True):
     """
     Plots all attributes against each other.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
@@ -119,6 +122,8 @@ def matrix_plot(data, percent=100.0, seed=1, size=10, outfile=None, wait=True):
     :type seed: int
     :param size: the size of the circles in point
     :type size: int
+    :param title: an optional title
+    :type title: str
     :param outfile: the (optional) file to save the generated plot to. The extension determines the file format.
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -163,7 +168,8 @@ def matrix_plot(data, percent=100.0, seed=1, size=10, outfile=None, wait=True):
             ax.get_xaxis().set_ticklabels([])
             ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
             ax.grid(True)
-    title = data.get_relationname()
+    if title is None:
+        title = data.get_relationname()
     if percent != 100:
         title += " (%0.1f%%)" % percent
     fig.canvas.set_window_title(title)
