@@ -7,10 +7,9 @@ Requirements:
 
 * Python
  * javabridge (>= 1.0.1)
- * matplotlib (>= 1.7.0)
- * pygraphviz (>= 1.2)
- * PIL (>= 1.1.0)
- * numpy
+ * matplotlib (optional)
+ * pygraphviz (optional)
+ * PIL (optional)
 * JDK 1.6+
 
 Included:
