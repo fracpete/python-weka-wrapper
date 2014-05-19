@@ -22,7 +22,7 @@ from weka.core.classes import Random
 from weka.core.dataset import Instances
 
 # logging setup
-logger = logging.getLogger("weka.plot.dataset")
+logger = logging.getLogger(__name__)
 
 
 def create_subsample(data, percent, seed=1):

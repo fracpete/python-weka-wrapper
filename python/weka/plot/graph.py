@@ -23,7 +23,7 @@ if plot.PIL_available:
     from PIL import Image
 
 # logging setup
-logger = logging.getLogger("weka.plot.dataset")
+logger = logging.getLogger(__name__)
 
 
 def plot_dot_graph(graph, filename=None):

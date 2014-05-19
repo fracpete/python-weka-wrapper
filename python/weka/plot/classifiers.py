@@ -24,7 +24,7 @@ from weka.core.dataset import Instances
 from weka.classifiers import NumericPrediction, NominalPrediction
 
 # logging setup
-logger = logging.getLogger("weka.plot.classifiers")
+logger = logging.getLogger(__name__)
 
 
 def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, absolute_size=50, outfile=None, wait=True):
