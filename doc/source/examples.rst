@@ -56,7 +56,7 @@ Build classifier on dataset, print model and draw graph
 
    print(cls)
 
-   import weka.plot.graph as graph
+   import weka.plot.graph as graph  # NB: pygraphviz and PIL are required
    graph.plot_dot_graph(cls.graph())
 
 
@@ -109,7 +109,7 @@ Cross-validate filtered classifier and print evaluation and display ROC
    print(evl.to_summary())
    print(evl.to_class_details())
 
-   import weka.plot.classifiers as plcls
+   import weka.plot.classifiers as plcls  # NB: matplotlib is required
    plcls.plot_roc(evl, class_index=0, wait=True)
 
 
@@ -130,7 +130,7 @@ Cross-validate regressor, display classifier errors and predictions
    print(evl.to_summary())
    print(pout.get_buffer_content())
 
-   import weka.plot.classifiers as plcls
+   import weka.plot.classifiers as plcls  # NB: matplotlib is required
    plcls.plot_classifier_errors(evl.predictions(), wait=True)
 
 
