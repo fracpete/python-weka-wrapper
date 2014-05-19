@@ -94,14 +94,15 @@ setup(
         "wekaexamples": ["data/*.arff"],
     },
     include_package_data=True,
-    version="0.1.3",
+    version="0.1.4",
     author='Peter "fracpete" Reutemann',
     author_email='fracpete at gmail dot com',
     install_requires=[
-        "javabridge",
-        "matplotlib",
-        "pygraphviz",
-        "PIL"
+        "javabridge>=1.0.1",
     ],
+    extras_require={
+        'plots': ["matplotlib"],
+        'graphs': ["pygraphviz", "PIL"],
+    },
     ext_modules=ext_modules(),
 )

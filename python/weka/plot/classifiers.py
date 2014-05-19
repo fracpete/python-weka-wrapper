@@ -15,10 +15,16 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import javabridge
-import matplotlib.pyplot as plt
+import logging
+import weka.plot as plot
+if plot.matplotlib_available:
+    import matplotlib.pyplot as plt
 from weka.core.classes import JavaObject
 from weka.core.dataset import Instances
 from weka.classifiers import NumericPrediction, NominalPrediction
+
+# logging setup
+logger = logging.getLogger("weka.plot.classifiers")
 
 
 def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, absolute_size=50, outfile=None, wait=True):
@@ -38,6 +44,9 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, abs
     :param wait: whether to wait for the user to close the plot
     :type wait: bool
     """
+    if not plot.matplotlib_available:
+        logger.error("Matplotlib is not installed, plotting unavailable!")
+        return
     actual = []
     predicted = []
     error = None
@@ -135,6 +144,9 @@ def plot_roc(evaluation, class_index=0, outfile=None, wait=True):
     :param wait: whether to wait for the user to close the plot
     :type wait: bool
     """
+    if not plot.matplotlib_available:
+        logger.error("Matplotlib is not installed, plotting unavailable!")
+        return
     data = generate_thresholdcurve_data(evaluation, class_index)
     area = javabridge.static_call(
         "weka/classifiers/evaluation/ThresholdCurve", "getROCArea", "(Lweka/core/Instances;)D", data.jobject)
@@ -168,6 +180,9 @@ def plot_prc(evaluation, class_index=0, outfile=None, wait=True):
     :param wait: whether to wait for the user to close the plot
     :type wait: bool
     """
+    if not plot.matplotlib_available:
+        logger.error("Matplotlib is not installed, plotting unavailable!")
+        return
     data = generate_thresholdcurve_data(evaluation, class_index)
     x, y = get_thresholdcurve_data(data, "Recall", "Precision")
     fig, ax = plt.subplots()

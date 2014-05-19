@@ -14,9 +14,16 @@
 # graph.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
-from pygraphviz.agraph import AGraph
+import logging
 import tempfile
-from PIL import Image
+import weka.plot as plot
+if plot.pygraphviz_available:
+    from pygraphviz.agraph import AGraph
+if plot.PIL_available:
+    from PIL import Image
+
+# logging setup
+logger = logging.getLogger("weka.plot.dataset")
 
 
 def plot_dot_graph(graph, filename=None):
@@ -27,6 +34,13 @@ def plot_dot_graph(graph, filename=None):
     :param filename: the (optional) file to save the generated plot to. The extension determines the file format.
     :type filename: str
     """
+    if not plot.pygraphviz_available:
+        logger.error("Pygraphviz is not installed, cannot generate graph plot!")
+        return
+    if not plot.PIL_available:
+        logger.error("PIL is not installed, cannot display graph plot!")
+        return
+
     agraph = AGraph(graph)
     agraph.layout(prog='dot')
     if filename is None:

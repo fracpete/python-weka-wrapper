@@ -25,10 +25,12 @@ Requirements
 The library has the following requirements:
 
 * Python
- * javabridge
- * pygraphviz
- * matplotlib
- * PIL
+
+ * javabridge (>=1.0.1, required)
+ * pygraphviz (optional)
+ * PIL (optional)
+ * matplotlib (optional)
+
 * JDK 1.6+
 
 The Python libraries you can either install using `pip install <name>` or use pre-built packages available for

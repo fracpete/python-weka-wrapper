@@ -14,9 +14,15 @@
 # dataset.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
-import matplotlib.pyplot as plt
+import weka.plot as plot
+import logging
+if plot.matplotlib_available:
+    import matplotlib.pyplot as plt
 from weka.core.classes import Random
 from weka.core.dataset import Instances
+
+# logging setup
+logger = logging.getLogger("weka.plot.dataset")
 
 
 def create_subsample(data, percent, seed=1):
@@ -58,6 +64,10 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, outfile
     :param wait: whether to wait for the user to close the plot
     :type wait: bool
     """
+    if not plot.matplotlib_available:
+        logger.error("Matplotlib is not installed, plotting unavailable!")
+        return
+
     # create subsample
     data = create_subsample(data, percent=percent, seed=seed)
 
@@ -114,6 +124,10 @@ def matrix_plot(data, percent=100.0, seed=1, size=10, outfile=None, wait=True):
     :param wait: whether to wait for the user to close the plot
     :type wait: bool
     """
+    if not plot.matplotlib_available:
+        logger.error("Matplotlib is not installed, plotting unavailable!")
+        return
+
     # create subsample
     data = create_subsample(data, percent=percent, seed=seed)
 
