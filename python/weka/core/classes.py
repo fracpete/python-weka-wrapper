@@ -39,6 +39,13 @@ class JavaObject(object):
         """
         return javabridge.to_string(self.jobject)
 
+    def __unicode__(self):
+        """
+        Just calls the toString() method.
+        :rtype: str
+        """
+        return javabridge.to_string(self.jobject)
+
     def set_property(self, path, jobject):
         """
         Attempts to set the value (jobject, a Java object) of the provided (bean) property path.
