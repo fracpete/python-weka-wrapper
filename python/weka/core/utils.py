@@ -77,9 +77,7 @@ def from_commandline(cmdline):
     params = split_options(cmdline)
     cls = params[0]
     params = params[1:]
-    result = OptionHandler(cls)
-    result.set_options(params)
-    return result
+    return OptionHandler(jobject=javabridge.make_instance(cls.replace(".", "/"), "()V"), options=params)
 
 
 def get_classname(jobject):
