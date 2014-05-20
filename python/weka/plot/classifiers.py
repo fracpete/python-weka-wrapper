@@ -137,6 +137,18 @@ def get_thresholdcurve_data(data, xname, yname):
     return x, y
 
 
+def get_auc(data):
+    """
+    Calculates the area under the ROC curve (AUC).
+    :param data: the threshold curve data
+    :type data: Instances
+    :return: the area
+    :rtype: float
+    """
+    return javabridge.static_call(
+        "weka/classifiers/evaluation/ThresholdCurve", "getROCArea", "(Lweka/core/Instances;)D", data.jobject)
+
+
 def plot_roc(evaluation, class_index=0, title=None, outfile=None, wait=True):
     """
     Plots the ROC (receiver operator characteristics) curve for the given predictions.
@@ -156,8 +168,7 @@ def plot_roc(evaluation, class_index=0, title=None, outfile=None, wait=True):
         logger.error("Matplotlib is not installed, plotting unavailable!")
         return
     data = generate_thresholdcurve_data(evaluation, class_index)
-    area = javabridge.static_call(
-        "weka/classifiers/evaluation/ThresholdCurve", "getROCArea", "(Lweka/core/Instances;)D", data.jobject)
+    area = get_auc(data)
     x, y = get_thresholdcurve_data(data, "False Positive Rate", "True Positive Rate")
     fig, ax = plt.subplots()
     ax.plot(x, y)
