@@ -1070,7 +1070,7 @@ class PredictionOutput(OptionHandler):
         :param data: The dataset format
         :type data: Instances
         """
-        javabridge.call(self.jobject, "setHeader", "(Lweka/core/Instances;)V", data)
+        javabridge.call(self.jobject, "setHeader", "(Lweka/core/Instances;)V", data.jobject)
 
     def get_header(self):
         """
@@ -1078,7 +1078,7 @@ class PredictionOutput(OptionHandler):
         :return: The dataset format
         :rtype: Instances
         """
-        return javabridge.call(self.jobject, "getHeader", "()Lweka/core/Instances;")
+        return Instances(javabridge.call(self.jobject, "getHeader", "()Lweka/core/Instances;"))
 
     def print_header(self):
         """
@@ -1137,6 +1137,14 @@ class PredictionOutput(OptionHandler):
         :rtype: str
         """
         return javabridge.to_string(javabridge.call(self.jobject, "getBuffer", "()Ljava/lang/StringBuffer;"))
+
+    def __str__(self):
+        """
+        Returns the content of the buffer.
+        :return: the current buffer content
+        :rtype: str
+        """
+        return self.get_buffer_content()
 
 
 def main(args):
