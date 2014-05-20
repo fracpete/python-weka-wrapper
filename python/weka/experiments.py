@@ -71,13 +71,15 @@ class SimpleExperiment(OptionHandler):
 
         if not jobject is None:
             self.enforce_type(jobject, "weka.experiment.Experiment")
+        if jobject is None:
+            jobject = javabridge.make_instance("weka/experiment/Experiment", "()V")
 
         self.classification = classification
         self.runs = runs
         self.datasets = datasets[:]
         self.classifiers = classifiers[:]
         self.result = result
-        self.jobject = jobject
+        super(SimpleExperiment, self).__init__(jobject=jobject)
 
     def configure_splitevaluator(self):
         """
@@ -104,11 +106,6 @@ class SimpleExperiment(OptionHandler):
         """
         Initializes the experiment.
         """
-        if not self.jobject is None:
-            return
-
-        self.jobject = javabridge.make_instance("weka/experiment/Experiment", "()V")
-
         # basic options
         javabridge.call(
             self.jobject, "setPropertyArray", "(Ljava/lang/Object;)V",
@@ -457,7 +454,8 @@ class Tester(OptionHandler):
         :return: the matrix in use
         :rtype: ResultMatrix
         """
-        return ResultMatrix(javabridge.call(self.jobject, "getResultMatrix", "()Lweka/experiment/ResultMatrix;"))
+        return ResultMatrix(
+            jobject=javabridge.call(self.jobject, "getResultMatrix", "()Lweka/experiment/ResultMatrix;"))
 
     def set_instances(self, data):
         """
