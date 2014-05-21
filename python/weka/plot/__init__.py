@@ -14,6 +14,9 @@
 # __init__.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
+from weka.core.dataset import Instances
+from weka.core.classes import Random
+
 # check whether pygraphviz is there
 pygraphviz_available = False
 try:
@@ -37,3 +40,21 @@ try:
     matplotlib_available = True
 except ImportError:
     pass
+
+
+def create_subsample(data, percent, seed=1):
+    """
+    Generates a subsample of the dataset.
+    :param data: the data to create the subsample from
+    :type data: Instances
+    :param percent: the percentage (0-100)
+    :type percent: float
+    :param seed: the seed value to use
+    :type seed: int
+    """
+    if percent <= 0 or percent >= 100:
+        return data
+    data = Instances.copy_instances(data)
+    data.randomize(Random(seed))
+    data = Instances.copy_instances(data, 0, int(round(data.num_instances() * percent / 100.0)))
+    return data

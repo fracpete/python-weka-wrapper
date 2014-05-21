@@ -14,33 +14,14 @@
 # dataset.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
-import weka.plot as plot
 import logging
 if plot.matplotlib_available:
     import matplotlib.pyplot as plt
-from weka.core.classes import Random
+import weka.plot as plot
 from weka.core.dataset import Instances
 
 # logging setup
 logger = logging.getLogger(__name__)
-
-
-def create_subsample(data, percent, seed=1):
-    """
-    Generates a subsample of the dataset.
-    :param data: the data to create the subsample from
-    :type data: Instances
-    :param percent: the percentage (0-100)
-    :type percent: float
-    :param seed: the seed value to use
-    :type seed: int
-    """
-    if percent <= 0 or percent >= 100:
-        return data
-    data = Instances.copy_instances(data)
-    data.randomize(Random(seed))
-    data = Instances.copy_instances(data, 0, int(round(data.num_instances() * percent / 100.0)))
-    return data
 
 
 def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=None, outfile=None, wait=True):
@@ -71,7 +52,7 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=N
         return
 
     # create subsample
-    data = create_subsample(data, percent=percent, seed=seed)
+    data = plot.create_subsample(data, percent=percent, seed=seed)
 
     # collect data
     x = []
@@ -134,7 +115,7 @@ def matrix_plot(data, percent=100.0, seed=1, size=10, title=None, outfile=None, 
         return
 
     # create subsample
-    data = create_subsample(data, percent=percent, seed=seed)
+    data = plot.create_subsample(data, percent=percent, seed=seed)
 
     fig = plt.figure()
 

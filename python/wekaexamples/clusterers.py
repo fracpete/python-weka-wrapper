@@ -20,7 +20,8 @@ import wekaexamples.helper as helper
 from weka.core.converters import Loader
 from weka.clusterers import Clusterer, FilteredClusterer, ClusterEvaluation
 from weka.filters import Filter
-import weka.plot.graph as plot_graph
+import weka.plot.graph as plg
+import weka.plot.clusterers as plc
 
 
 def main():
@@ -52,6 +53,7 @@ def main():
     print("# clusters: " + str(evaluation.get_num_clusters()))
     print("log likelihood: " + str(evaluation.get_log_likelihood()))
     print("cluster assignments:\n" + str(evaluation.get_cluster_assignments()))
+    plc.plot_cluster_assignments(evaluation, data, inst_no=True)
 
     # using a filtered clusterer
     helper.print_title("Filtered clusterer")
@@ -85,7 +87,7 @@ def main():
     print(clusterer.to_commandline())
     print(clusterer)
     print(clusterer.graph())
-    plot_graph.plot_dot_graph(clusterer.graph())
+    plg.plot_dot_graph(clusterer.graph())
 
 
 if __name__ == "__main__":
