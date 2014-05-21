@@ -16,6 +16,7 @@
 
 import javabridge
 import logging
+import numpy
 from weka.core.classes import JavaObject
 import weka.core.types as types
 
@@ -86,6 +87,18 @@ class Instances(JavaObject):
         :rtype: AttributeStats
         """
         return AttributeStats(javabridge.call(self.jobject, "attributeStats", "(I)Lweka/core/AttributeStats;", index))
+
+    def get_values(self, index):
+        """
+        Returns the internal values of this attribute from all the instance objects.
+        :return: the values as numpy array
+        :rtype: list
+        """
+        values = []
+        for i in xrange(self.num_instances()):
+            inst = self.get_instance(i)
+            values.append(inst.get_value(index))
+        return numpy.array(values)
 
     def num_instances(self):
         """
