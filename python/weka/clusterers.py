@@ -107,7 +107,7 @@ class Clusterer(OptionHandler):
         :rtype: float[]
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
-        return javabridge.get_env().get_float_array_elements(pred)
+        return javabridge.get_env().get_double_array_elements(pred)
 
     def number_of_clusters(self):
         """
