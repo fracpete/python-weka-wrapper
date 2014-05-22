@@ -49,6 +49,23 @@ public class EvaluationWrapper {
   }
 
   /**
+   * Initializes the wrapper.
+   *
+   * @param data the data to initialize with
+   * @param matrix the cost matrix to initialize with
+   */
+  public EvaluationWrapper(Instances data, CostMatrix costMatrix) {
+    try {
+      m_Evaluation = new Evaluation(data, costMatrix);
+    }
+    catch (Exception e) {
+      System.err.println("Failed to initialize Evaluation object:");
+      e.printStackTrace();
+      m_Evaluation = null;
+    }
+  }
+
+  /**
    * Returns the wrapped evaluation object.
    *
    * @return the evaluation object or null if initialization failed

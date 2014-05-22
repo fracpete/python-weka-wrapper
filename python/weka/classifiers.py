@@ -16,12 +16,11 @@
 
 import javabridge
 import logging
-import os
-import sys
 import getopt
 import weka.core.jvm as jvm
-import weka.core.utils as utils
+import weka.core.utils as wutils
 import weka.core.types as arrays
+from numpy import *
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
 from weka.core.classes import Random
@@ -80,7 +79,7 @@ class Classifier(OptionHandler):
         if self.is_updateable:
             javabridge.call(self.jobject, "updateClassifier", "(Lweka/core/Instance;)V", inst.jobject)
         else:
-            logger.critical(utils.get_classname(self.jobject) + " is not updateable!")
+            logger.critical(wutils.get_classname(self.jobject) + " is not updateable!")
 
     def classify_instance(self, inst):
         """
@@ -98,7 +97,7 @@ class Classifier(OptionHandler):
         :param inst: the Instance to get the class distribution for
         :type inst: Instance
         :return: the class distribution array
-        :rtype: float[]
+        :rtype: ndarray
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
         return javabridge.get_env().get_float_array_elements(pred)
@@ -358,24 +357,229 @@ class NumericPrediction(Prediction):
         return arrays.double_matrix_to_ndarray(javabridge.call(self.jobject, "predictionIntervals", "()[[D"))
 
 
+class CostMatrix(JavaObject):
+    """
+    Class for storing and manipulating a misclassification cost matrix. The element at position i,j in the matrix
+    is the penalty for classifying an instance of class j as class i. Cost values can be fixed or computed on a
+    per-instance basis (cost sensitive evaluation only) from the value of an attribute or an expression involving
+    attribute(s).
+    """
+
+    def __init__(self, matrx=None, num_classes=None):
+        """
+        Initializes the matrix object.
+        :param matrx: the matrix to copy
+        :type matrx: CostMatrix or ndarray
+        :param num_classes: the number of classes
+        :type num_classes: int
+        """
+        if not matrx is None:
+            if isinstance(matrx, CostMatrix):
+                jobject = javabridge.make_instance(
+                    "weka/classifiers/CostMatrix", "(Lweka/classifiers/CostMatrix;)V", matrx.jobject)
+                super(CostMatrix, self).__init__(jobject)
+            elif isinstance(matrx, ndarray):
+                shp = matrx.shape
+                if len(shp) != 2:
+                    raise Exception("Numpy array must be a 2-dimensional array!")
+                rows, cols = shp
+                if rows == cols:
+                    cmatrix = CostMatrix(num_classes=rows)
+                    for r in xrange(rows):
+                        for c in xrange(cols):
+                            cmatrix.set_element(r, c, matrx[r][c])
+                    super(CostMatrix, self).__init__(cmatrix.jobject)
+                else:
+                    raise Exception("Numpy array must be a square matrix!")
+            else:
+                raise Exception("Matrix must be either a CostMatrix or a 2-dimensional numpy array: " + str(type(matrx)))
+        elif not num_classes is None:
+            jobject = javabridge.make_instance(
+                "weka/classifiers/CostMatrix", "(I)V", num_classes)
+            super(CostMatrix, self).__init__(jobject)
+        else:
+            raise Exception("Either matrix or number of classes must be provided!")
+
+    def apply_cost_matrix(self, data, rnd):
+        """
+        Applies the cost matrix to the data.
+        :param data: the data to apply to
+        :type data: Instances
+        :param rnd: the random number generator
+        :type rnd: Random
+        """
+        return Instances(
+            javabridge.call(
+                self.jobject, "applyCostMatrix", "(Lweka/core/Instances;Ljava/util/Random;)Lweka/core/Instances;",
+                data.jobject, rnd.jobject))
+
+    def expected_costs(self, class_probs, inst=None):
+        """
+        Calculates the expected misclassification cost for each possible class value, given class probability
+        estimates.
+        :param class_probs: the class probabilities
+        :type class_probs: ndarray
+        :return: the calculated costs
+        :rtype: ndarray
+        """
+        if inst is None:
+            costs = javabridge.call(
+                self.jobject, "expectedCosts", "([D)[D", javabridge.get_env().make_double_array(class_probs))
+            return javabridge.get_env().get_float_array_elements(costs)
+        else:
+            costs = javabridge.call(
+                self.jobject, "expectedCosts", "([DLweka/core/Instance;)[D",
+                javabridge.get_env().make_double_array(class_probs), inst.jobject)
+            return javabridge.get_env().get_float_array_elements(costs)
+
+    def get_cell(self, row, col):
+        """
+        Returns the JB_Object at the specified location.
+        :param row: the 0-based index of the row
+        :type row: int
+        :param col: the 0-based index of the column
+        :type col: int
+        :return: the object in that cell
+        :rtype: JB_Object
+        """
+        return javabridge.call(
+            self.jobject, "getCell", "(II)Ljava/lang/Object;", row, col)
+
+    def set_cell(self, row, col, obj):
+        """
+        Sets the JB_Object at the specified location. Automatically unwraps JavaObject.
+        :param row: the 0-based index of the row
+        :type row: int
+        :param col: the 0-based index of the column
+        :type col: int
+        :param obj: the object for that cell
+        :type obj: object
+        """
+        if isinstance(obj, JavaObject):
+            obj = obj.jobject
+        javabridge.call(
+            self.jobject, "setCell", "(IILjava/lang/Object;)V", row, col, obj)
+
+    def get_element(self, row, col, inst=None):
+        """
+        Returns the value at the specified location.
+        :param row: the 0-based index of the row
+        :type row: int
+        :param col: the 0-based index of the column
+        :type col: int
+        :param inst: the Instace
+        :type inst: Instance
+        :return: the value in that cell
+        :rtype: float
+        """
+        if inst is None:
+            return javabridge.call(
+                self.jobject, "getElement", "(II)D", row, col)
+        else:
+            return javabridge.call(
+                self.jobject, "getElement", "(IILweka/core/Instance;)D", row, col, inst.jobject)
+
+    def set_element(self, row, col, value):
+        """
+        Sets the float value at the specified location.
+        :param row: the 0-based index of the row
+        :type row: int
+        :param col: the 0-based index of the column
+        :type col: int
+        :param value: the float value for that cell
+        :type value: float
+        """
+        javabridge.call(
+            self.jobject, "setElement", "(IID)V", row, col, value)
+
+    def get_max_cost(self, class_value, inst=None):
+        """
+        Gets the maximum cost for a particular class value.
+        :param class_value: the class value to get the maximum cost for
+        :type class_value: int
+        :param inst: the Instance
+        :type inst: Instance
+        :return: the cost
+        :rtype: float
+        """
+        if inst is None:
+            return javabridge.call(
+                self.jobject, "getMaxCost", "(I)D", class_value)
+        else:
+            return javabridge.call(
+                self.jobject, "getElement", "(ILweka/core/Instance;)D", class_value, inst.jobject)
+
+    def initialize(self):
+        """
+        Initializes the matrix.
+        """
+        javabridge.call(self.jobject, "initialize", "()V")
+
+    def normalize(self):
+        """
+        Normalizes the matrix.
+        """
+        javabridge.call(self.jobject, "normalize", "()V")
+
+    def num_columns(self):
+        """
+        Returns the number of columns.
+        :return: the number of columns
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "numColumns", "()I")
+
+    def num_rows(self):
+        """
+        Returns the number of rows.
+        :return: the number of rows
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "numRows", "()I")
+
+    def size(self):
+        """
+        Returns the number of rows/columns.
+        :return: the number of rows/columns
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "size", "()I")
+
+    def to_matlab(self):
+        """
+        Returns the matrix in Matlab format.
+        :return: the matrix as Matlab formatted string
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "toMatlab", "()Ljava/lang/String;")
+
+
 class Evaluation(JavaObject):
     """
     Evaluation class for classifiers.
     """
 
-    def __init__(self, data):
+    def __init__(self, data, cost_matrix=None):
         """
         Initializes an Evaluation object.
         :param data: the data to use to initialize the priors with
         :type data: Instances
+        :param cost_matrix: the cost matrix to use for initializing
+        :type cost_matrix: CostMatrix
         """
-        jobject = javabridge.make_instance(
-            "weka/classifiers/EvaluationWrapper", "(Lweka/core/Instances;)V", data.jobject)
+        if cost_matrix is None:
+            jobject = javabridge.make_instance(
+                "weka/classifiers/EvaluationWrapper", "(Lweka/core/Instances;)V",
+                data.jobject)
+        else:
+            jobject = javabridge.make_instance(
+                "weka/classifiers/EvaluationWrapper", "(Lweka/core/Instances;Lweka/classifiers/CostMatrix;)V",
+                data.jobject, cost_matrix.jobject)
         self.wrapper = jobject
         jobject = javabridge.call(jobject, "getEvaluation", "()Lweka/classifiers/Evaluation;")
         super(Evaluation, self).__init__(jobject)
 
-    def crossvalidate_model(self, classifier, data, num_folds, random, output=None):
+    def crossvalidate_model(self, classifier, data, num_folds, rnd, output=None):
         """
         Crossvalidates the model using the specified data, number of folds and random number generator wrapper.
         :param classifier: the classifier to cross-validate
@@ -384,8 +588,8 @@ class Evaluation(JavaObject):
         :type data: Instances
         :param num_folds: the number of folds
         :type num_folds: int
-        :param random: the random number generator to use
-        :type random: Random
+        :param rnd: the random number generator to use
+        :type rnd: Random
         :param output: the output generator to use
         :type output: PredictionOutput
         """
@@ -396,9 +600,9 @@ class Evaluation(JavaObject):
         javabridge.call(
             self.jobject, "crossValidateModel",
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V",
-            classifier.jobject, data.jobject, num_folds, random.jobject, generator)
+            classifier.jobject, data.jobject, num_folds, rnd.jobject, generator)
 
-    def evaluate_train_test_split(self, classifier, data, percentage, random, output=None):
+    def evaluate_train_test_split(self, classifier, data, percentage, rnd, output=None):
         """
         Splits the data into train and test, builds the classifier with the training data and
         evaluates it against the test set.
@@ -408,13 +612,13 @@ class Evaluation(JavaObject):
         :type data: Instances
         :param percentage: the percentage split to use (amount to use for training)
         :type percentage: double
-        :param random: the random number generator to use, if None the order gets preserved
-        :type random: Random
+        :param rnd: the random number generator to use, if None the order gets preserved
+        :type rnd: Random
         :param output: the output generator to use
         :type output: PredictionOutput
         """
-        if not random is None:
-            data.randomize(random)
+        if not rnd is None:
+            data.randomize(rnd)
         train_size = int(round(data.num_instances() * percentage / 100))
         test_size = data.num_instances() - train_size
         train_inst = Instances.copy_instances(data, 0, train_size)
@@ -439,14 +643,14 @@ class Evaluation(JavaObject):
             generator = []
         else:
             generator = [output.jobject]
-        array = javabridge.call(
+        cls = javabridge.call(
             self.jobject, "evaluateModel",
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;[Ljava/lang/Object;)[D",
             classifier.jobject, data.jobject, generator)
-        if array is None:
+        if cls is None:
             return None
         else:
-            return javabridge.get_env().get_double_array_elements(array)
+            return javabridge.get_env().get_double_array_elements(cls)
 
     def test_model_once(self, classifier, inst):
         """
