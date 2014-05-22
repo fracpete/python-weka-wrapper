@@ -25,7 +25,7 @@ from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
 from weka.core.classes import Random
 from weka.core.capabilities import Capabilities
-from weka.core.dataset import Instances
+from weka.core.dataset import Instances, Instance, Attribute
 from weka.filters import Filter
 
 # logging setup
@@ -100,7 +100,7 @@ class Classifier(OptionHandler):
         :rtype: ndarray
         """
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
-        return javabridge.get_env().get_float_array_elements(pred)
+        return javabridge.get_env().get_double_array_elements(pred)
 
     def graph_type(self):
         """
@@ -313,9 +313,9 @@ class NominalPrediction(Prediction):
         """
         Returns the class distribution.
         :return: the class distribution list
-        :rtype: list
+        :rtype: ndarray
         """
-        return javabridge.call(self.jobject, "distribution", "()[D")
+        return javabridge.get_env().get_double_array_elements(javabridge.call(self.jobject, "distribution", "()[D"))
 
     def margin(self):
         """
@@ -425,12 +425,12 @@ class CostMatrix(JavaObject):
         if inst is None:
             costs = javabridge.call(
                 self.jobject, "expectedCosts", "([D)[D", javabridge.get_env().make_double_array(class_probs))
-            return javabridge.get_env().get_float_array_elements(costs)
+            return javabridge.get_env().get_double_array_elements(costs)
         else:
             costs = javabridge.call(
                 self.jobject, "expectedCosts", "([DLweka/core/Instance;)[D",
                 javabridge.get_env().make_double_array(class_probs), inst.jobject)
-            return javabridge.get_env().get_float_array_elements(costs)
+            return javabridge.get_env().get_double_array_elements(costs)
 
     def get_cell(self, row, col):
         """
@@ -1184,7 +1184,7 @@ class Evaluation(JavaObject):
         :return: the priors
         :rtype: ndarray
         """
-        return javabridge.get_env().get_float_array_elements(javabridge.call(self.jobject, "getClassPriors", "()[D"))
+        return javabridge.get_env().get_double_array_elements(javabridge.call(self.jobject, "getClassPriors", "()[D"))
 
     def header(self):
         """
@@ -1349,6 +1349,61 @@ class PredictionOutput(OptionHandler):
         :rtype: str
         """
         return self.get_buffer_content()
+
+
+def predictions_to_instances(data, preds):
+    """
+    Turns the predictions turned into an Instances object.
+    :param data: the original dataset format
+    :type data: Instances
+    :param preds: the predictions to convert
+    :type preds: list
+    :return: the predictions, None if no predictions present
+    :rtype: Instances
+    """
+    if len(preds) == 0:
+        return None
+
+    is_numeric = isinstance(preds[0], NumericPrediction)
+
+    # create header
+    atts = []
+    if is_numeric:
+        atts.append(Attribute.create_numeric("index"))
+        atts.append(Attribute.create_numeric("weight"))
+        atts.append(Attribute.create_numeric("actual"))
+        atts.append(Attribute.create_numeric("predicted"))
+        atts.append(Attribute.create_numeric("error"))
+    else:
+        atts.append(Attribute.create_numeric("index"))
+        atts.append(Attribute.create_numeric("weight"))
+        atts.append(data.get_class_attribute().copy(name="actual"))
+        atts.append(data.get_class_attribute().copy(name="predicted"))
+        atts.append(Attribute.create_nominal("error", ["no", "yes"]))
+        atts.append(Attribute.create_numeric("classification"))
+        for i in xrange(data.get_class_attribute().num_values()):
+            atts.append(Attribute.create_numeric("distribution-" + data.get_class_attribute().value(i)))
+
+    result = Instances.create_instances("Predictions", atts, len(preds))
+
+    count = 0
+    for pred in preds:
+        count += 1
+        if is_numeric:
+            values = array([count, pred.weight(), pred.actual(), pred.predicted(), pred.error()])
+        else:
+            if pred.actual() == pred.predicted():
+                error = 0.0
+            else:
+                error = 1.0
+            l = [count, pred.weight(), pred.actual(), pred.predicted(), error, max(pred.distribution())]
+            for i in xrange(data.get_class_attribute().num_values()):
+                l.append(pred.distribution()[i])
+            values = array(l)
+        inst = Instance.create_instance(values)
+        result.add_instance(inst)
+
+    return result
 
 
 def main(args):
