@@ -83,6 +83,8 @@ def from_commandline(cmdline):
 def get_classname(jobject):
     """
     Returns the classname of the JB_Object.
+    :param jobject: the java object to get the classname for
+    :type jobject: JB_Object
     :return: the classname
     :rtype: str
     """
