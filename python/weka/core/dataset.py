@@ -716,10 +716,10 @@ class Attribute(JavaObject):
         """
         if name is None:
             return Attribute(
-                javabridge.call(self.jobject, "copy", "()Ljava/lang/Object;", self.jobject))
+                javabridge.call(self.jobject, "copy", "()Ljava/lang/Object;"))
         else:
             return Attribute(
-                javabridge.call(self.jobject, "copy", "(Ljava/lang/String;)Lweka/core/Attribute;", self.jobject))
+                javabridge.call(self.jobject, "copy", "(Ljava/lang/String;)Lweka/core/Attribute;", name))
 
     @classmethod
     def create_numeric(cls, name):
