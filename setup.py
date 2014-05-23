@@ -94,7 +94,7 @@ setup(
         "wekaexamples": ["data/*.arff"],
     },
     include_package_data=True,
-    version="0.1.4",
+    version="0.1.5",
     author='Peter "fracpete" Reutemann',
     author_email='fracpete at gmail dot com',
     install_requires=[
