@@ -44,7 +44,7 @@ For Ubuntu this could look as follows:
      $ sudo pip install javabridge
 
 A build environment is required to build libraries, like `javabridge`, from source. For Ubuntu that would
-be the `build-essential` meta-package and Xcode for Mac OSX.
+be the `build-essential` meta-package (`general Linux instructions <http://docs.python-guide.org/en/latest/starting/install/linux/>`_), Xcode for `Mac OSX <http://docs.python-guide.org/en/latest/starting/install/osx/>`_ and MinGW for `Windows <http://docs.python-guide.org/en/latest/starting/install/win/>`_.
 
 
 Contents
