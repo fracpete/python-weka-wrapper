@@ -38,3 +38,9 @@ Steps:
 * update `Version` and `Download URL`
 * re-use release notes from Github release in `Changes since last revision`
 * save
+
+
+Google Group
+============
+
+* post release on the Google Group: https://groups.google.com/forum/#!forum/python-weka-wrapper
