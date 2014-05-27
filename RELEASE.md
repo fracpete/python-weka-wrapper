@@ -43,4 +43,4 @@ Steps:
 Google Group
 ============
 
-* post release on the Google Group https://pypi.python.org/pypi/python-weka-wrapper
+* post release on the Google Group: https://groups.google.com/forum/#!forum/python-weka-wrapper

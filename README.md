@@ -31,7 +31,7 @@ be the `build-essential` meta-package and Xcode for Mac OSX.
 
 You can post questions, patches or enhancement requests in the following Google Group:
 
-https://pypi.python.org/pypi/python-weka-wrapper
+https://groups.google.com/forum/#!forum/python-weka-wrapper
 
 ## Code examples
 See **python/wekaexamples** for example code on the various APIs. Also, check out the sphinx documentation
