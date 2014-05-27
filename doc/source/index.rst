@@ -18,6 +18,8 @@ Project homepage: https://github.com/fracpete/python-weka-wrapper
 
 MLOSS project: https://mloss.org/software/view/548/
 
+Google Group: https://pypi.python.org/pypi/python-weka-wrapper
+
 
 Requirements
 ============

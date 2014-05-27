@@ -27,6 +27,12 @@ $ sudo pip install javabridge
 A build environment is required to build libraries, like `javabridge`, from source. For Ubuntu that would
 be the `build-essential` meta-package and Xcode for Mac OSX.
 
+## Forum
+
+You can post questions, patches or enhancement requests in the following Google Group:
+
+https://pypi.python.org/pypi/python-weka-wrapper
+
 ## Code examples
 See **python/wekaexamples** for example code on the various APIs. Also, check out the sphinx documentation
 in the **doc** directory. You can generate HTML documentation using the `make html` command in the **doc**
