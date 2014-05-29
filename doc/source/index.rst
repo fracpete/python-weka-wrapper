@@ -60,3 +60,4 @@ Contents
    virtualenv
    sourcecode
    examples
+   troubleshooting
