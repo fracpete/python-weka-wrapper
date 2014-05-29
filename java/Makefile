@@ -18,7 +18,7 @@ clean:
 compile:
 	@echo compiling source files...
 	mkdir -p $(BUILDDIR)
-	find $(SRCDIR) -name "*.java" -exec javac -classpath $(LIBDIR)/weka.jar -d $(BUILDDIR) {} \;
+	find $(SRCDIR) -name "*.java" -exec javac -source 1.6 -target 1.6 -classpath $(LIBDIR)/weka.jar -d $(BUILDDIR) {} \;
 
 dist:
 	@echo creating jar archive...
