@@ -66,12 +66,24 @@ def ext_modules():
     """
     download_weka()
 
+
+def _read(f):
+    """
+    Reads in the content of the file.
+    :param f: the file to read
+    :type f: str
+    :return: the content
+    :rtype: str
+    """
+    return open(f, 'rb').read()
+
+
 setup(
     name="python-weka-wrapper",
     description="Python wrapper for the Weka Machine Learning Workbench",
-    long_description='''The python-weka-wrapper package makes it easy to run
-    Weka algorithms and filters from within Python. It offers access to Weka
-    API using thin wrappers around JNI calls using the "javabridge" package.''',
+    long_description=(
+        _read('DESCRIPTION.rst') + b'\n' +
+        _read('CHANGES.rst')).decode('utf-8'),
     url="https://github.com/fracpete/python-weka-wrapper",
     classifiers=[
         'Development Status :: 3 - Alpha',
