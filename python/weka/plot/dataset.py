@@ -15,9 +15,9 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import logging
+import weka.plot as plot
 if plot.matplotlib_available:
     import matplotlib.pyplot as plt
-import weka.plot as plot
 from weka.core.dataset import Instances
 
 # logging setup
