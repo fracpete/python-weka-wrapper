@@ -449,13 +449,15 @@ class Instance(JavaObject):
         """
         Creates a new instance.
         :param values: the float values (internal format) to use (numpy array)
-        :type values: ndarray
+        :type values: ndarray or list
         :param classname: the classname of the instance (eg weka.core.DenseInstance).
         :type classname: str
         :param weight: the weight of the instance
         :type weight: float
         """
         jni_classname = classname.replace(".", "/")
+        if type(values) is list:
+            values = numpy.array(values)
         return Instance(
             javabridge.make_instance(jni_classname, "(D[D)V", weight, javabridge.get_env().make_double_array(values)))
 

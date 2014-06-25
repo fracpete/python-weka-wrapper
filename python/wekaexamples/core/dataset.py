@@ -15,7 +15,6 @@
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
 import os
-import numpy
 import weka.core.jvm as jvm
 import wekaexamples.helper as helper
 from weka.core.converters import Loader
@@ -78,7 +77,7 @@ def main():
     # create an instance
     helper.print_title("Create and add instance")
     values = [3.1415926, date_att.parse_date("2014-04-10"), 1.0]
-    inst = Instance.create_instance(numpy.array(values))
+    inst = Instance.create_instance(values)
     dataset.add_instance(inst)
     print("Instance:\n" + str(inst))
     print("Dataset:\n" + str(dataset))
