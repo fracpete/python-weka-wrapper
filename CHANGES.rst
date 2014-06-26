@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.1.7 (2014-06-26)
+------------------
+
+- fixed `weka/plot/dataset.py` imports to avoid error when testing for matplotlib availability
+
+- `Instance.create_instance` (`weka/core/dataset.py`) now accepts Python list and Numpy array
+
+
 0.1.6 (2014-05-29)
 ------------------
 
