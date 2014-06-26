@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.8 (2014-06-26)
+------------------
+
+- fixed installer: `MANIFEST.in` now includes `CHANGES.rst` and `DESCRIPTION.rst` as well
+
+
 0.1.7 (2014-06-26)
 ------------------
 
