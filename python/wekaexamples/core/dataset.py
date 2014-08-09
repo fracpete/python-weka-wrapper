@@ -37,6 +37,8 @@ def main():
     iris_data.set_class_index(iris_data.num_attributes() - 1)
     helper.print_title("Iris dataset")
     print(iris_data)
+    helper.print_title("Iris summary")
+    print(Instances.summary(iris_data))
     helper.print_title("Instance at #0")
     print(iris_data.get_instance(0))
     print(iris_data.get_instance(0).get_values())
@@ -45,6 +47,35 @@ def main():
     print("numeric stats (first attribute):\n" + str(iris_data.get_attribute_stats(0).numeric_stats()))
     print("nominal counts (last attribute):\n"
           + str(iris_data.get_attribute_stats(iris_data.num_attributes() - 1).nominal_counts()))
+
+    # append datasets
+    helper.print_title("append datasets")
+    data1 = Instances.copy_instances(iris_data, 0, 2)
+    data2 = Instances.copy_instances(iris_data, 2, 2)
+    print("Dataset #1:\n" + str(data1))
+    print("Dataset #2:\n" + str(data2))
+    msg = data1.equal_headers(data2)
+    print("#1 == #2 ? " + "yes" if msg is None else msg)
+    combined = Instances.append_instances(data1, data2)
+    print("Combined:\n" + str(combined))
+
+    # merge datasets
+    helper.print_title("merge datasets")
+    data1 = Instances.copy_instances(iris_data, 0, 2)
+    data1.set_class_index(-1)
+    data1.delete_attribute(1)
+    data1.delete_attribute(0)
+    data2 = Instances.copy_instances(iris_data, 0, 2)
+    data2.set_class_index(-1)
+    data2.delete_attribute(4)
+    data2.delete_attribute(3)
+    data2.delete_attribute(2)
+    print("Dataset #1:\n" + str(data1))
+    print("Dataset #2:\n" + str(data2))
+    msg = data1.equal_headers(data2)
+    print("#1 == #2 ? " + ("yes" if msg is None else msg))
+    combined = Instances.merge_instances(data2, data1)
+    print("Combined:\n" + str(combined))
 
     # load dataset incrementally
     iris_file = helper.get_data_dir() + os.sep + "iris.arff"
@@ -78,9 +109,15 @@ def main():
     helper.print_title("Create and add instance")
     values = [3.1415926, date_att.parse_date("2014-04-10"), 1.0]
     inst = Instance.create_instance(values)
+    print("Instance #1:\n" + str(inst))
     dataset.add_instance(inst)
-    print("Instance:\n" + str(inst))
+    values = [2.71828, date_att.parse_date("2014-08-09"), float('nan')]
+    inst = Instance.create_instance(values)
+    dataset.add_instance(inst)
+    print("Instance #2:\n" + str(inst))
     print("Dataset:\n" + str(dataset))
+    dataset.delete_with_missing(2)
+    print("Dataset (after delete of missing):\n" + str(dataset))
 
     # simple scatterplot of iris dataset: petalwidth x petallength
     iris_data = loader.load_file(iris_file)

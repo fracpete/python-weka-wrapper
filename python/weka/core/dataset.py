@@ -195,6 +195,14 @@ class Instances(JavaObject):
         """
         javabridge.call(self.jobject, "deleteAttributeType", "(I)V", typ)
 
+    def delete_with_missing(self, index):
+        """
+        Deletes all rows that have a missing value at the specified attribute index.
+        :param index: the attribute index to check for missing attributes
+        :type index: int
+        """
+        javabridge.call(self.jobject, "deleteWithMissing", "(I)V", index)
+
     def compactify(self):
         """
         Compactifies the set of instances.
@@ -217,6 +225,17 @@ class Instances(JavaObject):
         """
         javabridge.call(self.jobject, "randomize", "(Ljava/util/Random;)V", random.jobject)
 
+    def equal_headers(self, inst):
+        """
+        Compares this dataset against the given one in terms of attributes.
+        :param inst: the dataset to compare against
+        :type inst: Instances
+        :return: None if the same, otherwise an error message
+        :rtype: str
+        """
+        return javabridge.call(
+            self.jobject, "equalHeadersMsg", "(Lweka/core/Instances;)Ljava/lang/String;", inst.jobject)
+
     @classmethod
     def copy_instances(cls, dataset, from_row=None, num_rows=None):
         """
@@ -234,12 +253,14 @@ class Instances(JavaObject):
         if from_row is None or num_rows is None:
             return Instances(
                 javabridge.make_instance(
-                    "weka/core/Instances", "(Lweka/core/Instances;)V", dataset.jobject))
+                    "weka/core/Instances", "(Lweka/core/Instances;)V",
+                    dataset.jobject))
         else:
             dataset = cls.copy_instances(dataset)
             return Instances(
                 javabridge.make_instance(
-                    "weka/core/Instances", "(Lweka/core/Instances;II)V", dataset.jobject, from_row, num_rows))
+                    "weka/core/Instances", "(Lweka/core/Instances;II)V",
+                    dataset.jobject, from_row, num_rows))
 
     @classmethod
     def template_instances(cls, dataset, capacity=0):
@@ -276,6 +297,51 @@ class Instances(JavaObject):
             javabridge.make_instance(
                 "weka/core/Instances", "(Ljava/lang/String;Ljava/util/ArrayList;I)V",
                 name, javabridge.make_list(attributes), capacity))
+
+    @classmethod
+    def merge_instances(cls, inst1, inst2):
+        """
+        Merges the two datasets (side-by-side).
+        :param inst1: the first dataset
+        :type inst1: Instances or str
+        :param inst2: the first dataset
+        :type inst2: Instances
+        :return: the combined dataset
+        :rtype: Instances
+        """
+        return Instances(javabridge.static_call(
+            "weka/core/Instances", "mergeInstances",
+            "(Lweka/core/Instances;Lweka/core/Instances;)Lweka/core/Instances;", inst1.jobject, inst2.jobject))
+
+    @classmethod
+    def append_instances(cls, inst1, inst2):
+        """
+        Merges the two datasets (one-after-the-other). Throws an exception if the datasets aren't compatible.
+        :param inst1: the first dataset
+        :type inst1: Instances
+        :param inst2: the first dataset
+        :type inst2: Instances
+        :return: the combined dataset
+        :rtype: Instances
+        """
+        msg = inst1.equal_headers(inst2)
+        if not msg is None:
+            raise Exception("Cannot appent instances: " + msg)
+        result = cls.copy_instances(inst1)
+        for i in xrange(inst2.num_instances()):
+            result.add_instance(inst2.get_instance(i))
+        return result
+
+    @classmethod
+    def summary(cls, inst):
+        """
+        Generates a summary of the dataset.
+        :param inst: the dataset
+        :type inst: Instances
+        :return: the summary
+        :rtype: str
+        """
+        return javabridge.call(inst.jobject, "toSummaryString", "()Ljava/lang/String;")
 
 
 class Instance(JavaObject):
