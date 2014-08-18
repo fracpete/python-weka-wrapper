@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.1.9 (2014-08-18)
+------------------
+
+- added static methods to Instances class: `summary`, `merge_instances`, `append_instances`
+- added methods to Instances class: `delete_with_missing`, `equal_headers`
+
+
 0.1.8 (2014-06-26)
 ------------------
 
