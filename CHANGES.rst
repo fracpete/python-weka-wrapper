@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.10 (2014-08-29)
+-------------------
+
+- fixed adding custom classpath using `jvm.start(class_path=[...])`
+
+
 0.1.9 (2014-08-18)
 ------------------
 

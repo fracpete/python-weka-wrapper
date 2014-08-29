@@ -101,7 +101,7 @@ setup(
         "weka.plot",
         "wekaexamples"
     ],
-    version="0.1.9",
+    version="0.1.10",
     author='Peter "fracpete" Reutemann',
     author_email='fracpete at gmail dot com',
     install_requires=[
