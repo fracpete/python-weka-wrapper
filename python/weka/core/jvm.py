@@ -95,7 +95,7 @@ def start(class_path=None, bundled=True, packages=False, system_cp=False, max_he
     # add user-defined jars first
     if not class_path is None:
         for cp in class_path:
-            logger.debug("Adding user-supplied classpath=" + class_path)
+            logger.debug("Adding user-supplied classpath=" + cp)
             javabridge.JARS.append(cp)
 
     if bundled:
