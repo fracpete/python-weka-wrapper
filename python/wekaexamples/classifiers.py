@@ -18,7 +18,8 @@ import os
 import weka.core.jvm as jvm
 import wekaexamples.helper as helper
 from weka.core.converters import Loader
-from weka.classifiers import Classifier, SingleClassifierEnhancer, MultipleClassifiersCombiner, FilteredClassifier
+from weka.classifiers import Classifier, SingleClassifierEnhancer, MultipleClassifiersCombiner, FilteredClassifier, \
+    PredictionOutput
 from weka.classifiers import Evaluation
 from weka.filters import Filter
 from weka.core.classes import Random
@@ -116,8 +117,10 @@ def main():
     diabetes_data = loader.load_file(diabetes_file)
     diabetes_data.set_class_index(diabetes_data.num_attributes() - 1)
     classifier = Classifier(classname="weka.classifiers.bayes.NaiveBayes")
+    pred_output = PredictionOutput(
+        classname="weka.classifiers.evaluation.output.prediction.PlainText", options=["-distribution"])
     evaluation = Evaluation(diabetes_data)
-    evaluation.crossvalidate_model(classifier, diabetes_data, 10, Random(42))
+    evaluation.crossvalidate_model(classifier, diabetes_data, 10, Random(42), output=pred_output)
     print(evaluation.to_summary())
     print(evaluation.to_class_details())
     print(evaluation.to_matrix())
@@ -174,6 +177,7 @@ def main():
     print("rootMeanSquaredError: " + str(evaluation.root_mean_squared_error()))
     print("rootMeanPriorSquaredError: " + str(evaluation.root_mean_prior_squared_error()))
     print("rootRelativeSquaredError: " + str(evaluation.root_relative_squared_error()))
+    print("prediction output:\n" + str(pred_output))
     plot_cls.plot_roc(evaluation, title="ROC diabetes", wait=False)
     plot_cls.plot_prc(evaluation, title="PRC diabetes", wait=False)
 
