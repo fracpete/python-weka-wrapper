@@ -14,6 +14,8 @@
 # classifiers.py
 # Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
 
+import sys
+import os
 import javabridge
 import logging
 import getopt
@@ -1496,7 +1498,7 @@ def main(args):
 
     jvm.start(jars, max_heap_size=heap, packages=True)
 
-    logger.debug("Commandline: " + utils.join_options(args))
+    logger.debug("Commandline: " + wutils.join_options(args))
 
     try:
         classifier = Classifier(classname=optargs[0])
