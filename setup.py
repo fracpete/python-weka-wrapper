@@ -98,8 +98,7 @@ setup(
     packages=[
         "weka",
         "weka.core",
-        "weka.plot",
-        "wekaexamples"
+        "weka.plot"
     ],
     version="0.1.10",
     author='Peter "fracpete" Reutemann',
