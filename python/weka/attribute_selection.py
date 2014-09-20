@@ -317,22 +317,11 @@ def main(args):
             jars = opt[1].split(os.pathsep)
         elif opt[0] == "-X":
             heap = opt[1]
-        elif opt[0] == "-i":
+        elif opt[0] in ["-i", "-c", "-s", "-x", "-n"]:
             params.append(opt[0])
             params.append(opt[1])
-            inputf = opt[1]
-        elif opt[0] == "-c":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-s":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-x":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-n":
-            params.append(opt[0])
-            params.append(opt[1])
+            if opt[0] == "-i":
+                inputf = opt[1]
 
     # check parameters
     if inputf is None:

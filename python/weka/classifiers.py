@@ -1455,42 +1455,13 @@ def main(args):
             jars = opt[1].split(os.pathsep)
         elif opt[0] == "-X":
             heap = opt[1]
-        elif opt[0] == "-t":
+        elif opt[0] in ["-v", "-o", "-i", "-k"]:
+            params.append(opt[0])
+        elif opt[0] in ["-t", "-T", "-c", "-d", "-l", "-x", "-s", "-m", "-g"]:
             params.append(opt[0])
             params.append(opt[1])
-            train = opt[1]
-        elif opt[0] == "-T":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-c":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-d":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-l":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-x":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-s":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-v":
-            params.append(opt[0])
-        elif opt[0] == "-o":
-            params.append(opt[0])
-        elif opt[0] == "-i":
-            params.append(opt[0])
-        elif opt[0] == "-k":
-            params.append(opt[0])
-        elif opt[0] == "-m":
-            params.append(opt[0])
-            params.append(opt[1])
-        elif opt[0] == "-g":
-            params.append(opt[0])
-            params.append(opt[1])
+            if opt[0] == "-t":
+                train = opt[1]
 
     # check parameters
     if train is None:
