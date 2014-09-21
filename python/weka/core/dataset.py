@@ -225,6 +225,49 @@ class Instances(JavaObject):
         """
         javabridge.call(self.jobject, "randomize", "(Ljava/util/Random;)V", random.jobject)
 
+    def stratify(self, folds):
+        """
+        Stratifies the data after randomization for nominal class attributes.
+        :param folds: the number of folds to perform the stratification for
+        :type folds: int
+        """
+        javabridge.call(self.jobject, "stratify", "(I)V", folds)
+
+    def train_cv(self, num_folds, fold, random=None):
+        """
+        Generates a training fold for cross-validation.
+        :param num_folds: the number of folds of cross-validation, eg 10
+        :type num_folds: int
+        :param fold: the current fold (0-based)
+        :type fold: int
+        :param random: the random number generator
+        :type random: Random
+        :return: the training fold
+        :rtype: Instances
+        """
+        if random is None:
+            return Instances(
+                javabridge.call(self.jobject, "trainCV", "(II)Lweka/core/Instances;",
+                                num_folds, fold))
+        else:
+            return Instances(
+                javabridge.call(self.jobject, "trainCV", "(IILjava/util/Random;)Lweka/core/Instances;",
+                                num_folds, fold, random.jobject))
+
+    def test_cv(self, num_folds, fold):
+        """
+        Generates a test fold for cross-validation.
+        :param num_folds: the number of folds of cross-validation, eg 10
+        :type num_folds: int
+        :param fold: the current fold (0-based)
+        :type fold: int
+        :return: the training fold
+        :rtype: Instances
+        """
+        return Instances(
+            javabridge.call(self.jobject, "testCV", "(II)Lweka/core/Instances;",
+                            num_folds, fold))
+
     def equal_headers(self, inst):
         """
         Compares this dataset against the given one in terms of attributes.
