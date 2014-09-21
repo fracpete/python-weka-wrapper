@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.1.11 (2014-09-22)
+-------------------
+
+- moved `wekaexamples` module to separate github project: https://github.com/fracpete/python-weka-wrapper-examples
+- added `stratify`, `train_cv` and `test_cv` methods to the `Instances` class
+- fixed `to_summary` method of the Evaluation class: failed when providing a custom title
+
+
 0.1.10 (2014-08-29)
 -------------------
 
