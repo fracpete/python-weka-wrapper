@@ -669,18 +669,22 @@ class Evaluation(JavaObject):
             "(Lweka/classifiers/Classifier;Lweka/core/Instance;)D",
             classifier.jobject, inst.jobject)
 
-    def to_summary(self, title=None):
+    def to_summary(self, title=None, complexity=False):
         """
         Generates a summary.
         :param title: optional title
         :type title: str
+        :param complexity: whether to print the complexity information as well
+        :type complexity: bool
         :return: the summary
         :rtype: str
         """
         if title is None:
-            return javabridge.call(self.jobject, "toSummaryString", "()Ljava/lang/String;")
+            return javabridge.call(
+                self.jobject, "toSummaryString", "()Ljava/lang/String;")
         else:
-            return javabridge.call(self.jobject, "toSummaryString", "(Ljava/lang/String;)Ljava/lang/String;", title)
+            return javabridge.call(
+                self.jobject, "toSummaryString", "(Ljava/lang/String;Z)Ljava/lang/String;", title, complexity)
 
     def to_class_details(self, title=None):
         """
