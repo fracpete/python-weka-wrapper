@@ -859,7 +859,7 @@ class Attribute(JavaObject):
     @classmethod
     def create_nominal(cls, name, labels):
         """
-        Creates a date attribute.
+        Creates a nominal attribute.
         :param name: the name of the attribute
         :type name: str
         :param labels: the list of string labels to use
@@ -868,6 +868,17 @@ class Attribute(JavaObject):
         return Attribute(
             javabridge.make_instance(
                 "weka/core/Attribute", "(Ljava/lang/String;Ljava/util/List;)V", name, javabridge.make_list(labels)))
+
+    @classmethod
+    def create_string(cls, name):
+        """
+        Creates a string attribute.
+        :param name: the name of the attribute
+        :type name: str
+        """
+        return Attribute(
+            javabridge.make_instance(
+                "weka/core/Attribute", "(Ljava/lang/String;Ljava/util/List;)V", name, None))
 
 
 class AttributeStats(JavaObject):
