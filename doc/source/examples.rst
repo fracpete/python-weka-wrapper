@@ -110,7 +110,7 @@ Cross-validate filtered classifier and print evaluation and display ROC
    print(evl.to_class_details())
 
    import weka.plot.classifiers as plcls  # NB: matplotlib is required
-   plcls.plot_roc(evl, class_index=0, wait=True)
+   plcls.plot_roc(evl, class_index=[0, 1], wait=True)
 
 
 Cross-validate regressor, display classifier errors and predictions
