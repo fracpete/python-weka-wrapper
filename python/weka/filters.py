@@ -18,7 +18,7 @@ import javabridge
 import logging
 import os
 import sys
-import getopt
+import argparse
 import weka.core.jvm as jvm
 import weka.core.utils as utils
 from weka.core.classes import OptionHandler
@@ -154,88 +154,71 @@ class MultiFilter(Filter):
         return result
 
 
-def main(args):
+def main():
     """
     Runs a filter from the command-line. Calls JVM start/stop automatically.
-    Options:
-        [-j jar1[:jar2...]]
-        [-X max heap size]
-        -i input1
-        -o output1
-        [-r input2]
-        [-s output2]
-        [-c classindex]
-        filter classname
-        [filter options]
+    Use -h to see all options.
     """
-
-    usage = "Usage: weka.filters [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] -i input1 -o output1 " \
-            + "[-r input2 -s output2] [-c classindex] filterclass [filter options]"
-
-    optlist, optargs = getopt.getopt(args, "j:X:i:o:r:s:c:h")
-    if len(optargs) == 0:
-        raise Exception("No filter classname provided!\n" + usage)
-    for opt in optlist:
-        if opt[0] == "-h":
-            print(usage)
-            return
+    parser = argparse.ArgumentParser(
+        description='Executes a filter from the command-line. Calls JVM start/stop automatically.')
+    parser.add_argument("-j", metavar="classpath", dest="classpath", help="additional classpath, jars/directories")
+    parser.add_argument("-X", metavar="heap", dest="heap", help="max heap size for jvm, e.g., 512m")
+    parser.add_argument("-i", metavar="input1", dest="input1", required=True, help="input file 1")
+    parser.add_argument("-o", metavar="output1", dest="output1", required=True, help="output file 1")
+    parser.add_argument("-r", metavar="input2", dest="input2", help="input file 2")
+    parser.add_argument("-s", metavar="output2", dest="output2", help="output file 2")
+    parser.add_argument("-c", metavar="classindex", default="-1", dest="classindex", help="1-based class attribute index")
+    parser.add_argument("filter", help="filter classname, e.g., weka.filters.AllFilter")
+    parser.add_argument("option", nargs=argparse.REMAINDER, help="additional filter options")
+    parsed = parser.parse_args()
+    if parsed.input2 is None and not parsed.output2 is None:
+        raise Exception("No second input file provided ('-r ...')!")
 
     jars = []
-    input1 = None
-    output1 = None
-    input2 = None
-    output2 = None
-    cls = "-1"
-    heap = None
-    for opt in optlist:
-        if opt[0] == "-j":
-            jars = opt[1].split(os.pathsep)
-        elif opt[0] == "-X":
-            heap = opt[1]
-        elif opt[0] == "-i":
-            input1 = opt[1]
-        elif opt[0] == "-o":
-            output1 = opt[1]
-        elif opt[0] == "-r":
-            input2 = opt[1]
-        elif opt[0] == "-s":
-            output2 = opt[1]
-        elif opt[0] == "-c":
-            cls = opt[1]
+    if not parsed.classpath is None:
+        jars = parsed.classpath.split(os.pathsep)
+    params = []
+    if not parsed.input1 is None:
+        params.append("-i")
+        params.append(parsed.input1)
+    if not parsed.output1 is None:
+        params.append("-o")
+        params.append(parsed.output1)
+    if not parsed.input2 is None:
+        params.append("-r")
+        params.append(parsed.input2)
+    if not parsed.output2 is None:
+        params.append("-s")
+        params.append(parsed.output2)
+    if not parsed.classindex is None:
+        params.append("-c")
+        params.append(parsed.classindex)
 
-    # check parameters
-    if input1 is None:
-        raise Exception("No input file provided ('-i ...')!")
-    if output1 is None:
-        raise Exception("No output file provided ('-o ...')!")
-    if not input2 is None and output2 is None:
-        raise Exception("No 2nd output file provided ('-s ...')!")
+    jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    jvm.start(jars, max_heap_size=heap, packages=True)
-
-    logger.debug("Commandline: " + utils.join_options(args))
+    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
 
     try:
-        flter = Filter(classname=optargs[0])
-        optargs = optargs[1:]
-        if len(optargs) > 0:
-            flter.set_options(optargs)
-        loader = Loader("weka.core.converters.ArffLoader")
-        in1 = loader.load_file(input1)
-        if str(cls) == "first":
+        flter = Filter(parsed.filter)
+        if len(parsed.option) > 0:
+            flter.set_options(parsed.option)
+        loader = Loader(classname="weka.core.converters.ArffLoader")
+        in1 = loader.load_file(parsed.input1)
+        cls = parsed.classindex
+        if str(parsed.classindex) == "first":
             cls = "0"
-        if str(cls) == "last":
+        if str(parsed.classindex) == "last":
             cls = str(in1.num_attributes() - 1)
         in1.set_class_index(int(cls))
         flter.set_inputformat(in1)
         out1 = flter.filter(in1)
-        saver = Saver("weka.core.converters.ArffSaver")
-        saver.save_file(out1, output1)
-        if not input2 is None:
-            in2 = loader.load_file(input2)
+        saver = Saver(classname="weka.core.converters.ArffSaver")
+        saver.save_file(out1, parsed.output1)
+        if not parsed.input2 is None:
+            in2 = loader.load_file(parsed.input2)
             in2.set_class_index(int(cls))
             out2 = flter.filter(in2)
-            saver.save_file(out2, output2)
+            saver.save_file(out2, parsed.output2)
     except Exception, e:
         print(e)
     finally:
@@ -243,6 +226,6 @@ def main(args):
 
 if __name__ == "__main__":
     try:
-        main(sys.argv[1:])
+        main()
     except Exception, ex:
         print(ex)

@@ -18,7 +18,7 @@ import javabridge
 import logging
 import os
 import sys
-import getopt
+import argparse
 import weka.core.jvm as jvm
 import weka.core.utils as utils
 import weka.core.converters as converters
@@ -66,57 +66,34 @@ class Associator(OptionHandler):
         javabridge.call(self.jobject, "buildAssociations", "(Lweka/core/Instances;)V", data.jobject)
 
 
-def main(args):
+def main():
     """
     Runs a associator from the command-line. Calls JVM start/stop automatically.
-    Options:
-        [-j jar1[:jar2...]]
-        [-X max heap size]
-        -t train
-        associator classname
-        [associator options]
+    Use -h to see all options.
     """
 
-    usage = "Usage: weka.associators [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] -t train [-T test] " \
-            + "associator classname [associator options]"
-
-    optlist, optargs = getopt.getopt(args, "j:X:t:h")
-    if len(optargs) == 0:
-        raise Exception("No associator classname provided!\n" + usage)
-    for opt in optlist:
-        if opt[0] == "-h":
-            print(usage)
-            return
-
+    parser = argparse.ArgumentParser(
+        description='Executes an associator from the command-line. Calls JVM start/stop automatically.')
+    parser.add_argument("-j", metavar="classpath", dest="classpath", help="additional classpath, jars/directories")
+    parser.add_argument("-X", metavar="heap", dest="heap", help="max heap size for jvm, e.g., 512m")
+    parser.add_argument("-t", metavar="train", dest="train", required=True, help="training set file")
+    parser.add_argument("associator", help="associator classname, e.g., weka.associations.Apriori")
+    parser.add_argument("option", nargs=argparse.REMAINDER, help="additional associator options")
+    parsed = parser.parse_args()
     jars = []
-    params = []
-    train = None
-    heap = None
-    for opt in optlist:
-        if opt[0] == "-j":
-            jars = opt[1].split(os.pathsep)
-        elif opt[0] == "-X":
-            heap = opt[1]
-        elif opt[0] == "-t":
-            params.append(opt[0])
-            params.append(opt[1])
-            train = opt[1]
+    if not parsed.classpath is None:
+        jars = parsed.classpath.split(os.pathsep)
 
-    # check parameters
-    if train is None:
-        raise Exception("No train file provided ('-t ...')!")
+    jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    jvm.start(jars, max_heap_size=heap, packages=True)
-
-    logger.debug("Commandline: " + utils.join_options(args))
+    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
 
     try:
-        associator = Associator(classname=optargs[0])
-        optargs = optargs[1:]
-        if len(optargs) > 0:
-            associator.set_options(optargs)
-        loader = converters.loader_for_file(train)
-        data = loader.load_file(train)
+        associator = Associator(classname=parsed.associator)
+        if len(parsed.option) > 0:
+            associator.set_options(parsed.option)
+        loader = converters.loader_for_file(parsed.train)
+        data = loader.load_file(parsed.train)
         associator.build_associations(data)
         print(str(associator))
     except Exception, e:
@@ -126,6 +103,6 @@ def main(args):
 
 if __name__ == "__main__":
     try:
-        main(sys.argv[1:])
+        main()
     except Exception, ex:
         print(ex)

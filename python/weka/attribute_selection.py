@@ -16,9 +16,9 @@
 
 import javabridge
 import logging
+import argparse
 import os
 import sys
-import getopt
 import weka.core.jvm as jvm
 import weka.core.utils as utils
 import weka.core.types as arrays
@@ -281,61 +281,51 @@ class AttributeSelection(JavaObject):
             evaluator.jobject, args)
 
 
-def main(args):
+def main():
     """
     Runs attribute selection from the command-line. Calls JVM start/stop automatically.
-    Options:
-        [-j jar1[:jar2...]]
-        [-X max heap size]
-        -i train
-        [-c classindex]
-        [-s search method]
-        [-x num folds]
-        [-n seed]
-        evaluator classname
+    Use -h to see all options.
     """
-
-    usage = "Usage: weka.attribute_selection [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] " \
-            + "-i input file [-c classindex] " \
-            + "[-s search method][-x num folds] [-n seed] " \
-            + "evaluator classname [evaluator options]"
-
-    optlist, optargs = getopt.getopt(args, "j:X:i:c:s:x:n:h")
-    if len(optargs) == 0:
-        raise Exception("No evaluator classname provided!\n" + usage)
-    for opt in optlist:
-        if opt[0] == "-h":
-            print(usage)
-            return
-
+    parser = argparse.ArgumentParser(
+        description='Performs attribute selection from the command-line. Calls JVM start/stop automatically.')
+    parser.add_argument("-j", metavar="classpath", dest="classpath", help="additional classpath, jars/directories")
+    parser.add_argument("-X", metavar="heap", dest="heap", help="max heap size for jvm, e.g., 512m")
+    parser.add_argument("-i", metavar="input", dest="input", required=True, help="input file")
+    parser.add_argument("-c", metavar="class index", dest="classindex", help="1-based class attribute index")
+    parser.add_argument("-s", metavar="search", dest="search", help="search method, classname and options")
+    parser.add_argument("-x", metavar="num folds", dest="numfolds", help="number of folds")
+    parser.add_argument("-n", metavar="seed", dest="seed", help="the seed value for randomization")
+    parser.add_argument("evaluator", help="evaluator classname, e.g., weka.attributeSelection.CfsSubsetEval")
+    parser.add_argument("option", nargs=argparse.REMAINDER, help="additional evaluator options")
+    parsed = parser.parse_args()
     jars = []
+    if not parsed.classpath is None:
+        jars = parsed.classpath.split(os.pathsep)
     params = []
-    inputf = None
-    heap = None
-    for opt in optlist:
-        if opt[0] == "-j":
-            jars = opt[1].split(os.pathsep)
-        elif opt[0] == "-X":
-            heap = opt[1]
-        elif opt[0] in ["-i", "-c", "-s", "-x", "-n"]:
-            params.append(opt[0])
-            params.append(opt[1])
-            if opt[0] == "-i":
-                inputf = opt[1]
+    if not parsed.input is None:
+        params.append("-i")
+        params.append(parsed.input)
+    if not parsed.classindex is None:
+        params.append("-c")
+        params.append(parsed.classindex)
+    if not parsed.search is None:
+        params.append("-s")
+        params.append(parsed.search)
+    if not parsed.numfolds is None:
+        params.append("-n")
+        params.append(parsed.numfolds)
+    if not parsed.seed is None:
+        params.append("-s")
+        params.append(parsed.seed)
 
-    # check parameters
-    if inputf is None:
-        raise Exception("No input file provided ('-i ...')!")
+    jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    jvm.start(jars, max_heap_size=heap, packages=True)
-
-    logger.debug("Commandline: " + utils.join_options(args))
+    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
 
     try:
-        evaluation = ASEvaluation(classname=optargs[0])
-        optargs = optargs[1:]
-        if len(optargs) > 0:
-            evaluation.set_options(optargs)
+        evaluation = ASEvaluation(classname=parsed.evaluator)
+        if len(parsed.option) > 0:
+            evaluation.set_options(parsed.option)
         print(AttributeSelection.attribute_selection(evaluation, params))
     except Exception, e:
         print(e)
@@ -344,6 +334,6 @@ def main(args):
 
 if __name__ == "__main__":
     try:
-        main(sys.argv[1:])
+        main()
     except Exception, ex:
         print(ex)
