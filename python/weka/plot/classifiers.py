@@ -149,16 +149,18 @@ def get_auc(data):
         "weka/classifiers/evaluation/ThresholdCurve", "getROCArea", "(Lweka/core/Instances;)D", data.jobject)
 
 
-def plot_roc(evaluation, class_index=0, title=None, outfile=None, wait=True):
+def plot_roc(evaluation, class_index=None, title=None, key_loc="lower right", outfile=None, wait=True):
     """
     Plots the ROC (receiver operator characteristics) curve for the given predictions.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
     :param evaluation: the evaluation to obtain the predictions from
     :type evaluation: Evaluation
-    :param class_index: the 0-based index of the class-label to create the plot for
-    :type class_index: int
+    :param class_index: the list of 0-based indices of the class-labels to create the plot for
+    :type class_index: list
     :param title: an optional title
     :type title: str
+    :param key_loc: the position string for the key
+    :type key_loc: str
     :param outfile: the output file, ignored if None
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -167,39 +169,48 @@ def plot_roc(evaluation, class_index=0, title=None, outfile=None, wait=True):
     if not plot.matplotlib_available:
         logger.error("Matplotlib is not installed, plotting unavailable!")
         return
-    data = generate_thresholdcurve_data(evaluation, class_index)
-    area = get_auc(data)
-    x, y = get_thresholdcurve_data(data, "False Positive Rate", "True Positive Rate")
-    fig, ax = plt.subplots()
-    ax.plot(x, y)
-    ax.set_xlabel("False Positive Rate")
-    ax.set_ylabel("True Positive Rate")
-    if title is None:
-        title = "ROC"
-    title += " (%0.4f)" % area
-    ax.set_title(title)
-    ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
-    ax.grid(True)
-    fig.canvas.set_window_title(title)
-    plt.xlim([-0.05, 1.05])
-    plt.ylim([-0.05, 1.05])
+    if class_index is None:
+        class_index = [0]
+    ax = None
+    for cindex in class_index:
+        data = generate_thresholdcurve_data(evaluation, cindex)
+        head = evaluation.header()
+        area = get_auc(data)
+        x, y = get_thresholdcurve_data(data, "False Positive Rate", "True Positive Rate")
+        if ax is None:
+            fig, ax = plt.subplots()
+            ax.set_xlabel("False Positive Rate")
+            ax.set_ylabel("True Positive Rate")
+            if title is None:
+                title = "ROC"
+            ax.set_title(title)
+            ax.grid(True)
+            fig.canvas.set_window_title(title)
+            plt.xlim([-0.05, 1.05])
+            plt.ylim([-0.05, 1.05])
+        plot_label = head.get_class_attribute().value(cindex) + " (AUC: %0.4f)" % area
+        ax.plot(x, y, label=plot_label)
+        ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     plt.draw()
+    plt.legend(loc=key_loc, shadow=True)
     if not outfile is None:
         plt.savefig(outfile)
     if wait:
         plt.show()
 
 
-def plot_prc(evaluation, class_index=0, title=None, outfile=None, wait=True):
+def plot_prc(evaluation, class_index=None, title=None, key_loc="lower center", outfile=None, wait=True):
     """
     Plots the PRC (precision recall) curve for the given predictions.
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
     :param evaluation: the evaluation to obtain the predictions from
     :type evaluation: Evaluation
-    :param class_index: the 0-based index of the class-label to create the plot for
-    :type class_index: int
+    :param class_index: the list of 0-based indices of the class-labels to create the plot for
+    :type class_index: list
     :param title: an optional title
     :type title: str
+    :param key_loc: the location string for the key
+    :type key_loc: str
     :param outfile: the output file, ignored if None
     :type outfile: str
     :param wait: whether to wait for the user to close the plot
@@ -208,21 +219,29 @@ def plot_prc(evaluation, class_index=0, title=None, outfile=None, wait=True):
     if not plot.matplotlib_available:
         logger.error("Matplotlib is not installed, plotting unavailable!")
         return
-    data = generate_thresholdcurve_data(evaluation, class_index)
-    x, y = get_thresholdcurve_data(data, "Recall", "Precision")
-    fig, ax = plt.subplots()
-    ax.plot(x, y)
-    ax.set_xlabel("Recall")
-    ax.set_ylabel("Precision")
-    if title is None:
-        title = "PRC"
-    ax.set_title(title)
-    ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
-    ax.grid(True)
-    fig.canvas.set_window_title(title)
-    plt.xlim([-0.05, 1.05])
-    plt.ylim([-0.05, 1.05])
+    if class_index is None:
+        class_index = [0]
+    ax = None
+    for cindex in class_index:
+        data = generate_thresholdcurve_data(evaluation, cindex)
+        head = evaluation.header()
+        x, y = get_thresholdcurve_data(data, "Recall", "Precision")
+        if ax is None:
+            fig, ax = plt.subplots()
+            ax.set_xlabel("Recall")
+            ax.set_ylabel("Precision")
+            if title is None:
+                title = "PRC"
+            ax.set_title(title)
+            fig.canvas.set_window_title(title)
+            plt.xlim([-0.05, 1.05])
+            plt.ylim([-0.05, 1.05])
+            ax.grid(True)
+        plot_label = head.get_class_attribute().value(cindex)
+        ax.plot(x, y, label=plot_label)
+        ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     plt.draw()
+    plt.legend(loc=key_loc, shadow=True)
     if not outfile is None:
         plt.savefig(outfile)
     if wait:
