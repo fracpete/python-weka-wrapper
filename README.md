@@ -10,7 +10,7 @@ Requirements:
  * matplotlib (optional)
  * pygraphviz (optional)
  * PIL (optional)
-* JDK 1.6+
+* Oracle JDK 1.6+
 
 Included:
 * Weka (3.7.11)

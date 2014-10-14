@@ -33,7 +33,7 @@ The library has the following requirements:
  * PIL (optional)
  * matplotlib (optional)
 
-* JDK 1.6+
+* Oracle JDK 1.6+
 
 The Python libraries you can either install using `pip install <name>` or use pre-built packages available for
 your platform.
