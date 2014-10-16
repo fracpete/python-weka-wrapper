@@ -331,7 +331,7 @@ def main():
         jars = parsed.classpath.split(os.pathsep)
     params = []
     if not parsed.train is None:
-        params.extend(["-i", parsed.train])
+        params.extend(["-t", parsed.train])
     if not parsed.test is None:
         params.extend(["-T", parsed.test])
     if not parsed.outmodel is None:
