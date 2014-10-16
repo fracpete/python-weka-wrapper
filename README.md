@@ -56,8 +56,8 @@ Artifical data can be generated using one of Weka's data generators, e.g., the `
 
 <pre>
 python weka/datagenerators.py \
-    -o /tmp/out.arff \
-    weka.datagenerators.classifiers.classification.Agrawal
+    weka.datagenerators.classifiers.classification.Agrawal \
+    -o /tmp/out.arff
 </pre>
 
 ### Filters
@@ -118,6 +118,6 @@ Associators, like `Apriori`, can be run like this:
 
 <pre>
 python weka/associators.py \
-    -t /my/datasets/iris.arff \
+    -t /my/datasets/lung-cancer.arff \
     weka.associations.Apriori -N 9 -I
 </pre>
