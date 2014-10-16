@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.12 (????-??-??)
+0.1.12 (2014-10-17)
 -------------------
 
 - added `create_string` class method to the `Attribute` class for creating a string attribute
