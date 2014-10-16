@@ -1442,7 +1442,7 @@ def main():
         jars = parsed.classpath.split(os.pathsep)
     params = []
     if not parsed.train is None:
-        params.extend(["-i", parsed.train])
+        params.extend(["-t", parsed.train])
     if not parsed.test is None:
         params.extend(["-T", parsed.test])
     if not parsed.classindex is None:
@@ -1470,7 +1470,7 @@ def main():
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
+    logger.debug("Commandline: " + wutils.join_options(sys.argv[1:]))
 
     try:
         classifier = Classifier(classname=parsed.classifier)
