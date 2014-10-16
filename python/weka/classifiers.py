@@ -18,7 +18,7 @@ import sys
 import os
 import javabridge
 import logging
-import getopt
+import argparse
 import weka.core.jvm as jvm
 import weka.core.utils as wutils
 import weka.core.types as arrays
@@ -1412,74 +1412,70 @@ def predictions_to_instances(data, preds):
     return result
 
 
-def main(args):
+def main():
     """
     Runs a classifier from the command-line. Calls JVM start/stop automatically.
-    Options:
-        [-j jar1[:jar2...]]
-        [-X max heap size]
-        -t train
-        [-T test]
-        [-c classindex]
-        [-d output model file]
-        [-l input model file]
-        [-x num folds]
-        [-s seed]
-        [-v # no stats for training]
-        [-o # only stats, no model]
-        [-i # information-retrieval stats per class]
-        [-k # information-theoretic stats]
-        [-m cost matrix file]
-        [-g graph file]
-        classifier classname
-        [classifier options]
+    Use -h to see all options.
     """
-
-    usage = "Usage: weka.classifiers [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] -t train " \
-            + "[-T test] [-c classindex] " \
-            + "[-d output model file] [-l input model file] [-x num folds] [-s seed] [-v # no stats for training] " \
-            + "[-o # only stats, no model] [-i # information-retrieval stats per class] " \
-            + "-kl # information-theoretic stats] [-m cost matrix file] [-g graph file] " \
-            + "classifier classname [classifier options]"
-
-    optlist, optargs = getopt.getopt(args, "j:X:t:T:c:d:l:x:s:voikm:g:h")
-    if len(optargs) == 0:
-        raise Exception("No classifier classname provided!\n" + usage)
-    for opt in optlist:
-        if opt[0] == "-h":
-            print(usage)
-            return
-
+    parser = argparse.ArgumentParser(
+        description='Performs classification/regression from the command-line. Calls JVM start/stop automatically.')
+    parser.add_argument("-j", metavar="classpath", dest="classpath", help="additional classpath, jars/directories")
+    parser.add_argument("-X", metavar="heap", dest="heap", help="max heap size for jvm, e.g., 512m")
+    parser.add_argument("-t", metavar="train", dest="train", required=True, help="Training set file")
+    parser.add_argument("-T", metavar="test", dest="test", help="Test set file")
+    parser.add_argument("-c", metavar="class index", dest="classindex", help="1-based class attribute index")
+    parser.add_argument("-d", metavar="outmodel", dest="outmodel", help="model output file name")
+    parser.add_argument("-l", metavar="inmodel", dest="inmodel", help="model input file name")
+    parser.add_argument("-x", metavar="num folds", dest="numfolds", help="number of folds for cross-validation")
+    parser.add_argument("-s", metavar="seed", dest="seed", help="seed value for randomization")
+    parser.add_argument("-v", action="store_true", dest="notrainstats", help="no statistics for training")
+    parser.add_argument("-o", action="store_true", dest="onlystats", help="only statistics, don't output model")
+    parser.add_argument("-i", action="store_true", dest="irstats", help="output information retrieval statistics")
+    parser.add_argument("-k", action="store_true", dest="itstats", help="output information theoretic statistics")
+    parser.add_argument("-m", metavar="costmatrix", dest="costmatrix", help="cost matrix file")
+    parser.add_argument("-g", metavar="graph", dest="graph", help="output file for graph (if supported)")
+    parser.add_argument("classifier", help="classifier classname, e.g., weka.classifiers.trees.J48")
+    parser.add_argument("option", nargs=argparse.REMAINDER, help="additional ckassifier options")
+    parsed = parser.parse_args()
     jars = []
+    if not parsed.classpath is None:
+        jars = parsed.classpath.split(os.pathsep)
     params = []
-    train = None
-    heap = None
-    for opt in optlist:
-        if opt[0] == "-j":
-            jars = opt[1].split(os.pathsep)
-        elif opt[0] == "-X":
-            heap = opt[1]
-        elif opt[0] in ["-v", "-o", "-i", "-k"]:
-            params.append(opt[0])
-        elif opt[0] in ["-t", "-T", "-c", "-d", "-l", "-x", "-s", "-m", "-g"]:
-            params.append(opt[0])
-            params.append(opt[1])
-            if opt[0] == "-t":
-                train = opt[1]
+    if not parsed.train is None:
+        params.extend(["-i", parsed.train])
+    if not parsed.test is None:
+        params.extend(["-T", parsed.test])
+    if not parsed.classindex is None:
+        params.extend(["-c", parsed.classindex])
+    if not parsed.outmodel is None:
+        params.extend(["-d", parsed.outmodel])
+    if not parsed.inmodel is None:
+        params.extend(["-l", parsed.inmodel])
+    if not parsed.numfolds is None:
+        params.extend(["-x", parsed.numfolds])
+    if not parsed.seed is None:
+        params.extend(["-s", parsed.seed])
+    if parsed.notrainstats:
+        params.append("-v")
+    if parsed.onlystats:
+        params.append("-o")
+    if parsed.irstats:
+        params.append("-i")
+    if parsed.itstats:
+        params.append("-k")
+    if not parsed.costmatrix is None:
+        params.extend(["-m", parsed.costmatrix])
+    if not parsed.graph is None:
+        params.extend(["-g", parsed.graph])
 
-    # check parameters
-    if train is None:
-        raise Exception("No train file provided ('-t ...')!")
+    jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    jvm.start(jars, max_heap_size=heap, packages=True)
-
-    logger.debug("Commandline: " + wutils.join_options(args))
+    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
 
     try:
-        classifier = Classifier(classname=optargs[0])
-        optargs = optargs[1:]
-        if len(optargs) > 0:
-            classifier.set_options(optargs)
+        classifier = Classifier(classname=parsed.classifier)
+        if len(parsed.option) > 0:
+            classifier.set_options(parsed.option)
         print(Evaluation.evaluate_model(classifier, params))
     except Exception, e:
         print(e)
@@ -1488,6 +1484,6 @@ def main(args):
 
 if __name__ == "__main__":
     try:
-        main(sys.argv[1:])
+        main()
     except Exception, ex:
         print(ex)

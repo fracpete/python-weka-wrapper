@@ -18,7 +18,7 @@ import javabridge
 import logging
 import os
 import sys
-import getopt
+import argparse
 import weka.core.jvm as jvm
 import weka.core.utils as utils
 from weka.core.classes import JavaObject
@@ -305,66 +305,58 @@ class ClusterEvaluation(JavaObject):
             clusterer.jobject, args)
 
 
-def main(args):
+def main():
     """
     Runs a clusterer from the command-line. Calls JVM start/stop automatically.
-    Options:
-        [-j jar1[:jar2...]]
-        [-X max heap size]
-        -t train
-        [-T test]
-        [-d output model file]
-        [-l input model file]
-        [-p attribute range]
-        [-x num folds]
-        [-s seed]
-        [-c classindex]
-        [-g graph file]
-        clusterer classname
-        [clusterer options]
+    Use -h to see all options.
     """
-
-    usage = "Usage: weka.clusterers [-j jar1[" + os.pathsep + "jar2...]] [-X max heap size] " \
-            + "-t train [-T test] [-d output model file] [-l input model file] " \
-            + "[-p attribute range] [-x num folds] [-s seed] [-c classindex] " \
-            + "[-g graph file] clusterer classname [clusterer options]"
-
-    optlist, optargs = getopt.getopt(args, "j:X:t:T:d:l:p:x:s:c:g:h")
-    if len(optargs) == 0:
-        raise Exception("No clusterer classname provided!\n" + usage)
-    for opt in optlist:
-        if opt[0] == "-h":
-            print(usage)
-            return
-
+    parser = argparse.ArgumentParser(
+        description='Performs clustering from the command-line. Calls JVM start/stop automatically.')
+    parser.add_argument("-j", metavar="classpath", dest="classpath", help="additional classpath, jars/directories")
+    parser.add_argument("-X", metavar="heap", dest="heap", help="max heap size for jvm, e.g., 512m")
+    parser.add_argument("-t", metavar="train", dest="train", required=True, help="training set file")
+    parser.add_argument("-T", metavar="test", dest="test", help="test set file")
+    parser.add_argument("-d", metavar="outmodel", dest="outmodel", help="model output file name")
+    parser.add_argument("-l", metavar="inmodel", dest="inmodel", help="model input file name")
+    parser.add_argument("-p", metavar="attributes", dest="attributes", help="attribute range")
+    parser.add_argument("-x", metavar="num folds", dest="numfolds", help="number of folds")
+    parser.add_argument("-s", metavar="seed", dest="seed", help="seed value for randomization")
+    parser.add_argument("-c", metavar="class index", dest="classindex", help="1-based class attribute index")
+    parser.add_argument("-g", metavar="graph", dest="graph", help="graph output file (if supported)")
+    parser.add_argument("clusterer", help="clusterer classname, e.g., weka.clusterers.SimpleKMeans")
+    parser.add_argument("option", nargs=argparse.REMAINDER, help="additional clusterer options")
+    parsed = parser.parse_args()
     jars = []
+    if not parsed.classpath is None:
+        jars = parsed.classpath.split(os.pathsep)
     params = []
-    train = None
-    heap = None
-    for opt in optlist:
-        if opt[0] == "-j":
-            jars = opt[1].split(os.pathsep)
-        elif opt[0] == "-X":
-            heap = opt[1]
-        elif opt[0] in ["-t", "-T", "-d", "-l", "-p", "-x", "-s", "-c", "-g"]:
-            params.append(opt[0])
-            params.append(opt[1])
-            if opt[0] == "-t":
-                train = opt[1]
+    if not parsed.train is None:
+        params.extend(["-i", parsed.train])
+    if not parsed.test is None:
+        params.extend(["-T", parsed.test])
+    if not parsed.outmodel is None:
+        params.extend(["-d", parsed.outmodel])
+    if not parsed.inmodel is None:
+        params.extend(["-l", parsed.inmodel])
+    if not parsed.attributes is None:
+        params.extend(["-p", parsed.attributes])
+    if not parsed.numfolds is None:
+        params.extend(["-x", parsed.numfolds])
+    if not parsed.seed is None:
+        params.extend(["-s", parsed.seed])
+    if not parsed.classindex is None:
+        params.extend(["-c", parsed.classindex])
+    if not parsed.graph is None:
+        params.extend(["-g", parsed.graph])
 
-    # check parameters
-    if train is None:
-        raise Exception("No train file provided ('-t ...')!")
+    jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    jvm.start(jars, max_heap_size=heap, packages=True)
-
-    logger.debug("Commandline: " + utils.join_options(args))
+    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
 
     try:
-        clusterer = Clusterer(classname=optargs[0])
-        optargs = optargs[1:]
-        if len(optargs) > 0:
-            clusterer.set_options(optargs)
+        clusterer = Clusterer(classname=parsed.clusterer)
+        if len(parsed.option) > 0:
+            clusterer.set_options(parsed.option)
         print(ClusterEvaluation.evaluate_clusterer(clusterer, params))
     except Exception, e:
         print(e)
@@ -373,6 +365,6 @@ def main(args):
 
 if __name__ == "__main__":
     try:
-        main(sys.argv[1:])
+        main()
     except Exception, ex:
         print(ex)
