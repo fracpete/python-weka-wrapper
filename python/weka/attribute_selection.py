@@ -309,9 +309,9 @@ def main():
     if not parsed.search is None:
         params.extend(["-s", parsed.search])
     if not parsed.numfolds is None:
-        params.extend(["-n", parsed.numfolds])
+        params.extend(["-x", parsed.numfolds])
     if not parsed.seed is None:
-        params.extend(["-s", parsed.seed])
+        params.extend(["-n", parsed.seed])
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
