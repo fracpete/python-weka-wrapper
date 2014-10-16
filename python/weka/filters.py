@@ -179,7 +179,7 @@ def main():
         jars = parsed.classpath.split(os.pathsep)
     params = []
     if not parsed.input1 is None:
-        params.extend(["-i", parsed.input])
+        params.extend(["-i", parsed.input1])
     if not parsed.output1 is None:
         params.extend(["-o", parsed.output1])
     if not parsed.input2 is None:
