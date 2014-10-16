@@ -303,20 +303,15 @@ def main():
         jars = parsed.classpath.split(os.pathsep)
     params = []
     if not parsed.input is None:
-        params.append("-i")
-        params.append(parsed.input)
+        params.extend(["-i", parsed.input])
     if not parsed.classindex is None:
-        params.append("-c")
-        params.append(parsed.classindex)
+        params.extend(["-c", parsed.classindex])
     if not parsed.search is None:
-        params.append("-s")
-        params.append(parsed.search)
+        params.extend(["-s", parsed.search])
     if not parsed.numfolds is None:
-        params.append("-n")
-        params.append(parsed.numfolds)
+        params.extend(["-n", parsed.numfolds])
     if not parsed.seed is None:
-        params.append("-s")
-        params.append(parsed.seed)
+        params.extend(["-s", parsed.seed])
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 

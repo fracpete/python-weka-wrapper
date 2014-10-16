@@ -179,20 +179,15 @@ def main():
         jars = parsed.classpath.split(os.pathsep)
     params = []
     if not parsed.input1 is None:
-        params.append("-i")
-        params.append(parsed.input1)
+        params.extend(["-i", parsed.input])
     if not parsed.output1 is None:
-        params.append("-o")
-        params.append(parsed.output1)
+        params.extend(["-o", parsed.output1])
     if not parsed.input2 is None:
-        params.append("-r")
-        params.append(parsed.input2)
+        params.extend(["-r", parsed.input2])
     if not parsed.output2 is None:
-        params.append("-s")
-        params.append(parsed.output2)
+        params.extend(["-s", parsed.output2])
     if not parsed.classindex is None:
-        params.append("-c")
-        params.append(parsed.classindex)
+        params.extend(["-c", parsed.classindex])
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
