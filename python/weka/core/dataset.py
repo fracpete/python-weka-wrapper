@@ -38,6 +38,14 @@ class Instances(JavaObject):
         self.enforce_type(jobject, "weka.core.Instances")
         super(Instances, self).__init__(jobject)
 
+    def __iter__(self):
+        """
+        Allows iterating over the rows.
+        :return: the iterator
+        :rtype: InstanceIterator
+        """
+        return InstanceIterator(self)
+
     def get_relationname(self):
         """
         Returns the name of the dataset.
@@ -53,7 +61,13 @@ class Instances(JavaObject):
         :rtype: int
         """
         return javabridge.call(self.jobject, "numAttributes", "()I")
-        
+
+    def attributes(self):
+        """
+        Returns an iterator over the attributes.
+        """
+        return AttributeIterator(self)
+
     def get_attribute(self, index):
         """
         Returns the specified attribute.
@@ -401,6 +415,14 @@ class Instance(JavaObject):
         self.enforce_type(jobject, "weka.core.Instance")
         super(Instance, self).__init__(jobject)
 
+    def __iter__(self):
+        """
+        Returns an iterator over the values.
+        :return: a value iterator
+        :rtype: InstanceValueIterator
+        """
+        return InstanceValueIterator(self)
+
     def set_dataset(self, dataset):
         """
         Sets the dataset that this instance belongs to (for attribute information).
@@ -415,7 +437,7 @@ class Instance(JavaObject):
         :return: the dataset or None if no dataset set
         :rtype: Instances
         """
-        dataset = javabridge.call(self.jobject, "dataset", "()Lweka/core/Instances")
+        dataset = javabridge.call(self.jobject, "dataset", "()Lweka/core/Instances;")
         if dataset is None:
             return None
         else:
@@ -1030,3 +1052,102 @@ class Stats(JavaObject):
         :rtype: float
         """
         return javabridge.get_field(self.jobject, "sumsq", "D")
+
+
+class InstanceIterator(object):
+    """
+    Iterator for rows in an Instances object.
+    """
+    def __init__(self, data):
+        """
+        :param data: the Instances object to iterate over
+        :type data: Instances
+        """
+        self.data = data
+        self.row = 0
+
+    def __iter__(self):
+        """
+        Returns itself.
+        """
+        return self
+
+    def next(self):
+        """
+        Returns the next row from the Instances object.
+        :return: the next Instance object
+        :rtype: Instance
+        """
+        if self.row < self.data.num_instances():
+            index = self.row
+            self.row += 1
+            return self.data.get_instance(index)
+        else:
+            raise StopIteration()
+
+
+class AttributeIterator(object):
+    """
+    Iterator for attributes in an Instances object.
+    """
+    def __init__(self, data):
+        """
+        :param data: the Instances object to iterate over
+        :type data: Instances
+        """
+        self.data = data
+        self.col = 0
+
+    def __iter__(self):
+        """
+        Returns itself.
+        """
+        return self
+
+    def next(self):
+        """
+        Returns the next attribute from the Instances object.
+        :return: the next Attribute object
+        :rtype: Attribute
+        """
+        if self.col < self.data.num_attributes():
+            index = self.col
+            self.col += 1
+            return self.data.get_attribute(index)
+        else:
+            raise StopIteration()
+
+
+class InstanceValueIterator(object):
+    """
+    Iterator for values in an Instance object.
+    """
+    def __init__(self, data):
+        """
+        :param data: the Instance object to iterate over
+        :type data: Instance
+        """
+        self.data = data
+        self.col = 0
+
+    def __iter__(self):
+        """
+        Returns itself.
+        """
+        return self
+
+    def next(self):
+        """
+        Returns the next value from the Instance object.
+        :return: the next value, depending on the attribute that can be either a number of a string
+        :rtype: str or float
+        """
+        if self.col < self.data.num_attributes():
+            index = self.col
+            self.col += 1
+            if self.data.get_dataset().get_attribute(index).is_numeric():
+                return self.data.get_value(index)
+            else:
+                return self.data.get_string_value(index)
+        else:
+            raise StopIteration()

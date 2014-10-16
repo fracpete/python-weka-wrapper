@@ -73,10 +73,7 @@ Build classifier incrementally with data and print model
 
    cls = Classifier(classname="weka.classifiers.bayes.NaiveBayesUpdateable")
    cls.build_classifier(iris_inc)
-   while True:
-       inst = loader.next_instance(iris_inc)
-       if inst is None:
-           break
+   for inst in loader:
        cls.update_classifier(inst)
 
    print(cls)

@@ -39,6 +39,19 @@ class Loader(OptionHandler):
             jobject = Loader.new_instance(classname)
         self.enforce_type(jobject, "weka.core.converters.Loader")
         super(Loader, self).__init__(jobject=jobject, options=options)
+        self.incremental = False
+        self.structure = None
+
+    def __iter__(self):
+        """
+        Returns an iterator in case the loader was instantiated in incremental mode, otherwise
+        an Exception is raised.
+        :return: the iterator
+        :rtype: IncrementalLoaderIterator
+        """
+        if not self.incremental:
+            raise Exception("Not in incremental mode, cannot iterate!")
+        return IncrementalLoaderIterator(self, self.structure)
 
     def load_file(self, dfile, incremental=False):
         """
@@ -52,13 +65,15 @@ class Loader(OptionHandler):
         :rtype: Instances
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
+        self.incremental = incremental
         if not javabridge.is_instance_of(dfile, "Ljava/io/File;"):
             dfile = javabridge.make_instance(
                 "Ljava/io/File;", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)
         if incremental:
-            return Instances(javabridge.call(self.jobject, "getStructure", "()Lweka/core/Instances;"))
+            self.structure = Instances(javabridge.call(self.jobject, "getStructure", "()Lweka/core/Instances;"))
+            return self.structure
         else:
             return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
         
@@ -74,28 +89,49 @@ class Loader(OptionHandler):
         :rtype: Instances
         """
         self.enforce_type(self.jobject, "weka.core.converters.URLSourcedLoader")
+        self.incremental = incremental
         javabridge.call(self.jobject, "reset", "()V")
         javabridge.call(self.jobject, "setURL", "(Ljava/lang/String;)V", str(url))
         if incremental:
-            return Instances(javabridge.call(self.jobject, "getStructure", "()Lweka/core/Instances;"))
+            self.structure = Instances(javabridge.call(self.jobject, "getStructure", "()Lweka/core/Instances;"))
+            return self.structure
         else:
             return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
 
-    def next_instance(self, structure):
+
+class IncrementalLoaderIterator(object):
+    """
+    Iterator for dataset rows when loarding incrementally.
+    """
+    def __init__(self, loader, structure):
         """
-        Returns the next Instance object in case the dataset is being loaded incrementally.
-        Returns None if there are no more instances available.
-        :param structure: the Instances object this instance belongs to
+        :param loader: the loader instance to use for loading the data incrementally
+        :type loader: Loader
+        :param structure: the dataset structure
         :type structure: Instances
-        :return: the next instance, None if no more available
+        """
+        self.loader = loader
+        self.structure = structure
+
+    def __iter__(self):
+        """
+        Returns itself.
+        """
+        return self
+
+    def next(self):
+        """
+        Reads the next dataset row.
+        :return: the next row
         :rtype: Instance
         """
-        inst = javabridge.call(
-            self.jobject, "getNextInstance", "(Lweka/core/Instances;)Lweka/core/Instance;", structure.jobject)
-        if inst is None:
-            return None
+        result = javabridge.call(
+            self.loader.jobject, "getNextInstance",
+            "(Lweka/core/Instances;)Lweka/core/Instance;", self.structure.jobject)
+        if result is None:
+            raise StopIteration()
         else:
-            return Instance(inst)
+            return Instance(result)
 
 
 class Saver(OptionHandler):

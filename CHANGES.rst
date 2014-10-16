@@ -7,6 +7,9 @@ Changelog
 - added `create_string` class method to the `Attribute` class for creating a string attribute
 - ROC/PRC curves can now consist of multiple plots (ie multiple class labels)
 - switched command-line option handling from `getopt` to `argparse`
+- fixed Instance.get_dataset(self) method
+- added iterators for: rows/attributes in dataset, values in dataset row
+- incremental loaders can be iterated now
 
 
 0.1.11 (2014-09-22)
