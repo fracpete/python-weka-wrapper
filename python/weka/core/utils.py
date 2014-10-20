@@ -23,6 +23,23 @@ from weka.core.classes import OptionHandler
 logger = logging.getLogger(__name__)
 
 
+def get_class(kls):
+    """
+    Returns the class object associated with the dot-notation classname.
+    Taken from here: http://stackoverflow.com/a/452981
+    :param kls: the classname
+    :type kls: str
+    :return: the class object
+    :rtype: object
+    """
+    parts = kls.split('.')
+    module = ".".join(parts[:-1])
+    m = __import__(module)
+    for comp in parts[1:]:
+        m = getattr(m, comp)
+    return m
+
+
 def split_options(cmdline):
     """
     Splits the commandline into a list of options.
@@ -66,18 +83,25 @@ def to_commandline(optionhandler):
         optionhandler.jobject)
 
 
-def from_commandline(cmdline):
+def from_commandline(cmdline, kls=None):
     """
     Creates an OptionHandler based on the provided commandline string.
     :param cmdline: the commandline string to use
     :type cmdline: str
-    :return: the  generated option handler instance
-    :rtype: OptionHandler
+    :param kls: the classname of the wrapper to return other than OptionHandler (in dot-notation)
+    :type kls: str
+    :return: the generated option handler instance
+    :rtype: object
     """
     params = split_options(cmdline)
     cls = params[0]
     params = params[1:]
-    return OptionHandler(jobject=javabridge.make_instance(cls.replace(".", "/"), "()V"), options=params)
+    handler = OptionHandler(jobject=javabridge.make_instance(cls.replace(".", "/"), "()V"), options=params)
+    if kls is None:
+        return handler
+    else:
+        c = get_class(kls)
+        return c(jobject=handler.jobject)
 
 
 def get_classname(jobject):
