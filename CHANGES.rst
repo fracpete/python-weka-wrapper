@@ -8,6 +8,7 @@ Changelog
   with the classname in dot-notation
 - `from_commandline` method in `weka.core.utils` now takes an optional `kls` argument, which is
   the classname (in dot-notation) of the wrapper class to return - instead of the generic `OptionHandler`
+- added `Kernel` and `KernelClassifier` convenience classes to better handle kernel based classifiers
 
 
 0.1.12 (2014-10-17)

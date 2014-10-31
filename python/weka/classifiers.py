@@ -258,6 +258,113 @@ class MultipleClassifiersCombiner(Classifier):
         return result
 
 
+class Kernel(OptionHandler):
+    """
+    Wrapper class for kernels.
+    """
+
+    def __init__(self, classname=None, jobject=None, options=None):
+        """
+        Initializes the specified kernel using either the classname or the supplied JB_Object.
+        :param classname: the classname of the kernel
+        :type classname: str
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        if jobject is None:
+            jobject = Classifier.new_instance(classname)
+        self.enforce_type(jobject, "weka.classifiers.functions.supportVector.Kernel")
+        super(Kernel, self).__init__(jobject=jobject, options=options)
+
+    def get_capabilities(self):
+        """
+        Returns the capabilities of the classifier.
+        :return: the capabilities
+        :rtype: Capabilities
+        """
+        return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
+
+    def build_kernel(self, data):
+        """
+        Builds the classifier with the data.
+        :param data: the data to train the classifier with
+        :type data: Instances
+        """
+        javabridge.call(self.jobject, "buildKernel", "(Lweka/core/Instances;)V", data.jobject)
+
+    @classmethod
+    def make_copy(cls, kernel):
+        """
+        Creates a copy of the kernel.
+        :param kernel: the kernel to copy
+        :type kernel: Kernel
+        :return: the copy of the kernel
+        :rtype: Kernel
+        """
+        return Kernel(
+            jobject=javabridge.static_call(
+                "weka/classifiers/functions/supportVector/Kernel", "makeCopy",
+                "(Lweka/classifiers/functions/supportVector/Kernel;)Lweka/classifiers/functions/supportVector/Kernel;",
+                kernel.jobject))
+
+
+class KernelClassifier(Classifier):
+    """
+    Wrapper class for classifiers that have a kernel property, like SMO.
+    """
+
+    def __init__(self, classname=None, jobject=None, options=None):
+        """
+        Initializes the specified classifier using either the classname or the supplied JB_Object.
+        :param classname: the classname of the classifier
+        :type classname: str
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: list of commandline options
+        :type options: list
+        """
+        if jobject is None:
+            jobject = Classifier.new_instance(classname)
+        self.enforce_type(jobject, "weka.classifiers.Classifier")
+        if not javabridge.static_call(
+                "weka/classifiers/KernelHelper", "hasKernelProperty",
+                "(Ljava/lang/Object;)Z",
+                jobject):
+            raise Exception("Does not handle a kernel: " + wutils.get_classname(jobject))
+        super(KernelClassifier, self).__init__(classname=classname, jobject=jobject, options=options)
+
+    def set_kernel(self, kernel):
+        """
+        Sets the kernel.
+        :param kernel: the kernel to set
+        :type kernel: Kernel
+        :return: whether successfully set
+        :rtype: bool
+        """
+        result = javabridge.static_call(
+            "weka/classifiers/KernelHelper", "setKernel",
+            "(Ljava/lang/Object;Lweka/classifiers/functions/supportVector/Kernel;)Z",
+            self.jobject, kernel.jobject)
+        return result
+
+    def get_kernel(self):
+        """
+        Returns the current kernel.
+        :return: the kernel or None if none found
+        :rtype: Kernel
+        """
+        result = javabridge.static_call(
+            "weka/classifiers/KernelHelper", "getKernel",
+            "(Ljava/lang/Object;)Lweka/classifiers/functions/supportVector/Kernel;",
+            self.jobject)
+        if result is None:
+            return None
+        else:
+            return Kernel(jobject=result)
+
+
 class Prediction(JavaObject):
     """
     Wrapper class for a prediction.
