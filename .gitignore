@@ -60,6 +60,7 @@ docs/_build/
 *.e4p
 *.nja
 .idea
+.classpath
 
 # java
 build
