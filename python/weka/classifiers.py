@@ -286,6 +286,28 @@ class Kernel(OptionHandler):
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
 
+    def set_checks_turned_off(self, off):
+        """
+        Turns any checks on/off.
+        :param off: True to turn off checks
+        :type off: bool
+        """
+        javabridge.call(self.jobject, "setChecksTurnedOff", "(Z)V", off)
+
+    def get_checks_turned_off(self):
+        """
+        Returns whether checks are turned off.
+        :return: True if checks turned off
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "getChecksTurnedOff", "()Z")
+
+    def clean(self):
+        """
+        Frees the memory used by the kernel.
+        """
+        javabridge.call(self.jobject, "clean", "()V")
+
     def build_kernel(self, data):
         """
         Builds the classifier with the data.
@@ -293,6 +315,22 @@ class Kernel(OptionHandler):
         :type data: Instances
         """
         javabridge.call(self.jobject, "buildKernel", "(Lweka/core/Instances;)V", data.jobject)
+
+    def eval(self, id1, id2, inst1):
+        """
+        Computes the result of the kernel function for two instances. If id1 == -1, eval use inst1 instead of an
+        instance in the dataset.
+        :param id1: the index of the first instance in the dataset
+        :type id1: int
+        :param id2: the index of the second instance in the dataset
+        :type id2: int
+        :param inst1: the instance corresponding to id1 (used if id1 == -1)
+        :type inst1: Instance
+        """
+        jinst1 = None
+        if not inst1 is None:
+            jinst1 = inst1.jobject
+        return javabridge.call(self.jobject, "eval", "(IILweka/core/Instance;)D", id1, id2, jinst1)
 
     @classmethod
     def make_copy(cls, kernel):
