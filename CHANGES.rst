@@ -1,12 +1,12 @@
 Changelog
 =========
 
-0.1.13 (????-??-??)
+0.1.13 (2014-11-01)
 -------------------
 
 - added `get_class` method to `weka.core.utils` which returns the Python class object associated
   with the classname in dot-notation
-- `from_commandline` method in `weka.core.utils` now takes an optional `kls` argument, which is
+- `from_commandline` method in `weka.core.utils` now takes an optional `classname` argument, which is
   the classname (in dot-notation) of the wrapper class to return - instead of the generic `OptionHandler`
 - added `Kernel` and `KernelClassifier` convenience classes to better handle kernel based classifiers
 
