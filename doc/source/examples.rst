@@ -115,11 +115,13 @@ Cross-validate regressor, display classifier errors and predictions
 
 .. code-block:: python
 
-   from weka.classifiers import PredictionOutput
+   from weka.classifiers import PredictionOutput, KernelClassifier, Kernel
    data = loader.load_file(data_dir + "bolts.arff")
    data.set_class_index(data.num_attributes() - 1)
 
-   cls = Classifier(classname="weka.classifiers.functions.LinearRegression", options=["-S", "1", "-C"])
+   cls = KernelClassifier(classname="weka.classifiers.functions.SMOreg", options=["-N", "0"])
+   kernel = Kernel(classname="weka.classifiers.functions.supportVector.RBFKernel", options=["-G", "0.1"])
+   cls.set_kernel(kernel)
    pout = PredictionOutput(classname="weka.classifiers.evaluation.output.prediction.PlainText")
    evl = Evaluation(data)
    evl.crossvalidate_model(cls, data, 10, Random(1), pout)
