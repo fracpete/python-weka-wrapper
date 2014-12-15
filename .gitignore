@@ -61,6 +61,7 @@ docs/_build/
 *.nja
 .idea
 .classpath
+.settings
 
 # java
 build
