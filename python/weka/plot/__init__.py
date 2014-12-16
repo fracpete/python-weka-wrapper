@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # __init__.py
-# Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
+# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 from weka.core.dataset import Instances
 from weka.core.classes import Random

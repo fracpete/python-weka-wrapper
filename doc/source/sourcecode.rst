@@ -2,7 +2,7 @@ Source code
 ===========
 
 The following sections explain how to obtain the source code of *python-weka-wrapper*,
-generate the documentation and create an installer.
+generate the documentation and create an installer. See also the *Troubleshooting* section.
 
 
 Download

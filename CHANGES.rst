@@ -1,10 +1,11 @@
 Changelog
 =========
 
-0.1.14 (????-??-??)
+0.1.14 (2014-12-16)
 -------------------
 
-- ...
+- fixed `setup.py` to include the jars again when using eggs (via `include_package_data` etc)
+- added detailed instructions for installing the library
 
 
 0.1.13 (2014-11-01)

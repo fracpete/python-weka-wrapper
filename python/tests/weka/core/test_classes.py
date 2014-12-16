@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # test_classes.py
-# Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
+# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm

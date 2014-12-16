@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # setup.py
-# Copyright (C) 2014 Fracpete (fracpete at gmail dot com)
+# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import os
 from setuptools import setup
@@ -104,9 +104,9 @@ setup(
         "weka": ["lib/*.jar"],
     },
     include_package_data=True,
-    version="0.1.13",
+    version="0.1.14",
     author='Peter "fracpete" Reutemann',
-    author_email='fracpete at gmail dot com',
+    author_email='pythonwekawrapper at gmail dot com',
     install_requires=[
         "javabridge>=1.0.1",
     ],

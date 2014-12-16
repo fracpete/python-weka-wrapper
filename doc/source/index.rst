@@ -35,26 +35,13 @@ The library has the following requirements:
 
 * Oracle JDK 1.6+
 
-The Python libraries you can either install using `pip install <name>` or use pre-built packages available for
-your platform.
-
-For Ubuntu this could look as follows:
-
-  .. code-block:: bash
-
-     $ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygraphviz
-     $ sudo pip install javabridge
-
-A build environment is required to build libraries, like `javabridge`, from source. For Ubuntu that would
-be the `build-essential` meta-package (`general Linux instructions <http://docs.python-guide.org/en/latest/starting/install/linux/>`_), Xcode for `Mac OSX <http://docs.python-guide.org/en/latest/starting/install/osx/>`_ and MinGW for `Windows <http://docs.python-guide.org/en/latest/starting/install/win/>`_.
-
-
 Contents
 ========
 
 .. toctree::
    :maxdepth: 2
 
+   install
    commandline
    api
    virtualenv

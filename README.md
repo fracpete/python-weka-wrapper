@@ -1,7 +1,7 @@
 # python-weka-wrapper
 
-Python wrapper for Weka (http://www.cs.waikato.ac.nz/~ml/weka/) 
-using javabridge (https://pypi.python.org/pypi/javabridge).
+Python wrapper for the Java machine learning workbench [Weka](http://www.cs.waikato.ac.nz/~ml/weka/)
+using the [javabridge](https://pypi.python.org/pypi/javabridge) library.
 
 Requirements:
 
@@ -15,16 +15,12 @@ Requirements:
 Included:
 * Weka (3.7.11)
 
-The Python libraries you can either install using `pip install <name>` or use pre-built packages available for
-your platform.
+## Installation
 
-For Ubuntu this could look as follows:
-<pre>
-$ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygraphviz
-$ sudo pip install javabridge
-</pre>
+Detailed instructions on installing the library are located
+[here](http://pythonhosted.org/python-weka-wrapper/install.html).
 
-A build environment is required to build libraries, like `javabridge`, from source. For Ubuntu that would be the `build-essential` meta-package (general Linux instructions: http://docs.python-guide.org/en/latest/starting/install/linux/), Xcode for Mac OSX (http://docs.python-guide.org/en/latest/starting/install/osx/) and MinGW for Windows (http://docs.python-guide.org/en/latest/starting/install/win/).
+Please note, that you need a build environment to compile some libraries from source.
 
 ## Forum
 
