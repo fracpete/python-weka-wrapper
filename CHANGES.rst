@@ -1,10 +1,11 @@
 Changelog
 =========
 
-0.1.15 (2014-12-17)
+0.1.15 (????-??-??)
 -------------------
 
 - fixed `Instance.set_value` method: https://github.com/fracpete/python-weka-wrapper/issues/24
+- added sub-section `From source` to section on installing the library
 
 
 0.1.14 (2014-12-16)
