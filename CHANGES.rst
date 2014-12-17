@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.17 (2014-12-18)
+-------------------
+
+- fixed `setup.py` to download Weka 3.7.12 instead of 3.7.11 (this time correct URL)
+
+
 0.1.16 (2014-12-18)
 -------------------
 
