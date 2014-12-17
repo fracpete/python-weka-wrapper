@@ -35,6 +35,10 @@ The library has the following requirements:
 
 * Oracle JDK 1.6+
 
+Uses:
+
+* Weka (3.7.12)
+
 Contents
 ========
 

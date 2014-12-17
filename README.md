@@ -12,8 +12,8 @@ Requirements:
  * PIL (optional)
 * Oracle JDK 1.6+
 
-Included:
-* Weka (3.7.11)
+Uses:
+* Weka (3.7.12)
 
 ## Installation
 
