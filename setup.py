@@ -33,16 +33,16 @@ def download_file(url, outfile):
     try:
         # Open the url
         f = urlopen(url)
-        print "Downloading '" + url + "' to '" + outfile + "'"
+        print("Downloading '" + url + "' to '" + outfile + "'")
         # Open our local file for writing
         with open(outfile, "wb") as local_file:
             local_file.write(f.read())
     # handle errors
     except HTTPError, e:
-        print "HTTP Error:", e.code, url
+        print("HTTP Error: " + str(e.code) + " " + url)
         return False
     except URLError, e:
-        print "URL Error:", e.reason, url
+        print("URL Error: " + str(e.reason) + " " + url)
         return False
     return True
 
