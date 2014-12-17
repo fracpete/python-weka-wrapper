@@ -1,10 +1,10 @@
 Changelog
 =========
 
-0.1.15 (????-??-??)
+0.1.15 (2014-12-17)
 -------------------
 
-- ...
+- fixed `Instance.set_value` method: https://github.com/fracpete/python-weka-wrapper/issues/24
 
 
 0.1.14 (2014-12-16)

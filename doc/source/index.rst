@@ -42,9 +42,9 @@ Contents
    :maxdepth: 2
 
    install
+   troubleshooting
    commandline
    api
    virtualenv
    sourcecode
    examples
-   troubleshooting
