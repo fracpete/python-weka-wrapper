@@ -109,3 +109,17 @@ Perform the following steps:
      pip install python-weka-wrapper
 
 Now you can run `python-weka-wrapper` using the regular command-prompt as well.
+
+
+From source
+-----------
+
+You can either download a source archive or clone the github repository
+(`git clone https://github.com/fracpete/python-weka-wrapper.git`). Once you have done this,
+you can install the library using the following command:
+
+.. code-block:: bash
+
+   $ python setup.py install
+
+Check out the section on *virtualenv* as well, if you would rather install it in a *disposable* location.
