@@ -6,6 +6,9 @@ Preparation:
 * increment versions in `doc/source/conf.py`
 * added new changelog section in `CHANGES.rst`
 
+When upgrading Weka version:
+* change download URL in method `download_weka()` in `setup.py`
+
 Commands for releasing on pypi.org:
 
 <pre>
