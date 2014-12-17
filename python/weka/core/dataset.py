@@ -483,7 +483,7 @@ class Instance(JavaObject):
         :param value: the internal float value to set
         :type value: float
         """
-        javabridge.call(self.jobject, "value", "(ID)V", index, value)
+        javabridge.call(self.jobject, "setValue", "(ID)V", index, value)
 
     def get_value(self, index):
         """
