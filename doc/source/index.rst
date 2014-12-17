@@ -26,7 +26,7 @@ Requirements
 
 The library has the following requirements:
 
-* Python
+* Python 2.7 (does not work with Python 3)
 
  * javabridge (>=1.0.1, required)
  * pygraphviz (optional)
