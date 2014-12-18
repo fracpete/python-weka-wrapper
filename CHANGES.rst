@@ -4,6 +4,7 @@ Changelog
 0.1.18 (????-??-??)
 -------------------
 
+- added `weka.core.version` for accessing the Weka version currently in use
 - ...
 
 
