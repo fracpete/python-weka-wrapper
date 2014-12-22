@@ -1,10 +1,14 @@
 Changelog
 =========
 
-0.1.18 (????-??-??)
+0.2.0 (????-??-??)
 -------------------
 
+- requires `JavaBridge` 1.0.9 at least
+- moved from Java-like get/set (`getIndex()` and `setIndex(int)`) to nicer Python properties
 - added `weka.core.version` for accessing the Weka version currently in use
+- added `jwrapper` and `jclasswrapper` methods to `JavaObject` class (the mother of all objects in python-weka-wrapper)
+  to allow generic access to an object's methods: http://pythonhosted.org//javabridge/highlevel.html#wrapping-java-objects-using-reflection
 - ...
 
 

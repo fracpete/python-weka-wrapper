@@ -57,16 +57,16 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=N
     # collect data
     x = []
     y = []
-    if data.get_class_index() == -1:
+    if data.class_index == -1:
         c = None
     else:
         c = []
-    for i in xrange(data.num_instances()):
+    for i in xrange(data.num_instances):
         inst = data.get_instance(i)
         x.append(inst.get_value(index_x))
         y.append(inst.get_value(index_y))
         if not c is None:
-            c.append(inst.get_value(inst.get_class_index()))
+            c.append(inst.get_value(inst.class_index))
 
     # plot data
     fig, ax = plt.subplots()
@@ -74,8 +74,8 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=N
         ax.scatter(x, y, s=size, alpha=0.5)
     else:
         ax.scatter(x, y, c=c, s=size, alpha=0.5)
-    ax.set_xlabel(data.get_attribute(index_x).get_name())
-    ax.set_ylabel(data.get_attribute(index_y).get_name())
+    ax.set_xlabel(data.attribute(index_x).name)
+    ax.set_ylabel(data.attribute(index_y).name)
     if title is None:
         title = "Attribute scatter plot"
         if percent != 100:
@@ -83,7 +83,7 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=N
     ax.set_title(title)
     ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     ax.grid(True)
-    fig.canvas.set_window_title(data.get_relationname())
+    fig.canvas.set_window_title(data.relationname)
     plt.draw()
     if not outfile is None:
         plt.savefig(outfile)
@@ -119,38 +119,38 @@ def matrix_plot(data, percent=100.0, seed=1, size=10, title=None, outfile=None, 
 
     fig = plt.figure()
 
-    if data.get_class_index() == -1:
+    if data.class_index == -1:
         c = None
     else:
         c = []
-        for i in xrange(data.num_instances()):
+        for i in xrange(data.num_instances):
             inst = data.get_instance(i)
-            c.append(inst.get_value(inst.get_class_index()))
+            c.append(inst.get_value(inst.class_index))
 
-    for index_x in xrange(data.num_attributes()):
+    for index_x in xrange(data.num_attributes):
         x = []
-        for i in xrange(data.num_instances()):
+        for i in xrange(data.num_instances):
             inst = data.get_instance(i)
             x.append(inst.get_value(index_x))
-        for index_y in xrange(data.num_attributes()):
+        for index_y in xrange(data.num_attributes):
             y = []
-            for i in xrange(data.num_instances()):
+            for i in xrange(data.num_instances):
                 inst = data.get_instance(i)
                 y.append(inst.get_value(index_y))
             ax = fig.add_subplot(
-                data.num_attributes(), data.num_attributes(), index_x * data.num_attributes() + index_y + 1)
+                data.num_attributes, data.num_attributes, index_x * data.num_attributes + index_y + 1)
             if c is None:
                 ax.scatter(x, y, s=size, alpha=0.5)
             else:
                 ax.scatter(x, y, c=c, s=size, alpha=0.5)
-            ax.set_xlabel(data.get_attribute(index_x).get_name())
-            ax.set_ylabel(data.get_attribute(index_y).get_name())
+            ax.set_xlabel(data.attribute(index_x).name)
+            ax.set_ylabel(data.attribute(index_y).name)
             ax.get_yaxis().set_ticklabels([])
             ax.get_xaxis().set_ticklabels([])
             ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
             ax.grid(True)
     if title is None:
-        title = data.get_relationname()
+        title = data.relationname
     if percent != 100:
         title += " (%0.1f%%)" % percent
     fig.canvas.set_window_title(title)

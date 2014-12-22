@@ -108,7 +108,7 @@ setup(
     author='Peter "fracpete" Reutemann',
     author_email='pythonwekawrapper at gmail dot com',
     install_requires=[
-        "javabridge>=1.0.1",
+        "javabridge>=1.0.9",
     ],
     extras_require={
         'plots': ["matplotlib"],

@@ -30,14 +30,14 @@ class TestUtils(weka_test.WekaTest):
         self.assertEquals("", index.get_single_index())
 
         index = classes.SingleIndex(index="first")
-        index.set_upper(10)
+        index.upper(10)
         self.assertEquals("first", index.get_single_index())
-        self.assertEquals(0, index.get_index())
+        self.assertEquals(0, index.index())
 
         index = classes.SingleIndex(index="2")
-        index.set_upper(10)
+        index.upper(10)
         self.assertEquals("2", index.get_single_index())
-        self.assertEquals(1, index.get_index())
+        self.assertEquals(1, index.index())
 
     def test_range(self):
         """
@@ -47,19 +47,19 @@ class TestUtils(weka_test.WekaTest):
         self.assertEquals("", rang.get_ranges())
 
         rang = classes.Range(ranges="first")
-        rang.set_upper(10)
+        rang.upper(10)
         self.assertEquals("first", rang.get_ranges())
-        self.assertEquals([0], rang.get_selection())
+        self.assertEquals([0], rang.selection())
 
         rang = classes.Range(ranges="2")
-        rang.set_upper(10)
+        rang.upper(10)
         self.assertEquals("2", rang.get_ranges())
-        self.assertEquals([1], rang.get_selection())
+        self.assertEquals([1], rang.selection())
 
         rang = classes.Range(ranges="2-5,7")
-        rang.set_upper(10)
+        rang.upper(10)
         self.assertEquals("2-5,7", rang.get_ranges())
-        self.assertItemsEqual([1, 2, 3, 4, 6], rang.get_selection())
+        self.assertItemsEqual([1, 2, 3, 4, 6], rang.selection())
 
 
 if __name__ == '__main__':

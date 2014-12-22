@@ -154,7 +154,7 @@ class Saver(OptionHandler):
         self.enforce_type(jobject, "weka.core.converters.Saver")
         super(Saver, self).__init__(jobject=jobject, options=options)
 
-    def get_capabilities(self):
+    def capabilities(self):
         """
         Returns the capabilities of the saver.
         :return: the capabilities

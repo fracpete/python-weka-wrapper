@@ -52,7 +52,7 @@ class Clusterer(OptionHandler):
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject=jobject, options=options)
 
-    def get_capabilities(self):
+    def capabilities(self):
         """
         Returns the capabilities of the clusterer.
         :return: the capabilities
@@ -160,21 +160,23 @@ class SingleClustererEnhancer(Clusterer):
         self.enforce_type(jobject, "weka.clusterers.SingleClustererEnhancer")
         super(SingleClustererEnhancer, self).__init__(classname=classname, jobject=jobject, options=options)
 
-    def set_clusterer(self, clusterer):
-        """
-        Sets the base clusterer.
-        :param clusterer: the base clusterer to use
-        :type clusterer: Clusterer
-        """
-        javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
-
-    def get_clusterer(self):
+    @property
+    def clusterer(self):
         """
         Returns the base clusterer.
         :return: the clusterer
         :rtype: Clusterer
         """
         return Clusterer(javabridge.call(self.jobject, "getClusterer", "()Lweka/clusterers/Clusterer;"))
+
+    @clusterer.setter
+    def clusterer(self, clusterer):
+        """
+        Sets the base clusterer.
+        :param clusterer: the base clusterer to use
+        :type clusterer: Clusterer
+        """
+        javabridge.call(self.jobject, "setClusterer", "(Lweka/clusterers/Clusterer;)V", clusterer.jobject)
 
 
 class FilteredClusterer(SingleClustererEnhancer):
@@ -196,21 +198,23 @@ class FilteredClusterer(SingleClustererEnhancer):
         self.enforce_type(jobject, classname)
         super(FilteredClusterer, self).__init__(classname=classname, jobject=jobject, options=options)
 
-    def set_filter(self, filtr):
-        """
-        Sets the filter.
-        :param filtr: the filter to use
-        :type filtr: Filter
-        """
-        javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
-
-    def get_filter(self):
+    @property
+    def filter(self):
         """
         Returns the filter.
         :return: the filter
         :rtype: Filter
         """
         return Filter(javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
+
+    @filter.setter
+    def filter(self, filtr):
+        """
+        Sets the filter.
+        :param filtr: the filter to use
+        :type filtr: Filter
+        """
+        javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
 
 
 class ClusterEvaluation(JavaObject):
@@ -240,7 +244,7 @@ class ClusterEvaluation(JavaObject):
         """
         javabridge.call(self.jobject, "evaluateClusterer", "(Lweka/core/Instances;)V", test.jobject)
 
-    def get_cluster_results(self):
+    def cluster_results(self):
         """
         The cluster results as string.
         :return: the results string
@@ -248,7 +252,7 @@ class ClusterEvaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "clusterResultsToString", "()Ljava/lang/String;")
 
-    def get_cluster_assignments(self):
+    def cluster_assignments(self):
         """
         Return an array of cluster assignments corresponding to the most recent set of instances clustered.
         :return: the cluster assignments
@@ -260,7 +264,7 @@ class ClusterEvaluation(JavaObject):
         else:
             return javabridge.get_env().get_double_array_elements(array)
 
-    def get_num_clusters(self):
+    def num_clusters(self):
         """
         Returns the number of clusters.
         :return: the number of clusters
@@ -268,7 +272,7 @@ class ClusterEvaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "getNumClusters", "()I")
 
-    def get_log_likelihood(self):
+    def log_likelihood(self):
         """
         Returns the log likelihood.
         :return: the log likelihood
@@ -276,7 +280,7 @@ class ClusterEvaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "getLogLikelihood", "()D")
 
-    def get_classes_to_clusters(self):
+    def classes_to_clusters(self):
         """
         Return the array (ordered by cluster number) of minimum error class to cluster mappings..
         :return: the mappings
@@ -356,7 +360,7 @@ def main():
     try:
         clusterer = Clusterer(classname=parsed.clusterer)
         if len(parsed.option) > 0:
-            clusterer.set_options(parsed.option)
+            clusterer.options = parsed.option
         print(ClusterEvaluation.evaluate_clusterer(clusterer, params))
     except Exception, e:
         print(e)

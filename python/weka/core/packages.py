@@ -33,7 +33,7 @@ class Package(JavaObject):
         self.enforce_type(jobject, "org.pentaho.packageManagement.Package")
         super(Package, self).__init__(jobject)
 
-    def get_name(self):
+    def name(self):
         """
         Returns the name of the package.
         :return: the name
@@ -41,7 +41,7 @@ class Package(JavaObject):
         """
         return javabridge.call(self.jobject, "getName", "()Ljava/lang/String;")
 
-    def get_url(self):
+    def url(self):
         """
         Returns the URL of the package.
         :return: the url
@@ -49,7 +49,7 @@ class Package(JavaObject):
         """
         return str(JavaObject(javabridge.call(self.jobject, "getPackageURL", "()Ljava/net/URL;")))
 
-    def get_dependencies(self):
+    def dependencies(self):
         """
         Returns the dependencies of the package.
         :return: the list of Dependency objects
@@ -62,7 +62,7 @@ class Package(JavaObject):
             result.append(Dependency(dependency))
         return result
 
-    def get_metadata(self):
+    def metadata(self):
         """
         Returns the meta-data.
         :return: the meta-data dictionary
@@ -147,16 +147,8 @@ class Dependency(JavaObject):
         self.enforce_type(jobject, "org.pentaho.packageManagement.Dependency")
         super(Dependency, self).__init__(jobject)
 
-    def set_source(self, pkge):
-        """
-        Sets the source package.
-        :param pkge: the package
-        :type pkge: Package
-        """
-        javabridge.call(
-            self.jobject, "setSource", "(Lorg/pentaho/packageManagement/Package;)V", pkge.jobject)
-
-    def get_source(self):
+    @property
+    def source(self):
         """
         Returns the source package.
         :return: the package
@@ -165,16 +157,18 @@ class Dependency(JavaObject):
         return Package(
             javabridge.call(self.jobject, "getSource", "()Lorg/pentaho/packageManagement/Package;"))
 
-    def set_target(self, constr):
+    @source.setter
+    def source(self, pkge):
         """
-        Sets the target package constraint.
-        :param constr: the package constraint
-        :type constr: Package
+        Sets the source package.
+        :param pkge: the package
+        :type pkge: Package
         """
         javabridge.call(
-            self.jobject, "setTarget", "(Lorg/pentaho/packageManagement/PackageConstraint;)V", constr.jobject)
+            self.jobject, "setSource", "(Lorg/pentaho/packageManagement/Package;)V", pkge.jobject)
 
-    def get_target(self):
+    @property
+    def target(self):
         """
         Returns the target package constraint.
         :return: the package constraint
@@ -182,6 +176,16 @@ class Dependency(JavaObject):
         """
         return PackageConstraint(
             javabridge.call(self.jobject, "getTarget", "()Lorg/pentaho/packageManagement/PackageConstraint;"))
+
+    @target.setter
+    def target(self, constr):
+        """
+        Sets the target package constraint.
+        :param constr: the package constraint
+        :type constr: Package
+        """
+        javabridge.call(
+            self.jobject, "setTarget", "(Lorg/pentaho/packageManagement/PackageConstraint;)V", constr.jobject)
 
 
 def establish_cache():
@@ -291,7 +295,7 @@ def is_installed(name):
     """
     pkgs = get_installed_packages()
     for pkge in pkgs:
-        if pkge.get_name() == name:
+        if pkge.name() == name:
             return True
     return False
 
@@ -306,8 +310,8 @@ if __name__ == "__main__":
         print("============")
         packages = get_all_packages()
         for pkg in packages:
-            print(pkg.get_name())
-            print("  url: " + pkg.get_url())
+            print(pkg.name())
+            print("  url: " + pkg.url())
             print("")
 
         print("Available packages")
@@ -315,25 +319,25 @@ if __name__ == "__main__":
         packages = get_available_packages()
         p = packages[0]
         for pkg in packages:
-            print(pkg.get_name())
-            print("  url: " + pkg.get_url())
+            print(pkg.name())
+            print("  url: " + pkg.url())
             print("")
 
         print("Installed packages")
         print("==================")
         packages = get_installed_packages()
         for pkg in packages:
-            print(pkg.get_name())
-            print("  url: " + pkg.get_url())
+            print(pkg.name())
+            print("  url: " + pkg.url())
             print("")
 
         print("Install/Uninstall")
         print("=================")
-        print("Install: " + p.get_name())
-        print(install_package(p.get_url()))
+        print("Install: " + p.name())
+        print(install_package(p.url()))
 
-        print("Uninstall: " + p.get_name())
-        uninstall_package(p.get_name())
+        print("Uninstall: " + p.name())
+        uninstall_package(p.name())
     except Exception, e:
         print(e)
     finally:

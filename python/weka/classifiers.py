@@ -56,7 +56,7 @@ class Classifier(OptionHandler):
         self.is_drawable = self.check_type(jobject, "weka.core.Drawable")
         super(Classifier, self).__init__(jobject=jobject, options=options)
 
-    def get_capabilities(self):
+    def capabilities(self):
         """
         Returns the capabilities of the classifier.
         :return: the capabilities
@@ -161,19 +161,21 @@ class SingleClassifierEnhancer(Classifier):
         self.enforce_type(jobject, "weka.classifiers.SingleClassifierEnhancer")
         super(SingleClassifierEnhancer, self).__init__(classname=classname, jobject=jobject, options=options)
 
-    def set_classifier(self, classifier):
-        """
-        Sets the base classifier.
-        :param classifier: the base classifier to use
-        """
-        javabridge.call(self.jobject, "setClassifier", "(Lweka/classifiers/Classifier;)V", classifier.jobject)
-
-    def get_classifier(self):
+    @property
+    def classifier(self):
         """
         Returns the base classifier.
         :rtype: Classifier
         """
         return Classifier(javabridge.call(self.jobject, "getClassifier", "()Lweka/classifiers/Classifier;"))
+
+    @classifier.setter
+    def classifier(self, classifier):
+        """
+        Sets the base classifier.
+        :param classifier: the base classifier to use
+        """
+        javabridge.call(self.jobject, "setClassifier", "(Lweka/classifiers/Classifier;)V", classifier.jobject)
 
 
 class FilteredClassifier(SingleClassifierEnhancer):
@@ -196,21 +198,23 @@ class FilteredClassifier(SingleClassifierEnhancer):
             self.enforce_type(jobject, classname)
         super(FilteredClassifier, self).__init__(jobject=jobject, options=options)
 
-    def set_filter(self, filtr):
-        """
-        Sets the filter.
-        :param filtr: the filter to use
-        :type filtr: Filter
-        """
-        javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
-
-    def get_filter(self):
+    @property
+    def filter(self):
         """
         Returns the filter.
         :return: the filter in use
         :rtype: Filter
         """
         return Filter(javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
+
+    @filter.setter
+    def filter(self, filtr):
+        """
+        Sets the filter.
+        :param filtr: the filter to use
+        :type filtr: Filter
+        """
+        javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
 
 
 class MultipleClassifiersCombiner(Classifier):
@@ -233,18 +237,8 @@ class MultipleClassifiersCombiner(Classifier):
         self.enforce_type(jobject, "weka.classifiers.MultipleClassifiersCombiner")
         super(MultipleClassifiersCombiner, self).__init__(classname=classname, jobject=jobject, options=options)
 
-    def set_classifiers(self, classifiers):
-        """
-        Sets the base classifiers.
-        :param classifiers: the list of base classifiers to use
-        :type classifiers: list
-        """
-        obj = []
-        for classifier in classifiers:
-            obj.append(classifier.jobject)
-        javabridge.call(self.jobject, "setClassifiers", "([Lweka/classifiers/Classifier;)V", obj)
-
-    def get_classifiers(self):
+    @property
+    def classifiers(self):
         """
         Returns the list of base classifiers.
         :return: the classifier list
@@ -256,6 +250,18 @@ class MultipleClassifiersCombiner(Classifier):
         for obj in objects:
             result.append(Classifier(jobject=obj))
         return result
+
+    @classifiers.setter
+    def classifiers(self, classifiers):
+        """
+        Sets the base classifiers.
+        :param classifiers: the list of base classifiers to use
+        :type classifiers: list
+        """
+        obj = []
+        for classifier in classifiers:
+            obj.append(classifier.jobject)
+        javabridge.call(self.jobject, "setClassifiers", "([Lweka/classifiers/Classifier;)V", obj)
 
 
 class Kernel(OptionHandler):
@@ -278,7 +284,7 @@ class Kernel(OptionHandler):
         self.enforce_type(jobject, "weka.classifiers.functions.supportVector.Kernel")
         super(Kernel, self).__init__(jobject=jobject, options=options)
 
-    def get_capabilities(self):
+    def capabilities(self):
         """
         Returns the capabilities of the classifier.
         :return: the capabilities
@@ -286,21 +292,23 @@ class Kernel(OptionHandler):
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
 
-    def set_checks_turned_off(self, off):
-        """
-        Turns any checks on/off.
-        :param off: True to turn off checks
-        :type off: bool
-        """
-        javabridge.call(self.jobject, "setChecksTurnedOff", "(Z)V", off)
-
-    def get_checks_turned_off(self):
+    @property
+    def checks_turned_off(self):
         """
         Returns whether checks are turned off.
         :return: True if checks turned off
         :rtype: bool
         """
         return javabridge.call(self.jobject, "getChecksTurnedOff", "()Z")
+
+    @checks_turned_off.setter
+    def checks_turned_off(self, off):
+        """
+        Turns any checks on/off.
+        :param off: True to turn off checks
+        :type off: bool
+        """
+        javabridge.call(self.jobject, "setChecksTurnedOff", "(Z)V", off)
 
     def clean(self):
         """
@@ -373,21 +381,8 @@ class KernelClassifier(Classifier):
             raise Exception("Does not handle a kernel: " + wutils.get_classname(jobject))
         super(KernelClassifier, self).__init__(classname=classname, jobject=jobject, options=options)
 
-    def set_kernel(self, kernel):
-        """
-        Sets the kernel.
-        :param kernel: the kernel to set
-        :type kernel: Kernel
-        :return: whether successfully set
-        :rtype: bool
-        """
-        result = javabridge.static_call(
-            "weka/classifiers/KernelHelper", "setKernel",
-            "(Ljava/lang/Object;Lweka/classifiers/functions/supportVector/Kernel;)Z",
-            self.jobject, kernel.jobject)
-        return result
-
-    def get_kernel(self):
+    @property
+    def kernel(self):
         """
         Returns the current kernel.
         :return: the kernel or None if none found
@@ -401,6 +396,20 @@ class KernelClassifier(Classifier):
             return None
         else:
             return Kernel(jobject=result)
+
+    @kernel.setter
+    def kernel(self, kernel):
+        """
+        Sets the kernel.
+        :param kernel: the kernel to set
+        :type kernel: Kernel
+        """
+        result = javabridge.static_call(
+            "weka/classifiers/KernelHelper", "setKernel",
+            "(Ljava/lang/Object;Lweka/classifiers/functions/supportVector/Kernel;)Z",
+            self.jobject, kernel.jobject)
+        if not result:
+            raise Exception("Failed to set kernel!")
 
 
 class Prediction(JavaObject):
@@ -417,6 +426,7 @@ class Prediction(JavaObject):
         self.enforce_type(jobject, "weka.classifiers.evaluation.Prediction")
         super(Prediction, self).__init__(jobject)
 
+    @property
     def actual(self):
         """
         Returns the actual value.
@@ -425,6 +435,7 @@ class Prediction(JavaObject):
         """
         return javabridge.call(self.jobject, "actual", "()D")
 
+    @property
     def predicted(self):
         """
         Returns the predicted value.
@@ -433,6 +444,7 @@ class Prediction(JavaObject):
         """
         return javabridge.call(self.jobject, "predicted", "()D")
 
+    @property
     def weight(self):
         """
         Returns the weight.
@@ -456,6 +468,7 @@ class NominalPrediction(Prediction):
         self.enforce_type(jobject, "weka.classifiers.evaluation.NominalPrediction")
         super(NominalPrediction, self).__init__(jobject)
 
+    @property
     def distribution(self):
         """
         Returns the class distribution.
@@ -464,6 +477,7 @@ class NominalPrediction(Prediction):
         """
         return javabridge.get_env().get_double_array_elements(javabridge.call(self.jobject, "distribution", "()[D"))
 
+    @property
     def margin(self):
         """
         Returns the margin.
@@ -487,6 +501,7 @@ class NumericPrediction(Prediction):
         self.enforce_type(jobject, "weka.classifiers.evaluation.NumericPrediction")
         super(NumericPrediction, self).__init__(jobject)
 
+    @property
     def error(self):
         """
         Returns the error.
@@ -495,6 +510,7 @@ class NumericPrediction(Prediction):
         """
         return javabridge.call(self.jobject, "error", "()D")
 
+    @property
     def prediction_intervals(self):
         """
         Returns the prediction intervals.
@@ -539,7 +555,8 @@ class CostMatrix(JavaObject):
                 else:
                     raise Exception("Numpy array must be a square matrix!")
             else:
-                raise Exception("Matrix must be either a CostMatrix or a 2-dimensional numpy array: " + str(type(matrx)))
+                raise Exception(
+                    "Matrix must be either a CostMatrix or a 2-dimensional numpy array: " + str(type(matrx)))
         elif not num_classes is None:
             jobject = javabridge.make_instance(
                 "weka/classifiers/CostMatrix", "(I)V", num_classes)
@@ -668,6 +685,7 @@ class CostMatrix(JavaObject):
         """
         javabridge.call(self.jobject, "normalize", "()V")
 
+    @property
     def num_columns(self):
         """
         Returns the number of columns.
@@ -676,6 +694,7 @@ class CostMatrix(JavaObject):
         """
         return javabridge.call(self.jobject, "numColumns", "()I")
 
+    @property
     def num_rows(self):
         """
         Returns the number of rows.
@@ -684,6 +703,7 @@ class CostMatrix(JavaObject):
         """
         return javabridge.call(self.jobject, "numRows", "()I")
 
+    @property
     def size(self):
         """
         Returns the number of rows/columns.
@@ -766,8 +786,8 @@ class Evaluation(JavaObject):
         """
         if not rnd is None:
             data.randomize(rnd)
-        train_size = int(round(data.num_instances() * percentage / 100))
-        test_size = data.num_instances() - train_size
+        train_size = int(round(data.num_instances * percentage / 100))
+        test_size = data.num_instances - train_size
         train_inst = Instances.copy_instances(data, 0, train_size)
         test_inst = Instances.copy_instances(data, train_size, test_size)
         cls = Classifier.make_copy(classifier)
@@ -814,7 +834,7 @@ class Evaluation(JavaObject):
             "(Lweka/classifiers/Classifier;Lweka/core/Instance;)D",
             classifier.jobject, inst.jobject)
 
-    def to_summary(self, title=None, complexity=False):
+    def summary(self, title=None, complexity=False):
         """
         Generates a summary.
         :param title: optional title
@@ -831,7 +851,7 @@ class Evaluation(JavaObject):
             return javabridge.call(
                 self.jobject, "toSummaryString", "(Ljava/lang/String;Z)Ljava/lang/String;", title, complexity)
 
-    def to_class_details(self, title=None):
+    def class_details(self, title=None):
         """
         Generates the class details.
         :param title: optional title
@@ -846,7 +866,7 @@ class Evaluation(JavaObject):
             return javabridge.call(
                 self.jobject, "toClassDetailsString", "(Ljava/lang/String;)Ljava/lang/String;", title)
 
-    def to_matrix(self, title=None):
+    def matrix(self, title=None):
         """
         Generates the confusion matrix.
         :param title: optional title
@@ -869,6 +889,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "areaUnderPRC", "(I)D", class_index)
 
+    @property
     def weighted_area_under_prc(self):
         """
         Returns the weighted area under precision recall curve.
@@ -887,6 +908,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "areaUnderROC", "(I)D", class_index)
 
+    @property
     def weighted_area_under_roc(self):
         """
         Returns the weighted area under receiver operator characteristic curve.
@@ -895,6 +917,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "weightedAreaUnderROC", "()D")
 
+    @property
     def avg_cost(self):
         """
         Returns the average cost.
@@ -903,6 +926,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "avgCost", "()D")
 
+    @property
     def total_cost(self):
         """
         Returns the total cost.
@@ -911,6 +935,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "totalCost", "()D")
 
+    @property
     def confusion_matrix(self):
         """
         Returns the confusion matrix.
@@ -919,6 +944,7 @@ class Evaluation(JavaObject):
         """
         return arrays.double_matrix_to_ndarray(javabridge.call(self.jobject, "confusionMatrix", "()[[D"))
 
+    @property
     def correct(self):
         """
         Returns the correct count (nominal classes).
@@ -927,6 +953,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "correct", "()D")
 
+    @property
     def incorrect(self):
         """
         Returns the incorrect count (nominal classes).
@@ -935,6 +962,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "incorrect", "()D")
 
+    @property
     def unclassified(self):
         """
         Returns the unclassified count.
@@ -943,6 +971,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "unclassified", "()D")
 
+    @property
     def num_instances(self):
         """
         Returns the number of instances that had a known class value.
@@ -951,6 +980,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "numInstances", "()D")
 
+    @property
     def percent_correct(self):
         """
         Returns the percent correct (nominal classes).
@@ -959,6 +989,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "pctCorrect", "()D")
 
+    @property
     def percent_incorrect(self):
         """
         Returns the percent incorrect (nominal classes).
@@ -967,6 +998,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "pctIncorrect", "()D")
 
+    @property
     def percent_unclassified(self):
         """
         Returns the percent unclassified.
@@ -975,6 +1007,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "pctUnclassified", "()D")
 
+    @property
     def correlation_coefficient(self):
         """
         Returns the correlation coefficient (numeric classes).
@@ -993,6 +1026,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "matthewsCorrelationCoefficient", "(I)D", class_index)
 
+    @property
     def weighted_matthews_correlation(self):
         """
         Returns the weighted Matthews correlation (nominal classes).
@@ -1001,6 +1035,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "weightedMatthewsCorrelation", "()D")
 
+    @property
     def coverage_of_test_cases_by_predicted_regions(self):
         """
         Returns the coverage of the test cases by the predicted regions at the confidence level
@@ -1010,6 +1045,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "coverageOfTestCasesByPredictedRegions", "()D")
 
+    @property
     def size_of_predicted_regions(self):
         """
         Returns  the average size of the predicted regions, relative to the range of the target in the
@@ -1019,6 +1055,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "sizeOfPredictedRegions", "()D")
 
+    @property
     def error_rate(self):
         """
         Returns the error rate (numeric classes).
@@ -1027,6 +1064,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "errorRate", "()D")
 
+    @property
     def mean_absolute_error(self):
         """
         Returns the mean absolute error.
@@ -1035,6 +1073,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "meanAbsoluteError", "()D")
 
+    @property
     def relative_absolute_error(self):
         """
         Returns the relative absolute error.
@@ -1043,6 +1082,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "relativeAbsoluteError", "()D")
 
+    @property
     def root_mean_squared_error(self):
         """
         Returns the root mean squared error.
@@ -1051,6 +1091,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "rootMeanSquaredError", "()D")
 
+    @property
     def root_relative_squared_error(self):
         """
         Returns the root relative squared error.
@@ -1059,6 +1100,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "rootRelativeSquaredError", "()D")
 
+    @property
     def root_mean_prior_squared_error(self):
         """
         Returns the root mean prior squared error.
@@ -1067,6 +1109,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "rootMeanPriorSquaredError", "()D")
 
+    @property
     def mean_prior_absolute_error(self):
         """
         Returns the mean prior absolute error.
@@ -1085,6 +1128,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "falseNegativeRate", "(I)D", class_index)
 
+    @property
     def weighted_false_negative_rate(self):
         """
         Returns the weighted false negative rate.
@@ -1103,6 +1147,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "falsePositiveRate", "(I)D", class_index)
 
+    @property
     def weighted_false_positive_rate(self):
         """
         Returns the weighted false positive rate.
@@ -1131,6 +1176,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "trueNegativeRate", "(I)D", class_index)
 
+    @property
     def weighted_true_negative_rate(self):
         """
         Returns the weighted true negative rate.
@@ -1169,6 +1215,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "truePositiveRate", "(I)D", class_index)
 
+    @property
     def weighted_true_positive_rate(self):
         """
         Returns the weighted true positive rate.
@@ -1197,6 +1244,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "fMeasure", "(I)D", class_index)
 
+    @property
     def weighted_f_measure(self):
         """
         Returns the weighted f measure.
@@ -1205,6 +1253,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "weightedFMeasure", "()D")
 
+    @property
     def unweighted_macro_f_measure(self):
         """
         Returns the unweighted macro-averaged F-measure.
@@ -1213,6 +1262,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "unweightedMacroFmeasure", "()D")
 
+    @property
     def unweighted_micro_f_measure(self):
         """
         Returns the unweighted micro-averaged F-measure.
@@ -1231,6 +1281,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "precision", "(I)D", class_index)
 
+    @property
     def weighted_precision(self):
         """
         Returns the weighted precision.
@@ -1249,6 +1300,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "recall", "(I)D", class_index)
 
+    @property
     def weighted_recall(self):
         """
         Returns the weighted recall.
@@ -1257,6 +1309,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "weightedRecall", "()D")
 
+    @property
     def kappa(self):
         """
         Returns kappa.
@@ -1265,6 +1318,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "kappa", "()D")
 
+    @property
     def kb_information(self):
         """
         Returns KB information.
@@ -1273,6 +1327,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "KBInformation", "()D")
 
+    @property
     def kb_mean_information(self):
         """
         Returns KB mean information.
@@ -1281,6 +1336,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "KBMeanInformation", "()D")
 
+    @property
     def kb_relative_information(self):
         """
         Returns KB relative information.
@@ -1289,6 +1345,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "KBRelativeInformation", "()D")
 
+    @property
     def sf_entropy_gain(self):
         """
         Returns the total SF, which is the null model entropy minus the scheme entropy.
@@ -1297,6 +1354,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "SFEntropyGain", "()D")
 
+    @property
     def sf_mean_entropy_gain(self):
         """
         Returns the SF per instance, which is the null model entropy minus the scheme entropy, per instance.
@@ -1305,6 +1363,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "SFMeanEntropyGain", "()D")
 
+    @property
     def sf_mean_prior_entropy(self):
         """
         Returns the entropy per instance for the null model.
@@ -1313,6 +1372,7 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "SFMeanPriorEntropy", "()D")
 
+    @property
     def sf_mean_scheme_entropy(self):
         """
         Returns the entropy per instance for the scheme.
@@ -1321,15 +1381,8 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "SFMeanSchemeEntropy", "()D")
 
-    def set_class_priors(self, data):
-        """
-        Sets the class priors derived from the dataset.
-        :param data: the dataset to derive the priors from
-        :type data: Instances
-        """
-        return javabridge.call(self.jobject, "setClassPriors", "(Lweka/core/Instances;)V", data)
-
-    def get_class_priors(self):
+    @property
+    def class_priors(self):
         """
         Returns the class priors.
         :return: the priors
@@ -1337,6 +1390,16 @@ class Evaluation(JavaObject):
         """
         return javabridge.get_env().get_double_array_elements(javabridge.call(self.jobject, "getClassPriors", "()[D"))
 
+    @class_priors.setter
+    def class_priors(self, data):
+        """
+        Sets the class priors derived from the dataset.
+        :param data: the dataset to derive the priors from
+        :type data: Instances
+        """
+        javabridge.call(self.jobject, "setClassPriors", "(Lweka/core/Instances;)V", data)
+
+    @property
     def header(self):
         """
         Returns the header format.
@@ -1345,15 +1408,8 @@ class Evaluation(JavaObject):
         """
         return Instances(javabridge.call(self.jobject, "getHeader", "()Lweka/core/Instances;"))
 
-    def set_discard_predictions(self, discard):
-        """
-        Sets whether to discard predictions (saves memory).
-        :param discard: True if to discard predictions
-        :type discard: bool
-        """
-        javabridge.call(self.jobject, "setDiscardPredictions", "(Z)V", discard)
-
-    def get_discard_predictions(self):
+    @property
+    def discard_predictions(self):
         """
         Returns whether to discard predictions (saves memory).
         :return: True if to discard
@@ -1361,6 +1417,16 @@ class Evaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "getDiscardPredictions", "()Z")
 
+    @discard_predictions.setter
+    def discard_predictions(self, discard):
+        """
+        Sets whether to discard predictions (saves memory).
+        :param discard: True if to discard predictions
+        :type discard: bool
+        """
+        javabridge.call(self.jobject, "setDiscardPredictions", "(Z)V", discard)
+
+    @property
     def predictions(self):
         """
         Returns the predictions.
@@ -1419,21 +1485,23 @@ class PredictionOutput(OptionHandler):
         buf = javabridge.make_instance("java/lang/StringBuffer", "()V")
         javabridge.call(self.jobject, "setBuffer", "(Ljava/lang/StringBuffer;)V", buf)
 
-    def set_header(self, data):
-        """
-        Sets the header format.
-        :param data: The dataset format
-        :type data: Instances
-        """
-        javabridge.call(self.jobject, "setHeader", "(Lweka/core/Instances;)V", data.jobject)
-
-    def get_header(self):
+    @property
+    def header(self):
         """
         Returns the header format.
         :return: The dataset format
         :rtype: Instances
         """
         return Instances(javabridge.call(self.jobject, "getHeader", "()Lweka/core/Instances;"))
+
+    @header.setter
+    def header(self, data):
+        """
+        Sets the header format.
+        :param data: The dataset format
+        :type data: Instances
+        """
+        javabridge.call(self.jobject, "setHeader", "(Lweka/core/Instances;)V", data.jobject)
 
     def print_header(self):
         """
@@ -1485,7 +1553,7 @@ class PredictionOutput(OptionHandler):
             self.jobject, "printClassification", "(Lweka/classifiers/Classifier;Lweka/core/Instance;I)V",
             cls.jobject, inst.jobject, index)
 
-    def get_buffer_content(self):
+    def buffer_content(self):
         """
         Returns the content of the buffer as string.
         :return: The buffer content
@@ -1499,7 +1567,7 @@ class PredictionOutput(OptionHandler):
         :return: the current buffer content
         :rtype: str
         """
-        return self.get_buffer_content()
+        return self.buffer_content()
 
 
 def predictions_to_instances(data, preds):
@@ -1528,12 +1596,12 @@ def predictions_to_instances(data, preds):
     else:
         atts.append(Attribute.create_numeric("index"))
         atts.append(Attribute.create_numeric("weight"))
-        atts.append(data.get_class_attribute().copy(name="actual"))
-        atts.append(data.get_class_attribute().copy(name="predicted"))
+        atts.append(data.class_attribute.copy(name="actual"))
+        atts.append(data.class_attribute.copy(name="predicted"))
         atts.append(Attribute.create_nominal("error", ["no", "yes"]))
         atts.append(Attribute.create_numeric("classification"))
-        for i in xrange(data.get_class_attribute().num_values()):
-            atts.append(Attribute.create_numeric("distribution-" + data.get_class_attribute().value(i)))
+        for i in xrange(data.class_attribute.num_values):
+            atts.append(Attribute.create_numeric("distribution-" + data.class_attribute.value(i)))
 
     result = Instances.create_instances("Predictions", atts, len(preds))
 
@@ -1541,15 +1609,15 @@ def predictions_to_instances(data, preds):
     for pred in preds:
         count += 1
         if is_numeric:
-            values = array([count, pred.weight(), pred.actual(), pred.predicted(), pred.error()])
+            values = array([count, pred.weight, pred.actual, pred.predicted, pred.error])
         else:
-            if pred.actual() == pred.predicted():
+            if pred.actual == pred.predicted:
                 error = 0.0
             else:
                 error = 1.0
-            l = [count, pred.weight(), pred.actual(), pred.predicted(), error, max(pred.distribution())]
-            for i in xrange(data.get_class_attribute().num_values()):
-                l.append(pred.distribution()[i])
+            l = [count, pred.weight, pred.actual, pred.predicted, error, max(pred.distribution)]
+            for i in xrange(data.class_attribute.num_values):
+                l.append(pred.distribution[i])
             values = array(l)
         inst = Instance.create_instance(values)
         result.add_instance(inst)
@@ -1620,7 +1688,7 @@ def main():
     try:
         classifier = Classifier(classname=parsed.classifier)
         if len(parsed.option) > 0:
-            classifier.set_options(parsed.option)
+            classifier.options = parsed.option
         print(Evaluation.evaluate_model(classifier, params))
     except Exception, e:
         print(e)

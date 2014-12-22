@@ -68,7 +68,7 @@ class Capabilities(JavaObject):
             result.append(Capability(c))
         return result
 
-    def get_attribute_capabilities(self):
+    def attribute_capabilities(self):
         """
         Returns all the attribute capabilities.
         :return: attribute capabilities
@@ -77,7 +77,7 @@ class Capabilities(JavaObject):
         return Capabilities(
             javabridge.call(self.jobject, "getAttributeCapabilities", "()Lweka/core/Capabilities;"))
 
-    def get_class_capabilities(self):
+    def class_capabilities(self):
         """
         Returns all the class capabilities.
         :return: class capabilities
@@ -86,7 +86,7 @@ class Capabilities(JavaObject):
         return Capabilities(
             javabridge.call(self.jobject, "getClassCapabilities", "()Lweka/core/Capabilities;"))
 
-    def get_other_capabilities(self):
+    def other_capabilities(self):
         """
         Returns all other capabilities.
         :return: all other capabilities
@@ -244,21 +244,23 @@ class Capabilities(JavaObject):
         """
         return javabridge.call(self.jobject, "supportsMaybe", "(Lweka/core/Capabilities;)Z", capabilities.jobject)
 
-    def set_min_instances(self, minimum):
-        """
-        Sets the minimum number of instances that must be supported.
-        :param minimum: the minimum number
-        :type minimum: int
-        """
-        javabridge.call(self.jobject, "setMinimumNumberInstances", "(I)V", minimum)
-
-    def get_min_instances(self):
+    @property
+    def min_instances(self):
         """
         Returns the minimum number of instances that must be supported.
         :return: the minimum number
         :rtype: int
         """
         return javabridge.call(self.jobject, "getMinimumNumberInstances", "()I")
+
+    @min_instances.setter
+    def min_instances(self, minimum):
+        """
+        Sets the minimum number of instances that must be supported.
+        :param minimum: the minimum number
+        :type minimum: int
+        """
+        javabridge.call(self.jobject, "setMinimumNumberInstances", "(I)V", minimum)
 
     def test_attribute(self, att, is_class=None, fail=False):
         """

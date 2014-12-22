@@ -14,7 +14,6 @@
 # clusterers.py
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
-import javabridge
 import logging
 import weka.plot as plot
 if plot.matplotlib_available:
@@ -53,27 +52,27 @@ def plot_cluster_assignments(evl, data, atts=None, inst_no=False, size=10, title
 
     fig = plt.figure()
 
-    if data.get_class_index() == -1:
+    if data.class_index == -1:
         c = None
     else:
         c = []
-        for i in xrange(data.num_instances()):
+        for i in xrange(data.num_instances):
             inst = data.get_instance(i)
-            c.append(inst.get_value(inst.get_class_index()))
+            c.append(inst.get_value(inst.class_index))
 
     if atts is None:
         atts = []
-        for i in xrange(data.num_attributes()):
+        for i in xrange(data.num_attributes):
             atts.append(i)
 
     num_plots = len(atts)
     if inst_no:
         num_plots += 1
 
-    clusters = evl.get_cluster_assignments()
+    clusters = evl.cluster_assignments()
 
     for index, att in enumerate(atts):
-        x = data.get_values(att)
+        x = data.values(att)
         ax = fig.add_subplot(
             1, num_plots, index + 1)
         if c is None:
@@ -81,13 +80,13 @@ def plot_cluster_assignments(evl, data, atts=None, inst_no=False, size=10, title
         else:
             ax.scatter(clusters, x, c=c, s=size, alpha=0.5)
         ax.set_xlabel("Clusters")
-        ax.set_title(data.get_attribute(att).get_name())
+        ax.set_title(data.attribute(att).name)
         ax.get_xaxis().set_ticks(list(set(clusters)))
         ax.grid(True)
 
     if inst_no:
         x = []
-        for i in xrange(data.num_instances()):
+        for i in xrange(data.num_instances):
             x.append(i+1)
         ax = fig.add_subplot(
             1, num_plots, num_plots)
@@ -101,7 +100,7 @@ def plot_cluster_assignments(evl, data, atts=None, inst_no=False, size=10, title
         ax.grid(True)
 
     if title is None:
-        title = data.get_relationname()
+        title = data.relationname
     fig.canvas.set_window_title(title)
     plt.draw()
     if not outfile is None:

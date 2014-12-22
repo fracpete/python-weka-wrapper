@@ -56,5 +56,5 @@ def create_subsample(data, percent, seed=1):
         return data
     data = Instances.copy_instances(data)
     data.randomize(Random(seed))
-    data = Instances.copy_instances(data, 0, int(round(data.num_instances() * percent / 100.0)))
+    data = Instances.copy_instances(data, 0, int(round(data.num_instances * percent / 100.0)))
     return data

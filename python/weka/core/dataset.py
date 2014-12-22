@@ -46,7 +46,8 @@ class Instances(JavaObject):
         """
         return InstanceIterator(self)
 
-    def get_relationname(self):
+    @property
+    def relationname(self):
         """
         Returns the name of the dataset.
         :return: the name
@@ -54,6 +55,7 @@ class Instances(JavaObject):
         """
         return javabridge.call(self.jobject, "relationName", "()Ljava/lang/String;")
 
+    @property
     def num_attributes(self):
         """
         Returns the number of attributes.
@@ -68,7 +70,7 @@ class Instances(JavaObject):
         """
         return AttributeIterator(self)
 
-    def get_attribute(self, index):
+    def attribute(self, index):
         """
         Returns the specified attribute.
         :param index: the 0-based index of the attribute
@@ -78,7 +80,7 @@ class Instances(JavaObject):
         """
         return Attribute(javabridge.call(self.jobject, "attribute", "(I)Lweka/core/Attribute;", index))
 
-    def get_attribute_by_name(self, name):
+    def attribute_by_name(self, name):
         """
         Returns the specified attribute, None if not found.
         :param name: the name of the attribute
@@ -92,7 +94,7 @@ class Instances(JavaObject):
         else:
             return Attribute(att)
 
-    def get_attribute_stats(self, index):
+    def attribute_stats(self, index):
         """
         Returns the specified attribute statistics.
         :param index: the 0-based index of the attribute
@@ -102,18 +104,19 @@ class Instances(JavaObject):
         """
         return AttributeStats(javabridge.call(self.jobject, "attributeStats", "(I)Lweka/core/AttributeStats;", index))
 
-    def get_values(self, index):
+    def values(self, index):
         """
         Returns the internal values of this attribute from all the instance objects.
         :return: the values as numpy array
         :rtype: list
         """
         values = []
-        for i in xrange(self.num_instances()):
+        for i in xrange(self.num_instances):
             inst = self.get_instance(i)
             values.append(inst.get_value(index))
         return numpy.array(values)
 
+    @property
     def num_instances(self):
         """
         Returns the number of instances.
@@ -122,29 +125,32 @@ class Instances(JavaObject):
         """
         return javabridge.call(self.jobject, "numInstances", "()I")
         
-    def get_class_attribute(self):
+    @property
+    def class_attribute(self):
         """
         Returns the currently set class attribute.
         :return: the class attribute
         :rtype: Attribute
         """
         return Attribute(javabridge.call(self.jobject, "classAttribute", "()Lweka/core/Attribute;"))
-        
-    def get_class_index(self):
+
+    @property
+    def class_index(self):
         """
         Returns the currently set class index (0-based).
         :return: the class index, -1 if not set
         :rtype: int
         """
         return javabridge.call(self.jobject, "classIndex", "()I")
-        
-    def set_class_index(self, index):
+
+    @class_index.setter
+    def class_index(self, index):
         """
         Sets the class index (0-based).
         :param index: the new index, use -1 to unset
         :type index: int
         """
-        return javabridge.call(self.jobject, "setClassIndex", "(I)V", index)
+        javabridge.call(self.jobject, "setClassIndex", "(I)V", index)
         
     def get_instance(self, index):
         """
@@ -385,7 +391,7 @@ class Instances(JavaObject):
         if not msg is None:
             raise Exception("Cannot appent instances: " + msg)
         result = cls.copy_instances(inst1)
-        for i in xrange(inst2.num_instances()):
+        for i in xrange(inst2.num_instances):
             result.add_instance(inst2.get_instance(i))
         return result
 
@@ -423,15 +429,8 @@ class Instance(JavaObject):
         """
         return InstanceValueIterator(self)
 
-    def set_dataset(self, dataset):
-        """
-        Sets the dataset that this instance belongs to (for attribute information).
-        :param dataset: the dataset this instance belongs to.
-        :type dataset: Instances
-        """
-        javabridge.call(self.jobject, "setDataset", "(Lweka/core/Instances;)V", dataset.jobject)
-
-    def get_dataset(self):
+    @property
+    def dataset(self):
         """
         Returns the dataset that this instance belongs to.
         :return: the dataset or None if no dataset set
@@ -443,6 +442,16 @@ class Instance(JavaObject):
         else:
             return Instances(dataset)
 
+    @dataset.setter
+    def dataset(self, dataset):
+        """
+        Sets the dataset that this instance belongs to (for attribute information).
+        :param dataset: the dataset this instance belongs to.
+        :type dataset: Instances
+        """
+        javabridge.call(self.jobject, "setDataset", "(Lweka/core/Instances;)V", dataset.jobject)
+
+    @property
     def num_attributes(self):
         """
         Returns the number of attributes.
@@ -451,6 +460,7 @@ class Instance(JavaObject):
         """
         return javabridge.call(self.jobject, "numAttributes", "()I")
 
+    @property
     def num_classes(self):
         """
         Returns the number of class labels.
@@ -459,7 +469,8 @@ class Instance(JavaObject):
         """
         return javabridge.call(self.jobject, "numClasses", "()I")
 
-    def get_class_attribute(self):
+    @property
+    def class_attribute(self):
         """
         Returns the currently set class attribute.
         :return: the class attribute
@@ -467,7 +478,8 @@ class Instance(JavaObject):
         """
         return Attribute(javabridge.call(self.jobject, "classAttribute", "()Lweka/core/Attribute;"))
 
-    def get_class_index(self):
+    @property
+    def class_index(self):
         """
         Returns the currently set class index.
         :return: the class index, -1 if not set
@@ -551,15 +563,17 @@ class Instance(JavaObject):
         """
         return javabridge.call(self.jobject, "hasMissingValue", "()Z")
 
-    def get_weight(self):
+    @property
+    def weight(self):
         """
         Returns the currently set weight.
         :return: the weight
         :rtype: float
         """
         return javabridge.call(self.jobject, "weight", "()D")
-        
-    def set_weight(self, weight):
+
+    @weight.setter
+    def weight(self, weight):
         """
         Sets the weight.
         :param weight: the weight to set
@@ -567,7 +581,8 @@ class Instance(JavaObject):
         """
         javabridge.call(self.jobject, "setWeight", "(D)V", weight)
 
-    def get_values(self):
+    @property
+    def values(self):
         """
         Returns the internal values of this instance.
         :return: the values as numpy array
@@ -603,7 +618,8 @@ class Attribute(JavaObject):
         self.enforce_type(jobject, "weka.core.Attribute")
         super(Attribute, self).__init__(jobject)
 
-    def get_name(self):
+    @property
+    def name(self):
         """
         Returns the name of the attribute.
         :return: the name
@@ -611,7 +627,8 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "name", "()Ljava/lang/String;")
         
-    def get_index(self):
+    @property
+    def index(self):
         """
         Returns the index of this attribute.
         :return: the index
@@ -619,21 +636,23 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "index", "()I")
 
-    def set_weight(self, weight):
-        """
-        Sets the weight of the attribute.
-        :param weight: the weight of the attribute
-        :type weight: float
-        """
-        javabridge.call(self.jobject, "setWeight", "(D)V", weight)
-
-    def get_weight(self):
+    @property
+    def weight(self):
         """
         Returns the weight of the attribute.
         :return: the weight
         :rtype: float
         """
         return javabridge.call(self.jobject, "weight", "()D")
+
+    @weight.setter
+    def weight(self, weight):
+        """
+        Sets the weight of the attribute.
+        :param weight: the weight of the attribute
+        :type weight: float
+        """
+        javabridge.call(self.jobject, "setWeight", "(D)V", weight)
 
     def index_of(self, label):
         """
@@ -655,6 +674,7 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "value", "(I)Ljava/lang/String;", index)
 
+    @property
     def num_values(self):
         """
         Returns the number of labels.
@@ -663,7 +683,8 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "numValues", "()I")
 
-    def get_values(self):
+    @property
+    def values(self):
         """
         Returns the labels, strings or relation-values.
         :return: all the values, None if not NOMINAL, STRING, or RELATION
@@ -675,6 +696,7 @@ class Attribute(JavaObject):
         else:
             return types.enumeration_to_list(enm)
 
+    @property
     def ordering(self):
         """
         Returns the ordering of the attribute.
@@ -683,7 +705,8 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "ordering", "()I")
 
-    def get_type(self):
+    @property
+    def type(self):
         """
         Returns the type of the attribute. See weka.core.Attribute Javadoc.
         :return: the type
@@ -691,7 +714,7 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "type", "()I")
 
-    def get_type_str(self, short=False):
+    def type_str(self, short=False):
         """
         Returns the type of the attribute as string.
         :return: the type
@@ -706,6 +729,7 @@ class Attribute(JavaObject):
                 "weka/core/Attribute", "typeToString", "(Lweka/core/Attribute;)Ljava/lang/String;",
                 self.jobject)
 
+    @property
     def is_averagable(self):
         """
         Returns whether the attribute is averagable.
@@ -714,6 +738,7 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "isAveragable", "()Z")
 
+    @property
     def is_date(self):
         """
         Returns whether the attribute is a date one.
@@ -722,6 +747,7 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "isDate", "()Z")
 
+    @property
     def is_nominal(self):
         """
         Returns whether the attribute is a nominal one.
@@ -730,6 +756,7 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "isNominal", "()Z")
 
+    @property
     def is_numeric(self):
         """
         Returns whether the attribute is a numeric one (date or numeric).
@@ -738,6 +765,7 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "isNumeric", "()Z")
 
+    @property
     def is_relation_valued(self):
         """
         Returns whether the attribute is a relation valued one.
@@ -746,6 +774,7 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "isRelationValued", "()Z")
 
+    @property
     def is_string(self):
         """
         Returns whether the attribute is a string attribute.
@@ -754,7 +783,8 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "isString", "()Z")
 
-    def get_date_format(self):
+    @property
+    def date_format(self):
         """
         Returns the format of this data attribute. See java.text.SimpleDateFormat Javadoc.
         :return: the format string
@@ -762,7 +792,8 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "getDateFormat", "()Ljava/lang/String;")
 
-    def get_lower_numeric_bound(self):
+    @property
+    def lower_numeric_bound(self):
         """
         Returns the lower numeric bound of the numeric attribute.
         :return: the lower bound
@@ -770,7 +801,8 @@ class Attribute(JavaObject):
         """
         return javabridge.call(self.jobject, "getLowerNumericBound", "()D")
 
-    def get_upper_numeric_bound(self):
+    @property
+    def upper_numeric_bound(self):
         """
         Returns the upper numeric bound of the numeric attribute.
         :return: the upper bound
@@ -917,6 +949,7 @@ class AttributeStats(JavaObject):
         self.enforce_type(jobject, "weka.core.AttributeStats")
         super(AttributeStats, self).__init__(jobject)
 
+    @property
     def distinct_count(self):
         """
         The number of distinct values.
@@ -925,6 +958,7 @@ class AttributeStats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "distinctCount", "I")
 
+    @property
     def int_count(self):
         """
         The number of int-like values.
@@ -933,6 +967,7 @@ class AttributeStats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "intCount", "I")
 
+    @property
     def missing_count(self):
         """
         The number of missing values.
@@ -941,14 +976,17 @@ class AttributeStats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "missingCount", "I")
 
+    @property
     def nominal_counts(self):
         """
         Counts of each nominal value.
         :return: Counts of each nominal value
         :rtype: ndarray
         """
-        return javabridge.get_env().get_int_array_elements(javabridge.get_field(self.jobject, "nominalCounts", "[I"))
+        return javabridge.get_env().get_int_array_elements(
+            javabridge.get_field(self.jobject, "nominalCounts", "[I"))
 
+    @property
     def nominal_weights(self):
         """
         Weight mass for each nominal value.
@@ -958,6 +996,7 @@ class AttributeStats(JavaObject):
         return javabridge.get_env().get_double_array_elements(
             javabridge.get_field(self.jobject, "nominalWeights", "[D"))
 
+    @property
     def numeric_stats(self):
         """
         Stats on numeric value distributions.
@@ -966,6 +1005,7 @@ class AttributeStats(JavaObject):
         """
         return Stats(javabridge.get_field(self.jobject, "numericStats", "Lweka/experiment/Stats;"))
 
+    @property
     def total_count(self):
         """
         The total number of values.
@@ -974,6 +1014,7 @@ class AttributeStats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "totalCount", "I")
 
+    @property
     def unique_count(self):
         """
         The number of values that only appear once.
@@ -997,6 +1038,7 @@ class Stats(JavaObject):
         self.enforce_type(jobject, "weka.experiment.Stats")
         super(Stats, self).__init__(jobject)
 
+    @property
     def count(self):
         """
         The number of values seen.
@@ -1005,6 +1047,7 @@ class Stats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "count", "D")
 
+    @property
     def min(self):
         """
         The minimum value seen, or Double.NaN if no values seen.
@@ -1013,6 +1056,7 @@ class Stats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "min", "D")
 
+    @property
     def max(self):
         """
         The maximum value seen, or Double.NaN if no values seen.
@@ -1021,6 +1065,7 @@ class Stats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "max", "D")
 
+    @property
     def mean(self):
         """
         The mean of values at the last calculateDerived() call.
@@ -1029,6 +1074,7 @@ class Stats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "mean", "D")
 
+    @property
     def stddev(self):
         """
         The std deviation of values at the last calculateDerived() call
@@ -1037,6 +1083,7 @@ class Stats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "stdDev", "D")
 
+    @property
     def sum(self):
         """
         The sum of values seen.
@@ -1045,6 +1092,7 @@ class Stats(JavaObject):
         """
         return javabridge.get_field(self.jobject, "sum", "D")
 
+    @property
     def sumsq(self):
         """
         The sum of values squared seen.
@@ -1078,7 +1126,7 @@ class InstanceIterator(object):
         :return: the next Instance object
         :rtype: Instance
         """
-        if self.row < self.data.num_instances():
+        if self.row < self.data.num_instances:
             index = self.row
             self.row += 1
             return self.data.get_instance(index)
@@ -1110,10 +1158,10 @@ class AttributeIterator(object):
         :return: the next Attribute object
         :rtype: Attribute
         """
-        if self.col < self.data.num_attributes():
+        if self.col < self.data.num_attributes:
             index = self.col
             self.col += 1
-            return self.data.get_attribute(index)
+            return self.data.attribute(index)
         else:
             raise StopIteration()
 
@@ -1142,10 +1190,10 @@ class InstanceValueIterator(object):
         :return: the next value, depending on the attribute that can be either a number of a string
         :rtype: str or float
         """
-        if self.col < self.data.num_attributes():
+        if self.col < self.data.num_attributes:
             index = self.col
             self.col += 1
-            if self.data.get_dataset().get_attribute(index).is_numeric():
+            if self.data.dataset.attribute(index).is_numeric:
                 return self.data.get_value(index)
             else:
                 return self.data.get_string_value(index)

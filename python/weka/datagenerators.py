@@ -58,7 +58,7 @@ class DataGenerator(OptionHandler):
         else:
             return Instances(data)
 
-    def get_single_mode_flag(self):
+    def single_mode_flag(self):
         """
         Returns whether data is generated row by row (True) or in one go (False).
         :return: whether incremental
@@ -66,7 +66,8 @@ class DataGenerator(OptionHandler):
         """
         return javabridge.call(self.jobject, "getSingleModeFlag", "()Z")
 
-    def get_dataset_format(self):
+    @property
+    def dataset_format(self):
         """
         Returns the dataset format.
         :return: the format
@@ -78,7 +79,8 @@ class DataGenerator(OptionHandler):
         else:
             return Instances(data)
 
-    def set_dataset_format(self, inst):
+    @dataset_format.setter
+    def dataset_format(self, inst):
         """
         Sets the dataset format.
         :param inst: the Instances to use as dataset format
@@ -94,7 +96,7 @@ class DataGenerator(OptionHandler):
         """
         return javabridge.call(self.jobject, "generateStart", "()Ljava/lang/String;")
 
-    def get_num_examples_act(self):
+    def num_examples_act(self):
         """
         Returns a actual number of examples to generate.
         :return: the number of examples
@@ -172,7 +174,7 @@ def main():
     try:
         generator = DataGenerator(classname=parsed.datagenerator)
         if len(parsed.option) > 0:
-            generator.set_options(parsed.option)
+            generator.options = parsed.option
         DataGenerator.make_data(generator, parsed.option)
     except Exception, e:
         print(e)

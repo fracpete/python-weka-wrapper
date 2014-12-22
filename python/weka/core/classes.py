@@ -16,11 +16,14 @@
 
 import types
 import javabridge
+from javabridge import JWrapper, JClassWrapper
 from javabridge.jutil import JavaException
 
 
 class JavaObject(object):
-    """ Basic Java object. """
+    """
+    Basic Java object.
+    """
     
     def __init__(self, jobject):
         """
@@ -76,6 +79,26 @@ class JavaObject(object):
             "Lweka/core/PropertyPath;", "getValue",
             "(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;",
             self.jobject, path))
+
+    def jwrapper(self):
+        """
+        Returns a JWrapper instance of the encapsulated Java object, giving access to methods
+        using dot notation.
+        http://pythonhosted.org//javabridge/highlevel.html#wrapping-java-objects-using-reflection
+        :return: the wrapper
+        :rtype: JWrapper
+        """
+        return JWrapper(self.jobject)
+
+    def jclasswrapper(self):
+        """
+        Returns a JClassWrapper instance of the class for the encapsulated Java object, giving
+        access to the class methods using dot notation.
+        http://pythonhosted.org//javabridge/highlevel.html#wrapping-java-objects-using-reflection
+        :return: the wrapper
+        :rtype: JClassWrapper
+        """
+        return JClassWrapper(javabridge.call(self.jobject, "getClass", "()Ljava/lang/Class;"))
 
     @classmethod
     def check_type(cls, jobject, intf_or_class, jni_intf_or_class=None):
@@ -156,7 +179,7 @@ class Random(JavaObject):
         if n is None:
             return javabridge.call(self.jobject, "nextInt", "()I")
         else:
-            return javabridge.call(self.jobject, "nextInt", "(I)I")
+            return javabridge.call(self.jobject, "nextInt", "(I)I", n)
 
     def next_double(self):
         """
@@ -184,7 +207,7 @@ class OptionHandler(JavaObject):
         super(OptionHandler, self).__init__(jobject)
         self.is_optionhandler = OptionHandler.check_type(jobject, "weka.core.OptionHandler")
         if (not options is None) and (len(options) > 0):
-            self.set_options(options)
+            self.options = options
         
     def global_info(self):
         """
@@ -195,17 +218,9 @@ class OptionHandler(JavaObject):
             return javabridge.call(self.jobject, "globalInfo", "()Ljava/lang/String;")
         except JavaException:
             return None
-        
-    def set_options(self, options):
-        """
-        Sets the command-line options (as list).
-        :param options: the list of command-line options to set
-        :type options: list
-        """
-        if self.is_optionhandler:
-            javabridge.call(self.jobject, "setOptions", "([Ljava/lang/String;)V", types.string_list_to_array(options))
-                                                       
-    def get_options(self):
+
+    @property
+    def options(self):
         """
         Obtains the currently set options as list.
         :return: the list of options
@@ -215,6 +230,16 @@ class OptionHandler(JavaObject):
             return types.string_array_to_list(javabridge.call(self.jobject, "getOptions", "()[Ljava/lang/String;"))
         else:
             return []
+
+    @options.setter
+    def options(self, options):
+        """
+        Sets the command-line options (as list).
+        :param options: the list of command-line options to set
+        :type options: list
+        """
+        if self.is_optionhandler:
+            javabridge.call(self.jobject, "setOptions", "([Ljava/lang/String;)V", types.string_list_to_array(options))
 
     def to_commandline(self):
         """
@@ -258,7 +283,7 @@ class SingleIndex(JavaObject):
             self.enforce_type(jobject, "weka.core.SingleIndex")
         super(SingleIndex, self).__init__(jobject)
 
-    def set_upper(self, upper):
+    def upper(self, upper):
         """
         Sets the upper limit.
         :param upper: the upper limit
@@ -266,7 +291,7 @@ class SingleIndex(JavaObject):
         """
         javabridge.call(self.jobject, "setUpper", "(I)V", upper)
 
-    def get_index(self):
+    def index(self):
         """
         Returns the integer index.
         :return: the 0-based integer index
@@ -274,7 +299,8 @@ class SingleIndex(JavaObject):
         """
         return javabridge.call(self.jobject, "getIndex", "()I")
 
-    def get_single_index(self):
+    @property
+    def single_index(self):
         """
         Returns the string index.
         :return: the 1-based string index
@@ -282,7 +308,8 @@ class SingleIndex(JavaObject):
         """
         return javabridge.call(self.jobject, "getSingleIndex", "()Ljava/lang/String;")
 
-    def set_single_index(self, index):
+    @single_index.setter
+    def single_index(self, index):
         """
         Sets the string index.
         :param index: the 1-based string index
@@ -313,7 +340,7 @@ class Range(JavaObject):
             self.enforce_type(jobject, "weka.core.Range")
         super(Range, self).__init__(jobject)
 
-    def set_upper(self, upper):
+    def upper(self, upper):
         """
         Sets the upper limit.
         :param upper: the upper limit
@@ -321,7 +348,7 @@ class Range(JavaObject):
         """
         javabridge.call(self.jobject, "setUpper", "(I)V", upper)
 
-    def get_selection(self):
+    def selection(self):
         """
         Returns the selection list.
         :return: the list of 0-based integer indices
@@ -329,7 +356,8 @@ class Range(JavaObject):
         """
         return javabridge.get_env().get_int_array_elements(javabridge.call(self.jobject, "getSelection", "()[I"))
 
-    def get_ranges(self):
+    @property
+    def ranges(self):
         """
         Returns the string range.
         :return: the string range of 1-based indices
@@ -337,10 +365,163 @@ class Range(JavaObject):
         """
         return javabridge.call(self.jobject, "getRanges", "()Ljava/lang/String;")
 
-    def set_ranges(self, rng):
+    @ranges.setter
+    def ranges(self, rng):
         """
         Sets the string range.
         :param rng: the range to set
         :type rng: str
         """
         javabridge.call(self.jobject, "setRanges", "(Ljava/lang/String;)V", rng)
+
+    @property
+    def invert(self):
+        """
+        Returns whether the range is inverted.
+        :return: true if inverted
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "getInvert", "()Z")
+
+    @invert.setter
+    def invert(self, invert):
+        """
+        Sets the invert state.
+        :param invert: whether to invert or not
+        :type invert: bool
+        """
+        javabridge.call(self.jobject, "setInvert", "(Z)V", invert)
+
+
+class Tag(JavaObject):
+    """
+    Wrapper for the weka.core.Tag class.
+    """
+
+    def __init__(self, jobject=None, ident=None, ident_str="", readable="", uppercase=True):
+        """
+        :param jobject: the java object to wrap
+        :type jobject: JB_Object
+        :param ident: the ID integer associated with the tag
+        :type ident: int
+        :param ident_str: the ID string associated with the tag (case-insensitive)
+        :type ident_str: str
+        :param readable: the text of the tag
+        :type readable: str
+        :param uppercase: whether to uppercase the id string
+        :type uppercase: bool
+        """
+        if jobject is None:
+            jobject = javabridge.make_instance(
+                "weka/core/Tag", "(ILjava/lang/String;Ljava/lang/String;Z)V",
+                ident, ident_str, readable, uppercase)
+        else:
+            self.enforce_type(jobject, "weka.core.Tag")
+        super(Tag, self).__init__(jobject)
+
+    @property
+    def ident(self):
+        """
+        Returns the current integer ID of the tag.
+        :return: the integer ID
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "getID", "()I")
+
+    @ident.setter
+    def ident(self, value):
+        """
+        Sets the integer ID of the tag.
+        :param value: the new ID
+        :type value: int
+        """
+        javabridge.call(self.jobject, "setID", "(I)V", value)
+
+    @property
+    def identstr(self):
+        """
+        Returns the current ID string.
+        :return: the ID string
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "getIDStr", "()Ljava/lang/String;")
+
+    @identstr.setter
+    def identstr(self, value):
+        """
+        Sets the ID string.
+        :param value: the new ID string
+        :type value: str
+        """
+        javabridge.call(self.jobject, "setIDStr", "(Ljava/lang/String;)V", value)
+
+    @property
+    def readable(self):
+        """
+        Returns the 'human readable' string.
+        :return: the readable string
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "getReadable", "()Ljava/lang/String;")
+
+    @readable.setter
+    def readable(self, value):
+        """
+        Sets the 'human readable' string.
+        :param value: the new readable string
+        :type value: str
+        """
+        javabridge.call(self.jobject, "setReadable", "(Ljava/lang/String;)V", value)
+
+
+class SelectedTag(JavaObject):
+    """
+    Wrapper for the weka.core.SelectedTag class.
+    """
+
+    def __init__(self, jobject=None, tag_id=None, tag_text=None, tags=None):
+        """
+        Initializes the wrapper with the specified Java object or tags and either tag_id or tag_text.
+        :param jobject: the java object to wrap
+        :type jobject: JB_Object
+        :param tag_id: the integer associated with the tag
+        :type tag_id: int
+        :param tag_text: the text associated with the tag
+        :type tag_text: str
+        :param tags: list of Tag objects
+        :type tags: list
+        """
+        if jobject is None:
+            if tag_id is None:
+                jobject = javabridge.make_instance(
+                    "weka/core/SelectedTag", "(Ljava/lang/String;I])V", tag_text, tags)
+            else:
+                jobject = javabridge.make_instance(
+                    "weka/core/SelectedTag", "(II])V", tag_id, tags)
+        else:
+            self.enforce_type(jobject, "weka.core.SelectedTag")
+        super(SelectedTag, self).__init__(jobject)
+
+    @property
+    def selected(self):
+        """
+        Returns the selected tag.
+        :return: the tag
+        :rtype: Tag
+        """
+        return Tag(javabridge.call(self.jobject, "getSelectedTag", "()Lweka/core/Tag;"))
+
+    @property
+    def tags(self):
+        """
+        Returns the associated tags.
+        :return: the list of Tag objects
+        :rtype: list
+        """
+        result = []
+        a = javabridge.call(self.jobject, "getTags", "()Lweka/core/Tag;]")
+        length = javabridge.get_env().get_array_length(a)
+        wrapped = javabridge.get_env().get_object_array_elements(a)
+        for i in xrange(length):
+            result.append(Tag(javabridge.get_env().get_string(wrapped[i])))
+        return result

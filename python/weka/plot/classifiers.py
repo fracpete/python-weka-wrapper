@@ -55,16 +55,16 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, abs
     error = None
     cls = None
     for pred in predictions:
-        actual.append(pred.actual())
-        predicted.append(pred.predicted())
+        actual.append(pred.actual)
+        predicted.append(pred.predicted)
         if isinstance(pred, NumericPrediction):
             if error is None:
                 error = []
-            error.append(abs(pred.error()))
+            error.append(abs(pred.error))
         elif isinstance(pred, NominalPrediction):
             if cls is None:
                 cls = []
-            if pred.actual() != pred.predicted():
+            if pred.actual != pred.predicted:
                 cls.append(1)
             else:
                 cls.append(0)
@@ -126,11 +126,11 @@ def get_thresholdcurve_data(data, xname, yname):
     :return: tuple of x and y arrays
     :rtype: tuple
     """
-    xi = data.get_attribute_by_name(xname).get_index()
-    yi = data.get_attribute_by_name(yname).get_index()
+    xi = data.attribute_by_name(xname).index
+    yi = data.attribute_by_name(yname).index
     x = []
     y = []
-    for i in xrange(data.num_instances()):
+    for i in xrange(data.num_instances):
         inst = data.get_instance(i)
         x.append(inst.get_value(xi))
         y.append(inst.get_value(yi))
@@ -174,7 +174,7 @@ def plot_roc(evaluation, class_index=None, title=None, key_loc="lower right", ou
     ax = None
     for cindex in class_index:
         data = generate_thresholdcurve_data(evaluation, cindex)
-        head = evaluation.header()
+        head = evaluation.header
         area = get_auc(data)
         x, y = get_thresholdcurve_data(data, "False Positive Rate", "True Positive Rate")
         if ax is None:
@@ -188,7 +188,7 @@ def plot_roc(evaluation, class_index=None, title=None, key_loc="lower right", ou
             fig.canvas.set_window_title(title)
             plt.xlim([-0.05, 1.05])
             plt.ylim([-0.05, 1.05])
-        plot_label = head.get_class_attribute().value(cindex) + " (AUC: %0.4f)" % area
+        plot_label = head.class_attribute.value(cindex) + " (AUC: %0.4f)" % area
         ax.plot(x, y, label=plot_label)
         ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     plt.draw()
@@ -224,7 +224,7 @@ def plot_prc(evaluation, class_index=None, title=None, key_loc="lower center", o
     ax = None
     for cindex in class_index:
         data = generate_thresholdcurve_data(evaluation, cindex)
-        head = evaluation.header()
+        head = evaluation.header
         x, y = get_thresholdcurve_data(data, "Recall", "Precision")
         if ax is None:
             fig, ax = plt.subplots()
@@ -237,7 +237,7 @@ def plot_prc(evaluation, class_index=None, title=None, key_loc="lower center", o
             plt.xlim([-0.05, 1.05])
             plt.ylim([-0.05, 1.05])
             ax.grid(True)
-        plot_label = head.get_class_attribute().value(cindex)
+        plot_label = head.class_attribute.value(cindex)
         ax.plot(x, y, label=plot_label)
         ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     plt.draw()

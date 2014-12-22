@@ -20,10 +20,8 @@ from weka.core.classes import JavaObject
 def weka_version():
     """
     Determines the version of Weka in use.
-
     :return: the version
     :rtype: str
     """
-
     jobj = JavaObject(JavaObject.new_instance(classname="weka.core.Version"))
     return str(jobj)

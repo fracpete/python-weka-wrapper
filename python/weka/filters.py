@@ -52,7 +52,7 @@ class Filter(OptionHandler):
         self.enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject=jobject, options=options)
 
-    def get_capabilities(self):
+    def capabilities(self):
         """
         Returns the capabilities of the filter.
         :return: the capabilities
@@ -60,7 +60,7 @@ class Filter(OptionHandler):
         """
         return Capabilities(javabridge.call(self.jobject, "getCapabilities", "()Lweka/core/Capabilities;"))
 
-    def set_inputformat(self, data):
+    def inputformat(self, data):
         """
         Sets the input format.
         :param data: the data to use as input
@@ -76,7 +76,7 @@ class Filter(OptionHandler):
         """
         return javabridge.call(self.jobject, "input", "(Lweka/core/Instance;)Z", inst.jobject)
 
-    def get_outputformat(self):
+    def outputformat(self):
         """
         Returns the output format.
         :return: the output format
@@ -129,18 +129,8 @@ class MultiFilter(Filter):
         self.enforce_type(jobject, "weka.filters.MultiFilter")
         super(MultiFilter, self).__init__(jobject=jobject, options=options)
 
-    def set_filters(self, filters):
-        """
-        Sets the base filters.
-        :param filters: the list of base filters to use
-        :type filters: list
-        """
-        obj = []
-        for fltr in filters:
-            obj.append(fltr.jobject)
-        javabridge.call(self.jobject, "setFilters", "([Lweka/filters/Filter;)V", obj)
-
-    def get_filters(self):
+    @property
+    def filters(self):
         """
         Returns the list of base filters.
         :return: the filter list
@@ -152,6 +142,18 @@ class MultiFilter(Filter):
         for obj in objects:
             result.append(Filter(jobject=obj))
         return result
+
+    @filters.setter
+    def filters(self, filters):
+        """
+        Sets the base filters.
+        :param filters: the list of base filters to use
+        :type filters: list
+        """
+        obj = []
+        for fltr in filters:
+            obj.append(fltr.jobject)
+        javabridge.call(self.jobject, "setFilters", "([Lweka/filters/Filter;)V", obj)
 
 
 def main():
@@ -196,22 +198,22 @@ def main():
     try:
         flter = Filter(parsed.filter)
         if len(parsed.option) > 0:
-            flter.set_options(parsed.option)
+            flter.options = parsed.option
         loader = Loader(classname="weka.core.converters.ArffLoader")
         in1 = loader.load_file(parsed.input1)
         cls = parsed.classindex
         if str(parsed.classindex) == "first":
             cls = "0"
         if str(parsed.classindex) == "last":
-            cls = str(in1.num_attributes() - 1)
-        in1.set_class_index(int(cls))
-        flter.set_inputformat(in1)
+            cls = str(in1.num_attributes - 1)
+        in1.class_index = int(cls)
+        flter.inputformat(in1)
         out1 = flter.filter(in1)
         saver = Saver(classname="weka.core.converters.ArffSaver")
         saver.save_file(out1, parsed.output1)
         if not parsed.input2 is None:
             in2 = loader.load_file(parsed.input2)
-            in2.set_class_index(int(cls))
+            in2.class_index = int(cls)
             out2 = flter.filter(in2)
             saver.save_file(out2, parsed.output2)
     except Exception, e:

@@ -170,7 +170,7 @@ class SimpleExperiment(OptionHandler):
         logger.info("Finished...")
         javabridge.call(self.jobject, "postProcess", "()V")
 
-    def get_experiment(self):
+    def experiment(self):
         """
         Returns the internal experiment, if set up, otherwise None.
         :return: the internal experiment
@@ -434,21 +434,14 @@ class Tester(OptionHandler):
             jobject = Tester.new_instance(classname)
         self.enforce_type(jobject, "weka.experiment.Tester")
         self.columns_determined = False
-        self.dataset_columns = ["Key_Dataset"]
-        self.run_column = "Key_Run"
-        self.fold_column = "Key_Fold"
-        self.result_columns = ["Key_Scheme", "Key_Scheme_options", "Key_Scheme_version_ID"]
+        self._dataset_columns = ["Key_Dataset"]
+        self._run_column = "Key_Run"
+        self._fold_column = "Key_Fold"
+        self._result_columns = ["Key_Scheme", "Key_Scheme_options", "Key_Scheme_version_ID"]
         super(Tester, self).__init__(jobject=jobject, options=options)
 
-    def set_resultmatrix(self, matrix):
-        """
-        Sets the ResultMatrix to use.
-        :param matrix: the ResultMatrix instance to use
-        :type matrix: ResultMatrix
-        """
-        javabridge.call(self.jobject, "setResultMatrix", "(Lweka/experiment/ResultMatrix;)V", matrix.jobject)
-
-    def get_resultmatrix(self):
+    @property
+    def resultmatrix(self):
         """
         Returns the ResultMatrix instance in use.
         :return: the matrix in use
@@ -457,16 +450,17 @@ class Tester(OptionHandler):
         return ResultMatrix(
             jobject=javabridge.call(self.jobject, "getResultMatrix", "()Lweka/experiment/ResultMatrix;"))
 
-    def set_instances(self, data):
+    @resultmatrix.setter
+    def resultmatrix(self, matrix):
         """
-        Sets the data to use for analysis.
-        :param data: the Instances to analyze
-        :type data: Instances
+        Sets the ResultMatrix to use.
+        :param matrix: the ResultMatrix instance to use
+        :type matrix: ResultMatrix
         """
-        javabridge.call(self.jobject, "setInstances", "(Lweka/core/Instances;)V", data.jobject)
-        self.columns_determined = False
+        javabridge.call(self.jobject, "setResultMatrix", "(Lweka/experiment/ResultMatrix;)V", matrix.jobject)
 
-    def get_instances(self):
+    @property
+    def instances(self):
         """
         Returns the data used in the analysis.
         :return: the data in use
@@ -478,37 +472,87 @@ class Tester(OptionHandler):
         else:
             return Instances(inst)
 
-    def set_dataset_columns(self, col_names):
+    @instances.setter
+    def instances(self, data):
+        """
+        Sets the data to use for analysis.
+        :param data: the Instances to analyze
+        :type data: Instances
+        """
+        javabridge.call(self.jobject, "setInstances", "(Lweka/core/Instances;)V", data.jobject)
+        self.columns_determined = False
+
+    @property
+    def dataset_columns(self):
+        """
+        Returns the list of column names that identify uniquely a dataset.
+        :return: the list of attributes names
+        :rtype: list
+        """
+        return self._dataset_columns
+
+    @dataset_columns.setter
+    def dataset_columns(self, col_names):
         """
         Sets the list of column names that identify uniquely a dataset.
         :param col_names: the list of attribute names
         :type col_names: list
         """
-        self.dataset_columns = col_names[:]
+        self._dataset_columns = col_names[:]
 
-    def set_run_column(self, col_name):
+    @property
+    def run_column(self):
+        """
+        Returns the column name that holds the Run number.
+        :return: the attribute name
+        :rtype: str
+        """
+        return self._run_column
+
+    @run_column.setter
+    def run_column(self, col_name):
         """
         Sets the column name that holds the Run number.
         :param col_name: the attribute name
         :type col_name: str
         """
-        self.run_column = col_name
+        self._run_column = col_name
 
-    def set_fold_column(self, col_name):
+    @property
+    def fold_column(self):
+        """
+        Returns the column name that holds the Fold number.
+        :return: the attribute name
+        :rtype: str
+        """
+        return self._fold_column
+
+    @fold_column.setter
+    def fold_column(self, col_name):
         """
         Sets the column name that holds the Fold number.
         :param col_name: the attribute name
         :type col_name: str
         """
-        self.fold_column = col_name
+        self._fold_column = col_name
 
-    def set_result_columns(self, col_names):
+    @property
+    def result_columns(self):
+        """
+        Returns the list of column names that identify uniquely a result (eg classifier + options + ID).
+        :return: the list of attribute names
+        :rtype: list
+        """
+        return self._result_columns
+
+    @result_columns.setter
+    def result_columns(self, col_names):
         """
         Sets the list of column names that identify uniquely a result (eg classifier + options + ID).
         :param col_names: the list of attribute names
         :type col_names: list
         """
-        self.result_columns = col_names[:]
+        self._result_columns = col_names[:]
 
     def init_columns(self):
         """
@@ -516,7 +560,7 @@ class Tester(OptionHandler):
         """
         if self.columns_determined:
             return
-        data = self.get_instances()
+        data = self.instances
         if data is None:
             print("No instances set, cannot determine columns!")
             return
@@ -526,45 +570,45 @@ class Tester(OptionHandler):
             raise Exception("No dataset columns set!")
         cols = ""
         for name in self.dataset_columns:
-            att = data.get_attribute_by_name(name)
+            att = data.attribute_by_name(name)
             if att is None:
                 raise Exception("Dataset column not found: " + name)
             if len(cols) > 0:
                 cols += ","
-            cols += str(att.get_index() + 1)
+            cols += str(att.index + 1)
         javabridge.call(
             self.jobject, "setDatasetKeyColumns", "(Lweka/core/Range;)V", Range(ranges=cols).jobject)
 
         # run
         if self.run_column is None:
             raise Exception("No run columnn set!")
-        att = data.get_attribute_by_name(self.run_column)
+        att = data.attribute_by_name(self.run_column)
         if att is None:
             raise Exception("Run column not found: " + self.run_column)
         javabridge.call(
-            self.jobject, "setRunColumn", "(I)V", att.get_index())
+            self.jobject, "setRunColumn", "(I)V", att.index)
 
         # fold
         if not self.fold_column is None:
-            att = data.get_attribute_by_name(self.fold_column)
+            att = data.attribute_by_name(self.fold_column)
             if att is None:
                 index = -1
             else:
-                index = att.get_index()
+                index = att.index
             javabridge.call(
                 self.jobject, "setFoldColumn", "(I)V", index)
 
         # result
-        if self.result_columns is None:
+        if self._result_columns is None:
             raise Exception("No reset columns set!")
         cols = ""
-        for name in self.result_columns:
-            att = data.get_attribute_by_name(name)
+        for name in self._result_columns:
+            att = data.attribute_by_name(name)
             if att is None:
                 raise Exception("Result column not found: " + name)
             if len(cols) > 0:
                 cols += ","
-            cols += str(att.get_index() + 1)
+            cols += str(att.index + 1)
         javabridge.call(
             self.jobject, "setResultsetKeyColumns", "(Lweka/core/Range;)V", Range(ranges=cols).jobject)
 

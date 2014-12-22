@@ -91,7 +91,7 @@ def main():
     try:
         associator = Associator(classname=parsed.associator)
         if len(parsed.option) > 0:
-            associator.set_options(parsed.option)
+            associator.options = parsed.option
         loader = converters.loader_for_file(parsed.train)
         data = loader.load_file(parsed.train)
         associator.build_associations(data)

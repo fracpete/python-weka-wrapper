@@ -320,7 +320,7 @@ def main():
     try:
         evaluation = ASEvaluation(classname=parsed.evaluator)
         if len(parsed.option) > 0:
-            evaluation.set_options(parsed.option)
+            evaluation.options = parsed.option
         print(AttributeSelection.attribute_selection(evaluation, params))
     except Exception, e:
         print(e)
