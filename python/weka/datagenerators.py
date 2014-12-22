@@ -58,6 +58,7 @@ class DataGenerator(OptionHandler):
         else:
             return Instances(data)
 
+    @property
     def single_mode_flag(self):
         """
         Returns whether data is generated row by row (True) or in one go (False).
@@ -96,6 +97,7 @@ class DataGenerator(OptionHandler):
         """
         return javabridge.call(self.jobject, "generateStart", "()Ljava/lang/String;")
 
+    @property
     def num_examples_act(self):
         """
         Returns a actual number of examples to generate.

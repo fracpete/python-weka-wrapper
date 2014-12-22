@@ -33,6 +33,7 @@ class Package(JavaObject):
         self.enforce_type(jobject, "org.pentaho.packageManagement.Package")
         super(Package, self).__init__(jobject)
 
+    @property
     def name(self):
         """
         Returns the name of the package.
@@ -41,6 +42,7 @@ class Package(JavaObject):
         """
         return javabridge.call(self.jobject, "getName", "()Ljava/lang/String;")
 
+    @property
     def url(self):
         """
         Returns the URL of the package.
@@ -49,6 +51,7 @@ class Package(JavaObject):
         """
         return str(JavaObject(javabridge.call(self.jobject, "getPackageURL", "()Ljava/net/URL;")))
 
+    @property
     def dependencies(self):
         """
         Returns the dependencies of the package.
@@ -62,6 +65,7 @@ class Package(JavaObject):
             result.append(Dependency(dependency))
         return result
 
+    @property
     def metadata(self):
         """
         Returns the meta-data.
@@ -71,6 +75,7 @@ class Package(JavaObject):
         return javabridge.get_dictionary_wrapper(
             javabridge.call(self.jobject, "getPackageMetaData", "()Ljava/util/Map;"))
 
+    @property
     def is_installed(self):
         """
         Returns whether the package is installed.
@@ -196,7 +201,7 @@ def establish_cache():
         "weka/core/WekaPackageManager", "establishCacheIfNeeded", "([Ljava/io/PrintStream;)Ljava/lang/Exception;", [])
 
 
-def get_all_packages():
+def all_packages():
     """
     Returns a list of all packages.
     :return: the list of packages
@@ -212,7 +217,7 @@ def get_all_packages():
     return result
 
 
-def get_available_packages():
+def available_packages():
     """
     Returns a list of all packages that aren't installed yet.
     :return: the list of packages
@@ -228,7 +233,7 @@ def get_available_packages():
     return result
 
 
-def get_installed_packages():
+def installed_packages():
     """
     Returns a list of the installed packages.
     :return: the list of packages
@@ -293,7 +298,7 @@ def is_installed(name):
     :return: whether the package is installed
     :rtype: bool
     """
-    pkgs = get_installed_packages()
+    pkgs = installed_packages()
     for pkge in pkgs:
         if pkge.name() == name:
             return True
@@ -308,7 +313,7 @@ if __name__ == "__main__":
 
         print("All packages")
         print("============")
-        packages = get_all_packages()
+        packages = all_packages()
         for pkg in packages:
             print(pkg.name())
             print("  url: " + pkg.url())
@@ -316,7 +321,7 @@ if __name__ == "__main__":
 
         print("Available packages")
         print("==================")
-        packages = get_available_packages()
+        packages = available_packages()
         p = packages[0]
         for pkg in packages:
             print(pkg.name())
@@ -325,7 +330,7 @@ if __name__ == "__main__":
 
         print("Installed packages")
         print("==================")
-        packages = get_installed_packages()
+        packages = installed_packages()
         for pkg in packages:
             print(pkg.name())
             print("  url: " + pkg.url())
