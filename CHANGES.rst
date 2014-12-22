@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.0 (????-??-??)
+0.2.0 (2014-12-22)
 -------------------
 
 NB: This release is not backwards compatible!
@@ -14,7 +14,6 @@ NB: This release is not backwards compatible!
   to allow generic access to an object's methods: http://pythonhosted.org//javabridge/highlevel.html#wrapping-java-objects-using-reflection
 - added convenience methods `class_is_last()` and `class_is_first()` to `weka.core.Instances` class
 - added convenience methods `delete_last_attribute()` and `delete_first_attribute()` to `weka.core.Instances` class
-- ...
 
 
 0.1.17 (2014-12-18)
