@@ -52,6 +52,7 @@ class Clusterer(OptionHandler):
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject=jobject, options=options)
 
+    @property
     def capabilities(self):
         """
         Returns the capabilities of the clusterer.
@@ -109,6 +110,7 @@ class Clusterer(OptionHandler):
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
         return javabridge.get_env().get_double_array_elements(pred)
 
+    @property
     def number_of_clusters(self):
         """
         Returns the number of clusters found.
@@ -117,6 +119,7 @@ class Clusterer(OptionHandler):
         """
         return javabridge.call(self.jobject, "numberOfClusters", "()I")
 
+    @property
     def graph_type(self):
         """
         Returns the graph type if classifier implements weka.core.Drawable, otherwise -1.
@@ -128,6 +131,7 @@ class Clusterer(OptionHandler):
         else:
             return -1
 
+    @property
     def graph(self):
         """
         Returns the graph if classifier implements weka.core.Drawable, otherwise None.
@@ -244,6 +248,7 @@ class ClusterEvaluation(JavaObject):
         """
         javabridge.call(self.jobject, "evaluateClusterer", "(Lweka/core/Instances;)V", test.jobject)
 
+    @property
     def cluster_results(self):
         """
         The cluster results as string.
@@ -252,6 +257,7 @@ class ClusterEvaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "clusterResultsToString", "()Ljava/lang/String;")
 
+    @property
     def cluster_assignments(self):
         """
         Return an array of cluster assignments corresponding to the most recent set of instances clustered.
@@ -264,6 +270,7 @@ class ClusterEvaluation(JavaObject):
         else:
             return javabridge.get_env().get_double_array_elements(array)
 
+    @property
     def num_clusters(self):
         """
         Returns the number of clusters.
@@ -272,6 +279,7 @@ class ClusterEvaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "getNumClusters", "()I")
 
+    @property
     def log_likelihood(self):
         """
         Returns the log likelihood.
@@ -280,6 +288,7 @@ class ClusterEvaluation(JavaObject):
         """
         return javabridge.call(self.jobject, "getLogLikelihood", "()D")
 
+    @property
     def classes_to_clusters(self):
         """
         Return the array (ordered by cluster number) of minimum error class to cluster mappings..

@@ -217,13 +217,13 @@ Attribute selection
    search = ASSearch(classname="weka.attributeSelection.BestFirst", options=["-D", "1", "-N", "5"])
    evaluator = ASEvaluation(classname="weka.attributeSelection.CfsSubsetEval", options=["-P", "1", "-E", "1"])
    attsel = AttributeSelection()
-   attsel.set_search(search)
-   attsel.set_evaluator(evaluator)
+   attsel.search(search)
+   attsel.evaluator(evaluator)
    attsel.select_attributes(data)
 
-   print("# attributes: " + str(attsel.get_number_attributes_selected()))
-   print("attributes: " + str(attsel.get_selected_attributes()))
-   print("result string:\n" + attsel.to_results_string())
+   print("# attributes: " + str(attsel.number_attributes_selected))
+   print("attributes: " + str(attsel.selected_attributes))
+   print("result string:\n" + attsel.results_string)
 
 
 Data generators
@@ -266,18 +266,18 @@ Packages
 .. code-block:: python
 
    import weka.core.packages as packages
-   items = packages.get_all_packages()
+   items = packages.all_packages()
    for item in items:
        if item.get_name() == "CLOPE":
            print(item.name + " " + item.url)
 
    packages.install_package("CLOPE")
-   items = packages.get_installed_packages()
+   items = packages.installed_packages()
    for item in items:
        print(item.name + " " + item.url)
 
    packages.uninstall_package("CLOPE")
-   items = packages.get_installed_packages()
+   items = packages.installed_packages()
    for item in items:
        print(item.name + " " + item.url)
 

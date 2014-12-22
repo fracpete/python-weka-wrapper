@@ -56,6 +56,7 @@ class Classifier(OptionHandler):
         self.is_drawable = self.check_type(jobject, "weka.core.Drawable")
         super(Classifier, self).__init__(jobject=jobject, options=options)
 
+    @property
     def capabilities(self):
         """
         Returns the capabilities of the classifier.
@@ -104,6 +105,7 @@ class Classifier(OptionHandler):
         pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
         return javabridge.get_env().get_double_array_elements(pred)
 
+    @property
     def graph_type(self):
         """
         Returns the graph type if classifier implements weka.core.Drawable, otherwise -1.
@@ -115,6 +117,7 @@ class Classifier(OptionHandler):
         else:
             return -1
 
+    @property
     def graph(self):
         """
         Returns the graph if classifier implements weka.core.Drawable, otherwise None.

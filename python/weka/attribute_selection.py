@@ -90,7 +90,8 @@ class ASEvaluation(OptionHandler):
         self.enforce_type(jobject, "weka.attributeSelection.ASEvaluation")
         super(ASEvaluation, self).__init__(jobject=jobject, options=options)
 
-    def get_capabilities(self):
+    @property
+    def capabilities(self):
         """
         Returns the capabilities of the classifier.
         :return: the capabilities
@@ -133,7 +134,7 @@ class AttributeSelection(JavaObject):
         jobject = AttributeSelection.new_instance("weka.attributeSelection.AttributeSelection")
         super(AttributeSelection, self).__init__(jobject)
 
-    def set_evaluator(self, evaluator):
+    def evaluator(self, evaluator):
         """
         Sets the evaluator to use.
         :param evaluator: the evaluator to use.
@@ -141,7 +142,7 @@ class AttributeSelection(JavaObject):
         """
         javabridge.call(self.jobject, "setEvaluator", "(Lweka/attributeSelection/ASEvaluation;)V", evaluator.jobject)
 
-    def set_search(self, search):
+    def search(self, search):
         """
         Sets the search algorithm to use.
         :param search: the search algorithm
@@ -149,7 +150,7 @@ class AttributeSelection(JavaObject):
         """
         javabridge.call(self.jobject, "setSearch", "(Lweka/attributeSelection/ASSearch;)V", search.jobject)
 
-    def set_folds(self, folds):
+    def folds(self, folds):
         """
         Sets the number of folds to use for cross-validation.
         :param folds: the number of folds
@@ -157,7 +158,7 @@ class AttributeSelection(JavaObject):
         """
         javabridge.call(self.jobject, "setFolds", "(I)V", folds)
 
-    def set_ranking(self, ranking):
+    def ranking(self, ranking):
         """
         Sets whether to perform a ranking, if possible.
         :param ranking: whether to perform a ranking
@@ -165,7 +166,7 @@ class AttributeSelection(JavaObject):
         """
         javabridge.call(self.jobject, "setRanking", "(Z)V", ranking)
 
-    def set_seed(self, seed):
+    def seed(self, seed):
         """
         Sets the seed for cross-validation.
         :param seed: the seed value
@@ -173,7 +174,7 @@ class AttributeSelection(JavaObject):
         """
         javabridge.call(self.jobject, "setSeed", "(I)V", seed)
 
-    def set_crossvalidation(self, crossvalidation):
+    def crossvalidation(self, crossvalidation):
         """
         Sets whether to perform cross-validation.
         :param crossvalidation: whether to perform cross-validation
@@ -197,7 +198,8 @@ class AttributeSelection(JavaObject):
         """
         javabridge.call(self.jobject, "selectAttributesCVSplit", "(Lweka/core/Instances;)V", instances.jobject)
 
-    def get_selected_attributes(self):
+    @property
+    def selected_attributes(self):
         """
         Returns the selected attributes from the last run.
         :return: the Numpy array of 0-based indices
@@ -209,7 +211,8 @@ class AttributeSelection(JavaObject):
         else:
             return javabridge.get_env().get_int_array_elements(array)
 
-    def to_results_string(self):
+    @property
+    def results_string(self):
         """
         Generates a results string from the last attribute selection.
         :return: the results string
@@ -217,7 +220,8 @@ class AttributeSelection(JavaObject):
         """
         return javabridge.call(self.jobject, "toResultsString", "()Ljava/lang/String;")
 
-    def get_cv_results_string(self):
+    @property
+    def cv_results(self):
         """
         Generates a results string from the last cross-validation attribute selection.
         :return: the results string
@@ -225,7 +229,8 @@ class AttributeSelection(JavaObject):
         """
         return javabridge.call(self.jobject, "CVResultsString", "()Ljava/lang/String;")
 
-    def get_number_attributes_selected(self):
+    @property
+    def number_attributes_selected(self):
         """
         Returns the number of attributes that were selected.
         :return: the number of attributes
@@ -233,7 +238,8 @@ class AttributeSelection(JavaObject):
         """
         return javabridge.call(self.jobject, "numberAttributesSelected", "()I")
 
-    def get_ranked_attributes(self):
+    @property
+    def ranked_attributes(self):
         """
         Returns the matrix of ranked attributes from the last run.
         :return: the Numpy matrix
