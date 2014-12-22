@@ -85,7 +85,7 @@ Cross-validate filtered classifier and print evaluation and display ROC
 .. code-block:: python
 
    data = loader.load_file(data_dir + "diabetes.arff")
-   data.class_index = data.num_attributes - 1
+   data.class_is_last()
 
    from weka.filters import Filter
    remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1-3"])
@@ -117,7 +117,7 @@ Cross-validate regressor, display classifier errors and predictions
 
    from weka.classifiers import PredictionOutput, KernelClassifier, Kernel
    data = loader.load_file(data_dir + "bolts.arff")
-   data.class_index = data.num_attributes - 1
+   data.class_is_last()
 
    cls = KernelClassifier(classname="weka.classifiers.functions.SMOreg", options=["-N", "0"])
    kernel = Kernel(classname="weka.classifiers.functions.supportVector.RBFKernel", options=["-G", "0.1"])
@@ -181,7 +181,7 @@ Clustering
 .. code-block:: python
 
    data = loader.load_file(data_dir + "vote.arff")
-   data.delete_attribute(data.num_attributes - 1)
+   data.delete_last_attribute()
 
    from weka.clusterers import Clusterer
    clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans", options=["-N", "3"])

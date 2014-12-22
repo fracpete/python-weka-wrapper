@@ -13,6 +13,7 @@ NB: This release is not backwards compatible!
 - added `jwrapper` and `jclasswrapper` methods to `JavaObject` class (the mother of all objects in python-weka-wrapper)
   to allow generic access to an object's methods: http://pythonhosted.org//javabridge/highlevel.html#wrapping-java-objects-using-reflection
 - added convenience methods `class_is_last()` and `class_is_first()` to `weka.core.Instances` class
+- added convenience methods `delete_last_attribute()` and `delete_first_attribute()` to `weka.core.Instances` class
 - ...
 
 

@@ -219,6 +219,18 @@ class Instances(JavaObject):
         """
         javabridge.call(self.jobject, "deleteAttributeAt", "(I)V", index)
 
+    def delete_first_attribute(self):
+        """
+        Deletes the first attribute.
+        """
+        self.delete_attribute(0)
+
+    def delete_last_attribute(self):
+        """
+        Deletes the last attribute.
+        """
+        self.delete_attribute(self.num_attributes - 1)
+
     def delete_attribute_type(self, typ):
         """
         Deletes all attributes of the given type in the dataset.
