@@ -4,6 +4,8 @@ virtualenv
 If you want to merely test out the library, you can do that easily in a *virtual python environment*
 created with `virtualenv`.
 
+**NB:*** You need a build environment for your platform set up as described in the **Installation** section.
+
 
 Setup
 -----
@@ -28,22 +30,13 @@ The following steps set up an evironment:
      $ pwwtest/bin/pip install javabridge
 
 * as an alternative, you can also use all currently installed packages on your
-  host system in the virtual environment. For instance, on Ubuntu, run the following
-  commands to install all the dependencies:
-
-  .. code-block:: bash
-
-     $ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygraphviz
-     $ sudo pip install javabridge
-
-  after that, you can create the virtual environment as follows:
+  host system in the virtual environment. For this, you have to have to all the required
+  packages installed on your host already (see **Installation** section).
+  You can create the virtual environment as follows:
 
   .. code-block:: bash
 
      $ virtualenv --system-site-packages pwwtest
-
-* a build environment is required to build libraries, like `javabridge`, from source. For Ubuntu that would
-  be the `build-essential` meta-package and Xcode for Mac OSX.
 
 
 Troubleshooting
