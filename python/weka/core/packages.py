@@ -300,7 +300,7 @@ def is_installed(name):
     """
     pkgs = installed_packages()
     for pkge in pkgs:
-        if pkge.name() == name:
+        if pkge.name == name:
             return True
     return False
 
@@ -315,8 +315,8 @@ if __name__ == "__main__":
         print("============")
         packages = all_packages()
         for pkg in packages:
-            print(pkg.name())
-            print("  url: " + pkg.url())
+            print(pkg.name)
+            print("  url: " + pkg.url)
             print("")
 
         print("Available packages")
@@ -324,25 +324,25 @@ if __name__ == "__main__":
         packages = available_packages()
         p = packages[0]
         for pkg in packages:
-            print(pkg.name())
-            print("  url: " + pkg.url())
+            print(pkg.name)
+            print("  url: " + pkg.url)
             print("")
 
         print("Installed packages")
         print("==================")
         packages = installed_packages()
         for pkg in packages:
-            print(pkg.name())
+            print(pkg.name)
             print("  url: " + pkg.url())
             print("")
 
         print("Install/Uninstall")
         print("=================")
-        print("Install: " + p.name())
-        print(install_package(p.url()))
+        print("Install: " + p.name)
+        print(install_package(p.url))
 
-        print("Uninstall: " + p.name())
-        uninstall_package(p.name())
+        print("Uninstall: " + p.name)
+        uninstall_package(p.name)
     except Exception, e:
         print(e)
     finally:
