@@ -40,7 +40,7 @@ Load dataset and print it
    from weka.core.converters import Loader
    loader = Loader(classname="weka.core.converters.ArffLoader")
    data = loader.load_file(data_dir + "iris.arff")
-   data.class_index = data.num_attributes - 1
+   data.class_is_last()
 
    print(data)
 
@@ -67,7 +67,7 @@ Build classifier incrementally with data and print model
 
    loader = Loader(classname="weka.core.converters.ArffLoader")
    iris_inc = loader.load_file(data_dir + "iris.arff", incremental=True)
-   iris_inc.class_index = iris_inc.num_attributes - 1
+   iris_inc.class_is_last()
 
    print(iris_inc)
 
@@ -196,7 +196,7 @@ Associations
 .. code-block:: python
 
    data = loader.load_file(data_dir + "vote.arff")
-   data.class_index = data.num_attributes - 1
+   data.class_is_last()
 
    from weka.associations import Associator
    associator = Associator(classname="weka.associations.Apriori", options=["-N", "9", "-I"])
@@ -211,7 +211,7 @@ Attribute selection
 .. code-block:: python
 
    data = loader.load_file(data_dir + "vote.arff")
-   data.class_index = data.num_attributes - 1
+   data.class_is_last()
 
    from weka.attribute_selection import ASSearch, ASEvaluation, AttributeSelection
    search = ASSearch(classname="weka.attributeSelection.BestFirst", options=["-D", "1", "-N", "5"])

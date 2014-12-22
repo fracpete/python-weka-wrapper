@@ -151,7 +151,19 @@ class Instances(JavaObject):
         :type index: int
         """
         javabridge.call(self.jobject, "setClassIndex", "(I)V", index)
-        
+
+    def class_is_first(self):
+        """
+        Sets the first attribute as class attribute (convenience method).
+        """
+        self.class_index = 0
+
+    def class_is_last(self):
+        """
+        Sets the last attribute as class attribute (convenience method).
+        """
+        self.class_index = self.num_attributes - 1
+
     def get_instance(self, index):
         """
         Returns the Instance object at the specified location.

@@ -69,7 +69,7 @@ def plot_cluster_assignments(evl, data, atts=None, inst_no=False, size=10, title
     if inst_no:
         num_plots += 1
 
-    clusters = evl.cluster_assignments()
+    clusters = evl.cluster_assignments
 
     for index, att in enumerate(atts):
         x = data.values(att)
