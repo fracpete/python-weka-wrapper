@@ -1,8 +1,15 @@
 Changelog
 =========
 
+0.2.1 (????-??-??)
+------------------
+
+- added method `refresh_cache()` to `weka/core/packages.py` to allow user to refresh local cache
+- ...
+
+
 0.2.0 (2014-12-22)
--------------------
+------------------
 
 NB: This release is not backwards compatible!
 
