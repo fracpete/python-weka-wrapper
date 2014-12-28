@@ -201,6 +201,15 @@ def establish_cache():
         "weka/core/WekaPackageManager", "establishCacheIfNeeded", "([Ljava/io/PrintStream;)Ljava/lang/Exception;", [])
 
 
+def refresh_cache():
+    """
+    Refreshes the cache.
+    """
+    establish_cache()
+    javabridge.static_call(
+        "weka/core/WekaPackageManager", "refreshCache", "([Ljava/io/PrintStream;)Ljava/lang/Exception;", [])
+
+
 def all_packages():
     """
     Returns a list of all packages.
@@ -311,6 +320,10 @@ if __name__ == "__main__":
         print("===============")
         establish_cache()
 
+        print("Refresh cache")
+        print("=============")
+        refresh_cache()
+
         print("All packages")
         print("============")
         packages = all_packages()
@@ -333,16 +346,8 @@ if __name__ == "__main__":
         packages = installed_packages()
         for pkg in packages:
             print(pkg.name)
-            print("  url: " + pkg.url())
+            print("  url: " + pkg.url)
             print("")
-
-        print("Install/Uninstall")
-        print("=================")
-        print("Install: " + p.name)
-        print(install_package(p.url))
-
-        print("Uninstall: " + p.name)
-        uninstall_package(p.name)
     except Exception, e:
         print(e)
     finally:

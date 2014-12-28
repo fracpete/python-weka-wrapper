@@ -279,8 +279,11 @@ Packages can be listed, installed and uninstalled using the `weka.core.packages`
 
 .. code-block:: python
 
-   # list all packages (name and URL)
+   # refresh package cache
    import weka.core.packages as packages
+   packages.refresh_cache()
+
+   # list all packages (name and URL)
    items = packages.all_packages()
    for item in items:
        print(item.name + " " + item.url)
