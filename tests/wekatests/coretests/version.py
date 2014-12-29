@@ -11,26 +11,34 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# test_utils.py
+# version.py
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm
-import weka.core.utils as utils
-import tests.weka.tests.weka_test as weka_test
+import weka.core.version as version
+import wekatests.tests.weka_test as weka_test
 
 
-class TestUtils(weka_test.WekaTest):
+class TestVersion(weka_test.WekaTest):
 
-    def test_split_options(self):
-        self.assertEquals(0, len(utils.split_options("")))
-        self.assertEquals(2, len(utils.split_options("-t /some/where/test.arff")))
+    def test_version(self):
+        """
+        Tests the version.weka_version() method
+        """
+        self.assertEquals("3.7.12", version.weka_version())
 
-    def test_join_options(self):
-        self.assertEquals("", str(utils.join_options([])))
-        self.assertEquals("-t /some/where/test.arff", str(utils.join_options(["-t", "/some/where/test.arff"])))
+
+def suite():
+    """
+    Returns the test suite.
+    :return: the test suite
+    :rtype: unittest.TestSuite
+    """
+    return unittest.TestLoader().loadTestsFromTestCase(TestVersion)
+
 
 if __name__ == '__main__':
     jvm.start()
-    unittest.main()
+    unittest.TextTestRunner().run(suite())
     jvm.stop()

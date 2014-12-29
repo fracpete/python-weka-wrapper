@@ -11,11 +11,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# weka_test.py
+# graph.py
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
+import weka.core.jvm as jvm
+import weka.plot.graph as graph
+import wekatests.tests.weka_test as weka_test
 
 
-class WekaTest(unittest.TestCase):
+class TestGraph(weka_test.WekaTest):
     pass
+
+
+def suite():
+    """
+    Returns the test suite.
+    :return: the test suite
+    :rtype: unittest.TestSuite
+    """
+    return unittest.TestLoader().loadTestsFromTestCase(TestGraph)
+
+
+if __name__ == '__main__':
+    jvm.start()
+    unittest.TextTestRunner().run(suite())
+    jvm.stop()
