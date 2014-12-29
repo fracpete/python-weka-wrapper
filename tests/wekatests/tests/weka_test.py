@@ -15,10 +15,47 @@
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
+import tempfile
+import os
 
 
 class WekaTest(unittest.TestCase):
     """
     Weka-specific test case class.
     """
-    pass
+
+    def tempdir(self):
+        """
+        Returns the temp directory.
+        :return: the temp directory
+        :rtype: str
+        """
+        return tempfile.gettempdir()
+
+    def tempfile(self, fname):
+        """
+        Generates a full path for the given filename (without path) and returns it.
+        :param fname: the filename (without path)
+        :type fname: str
+        :return: the full path
+        :rtype: str
+        """
+        return self.tempdir() + os.sep + fname
+
+    def delfile(self, path):
+        """
+        Removes the file from the file system.
+        :param path: the full path to the file
+        :type path: str
+        :return: whether successfully removed (also True if not present)
+        :rtype: bool
+        """
+        if os.path.exists(path):
+            try:
+                os.remove(path)
+                return True
+            except Exception, e:
+                print("Failed to remove: " + path + "\n" + str(e))
+                return False
+        else:
+            return True
