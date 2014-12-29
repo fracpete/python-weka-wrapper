@@ -15,13 +15,34 @@
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
+import javabridge
 import weka.core.jvm as jvm
 import weka.core.types as types
 import wekatests.tests.weka_test as weka_test
 
 
 class TestTypes(weka_test.WekaTest):
-    pass
+
+    def test_string_list_conversions(self):
+        """
+        Tests methods string_list_to_array and string_array_to_list.
+        """
+        lin = ["A", "B", "C", "D"]
+        a = types.string_list_to_array(lin)
+        lout = types.string_array_to_list(a)
+        self.assertEquals(lin, lout)
+
+    def test_enumeration_to_list(self):
+        """
+        Tests method enumeration_to_list.
+        """
+        lin = ["A", "B", "C", "D"]
+        v = javabridge.make_instance("java/util/Vector", "()V")
+        for element in lin:
+            javabridge.call(v, "add", "(Ljava/lang/Object;)Z", element)
+        enm = javabridge.call(v, "elements", "()Ljava/util/Enumeration;")
+        lout = types.enumeration_to_list(enm)
+        self.assertEquals(lin, lout)
 
 
 def suite():
