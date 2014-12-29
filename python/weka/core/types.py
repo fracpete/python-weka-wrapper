@@ -76,7 +76,7 @@ def double_matrix_to_ndarray(m):
 
 def enumeration_to_list(enm):
     """
-    Turns the java,util.Enumeration into a list.
+    Turns the java.util.Enumeration into a list.
     :param enm: the enumeration to convert
     :type enm: JB_Object
     :return: the list
