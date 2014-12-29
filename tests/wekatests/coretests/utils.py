@@ -29,7 +29,7 @@ class TestUtils(weka_test.WekaTest):
         """
         cls = utils.get_class("weka.classifiers.Classifier")
         self.assertIsNotNone(cls)
-        self.assertEquals("weka.classifiers.Classifier", utils.get_classname(cls))
+        self.assertEqual("weka.classifiers.Classifier", utils.get_classname(cls))
 
     def test_get_classname(self):
         """
@@ -38,31 +38,31 @@ class TestUtils(weka_test.WekaTest):
         # Python class
         cls = utils.get_class("weka.classifiers.Classifier")
         self.assertIsNotNone(cls)
-        self.assertEquals("weka.classifiers.Classifier", utils.get_classname(cls))
+        self.assertEqual("weka.classifiers.Classifier", utils.get_classname(cls))
 
         # Python object
         cls = weka.classifiers.Classifier(classname="weka.classifiers.trees.J48")
         self.assertIsNotNone(cls)
-        self.assertEquals("weka.classifiers.Classifier", utils.get_classname(cls))
+        self.assertEqual("weka.classifiers.Classifier", utils.get_classname(cls))
 
         # Java object
         cls = weka.classifiers.Classifier(classname="weka.classifiers.trees.J48")
         self.assertIsNotNone(cls)
-        self.assertEquals("weka.classifiers.trees.J48", utils.get_classname(cls.jobject))
+        self.assertEqual("weka.classifiers.trees.J48", utils.get_classname(cls.jobject))
 
     def test_split_options(self):
         """
         Tests the split_options method.
         """
-        self.assertEquals(0, len(utils.split_options("")))
-        self.assertEquals(2, len(utils.split_options("-t /some/where/test.arff")))
+        self.assertEqual(0, len(utils.split_options("")))
+        self.assertEqual(2, len(utils.split_options("-t /some/where/test.arff")))
 
     def test_join_options(self):
         """
         Tests the join_options method.
         """
-        self.assertEquals("", str(utils.join_options([])))
-        self.assertEquals("-t /some/where/test.arff", str(utils.join_options(["-t", "/some/where/test.arff"])))
+        self.assertEqual("", str(utils.join_options([])))
+        self.assertEqual("-t /some/where/test.arff", str(utils.join_options(["-t", "/some/where/test.arff"])))
 
     def test_from_and_to_commandline(self):
         """
@@ -72,7 +72,7 @@ class TestUtils(weka_test.WekaTest):
         cls = utils.from_commandline(
             cmdline=cmdline, classname="weka.classifiers.Classifier")
         self.assertIsNotNone(cls)
-        self.assertEquals(cmdline, cls.to_commandline())
+        self.assertEqual(cmdline, cls.to_commandline())
 
 
 def suite():

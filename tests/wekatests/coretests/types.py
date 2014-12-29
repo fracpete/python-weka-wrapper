@@ -30,7 +30,7 @@ class TestTypes(weka_test.WekaTest):
         lin = ["A", "B", "C", "D"]
         a = types.string_list_to_array(lin)
         lout = types.string_array_to_list(a)
-        self.assertEquals(lin, lout)
+        self.assertEqual(lin, lout, msg="Elements differ")
 
     def test_enumeration_to_list(self):
         """
@@ -42,7 +42,7 @@ class TestTypes(weka_test.WekaTest):
             javabridge.call(v, "add", "(Ljava/lang/Object;)Z", element)
         enm = javabridge.call(v, "elements", "()Ljava/util/Enumeration;")
         lout = types.enumeration_to_list(enm)
-        self.assertEquals(lin, lout)
+        self.assertEqual(lin, lout, msg="Elements differ")
 
 
 def suite():

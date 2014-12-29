@@ -27,38 +27,38 @@ class TestClasses(weka_test.WekaTest):
         Tests the SingleIndex class.
         """
         index = classes.SingleIndex()
-        self.assertEquals("", index.single_index)
+        self.assertEqual("", index.single_index)
 
         index = classes.SingleIndex(index="first")
         index.upper(10)
-        self.assertEquals("first", index.single_index)
-        self.assertEquals(0, index.index())
+        self.assertEqual("first", index.single_index)
+        self.assertEqual(0, index.index())
 
         index = classes.SingleIndex(index="2")
         index.upper(10)
-        self.assertEquals("2", index.single_index)
-        self.assertEquals(1, index.index())
+        self.assertEqual("2", index.single_index)
+        self.assertEqual(1, index.index())
 
     def test_range(self):
         """
         Tests the Range class.
         """
         rang = classes.Range()
-        self.assertEquals("", rang.ranges)
+        self.assertEqual("", rang.ranges)
 
         rang = classes.Range(ranges="first")
         rang.upper(10)
-        self.assertEquals("first", rang.ranges)
-        self.assertEquals([0], rang.selection())
+        self.assertEqual("first", rang.ranges)
+        self.assertEqual([0], rang.selection())
 
         rang = classes.Range(ranges="2")
         rang.upper(10)
-        self.assertEquals("2", rang.ranges)
-        self.assertEquals([1], rang.selection())
+        self.assertEqual("2", rang.ranges)
+        self.assertEqual([1], rang.selection())
 
         rang = classes.Range(ranges="2-5,7")
         rang.upper(10)
-        self.assertEquals("2-5,7", rang.ranges)
+        self.assertEqual("2-5,7", rang.ranges)
         self.assertItemsEqual([1, 2, 3, 4, 6], rang.selection())
 
 
