@@ -17,18 +17,62 @@
 import unittest
 import weka.core.jvm as jvm
 import weka.core.utils as utils
+import weka.classifiers
 import wekatests.tests.weka_test as weka_test
 
 
 class TestUtils(weka_test.WekaTest):
 
+    def test_get_class(self):
+        """
+        Tests the get_class method.
+        """
+        cls = utils.get_class("weka.classifiers.Classifier")
+        self.assertIsNotNone(cls)
+        self.assertEquals("weka.classifiers.Classifier", utils.get_classname(cls))
+
+    def test_get_classname(self):
+        """
+        Tests the get_class method.
+        """
+        # Python class
+        cls = utils.get_class("weka.classifiers.Classifier")
+        self.assertIsNotNone(cls)
+        self.assertEquals("weka.classifiers.Classifier", utils.get_classname(cls))
+
+        # Python object
+        cls = weka.classifiers.Classifier(classname="weka.classifiers.trees.J48")
+        self.assertIsNotNone(cls)
+        self.assertEquals("weka.classifiers.Classifier", utils.get_classname(cls))
+
+        # Java object
+        cls = weka.classifiers.Classifier(classname="weka.classifiers.trees.J48")
+        self.assertIsNotNone(cls)
+        self.assertEquals("weka.classifiers.trees.J48", utils.get_classname(cls.jobject))
+
     def test_split_options(self):
+        """
+        Tests the split_options method.
+        """
         self.assertEquals(0, len(utils.split_options("")))
         self.assertEquals(2, len(utils.split_options("-t /some/where/test.arff")))
 
     def test_join_options(self):
+        """
+        Tests the join_options method.
+        """
         self.assertEquals("", str(utils.join_options([])))
         self.assertEquals("-t /some/where/test.arff", str(utils.join_options(["-t", "/some/where/test.arff"])))
+
+    def test_from_and_to_commandline(self):
+        """
+        Tests the from_commandline and to_commandline methods.
+        """
+        cmdline = "weka.classifiers.trees.J48 -C 0.3 -M 4"
+        cls = utils.from_commandline(
+            cmdline=cmdline, classname="weka.classifiers.Classifier")
+        self.assertIsNotNone(cls)
+        self.assertEquals(cmdline, cls.to_commandline())
 
 
 def suite():

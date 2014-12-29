@@ -16,6 +16,7 @@
 
 import javabridge
 import logging
+import inspect
 import weka.core.types as arrays
 from weka.core.classes import OptionHandler
 
@@ -38,6 +39,23 @@ def get_class(classname):
     for comp in parts[1:]:
         m = getattr(m, comp)
     return m
+
+
+def get_classname(obj):
+    """
+    Returns the classname of the JB_Object, Python class or object.
+    :param obj: the java object or Python class/object to get the classname for
+    :type obj: object
+    :return: the classname
+    :rtype: str
+    """
+    if isinstance(obj, javabridge.JB_Object):
+        cls = javabridge.call(obj, "getClass", "()Ljava/lang/Class;")
+        return javabridge.call(cls, "getName", "()Ljava/lang/String;")
+    elif inspect.isclass(obj):
+        return obj.__module__ + "." + obj.__name__
+    else:
+        return get_classname(obj.__class__)
 
 
 def split_options(cmdline):
@@ -102,15 +120,3 @@ def from_commandline(cmdline, classname=None):
     else:
         c = get_class(classname)
         return c(jobject=handler.jobject)
-
-
-def get_classname(jobject):
-    """
-    Returns the classname of the JB_Object.
-    :param jobject: the java object to get the classname for
-    :type jobject: JB_Object
-    :return: the classname
-    :rtype: str
-    """
-    cls = javabridge.call(jobject, "getClass", "()Ljava/lang/Class;")
-    return javabridge.call(cls, "getName", "()Ljava/lang/String;")
