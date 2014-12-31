@@ -41,6 +41,17 @@ def get_class(classname):
     return m
 
 
+def get_jclass(classname):
+    """
+    Returns the Java class object associated with the dot-notation classname.
+    :param classname: the classname
+    :type classname: str
+    :return: the class object
+    :rtype: JB_Object
+    """
+    return javabridge.class_for_name(classname=classname)
+
+
 def get_classname(obj):
     """
     Returns the classname of the JB_Object, Python class or object.
