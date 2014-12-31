@@ -63,6 +63,16 @@ class TestClasses(weka_test.WekaTest):
         self.assertEqual("2-5,7", rang.ranges)
         self.assertItemsEqual([1, 2, 3, 4, 6], rang.selection())
 
+    def test_javaobject(self):
+        """
+        Tests the JavaObject class.
+        """
+        cls = "weka.classifiers.trees.J48"
+        obj = classes.JavaObject.new_instance(cls)
+        self.assertIsNotNone(obj, "Failed to instantiate Java object: " + cls)
+        jobj = classes.JavaObject(obj)
+        self.assertEqual(cls, jobj.classname, "Classname differs!")
+
     def test_javaarray(self):
         """
         Tests the JavaArray class.

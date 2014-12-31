@@ -49,6 +49,16 @@ class JavaObject(object):
         """
         return javabridge.to_string(self.jobject)
 
+    @property
+    def classname(self):
+        """
+        Returns the Java classname in dot-notation.
+        :return: the Java classname
+        :rtype: str
+        """
+        cls = javabridge.call(self.jobject, "getClass", "()Ljava/lang/Class;")
+        return javabridge.call(cls, "getName", "()Ljava/lang/String;")
+
     def set_property(self, path, jobject):
         """
         Attempts to set the value (jobject, a Java object) of the provided (bean) property path.
