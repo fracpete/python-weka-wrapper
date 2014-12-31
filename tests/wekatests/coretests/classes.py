@@ -67,7 +67,7 @@ class TestClasses(weka_test.WekaTest):
         """
         Tests the JavaArray class.
         """
-        jarray = classes.JavaArray.new_instance("weka.core.Tag", 3)
+        jarray = classes.JavaArray(classes.JavaArray.new_instance("weka.core.Tag", 3))
         self.assertIsNotNone(jarray)
         self.assertEqual(3, len(jarray), msg="Array length differs!")
         self.assertIsNone(jarray[0], msg="Initial value must be none")
