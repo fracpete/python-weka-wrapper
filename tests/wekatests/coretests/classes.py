@@ -15,7 +15,9 @@
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
+import javabridge
 import weka.core.jvm as jvm
+import weka.core.utils as utils
 import weka.core.classes as classes
 import wekatests.tests.weka_test as weka_test
 
@@ -61,6 +63,68 @@ class TestClasses(weka_test.WekaTest):
         self.assertEqual("2-5,7", rang.ranges)
         self.assertItemsEqual([1, 2, 3, 4, 6], rang.selection())
 
+    def test_javaarray(self):
+        """
+        Tests the JavaArray class.
+        """
+        jarray = classes.JavaArray.new_instance("weka.core.Tag", 3)
+        self.assertIsNotNone(jarray)
+        self.assertEqual(3, len(jarray), msg="Array length differs!")
+        self.assertIsNone(jarray[0], msg="Initial value must be none")
+        count = 0
+        for i in jarray:
+            self.assertIsNone(i, msg="Element #" + str(count) + " is not none!")
+            count += 1
+        tag = classes.Tag(ident=1, ident_str="BLAH", readable="blahblah")
+        jarray[0] = tag
+        self.assertIsNotNone(jarray[0], msg="Should not be none")
+        count = 0
+        for i in jarray:
+            if count == 0:
+                self.assertIsNotNone(i, msg="Element #" + str(count) + " is none!")
+            else:
+                self.assertIsNone(i, msg="Element #" + str(count) + " is not none!")
+            count += 1
+
+    def test_tag(self):
+        """
+        Tests the Tag class.
+        """
+        tag1 = classes.Tag(ident=1, ident_str="tag1", readable="blah blah")
+        self.assertIsNotNone(tag1, msg="Failed to instantiate tag")
+        self.assertEqual(tag1.ident, 1, msg="ID differs")
+        self.assertEqual(tag1.identstr, "TAG1", msg="ID string differs")
+        self.assertEqual(tag1.readable, "blah blah", msg="Readable string differs")
+        tag2 = classes.Tag(ident=2, ident_str="tag2", readable="more blah", uppercase=False)
+        self.assertIsNotNone(tag2, msg="Failed to instantiate tag")
+        self.assertEqual(tag2.ident, 2, msg="ID differs")
+        self.assertEqual(tag2.identstr, "tag2", msg="ID string differs")
+        self.assertEqual(tag2.readable, "more blah", msg="Readable string differs")
+
+    def test_tags(self):
+        """
+        Tests the Tags class.
+        """
+        tag1 = classes.Tag(ident=1, ident_str="tag1", readable="blah 1")
+        tag2 = classes.Tag(ident=2, ident_str="tag2", readable="blah 2")
+        tag3 = classes.Tag(ident=3, ident_str="tag3", readable="blah 3")
+        tags = classes.Tags(tags=[tag1, tag2, tag3])
+        self.assertEqual(3, len(tags), "Number of tags differs!")
+        self.assertEqual("TAG1|TAG2|TAG3", str(tags), msg="String differs")
+        smo = classes.JavaObject(classes.JavaObject.new_instance(classname="weka.classifiers.functions.SMO"))
+        tags = classes.Tags(jobject=javabridge.get_static_field("Lweka/classifiers/functions/SMO;", "TAGS_FILTER", "[Lweka/core/Tag;"))
+        self.assertEqual(3, len(tags), "Number of tags differs!")
+        self.assertEqual("0|1|2", str(tags), msg="String differs")
+
+    def test_selectedtag(self):
+        """
+        Tests the SelectedTag  class.
+        """
+        tags = classes.Tags(jobject=javabridge.get_static_field("Lweka/classifiers/functions/SMO;", "TAGS_FILTER", "[Lweka/core/Tag;"))
+        stag = classes.SelectedTag(tag_id=1, tags=tags)
+        self.assertEqual(1, stag.selected.ident, "ID differs")
+        stag = classes.SelectedTag(tag_text="2", tags=tags)
+        self.assertEqual(2, stag.selected.ident, "ID differs")
 
 def suite():
     """
