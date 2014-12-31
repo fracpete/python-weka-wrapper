@@ -14,14 +14,155 @@
 # classifiers.py
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
+import os
 import unittest
 import weka.core.jvm as jvm
+import weka.core.converters as converters
 import weka.classifiers as classifiers
 import wekatests.tests.weka_test as weka_test
 
 
 class TestClassifiers(weka_test.WekaTest):
-    pass
+
+    def test_instantiate_classifier(self):
+        """
+        Tests the instantiation of several classifier classes.
+        """
+        cname = "weka.classifiers.trees.J48"
+        options = None
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+        cname = "weka.classifiers.trees.J48"
+        options = ["-C", "0.3"]
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+        cname = "weka.classifiers.meta.FilteredClassifier"
+        options = ["-W", "weka.classifiers.trees.J48", "--", "-C", "0.3"]
+        cls = classifiers.SingleClassifierEnhancer(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+        cls = classifiers.FilteredClassifier()
+        self.assertIsNotNone(cls, "Failed to instantiate FilteredClassifier!")
+        self.assertEqual("weka.classifiers.meta.FilteredClassifier", cls.classname, "Classnames differ!")
+
+        cname = "weka.classifiers.functions.SMO"
+        cls = classifiers.KernelClassifier(classname=cname)
+        self.assertIsNotNone(cls, "Failed to instantiate KernelClassifier: " + cname)
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+        cname = "weka.classifiers.meta.Vote"
+        cls = classifiers.MultipleClassifiersCombiner(classname=cname)
+        self.assertIsNotNone(cls, "Failed to instantiate MultipleClassifiersCombiner: " + cname)
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+    def test_build_classifier(self):
+        """
+        Tests the build_classifier method.
+        """
+        # 1. nominal
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.classifiers.trees.J48"
+        options = ["-C", "0.3"]
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        cls.build_classifier(data)
+
+        # 2. numeric
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "bolts.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.classifiers.functions.LinearRegression"
+        options = ["-R", "0.1"]
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        cls.build_classifier(data)
+
+    def test_distribution_for_instance(self):
+        """
+        Tests the distribution_for_instance method.
+        """
+        # 1. nominal
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.classifiers.trees.J48"
+        options = ["-C", "0.3"]
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        cls.build_classifier(data)
+        for i in range(10):
+            dist = cls.distribution_for_instance(data.get_instance(i))
+            self.assertIsNotNone(dist)
+            self.assertEqual(6, len(dist), "Number of classes in prediction differ!")
+
+        # 2. numeric
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "bolts.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.classifiers.functions.LinearRegression"
+        options = ["-R", "0.1"]
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        cls.build_classifier(data)
+        for i in range(10):
+            dist = cls.distribution_for_instance(data.get_instance(i))
+            self.assertIsNotNone(dist)
+            self.assertEqual(1, len(dist), "Number of classes in prediction should be one for numeric classifier!")
+
+    def test_classify_instance(self):
+        """
+        Tests the classify_instance method.
+        """
+        # 1. nominal
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.classifiers.trees.J48"
+        options = ["-C", "0.3"]
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        cls.build_classifier(data)
+        for i in range(10):
+            pred = cls.classify_instance(data.get_instance(i))
+            self.assertIsNotNone(pred)
+
+        # 2. numeric
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "bolts.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.classifiers.functions.LinearRegression"
+        options = ["-R", "0.1"]
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        cls.build_classifier(data)
+        for i in range(10):
+            pred = cls.classify_instance(data.get_instance(i))
+            self.assertIsNotNone(pred)
 
 
 def suite():
