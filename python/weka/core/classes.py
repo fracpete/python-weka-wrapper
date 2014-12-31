@@ -80,6 +80,16 @@ class JavaObject(object):
             "(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;",
             self.jobject, path))
 
+    @property
+    def jclass(self):
+        """
+        Returns the Java class object of the underlying Java object.
+        :return: the Java class
+        :rtype: JB_Object
+        """
+        return javabridge.call(self.jobject, "getClass", "()Ljava/lang/Class;")
+
+    @property
     def jwrapper(self):
         """
         Returns a JWrapper instance of the encapsulated Java object, giving access to methods
@@ -90,6 +100,7 @@ class JavaObject(object):
         """
         return JWrapper(self.jobject)
 
+    @property
     def jclasswrapper(self):
         """
         Returns a JClassWrapper instance of the class for the encapsulated Java object, giving
@@ -108,9 +119,7 @@ class JavaObject(object):
         or self._check_type('weka.core.converters.AbstractFileLoader')
         :param jobject: the Java object to check
         :type jobject: JB_Object
-        :param intf_or_class: the classname in Java notation (eg "weka.core.Instance")
-        :type intf_or_class: str
-        :param jni_intf_or_class: the classname in JNI notation (eg "Lweka/core/Instance;")
+        :param intf_or_class: the classname in Java notation (eg "weka.core.DenseInstance;")
         :type jni_intf_or_class: str
         :return: whether object implements interface or is subclass
         :rtype: bool
@@ -127,9 +136,9 @@ class JavaObject(object):
         or self._enforce_type('weka.core.converters.AbstractFileLoader')
         :param jobject: the Java object to check
         :type jobject: JB_Object
-        :param intf_or_class: the classname in Java notation (eg "weka.core.Instance")
+        :param intf_or_class: the classname in Java notation (eg "weka.core.DenseInstance")
         :type intf_or_class: str
-        :param jni_intf_or_class: the classname in JNI notation (eg "Lweka/core/Instance;")
+        :param jni_intf_or_class: the classname in JNI notation (eg "Lweka/core/DenseInstance;")
         :type jni_intf_or_class: str
         """
         if not cls.check_type(jobject, intf_or_class, jni_intf_or_class):
@@ -139,9 +148,9 @@ class JavaObject(object):
     def new_instance(cls, classname, jni_classname=None):
         """
         Creates a new object from the given classname using the default constructor, None in case of error.
-        :param classname: the classname in Java notation (eg "weka.core.Instance")
+        :param classname: the classname in Java notation (eg "weka.core.DenseInstance")
         :type classname: str
-        :param jni_classname: the classname in JNI notation (eg "Lweka/core/Instance;")
+        :param jni_classname: the classname in JNI notation (eg "Lweka/core/DenseInstance;")
         :type jni_classname: str
         :return: the Java object
         :rtype: JB_Object
@@ -153,6 +162,129 @@ class JavaObject(object):
         except JavaException, e:
             print("Failed to instantiate " + classname + "/" + jni_classname + ": " + str(e))
             return None
+
+
+class JavaArrayIterator(object):
+    """
+    Iterator for elements in a Java array.
+    """
+    def __init__(self, data):
+        """
+        :param data: the Java array to iterate over
+        :type data: JavaArray
+        """
+        self.data = data
+        self.index = 0
+        self.length = len(data)
+
+    def __iter__(self):
+        """
+        Returns itself.
+        """
+        return self
+
+    def next(self):
+        """
+        Returns the next element from the array.
+        :return: the next array element object, wrapped as JavaObject if not null
+        :rtype: JavaObject or None
+        """
+        if self.index < self.length:
+            index = self.index
+            self.index += 1
+            return self.data[index]
+        else:
+            raise StopIteration()
+
+
+class JavaArray(JavaObject):
+    """
+    Convenience wrapper around Java arrays.
+    """
+
+    def __init__(self, jobject):
+        """
+        Initializes the wrapper with the specified Java object.
+        :param jobject: the java array object to wrap
+        :type jobject: JB_Object
+        """
+        super(JavaArray, self).__init__(jobject)
+        c = self.jclass
+        if not javabridge.call(c, "isArray", "()Z"):
+            raise Exception("Not an array!")
+
+    def __len__(self):
+        """
+        Returns the length of the array.
+        :return: the array length
+        :rtype: int
+        """
+        return javabridge.get_env().get_array_length(self.jobject)
+
+    def __getitem__(self, key):
+        """
+        Returns the specified element in the array wrapped in a JavaObject.
+        :param key: the index of the element to retrieve
+        :type key: int
+        :return: the element or None if element is null
+        :rtype; JavaObject
+        """
+        if not isinstance(key, (int, long)):
+            raise Exception("Key must be an integer!")
+        element = javabridge.static_call(
+            "Ljava/lang/reflect/Array;", "get", "(Ljava/lang/Object;I)Ljava/lang/Object;",
+            self.jobject, key)
+        if element is None:
+            return None
+        return JavaObject(element)
+
+    def __setitem__(self, key, value):
+        """
+        Sets the specified element in the array.
+        :param key: the index of the element to set
+        :type key: int
+        :param value: the object to set (JavaObject or JB_Object)
+        """
+        if isinstance(value, JavaObject):
+            obj = value.jobject
+        else:
+            obj = value
+        if not isinstance(key, (int, long)):
+            raise Exception("Key must be an integer!")
+        javabridge.static_call(
+            "Ljava/lang/reflect/Array;", "set", "(Ljava/lang/Object;ILjava/lang/Object;)V",
+            self.jobject, key, obj)
+
+    def __delitem__(self, key):
+        """
+        Not implemented, raises an exception.
+        """
+        raise Exception("Cannot delete item from array!")
+
+    def __iter__(self):
+        """
+        Returns an iterator over the elements.
+        :return: the iterator
+        :rtype: JavaArrayIterator
+        """
+        return JavaArrayIterator(self)
+
+    @classmethod
+    def new_instance(cls, classname, length):
+        """
+        Creates a new array with the given classname and length; initial values are null.
+        :param classname: the classname in Java notation (eg "weka.core.DenseInstance")
+        :type classname: str
+        :param length: the length of the array
+        :type length: int
+        :return: the Java array
+        :rtype: JavaArray
+        """
+        return JavaArray(javabridge.static_call(
+            "Ljava/lang/reflect/Array;",
+            "newInstance",
+            "(Ljava/lang/Class;I)Ljava/lang/Object;",
+            javabridge.class_for_name(classname=classname), length))
 
 
 class Random(JavaObject):
@@ -474,6 +606,70 @@ class Tag(JavaObject):
         javabridge.call(self.jobject, "setReadable", "(Ljava/lang/String;)V", value)
 
 
+class Tags(JavaObject):
+    """
+    Wrapper for an array of weka.core.Tag objects.
+    """
+
+    def __init__(self, jobject=None, tags=None):
+        """
+        :param jobject: the Java Tag array to wrap.
+        :type jobject: JB_Object
+        :param tags: the list of Tag objects to use
+        :type tags: list
+        """
+        if not tags is None:
+            jarray = JavaArray.new_instance("weka.core.Tag", len(tags))
+            for i in range(len(tags)):
+                jarray[i] = tags[i]
+            jobject = jarray.jobject
+        self.enforce_type(jobject, "weka.core.Tag", jni_intf_or_class="[Lweka/core/Tag;")
+        super(Tags, self).__init__(jobject)
+        self.array = JavaArray(self.jobject)
+
+    def __len__(self):
+        """
+        Returns the number of Tag objects in the array.
+        :return: the number of tag objects
+        :rtype: int
+        """
+        return len(self.array)
+
+    def __getitem__(self, item):
+        """
+        Returns the specified Tag from the array.
+        :param item: the 0-based index
+        :type item: int
+        :return: the tag
+        :rtype: Tag
+        """
+        return Tag(self.array[item])
+
+    def __setitem__(self, key, value):
+        """
+        Not implemented.
+        """
+        raise Exception("Cannot set a Tag!")
+
+    def __delitem__(self, key):
+        """
+        Not implemented.
+        """
+        raise Exception("Cannot delete a Tag!")
+
+    def __str__(self):
+        """
+        Just calls the toString() method.
+        :rtype: str
+        """
+        result = ""
+        for i in xrange(len(self.array)):
+            if i > 0:
+                result += "|"
+            result += str(self.array[i])
+        return result
+
+
 class SelectedTag(JavaObject):
     """
     Wrapper for the weka.core.SelectedTag class.
@@ -488,16 +684,22 @@ class SelectedTag(JavaObject):
         :type tag_id: int
         :param tag_text: the text associated with the tag
         :type tag_text: str
-        :param tags: list of Tag objects
-        :type tags: list
+        :param tags: list of Tag objects or Tags wrapper object
+        :type tags: list or Tags
         """
+
+        if isinstance(tags, Tags):
+            tobj = tags.jobject
+        else:
+            tobj = tags
+
         if jobject is None:
             if tag_id is None:
                 jobject = javabridge.make_instance(
-                    "weka/core/SelectedTag", "(Ljava/lang/String;I])V", tag_text, tags)
+                    "weka/core/SelectedTag", "(Ljava/lang/String;[Lweka/core/Tag;)V", tag_text, tobj)
             else:
                 jobject = javabridge.make_instance(
-                    "weka/core/SelectedTag", "(II])V", tag_id, tags)
+                    "weka/core/SelectedTag", "(I[Lweka/core/Tag;)V", tag_id, tobj)
         else:
             self.enforce_type(jobject, "weka.core.SelectedTag")
         super(SelectedTag, self).__init__(jobject)
