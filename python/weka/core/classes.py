@@ -278,13 +278,13 @@ class JavaArray(JavaObject):
         :param length: the length of the array
         :type length: int
         :return: the Java array
-        :rtype: JavaArray
+        :rtype: JB_Object
         """
-        return JavaArray(javabridge.static_call(
+        return javabridge.static_call(
             "Ljava/lang/reflect/Array;",
             "newInstance",
             "(Ljava/lang/Class;I)Ljava/lang/Object;",
-            javabridge.class_for_name(classname=classname), length))
+            javabridge.class_for_name(classname=classname), length)
 
 
 class Random(JavaObject):
@@ -619,7 +619,7 @@ class Tags(JavaObject):
         :type tags: list
         """
         if not tags is None:
-            jarray = JavaArray.new_instance("weka.core.Tag", len(tags))
+            jarray = JavaArray(JavaArray.new_instance("weka.core.Tag", len(tags)))
             for i in range(len(tags)):
                 jarray[i] = tags[i]
             jobject = jarray.jobject
