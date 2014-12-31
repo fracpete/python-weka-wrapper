@@ -59,3 +59,13 @@ class WekaTest(unittest.TestCase):
                 return False
         else:
             return True
+
+    def datadir(self):
+        """
+        Returns the data directory.
+        :return: the data directory
+        :rtype: str
+        """
+        rootdir = os.path.dirname(__file__)
+        libdir = rootdir + os.sep + ".." + os.sep + "data"
+        return libdir
