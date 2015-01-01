@@ -535,7 +535,7 @@ class CostMatrix(JavaObject):
         """
         Initializes the matrix object.
         :param matrx: the matrix to copy
-        :type matrx: CostMatrix or ndarray
+        :type matrx: CostMatrix or ndarray or JB_Object
         :param num_classes: the number of classes
         :type num_classes: int
         """
@@ -557,6 +557,8 @@ class CostMatrix(JavaObject):
                     super(CostMatrix, self).__init__(cmatrix.jobject)
                 else:
                     raise Exception("Numpy array must be a square matrix!")
+            elif isinstance(matrx, javabridge.JB_Object):
+                super(CostMatrix, self).__init__(matrx)
             else:
                 raise Exception(
                     "Matrix must be either a CostMatrix or a 2-dimensional numpy array: " + str(type(matrx)))
@@ -722,6 +724,19 @@ class CostMatrix(JavaObject):
         :rtype: str
         """
         return javabridge.call(self.jobject, "toMatlab", "()Ljava/lang/String;")
+
+    @classmethod
+    def parse_matlab(cls, matlab):
+        """
+        Parses the costmatrix definition in matlab format and returns a matrix.
+        :param matlab: the matlab matrix string, eg [1 2; 3 4].
+        :type matlab: str
+        :return: the generated matrix
+        :rtype: CostMatrix
+        """
+        return CostMatrix(
+            matrx=javabridge.static_call(
+                "weka/classifiers/CostMatrix", "parseMatlab", "(Ljava/lang/String;)Lweka/classifiers/CostMatrix;", matlab))
 
 
 class Evaluation(JavaObject):
