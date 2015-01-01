@@ -15,13 +15,52 @@
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
+import os
 import weka.core.jvm as jvm
+import weka.core.converters as converters
 import weka.associations as associations
 import wekatests.tests.weka_test as weka_test
 
 
 class TestAssociations(weka_test.WekaTest):
-    pass
+
+    def test_instantiate_associator(self):
+        """
+        Tests the instantiation of an Associator class.
+        """
+        cname = "weka.associations.Apriori"
+        options = None
+        cls = associations.Associator(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+    def test_capabilities(self):
+        """
+        Tests the capabilities.
+        """
+        cname = "weka.associations.Apriori"
+        options = None
+        cls = associations.Associator(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+        caps = cls.capabilities
+
+    def test_build_associator(self):
+        """
+        Tests the build_classifier method.
+        """
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "nursery.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.associations.Apriori"
+        options = None
+        cls = associations.Associator(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        cls.build_associations(data)
 
 
 def suite():
