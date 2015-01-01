@@ -19,6 +19,7 @@ import unittest
 import weka.core.jvm as jvm
 import weka.core.converters as converters
 import weka.classifiers as classifiers
+import weka.filters as filters
 import wekatests.tests.weka_test as weka_test
 
 
@@ -45,6 +46,10 @@ class TestClassifiers(weka_test.WekaTest):
         cls = classifiers.SingleClassifierEnhancer(classname=cname, options=options)
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
         self.assertEqual(cname, cls.classname, "Classnames differ!")
+        fname = "weka.filters.unsupervised.attribute.Remove"
+        flter = filters.Filter(classname=fname, options=["-R", "last"])
+        cls.filter = flter
+        self.assertEqual(fname, cls.filter.classname, "Classnames differ!")
 
         cls = classifiers.FilteredClassifier()
         self.assertIsNotNone(cls, "Failed to instantiate FilteredClassifier!")
@@ -54,6 +59,11 @@ class TestClassifiers(weka_test.WekaTest):
         cls = classifiers.KernelClassifier(classname=cname)
         self.assertIsNotNone(cls, "Failed to instantiate KernelClassifier: " + cname)
         self.assertEqual(cname, cls.classname, "Classnames differ!")
+        kname = "weka.classifiers.functions.supportVector.RBFKernel"
+        kernel = classifiers.Kernel(classname=kname)
+        self.assertIsNotNone(kernel, "Failed to instantiate Kernel: " + kname)
+        cls.kernel = kernel
+        self.assertEqual(kname, cls.kernel.classname, "Kernel classnames differ!")
 
         cname = "weka.classifiers.meta.Vote"
         cls = classifiers.MultipleClassifiersCombiner(classname=cname)
@@ -163,6 +173,22 @@ class TestClassifiers(weka_test.WekaTest):
         for i in range(10):
             pred = cls.classify_instance(data.get_instance(i))
             self.assertIsNotNone(pred)
+
+    def test_costmatrix(self):
+        """
+        Tests the CostMatrix class.
+        """
+        cmatrix = classifiers.CostMatrix(num_classes=3)
+        self.assertEqual(3, cmatrix.num_columns, msg="# of columns differ")
+        self.assertEqual(3, cmatrix.num_rows, msg="# of rows differ")
+
+        self.assertEqual(0, cmatrix.get_element(1, 1), "cell should be initialized with 0")
+        cmatrix.set_element(1, 1, 0.1)
+        self.assertEqual(0.1, cmatrix.get_element(1, 1), "cell value differs")
+
+        matrixstr = "[1.0 2.0; 3.0 4.0]"
+        cmatrix = classifiers.CostMatrix.parse_matlab(matrixstr)
+        self.assertEqual(matrixstr, cmatrix.to_matlab(), msg="Matrix strings differ")
 
 
 def suite():
