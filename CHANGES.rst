@@ -5,6 +5,13 @@ Changelog
 ------------------
 
 - added method `refresh_cache()` to `weka/core/packages.py` to allow user to refresh local cache
+- added unit testing framework
+- method `get_classname` in `weka.core.utils` now handles Python objects and class objects as well
+- added convenience method `get_jclass` to `weka.core.utils` to instantiate a Java class
+- added a `JavaArray` wrapper for  `arrays, which allows getting/setting elements and iterating
+- added property `classname` to class `JavaObject` for easy access to classname of underlying object
+- added class method `parse_matlab` for parsing Matlab matrix strings to `CostMatrix` class
+- `predictions` method of `Evaluation` class now return `None` if predictions are discarded
 - ...
 
 

@@ -1448,19 +1448,22 @@ class Evaluation(JavaObject):
     def predictions(self):
         """
         Returns the predictions.
-        :return: the predictions
+        :return: the predictions. None if not available
         :rtype: list
         """
         preds = javabridge.get_collection_wrapper(
             javabridge.call(self.jobject, "predictions", "()Ljava/util/ArrayList;"))
-        result = []
-        for pred in preds:
-            if javabridge.is_instance_of(pred, "weka/classifiers/evaluation/NominalPrediction"):
-                result.append(NominalPrediction(pred))
-            elif javabridge.is_instance_of(pred, "weka/classifiers/evaluation/NumericPrediction"):
-                result.append(NumericPrediction(pred))
-            else:
-                result.append(Prediction(pred))
+        if self.discard_predictions:
+            result = None
+        else:
+            result = []
+            for pred in preds:
+                if javabridge.is_instance_of(pred, "weka/classifiers/evaluation/NominalPrediction"):
+                    result.append(NominalPrediction(pred))
+                elif javabridge.is_instance_of(pred, "weka/classifiers/evaluation/NumericPrediction"):
+                    result.append(NumericPrediction(pred))
+                else:
+                    result.append(Prediction(pred))
         return result
 
     @classmethod
