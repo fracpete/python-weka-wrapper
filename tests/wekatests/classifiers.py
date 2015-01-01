@@ -83,7 +83,6 @@ class TestClassifiers(weka_test.WekaTest):
 
         caps = cls.capabilities
 
-
     def test_build_classifier(self):
         """
         Tests the build_classifier method.
