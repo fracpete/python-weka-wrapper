@@ -49,7 +49,8 @@ class Associator(OptionHandler):
         self.enforce_type(jobject, "weka.associations.Associator")
         super(Associator, self).__init__(jobject=jobject, options=options)
 
-    def get_capabilities(self):
+    @property
+    def capabilities(self):
         """
         Returns the capabilities of the associator.
         :return: the capabilities
