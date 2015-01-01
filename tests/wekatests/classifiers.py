@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # classifiers.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import os
 import unittest
@@ -70,6 +70,19 @@ class TestClassifiers(weka_test.WekaTest):
         cls = classifiers.MultipleClassifiersCombiner(classname=cname)
         self.assertIsNotNone(cls, "Failed to instantiate MultipleClassifiersCombiner: " + cname)
         self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+    def test_capabilities(self):
+        """
+        Tests the capabilities.
+        """
+        cname = "weka.classifiers.trees.J48"
+        options = None
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+        caps = cls.capabilities
+
 
     def test_build_classifier(self):
         """

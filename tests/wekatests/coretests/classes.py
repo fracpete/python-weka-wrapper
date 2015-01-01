@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # classes.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2155 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import javabridge
@@ -96,6 +96,32 @@ class TestClasses(weka_test.WekaTest):
                 self.assertIsNone(i, msg="Element #" + str(count) + " is not none!")
             count += 1
 
+    def test_enum(self):
+        """
+        Tests the enum class.
+        """
+
+        enum = "weka.core.Capabilities$Capability"
+        member = "NOMINAL_CLAS"
+        try:
+            classes.Enum(enum=enum, member=member)
+            self.fail("Should not have instantiated enum")
+        except:
+            pass
+
+        member = "NOMINAL_CLASS"
+        enum1 = classes.Enum(enum=enum, member=member)
+        self.assertIsNotNone(enum1, "Failed to instantiate enum")
+        self.assertEqual(member, enum1.name)
+
+        enum2 = classes.Enum(jobject=enum1.jobject)
+        self.assertIsNotNone(enum2, "Failed to instantiate enum")
+        self.assertEqual(member, enum2.name)
+
+        values = enum1.values
+        self.assertIsNotNone(values, "Failed to retrieve list of members")
+        self.assertGreater(len(values), 0, msg="Should have at least one member")
+
     def test_tag(self):
         """
         Tests the Tag class.
@@ -135,6 +161,7 @@ class TestClasses(weka_test.WekaTest):
         self.assertEqual(1, stag.selected.ident, "ID differs")
         stag = classes.SelectedTag(tag_text="2", tags=tags)
         self.assertEqual(2, stag.selected.ident, "ID differs")
+
 
 def suite():
     """

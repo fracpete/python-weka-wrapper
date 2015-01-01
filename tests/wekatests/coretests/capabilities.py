@@ -12,16 +12,84 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # capabilities.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm
 import weka.core.capabilities as capabilities
+import weka.classifiers as classifiers
 import wekatests.tests.weka_test as weka_test
 
 
 class TestCapabilities(weka_test.WekaTest):
-    pass
+
+    def test_capability(self):
+        """
+        Tests the Capability class.
+        """
+        member = "NOMINAL_ATTRIBUTES"
+        cap = capabilities.Capability(member=member)
+        self.assertIsNotNone(cap, msg="Failed to instantiate capability: " + member)
+        self.assertEqual(member, cap.name, "Names differ")
+        self.assertTrue(cap.is_attribute)
+        self.assertTrue(cap.is_attribute_capability)
+        self.assertFalse(cap.is_class)
+        self.assertFalse(cap.is_class_capability)
+        self.assertFalse(cap.is_other_capability)
+
+    def test_capabilities(self):
+        """Tests the Capabilities class.
+        """
+        caps = capabilities.Capabilities()
+        self.assertIsNotNone(caps, msg="Failed to instantiate empty capabilities")
+        self.assertEqual(0, len(caps.capabilities()), msg="Should have no capabilities")
+
+        cls = classifiers.Classifier(classname="weka.classifiers.trees.J48")
+        caps = capabilities.Capabilities(owner=cls)
+        self.assertIsNotNone(caps, msg="Failed to instantiate empty capabilities")
+        self.assertEqual(0, len(caps.capabilities()), msg="Should have no capabilities")
+        self.assertIsNotNone(caps.owner, msg="Should have an owner")
+        caps.owner = None
+        self.assertIsNone(caps.owner, msg="Should have no owner")
+        caps.owner = cls
+        self.assertIsNotNone(caps.owner, msg="Should have an owner")
+
+        cap = capabilities.Capability(member="NUMERIC_CLASS")
+        caps.enable(cap)
+        self.assertTrue(caps.handles(cap), "Should have capability: " + str(cap))
+        self.assertFalse(caps.has_dependency(cap), "Should have no dependency: " + str(cap))
+        self.assertEqual(0, len(caps.dependencies()), msg="Should have no dependencies")
+        caps.enable_dependency(cap)
+        self.assertTrue(caps.has_dependency(cap), "Should have dependency: " + str(cap))
+        self.assertEqual(1, len(caps.dependencies()), msg="Should have one dependency")
+
+        caps.disable_all()
+        self.assertEqual(0, len(caps.capabilities()), msg="Should have no capabilities")
+        self.assertEqual(0, len(caps.dependencies()), msg="Should have no dependencies")
+
+        caps.enable_all()
+        self.assertGreater(len(caps.capabilities()), 0, msg="Should have capabilities")
+        self.assertGreater(len(caps.dependencies()), 0, msg="Should have dependencies")
+
+        caps.disable_all()
+        caps.enable_all_attribute_dependencies()
+        self.assertEqual(0, len(caps.capabilities()), msg="Should have no capabilities")
+        self.assertGreater(len(caps.dependencies()), 0, msg="Should have dependencies")
+
+        caps.disable_all()
+        caps.enable_all_attributes()
+        self.assertGreater(len(caps.capabilities()), 0, msg="Should have capabilities")
+        self.assertEqual(0, len(caps.dependencies()), msg="Should have no dependencies")
+
+        caps.disable_all()
+        caps.enable_all_class_dependencies()
+        self.assertEqual(0, len(caps.capabilities()), msg="Should have no capabilities")
+        self.assertGreater(len(caps.dependencies()), 0, msg="Should have dependencies")
+
+        caps.disable_all()
+        caps.enable_all_classes()
+        self.assertGreater(len(caps.capabilities()), 0, msg="Should have capabilities")
+        self.assertEqual(0, len(caps.dependencies()), msg="Should have no dependencies")
 
 
 def suite():

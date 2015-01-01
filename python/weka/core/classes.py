@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # classes.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import types
 import javabridge
@@ -295,6 +295,65 @@ class JavaArray(JavaObject):
             "newInstance",
             "(Ljava/lang/Class;I)Ljava/lang/Object;",
             javabridge.class_for_name(classname=classname), length)
+
+
+class Enum(JavaObject):
+    """
+    Wrapper for Java enums.
+    """
+
+    def __init__(self, jobject=None, enum=None, member=None):
+        """
+        Initializes the enum class.
+        :param jobject: the Java object to wrap
+        :type jobject: JB_Object
+        :param enum: the enum class to instantiate (dot notation)
+        :type enum: str
+        :param member: the member of the enum class to instantiate
+        :type member: str
+        """
+        if jobject is None:
+            enumclass = javabridge.class_for_name(classname=enum)
+            enum = enum.replace(".", "/")
+            jobject = javabridge.static_call(
+                "java/lang/Enum", "valueOf",
+                "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;",
+                enumclass, member)
+        super(Enum, self).__init__(jobject)
+
+    @property
+    def name(self):
+        """
+        Returns the name of the enum member.
+        :return: the name
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "name", "()Ljava/lang/String;")
+
+    @property
+    def ordinal(self):
+        """
+        Returns the ordinal of the enum member.
+        :return: the ordinal
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "ordinal", "()I")
+
+    @property
+    def values(self):
+        """
+        Returns list of all enum members.
+        :return: all enum members
+        :rtype: list
+        """
+        cls = javabridge.call(self.jobject, "getClass", "()Ljava/lang/Class;")
+        clsname = javabridge.call(cls, "getName", "()Ljava/lang/String;")
+        l = javabridge.static_call(clsname.replace(".", "/"), "values", "()[L" + clsname.replace(".", "/") + ";")
+        l = javabridge.get_env().get_object_array_elements(l)
+        result = []
+        for item in l:
+            result.append(Enum(jobject=item))
+        return result
 
 
 class Random(JavaObject):

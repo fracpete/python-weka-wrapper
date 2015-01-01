@@ -12,49 +12,119 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # capabilities.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
-from weka.core.classes import JavaObject
+from weka.core.classes import JavaObject, Enum
 from weka.core.dataset import Attribute, Instances
 
 
-class Capability(JavaObject):
-    """ Wrapper for a Capability. """
+class Capability(Enum):
+    """
+    Wrapper for a Capability.
+    """
 
-    def __init__(self, jobject):
+    def __init__(self, jobject=None, member=None):
         """
         Initializes the wrapper with the specified Capability object.
         :param jobject: the Capability object to wrap
         :type jobject: JB_Object
+        :param member: the capability string to parse
+        :type member: str
         """
-        Capability.enforce_type(jobject, "weka.core.Capabilities$Capability")
-        super(Capability, self).__init__(jobject)
+        super(Capability, self).__init__(\
+            jobject=jobject, enum="weka.core.Capabilities$Capability", member=member)
 
-    @classmethod
-    def parse(cls, s):
+    @property
+    def is_attribute(self):
         """
-        Tries to instantiate a Capability object from the string representation.
-        :param s: the string representing a Capability
-        :type s: str
+        Returns whether this capability is an attribute.
+        :return: whether it is an attribute
+        :rtype: bool
         """
-        return Capability(
-            javabridge.static_call(
-                "weka/core/Capabilities$Capability", "valueOf",
-                "(Ljava/lang/String;)Lweka/core/Capabilities$Capability;", s))
+        return javabridge.call(self.jobject, "isAttribute", "()Z")
+
+    @property
+    def is_attribute_capability(self):
+        """
+        Returns whether this capability is an attribute capability.
+        :return: whether it is an attribute capability
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "isAttributeCapability", "()Z")
+
+    @property
+    def is_class(self):
+        """
+        Returns whether this capability is a class.
+        :return: whether it is a class
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "isClass", "()Z")
+
+    @property
+    def is_class_capability(self):
+        """
+        Returns whether this capability is a class capability.
+        :return: whether it is a class capability
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "isClassCapability", "()Z")
+
+    @property
+    def is_other_capability(self):
+        """
+        Returns whether this capability is an other capability.
+        :return: whether it is an other capability
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "isOtherCapability", "()Z")
 
 
 class Capabilities(JavaObject):
-    """ Wrapper for Capabilities. """
+    """
+    Wrapper for Capabilities.
+    """
 
-    def __init__(self, jobject):
+    def __init__(self, jobject=None, owner=None):
         """
         Initializes the wrapper with the specified Capabilities object.
-        :param jobject: the Capabilities object to wrap
+        :param jobject: the Capabilities object to wrap, instantiates a new one if None
         :type jobject: JB_Object
+        :param owner: the weka.core.CapabilitiesHandler object to use as owner, can be None
+        :type owner: JB_Object or JavaObject
         """
+        if jobject is None:
+            if isinstance(owner, JavaObject):
+                owner = owner.jobject
+            jobject = javabridge.make_instance(
+                "weka/core/Capabilities", "(Lweka/core/CapabilitiesHandler;)V", owner)
         Capabilities.enforce_type(jobject, "weka.core.Capabilities")
         super(Capabilities, self).__init__(jobject)
+
+    @property
+    def owner(self):
+        """
+        Returns the owner of these capabilities, if any.
+        :return: the owner, can be None
+        :rtype: JavaObject
+        """
+        obj = javabridge.call(self.jobject, "getOwner", "()Lweka/core/CapabilitiesHandler;")
+        if obj is None:
+            return None
+        else:
+            return JavaObject(jobject=obj)
+
+    @owner.setter
+    def owner(self, obj):
+        """
+        Sets the new owner.
+        :param obj: the new owner
+        :type obj: JavaObject or JB_Object
+        """
+        if isinstance(obj, JavaObject):
+            obj = obj.jobject
+        javabridge.call(self.jobject, "setOwner", "(Lweka/core/CapabilitiesHandler;)V", obj)
 
     def capabilities(self):
         """
@@ -106,6 +176,17 @@ class Capabilities(JavaObject):
         for c in iterator:
             result.append(Capability(c))
         return result
+
+    def handles(self, capability):
+        """
+        Returns whether the specified capability is set
+        :param capability: the capability to check
+        :type capability: Capability
+        :return: whether the capability is set
+        :rtype: bool
+        """
+        return javabridge.call(
+            self.jobject, "handles", "(Lweka/core/Capabilities$Capability;)Z", capability.jobject)
 
     def enable_all(self):
         """

@@ -12,6 +12,8 @@ Changelog
 - added property `classname` to class `JavaObject` for easy access to classname of underlying object
 - added class method `parse_matlab` for parsing Matlab matrix strings to `CostMatrix` class
 - `predictions` method of `Evaluation` class now return `None` if predictions are discarded
+- `Associator.get_capabilities()` method is now a property: `Associator.capabilities`
+- added wrapper classes for Java enums: `weka.core.classes.Enum`
 - ...
 
 
