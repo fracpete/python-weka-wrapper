@@ -34,42 +34,42 @@ class TestClassifiers(weka_test.WekaTest):
         options = None
         cls = classifiers.Classifier(classname=cname, options=options)
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
-        self.assertEqual(cname, cls.classname, "Classnames differ!")
+        self.assertEqual(cname, cls.classname, msg="Classnames differ!")
 
         cname = "weka.classifiers.trees.J48"
         options = ["-C", "0.3"]
         cls = classifiers.Classifier(classname=cname, options=options)
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
-        self.assertEqual(cname, cls.classname, "Classnames differ!")
+        self.assertEqual(cname, cls.classname, msg="Classnames differ!")
 
         cname = "weka.classifiers.meta.FilteredClassifier"
         options = ["-W", "weka.classifiers.trees.J48", "--", "-C", "0.3"]
         cls = classifiers.SingleClassifierEnhancer(classname=cname, options=options)
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
-        self.assertEqual(cname, cls.classname, "Classnames differ!")
+        self.assertEqual(cname, cls.classname, msg="Classnames differ!")
         fname = "weka.filters.unsupervised.attribute.Remove"
         flter = filters.Filter(classname=fname, options=["-R", "last"])
         cls.filter = flter
-        self.assertEqual(fname, cls.filter.classname, "Classnames differ!")
+        self.assertEqual(fname, cls.filter.classname, msg="Classnames differ!")
 
         cls = classifiers.FilteredClassifier()
-        self.assertIsNotNone(cls, "Failed to instantiate FilteredClassifier!")
-        self.assertEqual("weka.classifiers.meta.FilteredClassifier", cls.classname, "Classnames differ!")
+        self.assertIsNotNone(cls, msg="Failed to instantiate FilteredClassifier!")
+        self.assertEqual("weka.classifiers.meta.FilteredClassifier", cls.classname, msg="Classnames differ!")
 
         cname = "weka.classifiers.functions.SMO"
         cls = classifiers.KernelClassifier(classname=cname)
-        self.assertIsNotNone(cls, "Failed to instantiate KernelClassifier: " + cname)
-        self.assertEqual(cname, cls.classname, "Classnames differ!")
+        self.assertIsNotNone(cls, msg="Failed to instantiate KernelClassifier: " + cname)
+        self.assertEqual(cname, cls.classname, msg="Classnames differ!")
         kname = "weka.classifiers.functions.supportVector.RBFKernel"
         kernel = classifiers.Kernel(classname=kname)
-        self.assertIsNotNone(kernel, "Failed to instantiate Kernel: " + kname)
+        self.assertIsNotNone(kernel, msg="Failed to instantiate Kernel: " + kname)
         cls.kernel = kernel
-        self.assertEqual(kname, cls.kernel.classname, "Kernel classnames differ!")
+        self.assertEqual(kname, cls.kernel.classname, msg="Kernel classnames differ!")
 
         cname = "weka.classifiers.meta.Vote"
         cls = classifiers.MultipleClassifiersCombiner(classname=cname)
-        self.assertIsNotNone(cls, "Failed to instantiate MultipleClassifiersCombiner: " + cname)
-        self.assertEqual(cname, cls.classname, "Classnames differ!")
+        self.assertIsNotNone(cls, msg="Failed to instantiate MultipleClassifiersCombiner: " + cname)
+        self.assertEqual(cname, cls.classname, msg="Classnames differ!")
 
     def test_capabilities(self):
         """
@@ -79,7 +79,7 @@ class TestClassifiers(weka_test.WekaTest):
         options = None
         cls = classifiers.Classifier(classname=cname, options=options)
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
-        self.assertEqual(cname, cls.classname, "Classnames differ!")
+        self.assertEqual(cname, cls.classname, msg="Classnames differ!")
 
         caps = cls.capabilities
 
@@ -132,7 +132,7 @@ class TestClassifiers(weka_test.WekaTest):
         for i in range(10):
             dist = cls.distribution_for_instance(data.get_instance(i))
             self.assertIsNotNone(dist)
-            self.assertEqual(6, len(dist), "Number of classes in prediction differ!")
+            self.assertEqual(6, len(dist), msg="Number of classes in prediction differ!")
 
         # 2. numeric
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
@@ -149,7 +149,7 @@ class TestClassifiers(weka_test.WekaTest):
         for i in range(10):
             dist = cls.distribution_for_instance(data.get_instance(i))
             self.assertIsNotNone(dist)
-            self.assertEqual(1, len(dist), "Number of classes in prediction should be one for numeric classifier!")
+            self.assertEqual(1, len(dist), msg="Number of classes in prediction should be one for numeric classifier!")
 
     def test_classify_instance(self):
         """
@@ -195,9 +195,9 @@ class TestClassifiers(weka_test.WekaTest):
         self.assertEqual(3, cmatrix.num_columns, msg="# of columns differ")
         self.assertEqual(3, cmatrix.num_rows, msg="# of rows differ")
 
-        self.assertEqual(0, cmatrix.get_element(1, 1), "cell should be initialized with 0")
+        self.assertEqual(0, cmatrix.get_element(1, 1), msg="cell should be initialized with 0")
         cmatrix.set_element(1, 1, 0.1)
-        self.assertEqual(0.1, cmatrix.get_element(1, 1), "cell value differs")
+        self.assertEqual(0.1, cmatrix.get_element(1, 1), msg="cell value differs")
 
         matrixstr = "[1.0 2.0; 3.0 4.0]"
         cmatrix = classifiers.CostMatrix.parse_matlab(matrixstr)
@@ -303,7 +303,9 @@ class TestClassifiers(weka_test.WekaTest):
         cls = classifiers.Classifier(classname=cname)
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname)
         evl = classifiers.Evaluation(data)
-        pout = classifiers.PredictionOutput(classname="weka.classifiers.evaluation.output.prediction.PlainText")
+        cname = "weka.classifiers.evaluation.output.prediction.PlainText"
+        pout = classifiers.PredictionOutput(classname=cname)
+        self.assertEqual(cname, pout.classname, msg="Output classnames differ!")
         self.assertIsNotNone(evl, msg="Failed to instantiate Evaluation")
         evl.crossvalidate_model(cls, data, 10, classes.Random(1), output=pout)
         self.assertGreater(len(str(pout)), 0, msg="Should have generated output")
