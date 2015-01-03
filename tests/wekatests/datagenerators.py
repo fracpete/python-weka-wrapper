@@ -21,7 +21,30 @@ import wekatests.tests.weka_test as weka_test
 
 
 class TestDataGenerators(weka_test.WekaTest):
-    pass
+
+    def test_batch(self):
+        """
+        Tests the batch generation.
+        """
+        generator = datagenerators.DataGenerator(
+            classname="weka.datagenerators.classifiers.classification.Agrawal", options=["-n", "10", "-r", "agrawal"])
+        generator.dataset_format = generator.define_data_format()
+        self.assertEqual(10, generator.dataset_format.num_attributes, msg="Number of attributes differs")
+        data = generator.generate_examples()
+        self.assertEqual(10, data.num_instances, msg="Number of rows differs")
+
+    def test_incremental(self):
+        """
+        Tests the incremental generation.
+        """
+        generator = datagenerators.DataGenerator(
+            classname="weka.datagenerators.classifiers.classification.Agrawal", options=["-n", "10", "-r", "agrawal"])
+        generator.dataset_format = generator.define_data_format()
+        self.assertEqual(10, generator.dataset_format.num_attributes, msg="Number of attributes differs")
+        count = 0
+        for i in xrange(generator.num_examples_act):
+            count += 1
+        self.assertEqual(10, count, msg="Number of rows differs")
 
 
 def suite():
