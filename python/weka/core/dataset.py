@@ -1123,7 +1123,7 @@ class Stats(JavaObject):
         :return: The sum of values squared seen
         :rtype: float
         """
-        return javabridge.get_field(self.jobject, "sumsq", "D")
+        return javabridge.get_field(self.jobject, "sumSq", "D")
 
 
 class InstanceIterator(object):
