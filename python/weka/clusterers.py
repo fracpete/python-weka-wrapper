@@ -97,7 +97,7 @@ class Clusterer(OptionHandler):
         :return: the clustering result
         :rtype: float
         """
-        return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)D", inst.jobject)
+        return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)I", inst.jobject)
 
     def distribution_for_instance(self, inst):
         """
@@ -171,7 +171,7 @@ class SingleClustererEnhancer(Clusterer):
         :return: the clusterer
         :rtype: Clusterer
         """
-        return Clusterer(javabridge.call(self.jobject, "getClusterer", "()Lweka/clusterers/Clusterer;"))
+        return Clusterer(jobject=javabridge.call(self.jobject, "getClusterer", "()Lweka/clusterers/Clusterer;"))
 
     @clusterer.setter
     def clusterer(self, clusterer):
@@ -209,7 +209,7 @@ class FilteredClusterer(SingleClustererEnhancer):
         :return: the filter
         :rtype: Filter
         """
-        return Filter(javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
+        return Filter(jobject=javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
 
     @filter.setter
     def filter(self, filtr):

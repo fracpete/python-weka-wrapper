@@ -170,7 +170,7 @@ class SingleClassifierEnhancer(Classifier):
         Returns the base classifier.
         :rtype: Classifier
         """
-        return Classifier(javabridge.call(self.jobject, "getClassifier", "()Lweka/classifiers/Classifier;"))
+        return Classifier(jobject=javabridge.call(self.jobject, "getClassifier", "()Lweka/classifiers/Classifier;"))
 
     @classifier.setter
     def classifier(self, classifier):
@@ -208,7 +208,7 @@ class FilteredClassifier(SingleClassifierEnhancer):
         :return: the filter in use
         :rtype: Filter
         """
-        return Filter(javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
+        return Filter(jobject=javabridge.call(self.jobject, "getFilter", "()Lweka/filters/Filter;"))
 
     @filter.setter
     def filter(self, filtr):
