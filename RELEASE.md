@@ -2,6 +2,7 @@ Pypi
 ====
 
 Preparation:
+* run unit tests: `tests/wekatests/all_tests.py`
 * increment version in `setup.py`
 * increment versions in `doc/source/conf.py`
 * added new changelog section in `CHANGES.rst`
