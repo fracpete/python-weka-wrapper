@@ -15,14 +15,48 @@
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
+import os
 import weka.core.jvm as jvm
+import weka.core.converters as converters
 import weka.filters as filters
 import wekatests.tests.weka_test as weka_test
 
 
 class TestFilters(weka_test.WekaTest):
-    pass
 
+    def test_batch_filtering(self):
+        """
+        Tests the Filter.filter method.
+        """
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        self.assertIsNotNone(data)
+
+        flter = filters.Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1,3"])
+        flter.inputformat(data)
+        filtered = flter.filter(data)
+        self.assertEqual(data.num_attributes - 2, filtered.num_attributes, msg="Number of attributes differ")
+        self.assertEqual(data.num_instances, filtered.num_instances, msg="Number of instances differ")
+
+    def test_incremental_filtering(self):
+        """
+        Tests the Filter.input/output methods.
+        """
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        self.assertIsNotNone(data)
+
+        flter = filters.Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1,3"])
+        flter.inputformat(data)
+        filtered = flter.outputformat()
+
+        for inst in data:
+            flter.input(inst)
+            finst = flter.output()
+            filtered.add_instance(finst)
+
+        self.assertEqual(data.num_attributes - 2, filtered.num_attributes, msg="Number of attributes differ")
+        self.assertEqual(data.num_instances, filtered.num_instances, msg="Number of instances differ")
 
 def suite():
     """
