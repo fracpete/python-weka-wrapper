@@ -14,6 +14,7 @@ Changelog
 - `predictions` method of `Evaluation` class now return `None` if predictions are discarded
 - `Associator.get_capabilities()` method is now a property: `Associator.capabilities`
 - added wrapper classes for Java enums: `weka.core.classes.Enum`
+- fixed retrieval of `sumSq` in `Stats` class (used by `AttributeStats`)
 - ...
 
 
