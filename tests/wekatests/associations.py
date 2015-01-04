@@ -45,6 +45,7 @@ class TestAssociations(weka_test.WekaTest):
         self.assertEqual(cname, cls.classname, "Classnames differ!")
 
         caps = cls.capabilities
+        self.assertIsNotNone(caps, msg="Capabilities are None!")
 
     def test_build_associator(self):
         """
