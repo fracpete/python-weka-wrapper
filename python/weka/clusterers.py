@@ -23,6 +23,7 @@ import weka.core.jvm as jvm
 import weka.core.utils as utils
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
+from weka.core.classes import Random
 from weka.core.capabilities import Capabilities
 from weka.filters import Filter
 
@@ -316,6 +317,26 @@ class ClusterEvaluation(JavaObject):
             "Lweka/clusterers/ClusterEvaluation;", "evaluateClusterer",
             "(Lweka/clusterers/Clusterer;[Ljava/lang/String;)Ljava/lang/String;",
             clusterer.jobject, args)
+
+    @classmethod
+    def crossvalidate_model(cls, clusterer, data, num_folds, rnd):
+        """
+        Cross-validates the clusterer and returns the loglikelihood.
+        :param clusterer: the clusterer instance to evaluate
+        :type clusterer: Clusterer
+        :param data: the data to evaluate on
+        :type data: Instances
+        :param num_folds: the number of folds
+        :type num_folds: int
+        :param rnd: the random number generator to use
+        :type rnd: Random
+        :return: the cross-validated loglikelihood
+        :rtype: float
+        """
+        return javabridge.static_call(
+            "Lweka/clusterers/ClusterEvaluation;", "crossValidateModel",
+            "(Lweka/clusterers/DensityBasedClusterer;Lweka/core/Instances;ILjava/util/Random;)D",
+            clusterer.jobject, data.jobject, num_folds, rnd.jobject)
 
 
 def main():
