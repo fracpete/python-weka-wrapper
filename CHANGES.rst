@@ -4,8 +4,8 @@ Changelog
 0.2.1 (????-??-??)
 ------------------
 
-- added method `refresh_cache()` to `weka/core/packages.py` to allow user to refresh local cache
 - added unit testing framework
+- added method `refresh_cache()` to `weka/core/packages.py` to allow user to refresh local cache
 - method `get_classname` in `weka.core.utils` now handles Python objects and class objects as well
 - added convenience method `get_jclass` to `weka.core.utils` to instantiate a Java class
 - added a `JavaArray` wrapper for  `arrays, which allows getting/setting elements and iterating
@@ -16,10 +16,9 @@ Changelog
 - added wrapper classes for Java enums: `weka.core.classes.Enum`
 - fixed retrieval of `sumSq` in `Stats` class (used by `AttributeStats`)
 - fixed `cluster_instance` method in `Clusterer` class
-- fixed `filter` and `clusterer` properties in `Clusterer` class
+- fixed `filter` and `clusterer` properties in clusterer classes (`SingleClustererEnhancer`, `FilteredClusterer`)
 - added `crossvalidate_model` method to `ClusterEvaluation`
 - added `get_prc` method to `plot/classifiers.py` for calculating the area under the precision-recall curve
-- ...
 
 
 0.2.0 (2014-12-22)
