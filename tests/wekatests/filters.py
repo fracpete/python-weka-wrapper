@@ -49,6 +49,19 @@ class TestFilters(weka_test.WekaTest):
         self.assertEqual(data.num_attributes - 2, filtered.num_attributes, msg="Number of attributes differ")
         self.assertEqual(data.num_instances, filtered.num_instances, msg="Number of instances differ")
 
+        # multple files
+        data = loader.load_file(self.datafile("reutersTop10Randomized_1perc_shortened-train.arff"))
+        self.assertIsNotNone(data)
+        data2 = loader.load_file(self.datafile("reutersTop10Randomized_1perc_shortened-test.arff"))
+        self.assertIsNotNone(data2)
+
+        flter = filters.Filter(classname="weka.filters.unsupervised.attribute.StringToWordVector")
+        flter.inputformat(data)
+        filtered = flter.filter([data, data2])
+        print(filtered[0])
+        print(filtered[1])
+        self.assertIsNone(filtered[0].equal_headers(filtered[1]), msg="Headers should be compatible")
+
     def test_incremental_filtering(self):
         """
         Tests the Filter.input/output methods.

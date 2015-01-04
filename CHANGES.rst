@@ -19,6 +19,8 @@ Changelog
 - fixed `filter` and `clusterer` properties in clusterer classes (`SingleClustererEnhancer`, `FilteredClusterer`)
 - added `crossvalidate_model` method to `ClusterEvaluation`
 - added `get_prc` method to `plot/classifiers.py` for calculating the area under the precision-recall curve
+- `Filter.filter` method now handles list of `Instances` objects as well, applying the filter sequentially
+  to all the datasets (allows generation of compatible train/test sets)
 
 
 0.2.0 (2014-12-22)

@@ -98,16 +98,28 @@ class Filter(OptionHandler):
 
     def filter(self, data):
         """
-        Filters the dataset.
+        Filters the dataset(s). When providing a list, this can be used to create compatible train/test sets,
+        since the filter only gets initialized with the first dataset and all subsequent datasets get transformed
+        using the same setup.
+        NB: inputformat(Instances) must have been called beforehand.
         :param data: the Instances to filter
-        :type data: Instances
-        :return: the filtered Instances object
-        :rtype: Instances
+        :type data: Instances or list of Instances
+        :return: the filtered Instances object(s)
+        :rtype: Instances or list of Instances
         """
-        return Instances(javabridge.static_call(
-            "Lweka/filters/Filter;", "useFilter",
-            "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;",
-            data.jobject, self.jobject))
+        if isinstance(data, list):
+            result = []
+            for d in data:
+                result.append(Instances(javabridge.static_call(
+                    "Lweka/filters/Filter;", "useFilter",
+                    "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;",
+                    d.jobject, self.jobject)))
+            return result
+        else:
+            return Instances(javabridge.static_call(
+                "Lweka/filters/Filter;", "useFilter",
+                "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;",
+                data.jobject, self.jobject))
 
 
 class MultiFilter(Filter):
