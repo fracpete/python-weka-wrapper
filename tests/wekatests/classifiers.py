@@ -82,6 +82,7 @@ class TestClassifiers(weka_test.WekaTest):
         self.assertEqual(cname, cls.classname, msg="Classnames differ!")
 
         caps = cls.capabilities
+        self.assertIsNotNone(caps, msg="Capabilities are None!")
 
     def test_build_classifier(self):
         """
