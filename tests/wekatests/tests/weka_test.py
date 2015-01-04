@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # weka_test.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import tempfile
@@ -69,3 +69,13 @@ class WekaTest(unittest.TestCase):
         rootdir = os.path.dirname(__file__)
         libdir = rootdir + os.sep + ".." + os.sep + "data"
         return libdir
+
+    def datafile(self, fname):
+        """
+        Returns the full path for the file (without path) and returns it.
+        :param fname: the filename (without path)
+        :type fname: str
+        :return: the full path
+        :rtype: str
+        """
+        return self.datadir() + os.sep + fname
