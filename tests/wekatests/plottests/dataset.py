@@ -12,16 +12,39 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # dataset.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm
-import weka.plot.dataset as dataset
+import weka.core.converters as converters
+import weka.core.dataset as dataset
+import weka.plot.dataset as plot
 import wekatests.tests.weka_test as weka_test
 
 
 class TestDataset(weka_test.WekaTest):
-    pass
+
+    def test_scatter_plot(self):
+        """
+        Tests the scatter_plot method.
+        """
+        loader = converters.Loader("weka.core.converters.ArffLoader")
+        iris_data = loader.load_file(self.datafile("iris.arff"))
+        iris_data.class_is_last()
+        plot.scatter_plot(
+            iris_data, iris_data.attribute_by_name("petalwidth").index,
+            iris_data.attribute_by_name("petallength").index,
+            percent=50,
+            wait=False)
+
+    def test_matrix_plot(self):
+        """
+        Tests the matrix_plot method.
+        """
+        loader = converters.Loader("weka.core.converters.ArffLoader")
+        iris_data = loader.load_file(self.datafile("iris.arff"))
+        iris_data.class_is_last()
+        plot.matrix_plot(iris_data, percent=50, title="Matrix plot iris", wait=False)
 
 
 def suite():
