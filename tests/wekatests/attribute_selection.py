@@ -79,7 +79,30 @@ class TestAttributeSelection(weka_test.WekaTest):
         """
         Tests reducing of attributes.
         """
-        pass
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.attributeSelection.BestFirst"
+        options = ["-D", "1", "-N", "5"]
+        search = attribute_selection.ASSearch(classname=cname, options=options)
+        self.assertIsNotNone(search, msg="Search should not be None: " + cname + "/" + str(options))
+
+        cname = "weka.attributeSelection.CfsSubsetEval"
+        options = ["-P", "1", "-E", "1"]
+        evaluation = attribute_selection.ASEvaluation(classname=cname, options=options)
+        self.assertIsNotNone(evaluation, msg="Evaluation should not be None: " + cname + "/" + str(options))
+
+        attsel = attribute_selection.AttributeSelection()
+        self.assertIsNotNone(search, msg="AttributeSelection should not be None!")
+
+        attsel.search(search)
+        attsel.evaluator(evaluation)
+        attsel.select_attributes(data)
+        reduced = attsel.reduce_dimensionality(data)
+        self.assertEqual(attsel.number_attributes_selected + 1, reduced.num_attributes, msg="number of attributes differs")
+        self.assertEqual(data.num_instances, reduced.num_instances, msg="number of rows differs")
 
     def test_ranking(self):
         """
