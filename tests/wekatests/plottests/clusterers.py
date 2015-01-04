@@ -12,16 +12,33 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # clusterers.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm
-import weka.plot.clusterers as clusterers
+import weka.core.converters as converters
+import weka.clusterers as clusterers
+import weka.plot.clusterers as plc
 import wekatests.tests.weka_test as weka_test
 
 
 class TestClusterers(weka_test.WekaTest):
-    pass
+
+    def test_plot_cluster_assignments(self):
+        """
+        Tests the plot_cluster_assignments method.
+        """
+        loader = converters.Loader("weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datafile("iris.arff"))
+        data.delete_last_attribute()
+
+        # build a clusterer and output model
+        clusterer = clusterers.Clusterer(classname="weka.clusterers.SimpleKMeans", options=["-N", "3"])
+        clusterer.build_clusterer(data)
+        evaluation = clusterers.ClusterEvaluation()
+        evaluation.set_model(clusterer)
+        evaluation.test_model(data)
+        plc.plot_cluster_assignments(evaluation, data, inst_no=True, wait=False)
 
 
 def suite():
