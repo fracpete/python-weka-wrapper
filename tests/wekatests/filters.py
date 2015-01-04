@@ -58,8 +58,6 @@ class TestFilters(weka_test.WekaTest):
         flter = filters.Filter(classname="weka.filters.unsupervised.attribute.StringToWordVector")
         flter.inputformat(data)
         filtered = flter.filter([data, data2])
-        print(filtered[0])
-        print(filtered[1])
         self.assertIsNone(filtered[0].equal_headers(filtered[1]), msg="Headers should be compatible")
 
     def test_incremental_filtering(self):
