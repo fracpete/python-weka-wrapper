@@ -24,6 +24,18 @@ import wekatests.tests.weka_test as weka_test
 
 class TestFilters(weka_test.WekaTest):
 
+    def test_capabilities(self):
+        """
+        Tests the capabilities.
+        """
+        cname = "weka.classifiers.trees.J48"
+        options = None
+        flter = filters.Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1,3"])
+        self.assertIsNotNone(flter, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        caps = flter.capabilities
+        self.assertIsNotNone(caps, msg="Capabilities are None!")
+
     def test_batch_filtering(self):
         """
         Tests the Filter.filter method.
