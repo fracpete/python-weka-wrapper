@@ -20,7 +20,7 @@ from weka.core.classes import Random
 import weka.core.converters as converters
 import weka.classifiers as classifiers
 import weka.filters as filters
-import weka.plot.classifiers as plot_cls
+import weka.plot.classifiers as plot
 import wekatests.tests.weka_test as weka_test
 
 
@@ -42,7 +42,7 @@ class TestClassifiers(weka_test.WekaTest):
 
         evl = classifiers.Evaluation(data)
         evl.crossvalidate_model(cls, data, 10, Random(1))
-        data = plot_cls.generate_thresholdcurve_data(evl, 0)
+        data = plot.generate_thresholdcurve_data(evl, 0)
         self.assertEqual(13, data.num_attributes, msg="number of attributes differs")
         self.assertEqual(769, data.num_instances, msg="number of rows differs")
         attname = "True Positives"
@@ -68,8 +68,8 @@ class TestClassifiers(weka_test.WekaTest):
 
         evl = classifiers.Evaluation(data)
         evl.crossvalidate_model(cls, data, 10, Random(1))
-        data = plot_cls.generate_thresholdcurve_data(evl, 0)
-        area = plot_cls.get_auc(data)
+        data = plot.generate_thresholdcurve_data(evl, 0)
+        area = plot.get_auc(data)
         self.assertAlmostEqual(0.819, area, places=3, msg="AUC differs")
 
     def test_get_prc(self):
@@ -88,8 +88,8 @@ class TestClassifiers(weka_test.WekaTest):
 
         evl = classifiers.Evaluation(data)
         evl.crossvalidate_model(cls, data, 10, Random(1))
-        data = plot_cls.generate_thresholdcurve_data(evl, 0)
-        area = plot_cls.get_prc(data)
+        data = plot.generate_thresholdcurve_data(evl, 0)
+        area = plot.get_prc(data)
         self.assertAlmostEqual(0.892, area, places=3, msg="PRC differs")
 
     def test_plot_classifier_errors(self):
@@ -104,7 +104,7 @@ class TestClassifiers(weka_test.WekaTest):
         classifier = classifiers.Classifier(classname="weka.classifiers.functions.LinearRegression", options=["-S", "1", "-C"])
         evaluation = classifiers.Evaluation(bolts_data)
         evaluation.crossvalidate_model(classifier, bolts_data, 10, Random(42))
-        plot_cls.plot_classifier_errors(evaluation.predictions, wait=False)
+        plot.plot_classifier_errors(evaluation.predictions, wait=False)
 
     def test_plot_roc(self):
         """
@@ -122,7 +122,7 @@ class TestClassifiers(weka_test.WekaTest):
 
         evl = classifiers.Evaluation(data)
         evl.crossvalidate_model(cls, data, 10, Random(1))
-        plot_cls.plot_roc(evl, class_index=[0, 1], wait=False)
+        plot.plot_roc(evl, class_index=[0, 1], wait=False)
 
     def test_plot_prc(self):
         """
@@ -140,7 +140,7 @@ class TestClassifiers(weka_test.WekaTest):
 
         evl = classifiers.Evaluation(data)
         evl.crossvalidate_model(cls, data, 10, Random(1))
-        plot_cls.plot_prc(evl, class_index=[0, 1], wait=False)
+        plot.plot_prc(evl, class_index=[0, 1], wait=False)
 
 
 def suite():

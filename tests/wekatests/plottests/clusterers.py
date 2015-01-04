@@ -18,7 +18,7 @@ import unittest
 import weka.core.jvm as jvm
 import weka.core.converters as converters
 import weka.clusterers as clusterers
-import weka.plot.clusterers as plc
+import weka.plot.clusterers as plot
 import wekatests.tests.weka_test as weka_test
 
 
@@ -38,7 +38,7 @@ class TestClusterers(weka_test.WekaTest):
         evaluation = clusterers.ClusterEvaluation()
         evaluation.set_model(clusterer)
         evaluation.test_model(data)
-        plc.plot_cluster_assignments(evaluation, data, inst_no=True, wait=False)
+        plot.plot_cluster_assignments(evaluation, data, inst_no=True, wait=False)
 
 
 def suite():
