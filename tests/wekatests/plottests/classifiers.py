@@ -72,6 +72,26 @@ class TestClassifiers(weka_test.WekaTest):
         area = plot_cls.get_auc(data)
         self.assertAlmostEqual(0.819, area, places=3, msg="AUC differs")
 
+    def test_get_prc(self):
+        """
+        Tests the get_prc method.
+        """
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datafile("diabetes.arff"))
+        data.class_is_last()
+
+        remove = filters.Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1-3"])
+        cls = classifiers.Classifier(classname="weka.classifiers.bayes.NaiveBayes")
+        fc = classifiers.FilteredClassifier()
+        fc.filter = remove
+        fc.classifier = cls
+
+        evl = classifiers.Evaluation(data)
+        evl.crossvalidate_model(cls, data, 10, Random(1))
+        data = plot_cls.generate_thresholdcurve_data(evl, 0)
+        area = plot_cls.get_prc(data)
+        self.assertAlmostEqual(0.892, area, places=3, msg="PRC differs")
+
     def test_plot_classifier_errors(self):
         """
         Tests the plot_classifier_errors method.

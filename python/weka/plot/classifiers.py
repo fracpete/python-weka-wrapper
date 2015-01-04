@@ -149,6 +149,18 @@ def get_auc(data):
         "weka/classifiers/evaluation/ThresholdCurve", "getROCArea", "(Lweka/core/Instances;)D", data.jobject)
 
 
+def get_prc(data):
+    """
+    Calculates the area under the precision recall curve (PRC).
+    :param data: the threshold curve data
+    :type data: Instances
+    :return: the area
+    :rtype: float
+    """
+    return javabridge.static_call(
+        "weka/classifiers/evaluation/ThresholdCurve", "getPRCArea", "(Lweka/core/Instances;)D", data.jobject)
+
+
 def plot_roc(evaluation, class_index=None, title=None, key_loc="lower right", outfile=None, wait=True):
     """
     Plots the ROC (receiver operator characteristics) curve for the given predictions.
@@ -225,6 +237,7 @@ def plot_prc(evaluation, class_index=None, title=None, key_loc="lower center", o
     for cindex in class_index:
         data = generate_thresholdcurve_data(evaluation, cindex)
         head = evaluation.header
+        area = get_prc(data)
         x, y = get_thresholdcurve_data(data, "Recall", "Precision")
         if ax is None:
             fig, ax = plt.subplots()
@@ -237,7 +250,7 @@ def plot_prc(evaluation, class_index=None, title=None, key_loc="lower center", o
             plt.xlim([-0.05, 1.05])
             plt.ylim([-0.05, 1.05])
             ax.grid(True)
-        plot_label = head.class_attribute.value(cindex)
+        plot_label = head.class_attribute.value(cindex) + " (PRC: %0.4f)" % area
         ax.plot(x, y, label=plot_label)
         ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     plt.draw()

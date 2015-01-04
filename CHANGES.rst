@@ -18,6 +18,7 @@ Changelog
 - fixed `cluster_instance` method in `Clusterer` class
 - fixed `filter` and `clusterer` properties in `Clusterer` class
 - added `crossvalidate_model` method to `ClusterEvaluation`
+- added `get_prc` method to `plot/classifiers.py` for calculating the area under the precision-recall curve
 - ...
 
 
