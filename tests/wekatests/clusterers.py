@@ -48,6 +48,18 @@ class TestClusterers(weka_test.WekaTest):
         cls.clusterer = clusterers.Clusterer(classname=cname)
         self.assertEqual(cname, cls.clusterer.classname, msg="Base clusterer classnames differ!")
 
+    def test_capabilities(self):
+        """
+        Tests the capabilities.
+        """
+        cname = "weka.clusterers.SimpleKMeans"
+        cls = clusterers.Clusterer(classname=cname)
+        self.assertIsNotNone(cls, msg="Failed to instantiate clusterer!")
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+
+        caps = cls.capabilities
+        self.assertIsNotNone(caps, msg="Capabilities are None!")
+
     def test_build_clusterer(self):
         """
         Tests the build_clusterer class.
