@@ -5,7 +5,8 @@ Preparation:
 * run unit tests: `tests/wekatests/all_tests.py`
 * increment version in `setup.py`
 * increment versions in `doc/source/conf.py`
-* added new changelog section in `CHANGES.rst`
+* add new changelog section in `CHANGES.rst`
+* commit/push all changes
 
 When upgrading Weka version:
 * change download URL in method `download_weka()` in `setup.py`
