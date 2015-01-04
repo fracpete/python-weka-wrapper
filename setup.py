@@ -86,7 +86,7 @@ setup(
         _read('CHANGES.rst')).decode('utf-8'),
     url="https://github.com/fracpete/python-weka-wrapper",
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Programming Language :: Python',
@@ -104,7 +104,7 @@ setup(
         "weka": ["lib/*.jar"],
     },
     include_package_data=True,
-    version="0.2.0",
+    version="0.2.1",
     author='Peter "fracpete" Reutemann',
     author_email='pythonwekawrapper at gmail dot com',
     install_requires=[
