@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # converters.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import os
@@ -56,7 +56,7 @@ class TestConverters(weka_test.WekaTest):
         Tests the Loader class using an ArffLoader.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         self.assertEqual(898, data.num_instances, msg="Number of instances differs!")
 
@@ -65,7 +65,7 @@ class TestConverters(weka_test.WekaTest):
         Tests the Loader class using an incremental ArffLoader.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff", incremental=True)
+        data = loader.load_file(self.datafile("anneal.arff"), incremental=True)
         self.assertIsNotNone(data)
         count = 0
         for inst in loader:
@@ -77,7 +77,7 @@ class TestConverters(weka_test.WekaTest):
         Tests the Saver class using an ArffSaver.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         outfile = self.tempfile("out.arff")
         self.delfile(outfile)

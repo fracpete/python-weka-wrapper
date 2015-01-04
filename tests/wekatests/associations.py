@@ -15,7 +15,6 @@
 # Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
-import os
 import weka.core.jvm as jvm
 import weka.core.converters as converters
 import weka.associations as associations
@@ -52,7 +51,7 @@ class TestAssociations(weka_test.WekaTest):
         Tests the build_classifier method.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "nursery.arff")
+        data = loader.load_file(self.datafile("nursery.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 

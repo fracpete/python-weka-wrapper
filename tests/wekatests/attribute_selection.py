@@ -15,7 +15,6 @@
 # Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
-import os
 import weka.core.jvm as jvm
 import weka.core.converters as converters
 import weka.attribute_selection as attribute_selection
@@ -64,7 +63,7 @@ class TestAttributeSelection(weka_test.WekaTest):
         Tests attribute selection.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -93,7 +92,7 @@ class TestAttributeSelection(weka_test.WekaTest):
         Tests reducing of attributes.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -122,7 +121,7 @@ class TestAttributeSelection(weka_test.WekaTest):
         Tests ranking of attributes.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 

@@ -15,7 +15,6 @@
 # Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
-import os
 import weka.core.jvm as jvm
 import weka.core.dataset as dataset
 import weka.core.converters as converters
@@ -63,7 +62,7 @@ class TestDataset(weka_test.WekaTest):
         Tests the AttributeStats class.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data, msg="Failed to load data!")
 
         stats = data.attribute_stats(2)
@@ -81,7 +80,7 @@ class TestDataset(weka_test.WekaTest):
         Tests the Stats class.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data, msg="Failed to load data!")
 
         stats = data.attribute_stats(3)
@@ -99,7 +98,7 @@ class TestDataset(weka_test.WekaTest):
         Tests the Instance class.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.ORIG.arff")
+        data = loader.load_file(self.datafile("anneal.ORIG.arff"))
         self.assertIsNotNone(data, msg="Failed to load data!")
 
         inst = data.get_instance(0)
@@ -133,7 +132,7 @@ class TestDataset(weka_test.WekaTest):
         Tests the Instances class.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data, msg="Failed to load data!")
 
         count = 0

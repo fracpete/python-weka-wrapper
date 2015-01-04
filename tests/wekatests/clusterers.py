@@ -15,7 +15,6 @@
 # Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
-import os
 import weka.core.jvm as jvm
 import weka.core.converters as converters
 import weka.core.dataset as dataset
@@ -65,7 +64,7 @@ class TestClusterers(weka_test.WekaTest):
         Tests the build_clusterer class.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.delete_last_attribute()
 
@@ -89,7 +88,7 @@ class TestClusterers(weka_test.WekaTest):
         Tests the cluster_instance class.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.delete_last_attribute()
 
@@ -106,7 +105,7 @@ class TestClusterers(weka_test.WekaTest):
         Tests the distribution_for_instance method.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.delete_last_attribute()
 
@@ -124,7 +123,7 @@ class TestClusterers(weka_test.WekaTest):
         Tests the ClusterEvaluation class.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.delete_last_attribute()
 
@@ -156,7 +155,7 @@ class TestClusterers(weka_test.WekaTest):
         Tests the classes_to_clusters method.
         """
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         #data.class_is_last()
 

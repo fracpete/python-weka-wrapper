@@ -14,7 +14,6 @@
 # classifiers.py
 # Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
-import os
 import unittest
 import weka.core.jvm as jvm
 import weka.core.classes as classes
@@ -90,7 +89,7 @@ class TestClassifiers(weka_test.WekaTest):
         """
         # 1. nominal
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -103,7 +102,7 @@ class TestClassifiers(weka_test.WekaTest):
 
         # 2. numeric
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "bolts.arff")
+        data = loader.load_file(self.datafile("bolts.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -120,7 +119,7 @@ class TestClassifiers(weka_test.WekaTest):
         """
         # 1. nominal
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -137,7 +136,7 @@ class TestClassifiers(weka_test.WekaTest):
 
         # 2. numeric
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "bolts.arff")
+        data = loader.load_file(self.datafile("bolts.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -158,7 +157,7 @@ class TestClassifiers(weka_test.WekaTest):
         """
         # 1. nominal
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -174,7 +173,7 @@ class TestClassifiers(weka_test.WekaTest):
 
         # 2. numeric
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "bolts.arff")
+        data = loader.load_file(self.datafile("bolts.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -210,7 +209,7 @@ class TestClassifiers(weka_test.WekaTest):
         """
         # 1. nominal
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
@@ -313,7 +312,7 @@ class TestClassifiers(weka_test.WekaTest):
 
         # 2. numeric
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
-        data = loader.load_file(self.datadir() + os.sep + "bolts.arff")
+        data = loader.load_file(self.datafile("bolts.arff"))
         self.assertIsNotNone(data)
         data.class_is_last()
 
