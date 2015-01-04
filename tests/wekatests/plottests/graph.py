@@ -12,16 +12,30 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # graph.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm
+import weka.core.converters as converters
+import weka.classifiers as classifiers
 import weka.plot.graph as graph
 import wekatests.tests.weka_test as weka_test
 
 
 class TestGraph(weka_test.WekaTest):
-    pass
+
+    def test_plot_dot_graph(self):
+        """
+        Tests the plot_dot_graph method.
+        """
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datafile("diabetes.arff"))
+        data.class_is_last()
+
+        cls = classifiers.Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
+        cls.build_classifier(data)
+
+        graph.plot_dot_graph(cls.graph)
 
 
 def suite():
