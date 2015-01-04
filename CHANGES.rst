@@ -15,6 +15,9 @@ Changelog
 - `Associator.get_capabilities()` method is now a property: `Associator.capabilities`
 - added wrapper classes for Java enums: `weka.core.classes.Enum`
 - fixed retrieval of `sumSq` in `Stats` class (used by `AttributeStats`)
+- fixed `cluster_instance` method in `Clusterer` class
+- fixed `filter` and `clusterer` properties in `Clusterer` class
+- added `crossvalidate_model` method to `ClusterEvaluation`
 - ...
 
 
