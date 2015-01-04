@@ -15,13 +15,100 @@
 # Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
+import os
 import weka.core.jvm as jvm
+import weka.core.converters as converters
 import weka.attribute_selection as attribute_selection
 import wekatests.tests.weka_test as weka_test
 
 
 class TestAttributeSelection(weka_test.WekaTest):
-    pass
+
+    def test_instantiations(self):
+        """
+        Tests instantiating classes.
+        """
+        cname = "weka.attributeSelection.BestFirst"
+        options = ["-D", "1", "-N", "5"]
+        search = attribute_selection.ASSearch(classname=cname, options=options)
+        self.assertIsNotNone(search, msg="Search should not be None: " + cname + "/" + str(options))
+        self.assertEqual(cname, search.classname, msg="Classnames differ!")
+
+        cname = "weka.attributeSelection.CfsSubsetEval"
+        options = ["-P", "1", "-E", "1"]
+        evaluation = attribute_selection.ASEvaluation(classname=cname, options=options)
+        self.assertIsNotNone(evaluation, msg="Evaluation should not be None: " + cname + "/" + str(options))
+        self.assertEqual(cname, evaluation.classname, msg="Classnames differ!")
+
+        attsel = attribute_selection.AttributeSelection()
+        self.assertIsNotNone(search, msg="AttributeSelection should not be None!")
+
+        attsel.search(search)
+        attsel.evaluator(evaluation)
+
+    def test_attribute_selection(self):
+        """
+        Tests attribute selection.
+        """
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.attributeSelection.BestFirst"
+        options = ["-D", "1", "-N", "5"]
+        search = attribute_selection.ASSearch(classname=cname, options=options)
+        self.assertIsNotNone(search, msg="Search should not be None: " + cname + "/" + str(options))
+
+        cname = "weka.attributeSelection.CfsSubsetEval"
+        options = ["-P", "1", "-E", "1"]
+        evaluation = attribute_selection.ASEvaluation(classname=cname, options=options)
+        self.assertIsNotNone(evaluation, msg="Evaluation should not be None: " + cname + "/" + str(options))
+
+        attsel = attribute_selection.AttributeSelection()
+        self.assertIsNotNone(search, msg="AttributeSelection should not be None!")
+
+        attsel.search(search)
+        attsel.evaluator(evaluation)
+        attsel.select_attributes(data)
+        self.assertEqual(9, attsel.number_attributes_selected, msg="number_attributes_selected differs")
+        self.assertEqual([0, 4, 8, 11, 12, 19, 24, 32, 33, 38], attsel.selected_attributes.tolist(), msg="selected_attributes differ")
+        self.assertGreater(len(attsel.results_string), 0, msg="results_string should get produced")
+
+    def test_reduce(self):
+        """
+        Tests reducing of attributes.
+        """
+        pass
+
+    def test_ranking(self):
+        """
+        Tests ranking of attributes.
+        """
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datadir() + os.sep + "anneal.arff")
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        search = attribute_selection.ASSearch(classname="weka.attributeSelection.Ranker", options=["-N", "-1"])
+        self.assertIsNotNone(search, msg="Search should not be None!")
+
+        evaluation = attribute_selection.ASEvaluation("weka.attributeSelection.InfoGainAttributeEval")
+        self.assertIsNotNone(evaluation, msg="Evaluation should not be None!")
+
+        attsel = attribute_selection.AttributeSelection()
+        self.assertIsNotNone(attsel, msg="AttributeSelection should not be None!")
+
+        attsel.ranking(True)
+        attsel.folds(2)
+        attsel.crossvalidation(True)
+        attsel.seed(42)
+        attsel.search(search)
+        attsel.evaluator(evaluation)
+        attsel.select_attributes(data)
+
+        self.assertGreater(len(str(attsel.ranked_attributes)), 0, msg="results_string should get produced")
+        self.assertGreater(len(attsel.results_string), 0, msg="results_string should get produced")
 
 
 def suite():
