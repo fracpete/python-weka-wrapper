@@ -13,6 +13,7 @@ When upgrading Weka version:
 Commands for releasing on pypi.org:
 
 <pre>
+  find -name "*~" -delete
   python setup.py clean
   python setup.py sdist upload
   python setup.py build_sphinx
