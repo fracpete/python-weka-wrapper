@@ -39,17 +39,17 @@ def suite():
     :return: the test suite
     :rtype: unittest.TestSuite
     """
-    suite = unittest.TestSuite()
-    suite.addTests(wekatests.associations.suite())
-    suite.addTests(wekatests.attribute_selection.suite())
-    suite.addTests(wekatests.classifiers.suite())
-    suite.addTests(wekatests.clusterers.suite())
-    suite.addTests(wekatests.datagenerators.suite())
-    suite.addTests(wekatests.experiments.suite())
-    suite.addTests(wekatests.filters.suite())
-    suite.addTests(wekatests.coretests.all_tests.suite())
-    suite.addTests(wekatests.plottests.all_tests.suite())
-    return suite
+    result = unittest.TestSuite()
+    result.addTests(wekatests.associations.suite())
+    result.addTests(wekatests.attribute_selection.suite())
+    result.addTests(wekatests.classifiers.suite())
+    result.addTests(wekatests.clusterers.suite())
+    result.addTests(wekatests.datagenerators.suite())
+    result.addTests(wekatests.experiments.suite())
+    result.addTests(wekatests.filters.suite())
+    result.addTests(wekatests.coretests.all_tests.suite())
+    result.addTests(wekatests.plottests.all_tests.suite())
+    return result
 
 
 if __name__ == '__main__':

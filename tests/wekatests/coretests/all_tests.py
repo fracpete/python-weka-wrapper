@@ -38,16 +38,16 @@ def suite():
     :return: the test suite
     :rtype: unittest.TestSuite
     """
-    suite = unittest.TestSuite()
-    suite.addTests(wekatests.coretests.capabilities.suite())
-    suite.addTests(wekatests.coretests.classes.suite())
-    suite.addTests(wekatests.coretests.converters.suite())
-    suite.addTests(wekatests.coretests.dataset.suite())
-    suite.addTests(wekatests.coretests.serialization.suite())
-    suite.addTests(wekatests.coretests.types.suite())
-    suite.addTests(wekatests.coretests.utils.suite())
-    suite.addTests(wekatests.coretests.version.suite())
-    return suite
+    result = unittest.TestSuite()
+    result.addTests(wekatests.coretests.capabilities.suite())
+    result.addTests(wekatests.coretests.classes.suite())
+    result.addTests(wekatests.coretests.converters.suite())
+    result.addTests(wekatests.coretests.dataset.suite())
+    result.addTests(wekatests.coretests.serialization.suite())
+    result.addTests(wekatests.coretests.types.suite())
+    result.addTests(wekatests.coretests.utils.suite())
+    result.addTests(wekatests.coretests.version.suite())
+    return result
 
 
 if __name__ == '__main__':

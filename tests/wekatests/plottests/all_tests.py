@@ -34,12 +34,12 @@ def suite():
     :return: the test suite
     :rtype: unittest.TestSuite
     """
-    suite = unittest.TestSuite()
-    suite.addTests(wekatests.plottests.classifiers.suite())
-    suite.addTests(wekatests.plottests.clusterers.suite())
-    suite.addTests(wekatests.plottests.dataset.suite())
-    suite.addTests(wekatests.plottests.graph.suite())
-    return suite
+    result = unittest.TestSuite()
+    result.addTests(wekatests.plottests.classifiers.suite())
+    result.addTests(wekatests.plottests.clusterers.suite())
+    result.addTests(wekatests.plottests.dataset.suite())
+    result.addTests(wekatests.plottests.graph.suite())
+    return result
 
 
 if __name__ == '__main__':
