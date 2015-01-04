@@ -57,7 +57,7 @@ Build classifier on dataset, print model and draw graph
    print(cls)
 
    import weka.plot.graph as graph  # NB: pygraphviz and PIL are required
-   graph.plot_dot_graph(cls.graph())
+   graph.plot_dot_graph(cls.graph)
 
 
 Build classifier incrementally with data and print model
