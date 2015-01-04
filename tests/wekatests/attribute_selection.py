@@ -46,6 +46,19 @@ class TestAttributeSelection(weka_test.WekaTest):
         attsel.search(search)
         attsel.evaluator(evaluation)
 
+    def test_capabilities(self):
+        """
+        Tests the capabilities.
+        """
+        cname = "weka.attributeSelection.CfsSubsetEval"
+        options = ["-P", "1", "-E", "1"]
+        evaluation = attribute_selection.ASEvaluation(classname=cname, options=options)
+        self.assertIsNotNone(evaluation, msg="Evaluation should not be None: " + cname + "/" + str(options))
+        self.assertEqual(cname, evaluation.classname, msg="Classnames differ!")
+
+        caps = evaluation.capabilities
+        self.assertIsNotNone(caps, msg="Capabilities are None!")
+
     def test_attribute_selection(self):
         """
         Tests attribute selection.
