@@ -97,8 +97,10 @@ Perform the following steps:
 * install `.Net 4.0 <http://go.microsoft.com/fwlink/?LinkID=187668>`_
 * install `Windows SDK 7.1 <http://www.microsoft.com/download/details.aspx?id=8279>`_
 * install `pip` with these steps:
+
  * download from `here <https://bootstrap.pypa.io/get-pip.py>`_
  * install using `python get-pip.py`
+
 * open Windows SDK command prompt (**not** the regular command prompt!) and install `javabridge` and `python-weka-wrapper`
 
   .. code-block:: bat
