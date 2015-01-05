@@ -156,6 +156,7 @@ class TestDataset(weka_test.WekaTest):
 
         data.class_index = data.num_attributes - 1
         self.assertEqual(38, data.class_index, msg="class_index differs")
+        self.assertEqual(38, data.class_attribute.index, msg="class_index differs")
 
         data.class_is_first()
         self.assertEqual(0, data.class_index, msg="class_index differs")
@@ -187,6 +188,30 @@ class TestDataset(weka_test.WekaTest):
         data.class_is_last()
         data.no_class()
         self.assertFalse(data.has_class(), msg="Should not have class set!")
+
+        # changing rows
+        data1 = loader.load_file(self.datafile("anneal.arff"))
+        self.assertIsNotNone(data1, msg="Failed to load data!")
+        data2 = loader.load_file(self.datafile("anneal.arff"))
+        self.assertIsNotNone(data2, msg="Failed to load data!")
+
+        inst1 = data1.get_instance(0)
+        inst2 = data2.get_instance(0)
+        self.assertEqual(inst1.values.tolist(), inst2.values.tolist(), msg="values differ")
+
+        data1.add_instance(inst2)
+        self.assertEqual(899, data1.num_instances, msg="num_instances differs (add)")
+
+        inst2 = data2.get_instance(2)
+        data1.add_instance(inst2, index=10)
+        inst1 = data1.get_instance(10)
+        self.assertEqual(900, data1.num_instances, msg="num_instances differs (insert)")
+        self.assertEqual(inst1.values.tolist(), inst2.values.tolist(), msg="values differ (insert)")
+
+        inst2 = data2.get_instance(1)
+        data1.set_instance(0, inst2)
+        inst1 = data1.get_instance(0)
+        self.assertEqual(inst1.values.tolist(), inst2.values.tolist(), msg="values differ (set)")
 
 
 def suite():

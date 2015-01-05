@@ -37,6 +37,17 @@ class Instances(JavaObject):
         """
         self.enforce_type(jobject, "weka.core.Instances")
         super(Instances, self).__init__(jobject)
+        self.__attribute = javabridge.make_call(self.jobject, "attribute", "(I)Lweka/core/Attribute;")
+        self.__attribute_by_name = javabridge.make_call(self.jobject, "attribute", "(Ljava/lang/String;)Lweka/core/Attribute;")
+        self.__num_attributes = javabridge.make_call(self.jobject, "numAttributes", "()I")
+        self.__num_instances = javabridge.make_call(self.jobject, "numInstances", "()I")
+        self.__get_class_index = javabridge.make_call(self.jobject, "classIndex", "()I")
+        self.__set_class_index = javabridge.make_call(self.jobject, "setClassIndex", "(I)V")
+        self.__class_attribute = javabridge.make_call(self.jobject, "classAttribute", "()Lweka/core/Attribute;")
+        self.__get_instance = javabridge.make_call(self.jobject, "instance", "(I)Lweka/core/Instance;")
+        self.__set_instance = javabridge.make_call(self.jobject, "set", "(ILweka/core/Instance;)Lweka/core/Instance;")
+        self.__append_instance = javabridge.make_call(self.jobject, "add", "(Lweka/core/Instance;)Z")
+        self.__insert_instance = javabridge.make_call(self.jobject, "add", "(ILweka/core/Instance;)V")
 
     def __iter__(self):
         """
@@ -62,7 +73,7 @@ class Instances(JavaObject):
         :return: the number of attributes
         :rtype: int
         """
-        return javabridge.call(self.jobject, "numAttributes", "()I")
+        return self.__num_attributes()
 
     def attributes(self):
         """
@@ -78,7 +89,7 @@ class Instances(JavaObject):
         :return: the attribute
         :rtype: Attribute
         """
-        return Attribute(javabridge.call(self.jobject, "attribute", "(I)Lweka/core/Attribute;", index))
+        return Attribute(self.__attribute(index))
 
     def attribute_by_name(self, name):
         """
@@ -88,7 +99,7 @@ class Instances(JavaObject):
         :return: the attribute or None
         :rtype: Attribute
         """
-        att = javabridge.call(self.jobject, "attribute", "(Ljava/lang/String;)Lweka/core/Attribute;", name)
+        att = self.__attribute_by_name(javabridge.get_env().new_string(name))
         if att is None:
             return None
         else:
@@ -123,8 +134,8 @@ class Instances(JavaObject):
         :return: the number of instances
         :rtype: int
         """
-        return javabridge.call(self.jobject, "numInstances", "()I")
-        
+        return self.__num_instances()
+
     @property
     def class_attribute(self):
         """
@@ -132,7 +143,7 @@ class Instances(JavaObject):
         :return: the class attribute
         :rtype: Attribute
         """
-        return Attribute(javabridge.call(self.jobject, "classAttribute", "()Lweka/core/Attribute;"))
+        return Attribute(self.__class_attribute())
 
     @property
     def class_index(self):
@@ -141,7 +152,7 @@ class Instances(JavaObject):
         :return: the class index, -1 if not set
         :rtype: int
         """
-        return javabridge.call(self.jobject, "classIndex", "()I")
+        return self.__get_class_index()
 
     @class_index.setter
     def class_index(self, index):
@@ -150,7 +161,7 @@ class Instances(JavaObject):
         :param index: the new index, use -1 to unset
         :type index: int
         """
-        javabridge.call(self.jobject, "setClassIndex", "(I)V", index)
+        self.__set_class_index(index)
 
     def has_class(self):
         """
@@ -186,8 +197,8 @@ class Instances(JavaObject):
         :return: the instance
         :rtype: Instance
         """
-        return Instance(javabridge.call(self.jobject, "instance", "(I)Lweka/core/Instance;", index))
-        
+        return Instance(self.__get_instance(index))
+
     def add_instance(self, inst, index=None):
         """
         Adds the specified instance to the dataset.
@@ -197,9 +208,9 @@ class Instances(JavaObject):
         :type index: int
         """
         if index is None:
-            javabridge.call(self.jobject, "add", "(Lweka/core/Instance;)Z", inst.jobject)
+            self.__append_instance(inst.jobject)
         else:
-            javabridge.call(self.jobject, "add", "(ILweka/core/Instance;)V", index, inst.jobject)
+            self.__insert_instance(index, inst.jobject)
 
     def set_instance(self, index, inst):
         """
@@ -212,7 +223,7 @@ class Instances(JavaObject):
         :rtype: Instance
         """
         return Instance(
-            javabridge.call(self.jobject, "set", "(ILweka/core/Instance;)Lweka/core/Instance;", index, inst.jobject))
+            self.__set_instance(index, inst.jobject))
             
     def delete(self, index=None):
         """
