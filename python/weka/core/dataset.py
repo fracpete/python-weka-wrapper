@@ -152,6 +152,20 @@ class Instances(JavaObject):
         """
         javabridge.call(self.jobject, "setClassIndex", "(I)V", index)
 
+    def has_class(self):
+        """
+        Returns whether a class attribute is set(convenience method).
+        :return: whether a class attribute is currently set
+        :rtype: bool
+        """
+        return self.class_index != -1
+
+    def no_class(self):
+        """
+        Unsets the class attribute (convenience method).
+        """
+        self.class_index = -1
+
     def class_is_first(self):
         """
         Sets the first attribute as class attribute (convenience method).

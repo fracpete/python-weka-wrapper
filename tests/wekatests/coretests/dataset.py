@@ -134,6 +134,7 @@ class TestDataset(weka_test.WekaTest):
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
         data = loader.load_file(self.datafile("anneal.arff"))
         self.assertIsNotNone(data, msg="Failed to load data!")
+        self.assertFalse(data.has_class(), msg="Should not have class set!")
 
         count = 0
         for i in data:
@@ -154,9 +155,11 @@ class TestDataset(weka_test.WekaTest):
 
         data.class_is_first()
         self.assertEqual(0, data.class_index, msg="class_index differs")
+        self.assertTrue(data.has_class(), msg="Should have class set!")
 
         data.class_is_last()
         self.assertEqual(38, data.class_index, msg="class_index differs")
+        self.assertTrue(data.has_class(), msg="Should have class set!")
 
         att = data.attribute(0)
         self.assertIsNotNone(att, msg="Attribute should not be None!")
@@ -176,6 +179,10 @@ class TestDataset(weka_test.WekaTest):
 
         data.delete(3)
         self.assertEqual(897, data.num_instances, msg="num_instances differs")
+
+        data.class_is_last()
+        data.no_class()
+        self.assertFalse(data.has_class(), msg="Should not have class set!")
 
 
 def suite():

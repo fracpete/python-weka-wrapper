@@ -4,6 +4,7 @@ Changelog
 0.2.2 (????-??-??)
 ------------------
 
+- added convenience methods `no_class` (to unset class) and `has_class` (class set?) to `Instances` class
 - ...
 
 
