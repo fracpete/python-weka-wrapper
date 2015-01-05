@@ -127,6 +127,10 @@ class TestDataset(weka_test.WekaTest):
         inst.set_value(3, 6.3)
         self.assertEqual(6.3, inst.get_value(3), msg="numeric value differs")
 
+        self.assertEqual(1, inst.weight, msg="weight should be 1")
+        inst.weight = 0.5
+        self.assertEqual(0.5, inst.weight, msg="weights differ")
+
     def test_instances(self):
         """
         Tests the Instances class.

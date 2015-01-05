@@ -458,6 +458,14 @@ class Instance(JavaObject):
         """
         self.enforce_type(jobject, "weka.core.Instance")
         super(Instance, self).__init__(jobject)
+        self.__set_value = javabridge.make_call(self.jobject, "setValue", "(ID)V")
+        self.__get_value = javabridge.make_call(self.jobject, "value", "(I)D")
+        self.__set_string_value = javabridge.make_call(self.jobject, "setValue", "(ILjava/lang/String;)V")
+        self.__get_string_value = javabridge.make_call(self.jobject, "stringValue", "(I)Ljava/lang/String;")
+        self.__set_weight = javabridge.make_call(self.jobject, "setWeight", "(D)V")
+        self.__get_weight = javabridge.make_call(self.jobject, "weight", "()D")
+        self.__is_missing = javabridge.make_call(self.jobject, "isMissing", "(I)Z")
+        self.__class_index = javabridge.make_call(self.jobject, "classIndex", "()I")
 
     def __iter__(self):
         """
@@ -523,7 +531,7 @@ class Instance(JavaObject):
         :return: the class index, -1 if not set
         :rtype: int
         """
-        return javabridge.call(self.jobject, "classIndex", "()I")
+        return self.__class_index()
 
     def set_value(self, index, value):
         """
@@ -533,7 +541,7 @@ class Instance(JavaObject):
         :param value: the internal float value to set
         :type value: float
         """
-        javabridge.call(self.jobject, "setValue", "(ID)V", index, value)
+        self.__set_value(index, value)
 
     def get_value(self, index):
         """
@@ -543,7 +551,7 @@ class Instance(JavaObject):
         :return: the internal value
         :rtype: float
         """
-        return javabridge.call(self.jobject, "value", "(I)D", index)
+        return self.__get_value(index)
 
     def set_string_value(self, index, s):
         """
@@ -553,7 +561,7 @@ class Instance(JavaObject):
         :param s: the string value
         :type s: str
         """
-        return javabridge.call(self.jobject, "setValue", "(ILjava/lang/String;)V", index, s)
+        return self.__set_string_value(index, javabridge.get_env().new_string(s))
 
     def get_string_value(self, index):
         """
@@ -563,7 +571,7 @@ class Instance(JavaObject):
         :return: the string value
         :rtype: str
         """
-        return javabridge.call(self.jobject, "stringValue", "(I)Ljava/lang/String;", index)
+        return javabridge.get_env().get_string(self.__get_string_value(index))
 
     def get_relational_value(self, index):
         """
@@ -591,7 +599,7 @@ class Instance(JavaObject):
         :return: whether the value is missing
         :rtype: bool
         """
-        return javabridge.call(self.jobject, "isMissing", "(I)Z", index)
+        return self.__is_missing(index)
 
     def has_missing(self):
         """
@@ -608,7 +616,7 @@ class Instance(JavaObject):
         :return: the weight
         :rtype: float
         """
-        return javabridge.call(self.jobject, "weight", "()D")
+        return self.__get_weight()
 
     @weight.setter
     def weight(self, weight):
@@ -617,7 +625,7 @@ class Instance(JavaObject):
         :param weight: the weight to set
         :type weight: float
         """
-        javabridge.call(self.jobject, "setWeight", "(D)V", weight)
+        self.__set_weight(weight)
 
     @property
     def values(self):
