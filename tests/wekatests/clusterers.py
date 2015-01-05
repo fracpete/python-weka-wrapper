@@ -96,9 +96,12 @@ class TestClusterers(weka_test.WekaTest):
         self.assertIsNotNone(cls, msg="Failed to instantiate clusterer!")
         cls.build_clusterer(data)
 
+        preds = []
         for i in range(10):
             cluster = cls.cluster_instance(data.get_instance(i))
             self.assertIsNotNone(cluster, msg="Failed to cluster instance")
+            preds.append(cluster)
+        self.assertEqual([1, 0, 0, 1, 1, 1, 0, 0, 0, 0], preds, msg="Clusters differ")
 
     def test_distribution_for_instance(self):
         """
@@ -113,10 +116,16 @@ class TestClusterers(weka_test.WekaTest):
         self.assertIsNotNone(cls, msg="Failed to instantiate clusterer!")
         cls.build_clusterer(data)
 
+        preds = []
         for i in range(10):
             dist = cls.distribution_for_instance(data.get_instance(i))
             self.assertIsNotNone(dist, msg="Failed to obtain cluster membership for instance")
             self.assertEqual(2, len(dist), msg="Number of clusters differs")
+            preds.append(dist)
+        expected = [[0., 1.], [1., 0.], [1., 0.], [0., 1.], [0., 1.], [0., 1.], [1., 0.], [1., 0.], [1., 0.], [1., 0.]]
+        self.assertEqual(len(expected), len(preds), msg="Expected/predicted differ in length - update required!")
+        for i in range(len(expected)):
+            self.assertEqual(expected[i], preds[i].tolist(), msg="Cluster distributions differ")
 
     def test_clusterevaluation(self):
         """
