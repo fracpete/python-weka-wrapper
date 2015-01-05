@@ -167,9 +167,14 @@ class TestClassifiers(weka_test.WekaTest):
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
 
         cls.build_classifier(data)
-        for i in range(10):
+        preds = []
+        for i in range(10,20):
             pred = cls.classify_instance(data.get_instance(i))
             self.assertIsNotNone(pred)
+            preds.append(pred)
+        self.assertEqual(
+            [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0, 2.0, 2.0],
+            preds, msg="Classifications differ")
 
         # 2. numeric
         loader = converters.Loader(classname="weka.core.converters.ArffLoader")
@@ -183,9 +188,14 @@ class TestClassifiers(weka_test.WekaTest):
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
 
         cls.build_classifier(data)
+        preds = []
         for i in range(10):
             pred = cls.classify_instance(data.get_instance(i))
             self.assertIsNotNone(pred)
+            preds.append(pred)
+        expected = [24.313, 33.359, 28.569, 26.365, 32.680, 29.149, 26.998, 22.971, 13.160, 7.394]
+        for i in range(len(preds)):
+            self.assertAlmostEqual(expected[i], preds[i], places=3, msg="Classifications differ")
 
     def test_costmatrix(self):
         """
