@@ -55,8 +55,8 @@ class Classifier(OptionHandler):
         self.is_updateable = self.check_type(jobject, "weka.classifiers.UpdateableClassifier")
         self.is_drawable = self.check_type(jobject, "weka.core.Drawable")
         super(Classifier, self).__init__(jobject=jobject, options=options)
-        self.classify = javabridge.make_call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)D")
-        self.distribution = javabridge.make_call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D")
+        self.__classify = javabridge.make_call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)D")
+        self.__distribution = javabridge.make_call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D")
 
     @property
     def capabilities(self):
@@ -94,7 +94,7 @@ class Classifier(OptionHandler):
         :return: the classification (either regression value or 0-based label index)
         :rtype: float
         """
-        return self.classify(inst.jobject)
+        return self.__classify(inst.jobject)
 
     def distribution_for_instance(self, inst):
         """
@@ -104,7 +104,7 @@ class Classifier(OptionHandler):
         :return: the class distribution array
         :rtype: ndarray
         """
-        pred = self.distribution(inst.jobject)
+        pred = self.__distribution(inst.jobject)
         return javabridge.get_env().get_double_array_elements(pred)
 
     @property
