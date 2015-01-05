@@ -52,6 +52,8 @@ class Clusterer(OptionHandler):
         self.is_drawable = self.check_type(jobject, "weka.core.Drawable")
         self.enforce_type(jobject, "weka.clusterers.Clusterer")
         super(Clusterer, self).__init__(jobject=jobject, options=options)
+        self.cluster = javabridge.make_call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)I")
+        self.distribution = javabridge.make_call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D")
 
     @property
     def capabilities(self):
@@ -98,7 +100,7 @@ class Clusterer(OptionHandler):
         :return: the clustering result
         :rtype: float
         """
-        return javabridge.call(self.jobject, "clusterInstance", "(Lweka/core/Instance;)I", inst.jobject)
+        return self.cluster(inst.jobject)
 
     def distribution_for_instance(self, inst):
         """
@@ -108,7 +110,7 @@ class Clusterer(OptionHandler):
         :return: the cluster distribution
         :rtype: float[]
         """
-        pred = javabridge.call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D", inst.jobject)
+        pred = self.distribution(inst.jobject)
         return javabridge.get_env().get_double_array_elements(pred)
 
     @property

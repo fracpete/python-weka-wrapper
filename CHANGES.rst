@@ -5,6 +5,8 @@ Changelog
 ------------------
 
 - added convenience methods `no_class` (to unset class) and `has_class` (class set?) to `Instances` class
+- switched to using method objects to speed up methods `classify_instance`/`distribution_for_instance` in `Classifier` class
+- switched to using method objects to speed up methods `cluster_instance`/`distribution_for_instance` in `Clusterer` class
 - ...
 
 
