@@ -8,6 +8,7 @@ Changelog
 - switched to using faster method objects for methods `classify_instance`/`distribution_for_instance` in `Classifier` class
 - switched to using faster method objects for methods `cluster_instance`/`distribution_for_instance` in `Clusterer` class
 - switched to using faster method objects for methods `class_index`, `is_missing`, `get/set_value`, `get/set_string_value`, `weight` in `Instance` class
+- switched to using faster method objects for methods `input`, `output`, `outputformat` in `Filter` class
 - ...
 
 

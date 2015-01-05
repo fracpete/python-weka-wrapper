@@ -17,6 +17,7 @@
 import unittest
 import weka.core.jvm as jvm
 import weka.core.converters as converters
+import weka.core.dataset as dataset
 import weka.filters as filters
 import wekatests.tests.weka_test as weka_test
 
@@ -71,6 +72,8 @@ class TestFilters(weka_test.WekaTest):
         flter = filters.Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1,3"])
         flter.inputformat(data)
         filtered = flter.outputformat()
+        self.assertIsNotNone(filtered)
+        self.assertTrue(isinstance(filtered, dataset.Instances), msg="Should be Instances object")
 
         for inst in data:
             flter.input(inst)

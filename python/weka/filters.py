@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # filters.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import logging
@@ -51,6 +51,9 @@ class Filter(OptionHandler):
             jobject = Filter.new_instance(classname)
         self.enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject=jobject, options=options)
+        self.__input = javabridge.make_call(self.jobject, "input", "(Lweka/core/Instance;)Z")
+        self.__output = javabridge.make_call(self.jobject, "output", "()Lweka/core/Instance;")
+        self.__outputformat = javabridge.make_call(self.jobject, "getOutputFormat", "()Lweka/core/Instances;")
 
     def capabilities(self):
         """
@@ -74,7 +77,7 @@ class Filter(OptionHandler):
         :param inst: the instance to filter
         :type inst: Instance
         """
-        return javabridge.call(self.jobject, "input", "(Lweka/core/Instance;)Z", inst.jobject)
+        return self.__input(inst.jobject)
 
     def outputformat(self):
         """
@@ -82,7 +85,7 @@ class Filter(OptionHandler):
         :return: the output format
         :rtype: Instances
         """
-        inst = javabridge.call(self.jobject, "getOutputFormat", "()Lweka/core/Instances;")
+        inst = self.__outputformat()
         if inst is None:
             return None
         else:
@@ -94,7 +97,7 @@ class Filter(OptionHandler):
         :return: the filtered instance
         :rtype: an Instance object
         """
-        return Instance(javabridge.call(self.jobject, "output", "()Lweka/core/Instance;"))
+        return Instance(jobject=self.__output())
 
     def filter(self, data):
         """
