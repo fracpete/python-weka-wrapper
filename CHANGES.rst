@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.2 (????-??-??)
+0.2.2 (2015-01-05)
 ------------------
 
 - added convenience methods `no_class` (to unset class) and `has_class` (class set?) to `Instances` class
@@ -11,7 +11,6 @@ Changelog
 - switched to using faster method objects for methods `input`, `output`, `outputformat` in `Filter` class
 - switched to using faster method objects for methods `attribute`, `attribute_by_name`, `num_attributes`, `num_instances`,
   `class_index`, `class_attribute`, `set_instance`, `get_instance`, `add_instance` in `Instances` class
-- ...
 
 
 0.2.1 (2015-01-05)
