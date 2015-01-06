@@ -13,21 +13,38 @@ on the instructions below, please use the following mailing list:
 https://groups.google.com/forum/#!forum/python-weka-wrapper
 
 
+Prerequisites for all plaforms
+------------------------------
+
+You need an `Oracle JDK (1.7.x) <http://www.oracle.com/technetwork/java/javase/downloads/>`_
+installed and the `JAVA_HOME` `environment variable <http://docs.oracle.com/cd/E19182-01/820-7851/inst_cli_jdk_javahome_t/index.html>`_
+pointing to the installation directory in order to use *python-weka-wrapper* library.
+
+*Why not OpenJDK?* Weka is developed and tested with Oracle's JDK/JRE. There is no guarantee
+that it will work with OpenJDK.
+
+
 Debian/Ubuntu
 -------------
 
-First, you need to be able to compile C/C++ code:
+First, you need to be able to compile C/C++ code and Python modules:
 
 .. code-block:: bash
 
-   $ sudo apt-get install build-essential
+   $ sudo apt-get install build-essential python-dev
 
 Now, you can install the various packages that `python-weka-wrapper` requires, which are available from the repositories:
 
 .. code-block:: bash
 
-   $ sudo apt-get install python-numpy python-imaging python-matplotlib python-pygraphviz
+   $ sudo apt-get install python-pip python-numpy python-imaging python-matplotlib python-pygraphviz
 
+Install OpenJDK as well, in order to get all the header files that *javabridge* compiles against
+(but don't use it for starting up JVMs):
+
+.. code-block:: bash
+
+   $ sudo apt-get install default-jdk
 
 Finally, you can use `pip` to install the Python packages that are not available in the repositories:
 
@@ -41,16 +58,19 @@ Other Linux distributions
 -------------------------
 
 See `these <http://docs.python-guide.org/en/latest/starting/install/linux/>`_ general instructions
-for installing Python on Linux. Also, you need to be able to compile C/C++ code on your machine.
+for installing Python on Linux. You need to be able to compile C/C++ code and Python modules
+(i.e., Python header files are required). By installing OpenJDK, you should be able to compile
+*javabridge* against its header files (for JNI access).
 
-We need to install the following Python packages, preferably through your package manager (e.g., `yum`):
+Then you need to install the following Python packages, preferably through your package manager (e.g., `yum`):
 
+* pip
 * numpy
 * PIL
 * matplotlib
 * pygraphviz
 
-Once these libraries are installed, we can use `pip` to install the remaining Python packages:
+Once these libraries are installed, you can use `pip` to install the remaining Python packages:
 
 .. code-block:: bash
 
@@ -64,7 +84,7 @@ Mac OSX
 Please following `these <http://docs.python-guide.org/en/latest/starting/install/osx/>`_
 general instructions for installing Python.
 
-You also need to install *Xcode* in order to compile C/C++ code and an *Oracle JDK 1.7.x*.
+In order to compile C/C++ code, you need to install *Xcode*.
 
 You need to install the following Python packages:
 
@@ -73,7 +93,7 @@ You need to install the following Python packages:
 * matplotlib
 * pygraphviz
 
-Once these libraries are installed, we can use `pip` to install the remaining Python packages:
+Once these libraries are installed, you can use `pip` to install the remaining Python packages:
 
 .. code-block:: bash
 
@@ -90,7 +110,6 @@ I.e., if you install a 32-bit version of Python, you need to install a 32-bit JD
 
 Perform the following steps:
 
-* install an `Oracle JDK (1.7.x) <http://www.oracle.com/technetwork/java/javase/downloads/>`_
 * install `Python <www.python.org/downloads>`_, make sure you check `Add python.exe to path` during the installation
 * add the Python scripts directory to your `PATH` environment variable, e.g., `C:\\Python27\\Scripts`
 * install `numpy 1.8.x <http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy>`_
