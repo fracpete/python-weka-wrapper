@@ -13,6 +13,14 @@ on the instructions below, please use the following mailing list:
 https://groups.google.com/forum/#!forum/python-weka-wrapper
 
 
+Videos
+------
+
+You can find videos on YouTube that show the installation process:
+
+* `Ubuntu 14.04 <https://www.youtube.com/watch?v=8d0PVBlttM4>`_
+
+
 Prerequisites for all plaforms
 ------------------------------
 
