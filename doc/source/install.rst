@@ -110,9 +110,9 @@ I.e., if you install a 32-bit version of Python, you need to install a 32-bit JD
 
 Perform the following steps:
 
-* install `Python <www.python.org/downloads>`_, make sure you check `Add python.exe to path` during the installation
+* install `Python <http://www.python.org/downloads>`_, make sure you check `Add python.exe to path` during the installation
 * add the Python scripts directory to your `PATH` environment variable, e.g., `C:\\Python27\\Scripts`
-* install `numpy 1.8.x <http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy>`_
+* install `numpy 1.9.x <http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy>`_
 * install `.Net 4.0 <http://go.microsoft.com/fwlink/?LinkID=187668>`_
 * install `Windows SDK 7.1 <http://www.microsoft.com/download/details.aspx?id=8279>`_
 * install `pip` with these steps:
