@@ -17,7 +17,7 @@ Uses:
 
 ## Installation
 
-Detailed instructions on installing the library are located
+Detailed instructions and links to videos on installing the library are located
 [here](http://pythonhosted.org/python-weka-wrapper/install.html).
 
 Please note, that you need a build environment to compile some libraries from source.

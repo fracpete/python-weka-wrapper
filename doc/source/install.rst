@@ -16,9 +16,11 @@ https://groups.google.com/forum/#!forum/python-weka-wrapper
 Videos
 ------
 
-You can find videos on YouTube that show the installation process:
+You can find videos on `YouTube <https://www.youtube.com/channel/UCYkzno8dbnAasWakSXVsuPA>`_ that show the installation process:
 
-* `Ubuntu 14.04 <https://www.youtube.com/watch?v=8d0PVBlttM4>`_
+* `Ubuntu 14.04 (64-bit) <https://www.youtube.com/watch?v=8d0PVBlttM4>`_
+* `Windows 7 (32-bit) <https://www.youtube.com/watch?v=KdDt9rT5wTo>`_
+* `Windows 8.1 (64-bit) <https://www.youtube.com/watch?v=PeUfDVOA_1Y>`_
 
 
 Prerequisites for all plaforms
@@ -121,7 +123,7 @@ Perform the following steps:
 * install `Python <http://www.python.org/downloads>`_, make sure you check `Add python.exe to path` during the installation
 * add the Python scripts directory to your `PATH` environment variable, e.g., `C:\\Python27\\Scripts`
 * install `numpy 1.9.x <http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy>`_
-* install `.Net 4.0 <http://go.microsoft.com/fwlink/?LinkID=187668>`_
+* install `.Net 4.0 <http://go.microsoft.com/fwlink/?LinkID=187668>`_ (if not already installed)
 * install `Windows SDK 7.1 <http://www.microsoft.com/download/details.aspx?id=8279>`_
 * install `pip` with these steps:
 
