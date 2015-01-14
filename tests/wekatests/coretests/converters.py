@@ -19,6 +19,7 @@ import os
 import weka.core.jvm as jvm
 import weka.core.converters as converters
 import wekatests.tests.weka_test as weka_test
+import numpy
 
 
 class TestConverters(weka_test.WekaTest):
@@ -85,6 +86,34 @@ class TestConverters(weka_test.WekaTest):
         saver.save_file(data, outfile)
         self.assertTrue(os.path.exists(outfile), "File does not exist: " + outfile)
         self.delfile(outfile)
+
+    def test_ndarray_to_instances(self):
+        """
+        Tests the ndarray_to_instances method.
+        """
+        x = numpy.array([[1, 2, 3], [4, 5, 6]], numpy.float64)
+        inst = converters.ndarray_to_instances(x, "test")
+        self.assertIsNotNone(inst, msg="Should not be None!")
+        self.assertEqual("Att-1", inst.attribute(0).name, msg="Attribute name differs at #0")
+        self.assertEqual(3, inst.num_attributes, msg="# of columns differ")
+        self.assertEqual(2, inst.num_instances, msg="# of rows differ")
+        self.assertEqual(1, inst.get_instance(0).get_value(0), msg="value differs at 0,0")
+
+        x = numpy.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]], numpy.float64)
+        inst = converters.ndarray_to_instances(x, "test", att_template="@-!")
+        self.assertIsNotNone(inst, msg="Should not be None!")
+        self.assertEqual("test-0", inst.attribute(0).name, msg="Attribute name differs at #0")
+        self.assertEqual(3, inst.num_attributes, msg="# of columns differ")
+        self.assertEqual(2, inst.num_instances, msg="# of rows differ")
+        self.assertEqual(1.1, inst.get_instance(0).get_value(0), msg="value differs at 0,0")
+
+        x = numpy.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]], numpy.float64)
+        inst = converters.ndarray_to_instances(x, "test", att_list=["a", "b", "c"])
+        self.assertIsNotNone(inst, msg="Should not be None!")
+        self.assertEqual("a", inst.attribute(0).name, msg="Attribute name differs at #0")
+        self.assertEqual(3, inst.num_attributes, msg="# of columns differ")
+        self.assertEqual(2, inst.num_instances, msg="# of rows differ")
+        self.assertEqual(1.1, inst.get_instance(0).get_value(0), msg="value differs at 0,0")
 
 
 def suite():

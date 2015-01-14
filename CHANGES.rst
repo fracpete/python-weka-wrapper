@@ -4,6 +4,7 @@ Changelog
 0.2.3 (????-??-??)
 ------------------
 
+- added method `ndarray_to_instances` to `weka.converters` module for converting Numpy 2-dimensional array into `Instances` object
 - ...
 
 

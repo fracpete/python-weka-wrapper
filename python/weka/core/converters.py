@@ -12,12 +12,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # converters.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
-from weka.core.dataset import Instances, Instance
+from weka.core.dataset import Instances, Instance, Attribute
+import numpy
 
 
 class Loader(OptionHandler):
@@ -211,3 +212,46 @@ def saver_for_file(filename):
         return None
     else:
         return Saver(jobject=saver)
+
+
+def ndarray_to_instances(array, relation, att_template="Att-#", att_list=None):
+    """
+    Converts the numpy matrix into an Instances object and returns it.
+    :param array: the numpy ndarray to convert
+    :type array: numpy.darray
+    :param relation: the name of the dataset
+    :type relation: str
+    :param att_template: the prefix to use for the attribute names, "#" is the 1-based index,
+                         "!" is the 0-based index, "@" the relation name
+    :type att_template: str
+    :param att_list: the list of attribute names to use
+    :type att_list: list
+    :return: the generated instances object
+    :rtype: Instances
+    """
+    if len(numpy.shape(array)) != 2:
+        raise Exception("Number of array dimensions must be 2!")
+    rows, cols = numpy.shape(array)
+
+    # header
+    atts = []
+    if att_list is not None:
+        if len(att_list) != cols:
+            raise Exception(
+                "Number columns and provided attribute names differ: " + str(cols) + " != " + len(att_list))
+        for name in att_list:
+            att = Attribute.create_numeric(name)
+            atts.append(att)
+    else:
+        for i in xrange(cols):
+            name = att_template.replace("#", str(i+1)).replace("!", str(i)).replace("@", relation)
+            att = Attribute.create_numeric(name)
+            atts.append(att)
+    result = Instances.create_instances(relation, atts, rows)
+
+    # data
+    for i in xrange(rows):
+        inst = Instance.create_instance(array[i])
+        result.add_instance(inst)
+
+    return result
