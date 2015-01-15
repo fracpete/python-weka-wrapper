@@ -338,7 +338,7 @@ def plot_learning_curve(classifiers, train, test=None, increments=100, metric="p
                 evls[cl].append(getattr(evl, metric))
 
     fig, ax = plt.subplots()
-    ax.set_xlabel("steps")
+    ax.set_xlabel("# of instances")
     ax.set_ylabel(metric)
     ax.set_title(title)
     fig.canvas.set_window_title(title)
