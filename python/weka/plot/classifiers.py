@@ -279,7 +279,8 @@ def plot_learning_curve(classifiers, train, test=None, increments=100, metric="p
     :type metric: str
     :param title: the title for the plot
     :type title: str
-    :param label_template: the template for the label in the plot (#: 1-based index, @: class, $: options)
+    :param label_template: the template for the label in the plot
+                           (#: 1-based index, @: full classname, !: simple classname, $: options)
     :type label_template: str
     :param key_loc: the location string for the key
     :type key_loc: str
@@ -350,6 +351,7 @@ def plot_learning_curve(classifiers, train, test=None, increments=100, metric="p
         plot_label = label_template.\
             replace("#", str(i)).\
             replace("@", cl.classname).\
+            replace("!", cl.classname[cl.classname.rfind(".") + 1:]).\
             replace("$", utils.join_options(cl.options))
         ax.plot(steps, evl, label=plot_label)
     plt.draw()
