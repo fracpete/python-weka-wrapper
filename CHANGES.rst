@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 - added method `ndarray_to_instances` to `weka.converters` module for converting Numpy 2-dimensional array into `Instances` object
+- added method `plot_learning_curve` to `weka.plot.classifiers` module for creating learning curves for multiple classifiers for a specific metric
 - ...
 
 

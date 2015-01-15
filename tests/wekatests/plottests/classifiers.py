@@ -142,6 +142,20 @@ class TestClassifiers(weka_test.WekaTest):
         evl.crossvalidate_model(cls, data, 10, Random(1))
         plot.plot_prc(evl, class_index=[0, 1], wait=False)
 
+    def test_learning_curve(self):
+        """
+        Tests the learning_curve method.
+        """
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datafile("diabetes.arff"))
+        data.class_is_last()
+
+        cls = [
+            classifiers.Classifier(classname="weka.classifiers.trees.J48"),
+            classifiers.Classifier(classname="weka.classifiers.bayes.NaiveBayesUpdateable")]
+        plot.plot_learning_curve(cls, data, wait=False)
+        plot.plot_learning_curve(cls, data, increments=0.1, wait=False)
+
 
 def suite():
     """

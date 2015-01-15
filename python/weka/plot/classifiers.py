@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # classifiers.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import logging
@@ -21,7 +21,8 @@ if plot.matplotlib_available:
     import matplotlib.pyplot as plt
 from weka.core.classes import JavaObject
 from weka.core.dataset import Instances
-from weka.classifiers import NumericPrediction, NominalPrediction
+from weka.classifiers import Classifier, Evaluation, NumericPrediction, NominalPrediction
+import weka.core.utils as utils
 
 # logging setup
 logger = logging.getLogger(__name__)
@@ -71,9 +72,9 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, abs
     fig, ax = plt.subplots()
     if error is None and cls is None:
         ax.scatter(actual, predicted, s=absolute_size, alpha=0.5)
-    elif not cls is None:
+    elif cls is not None:
         ax.scatter(actual, predicted, c=cls, s=absolute_size, alpha=0.5)
-    elif not error is None:
+    elif error is not None:
         if not absolute:
             min_err = min(error)
             max_err = max(error)
@@ -90,7 +91,7 @@ def plot_classifier_errors(predictions, absolute=True, max_relative_size=50, abs
     ax.grid(True)
     fig.canvas.set_window_title(title)
     plt.draw()
-    if not outfile is None:
+    if outfile is not None:
         plt.savefig(outfile)
     if wait:
         plt.show()
@@ -205,7 +206,7 @@ def plot_roc(evaluation, class_index=None, title=None, key_loc="lower right", ou
         ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     plt.draw()
     plt.legend(loc=key_loc, shadow=True)
-    if not outfile is None:
+    if outfile is not None:
         plt.savefig(outfile)
     if wait:
         plt.show()
@@ -255,7 +256,105 @@ def plot_prc(evaluation, class_index=None, title=None, key_loc="lower center", o
         ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c="0.3")
     plt.draw()
     plt.legend(loc=key_loc, shadow=True)
-    if not outfile is None:
+    if outfile is not None:
+        plt.savefig(outfile)
+    if wait:
+        plt.show()
+
+
+def plot_learning_curve(classifiers, train, test=None, increments=100, metric="percent_correct",
+                        title="Learning curve", label_template="[#] @ $", key_loc="lower right",
+                        outfile=None, wait=True):
+    """
+    Plots
+    :param classifiers: list of Classifier template objects
+    :type classifiers: list of Classifier
+    :param train: dataset to use for the building the classifier, used for evaluating it test set None
+    :type train: Instances
+    :param test: optional dataset to use for the testing the built classifiers
+    :type test: Instances
+    :param increments: the increments (>= 1: # of instances, <1: percentage of dataset)
+    :type increments: float
+    :param metric: the name of the numeric metric to plot (Evaluation.<metric>)
+    :type metric: str
+    :param title: the title for the plot
+    :type title: str
+    :param label_template: the template for the label in the plot (#: 1-based index, @: class, $: options)
+    :type label_template: str
+    :param key_loc: the location string for the key
+    :type key_loc: str
+    :param outfile: the output file, ignored if None
+    :type outfile: str
+    :param wait: whether to wait for the user to close the plot
+    :type wait: bool
+    """
+
+    if not plot.matplotlib_available:
+        logger.error("Matplotlib is not installed, plotting unavailable!")
+        return
+    if not train.has_class():
+        logger.error("Training set has no class attribute set!")
+        return
+    if (test is not None) and (train.equal_headers(test) is not None):
+        logger.error("Training and test set are not compatible: " + train.equal_headers(test))
+        return
+
+    if increments >= 1:
+        inc = increments
+    else:
+        inc = round(train.num_instances * increments)
+
+    steps = []
+    cls = []
+    evls = {}
+    for classifier in classifiers:
+        cl = Classifier.make_copy(classifier)
+        cls.append(cl)
+        evls[cl] = []
+    if test is None:
+        tst = train
+    else:
+        tst = test
+
+    for i in xrange(train.num_instances):
+        if (i > 0) and (i % inc == 0):
+            steps.append(i+1)
+        for cl in cls:
+            # train
+            if cl.is_updateable:
+                if i == 0:
+                    tr = Instances.copy_instances(train, 0, 1)
+                    cl.build_classifier(tr)
+                else:
+                    cl.update_classifier(train.get_instance(i))
+            else:
+                if (i > 0) and (i % inc == 0):
+                    tr = Instances.copy_instances(train, 0, i + 1)
+                    cl.build_classifier(tr)
+            # evaluate
+            if (i > 0) and (i % inc == 0):
+                evl = Evaluation(tst)
+                evl.test_model(cl, tst)
+                evls[cl].append(getattr(evl, metric))
+
+    fig, ax = plt.subplots()
+    ax.set_xlabel("steps")
+    ax.set_ylabel(metric)
+    ax.set_title(title)
+    fig.canvas.set_window_title(title)
+    ax.grid(True)
+    i = 0
+    for cl in cls:
+        evl = evls[cl]
+        i += 1
+        plot_label = label_template.\
+            replace("#", str(i)).\
+            replace("@", cl.classname).\
+            replace("$", utils.join_options(cl.options))
+        ax.plot(steps, evl, label=plot_label)
+    plt.draw()
+    plt.legend(loc=key_loc, shadow=True)
+    if outfile is not None:
         plt.savefig(outfile)
     if wait:
         plt.show()
