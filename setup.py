@@ -109,6 +109,7 @@ setup(
     author_email='pythonwekawrapper at gmail dot com',
     install_requires=[
         "javabridge>=1.0.9",
+        "numpy"
     ],
     extras_require={
         'plots': ["matplotlib"],
