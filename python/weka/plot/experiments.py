@@ -25,8 +25,8 @@ from weka.experiments import ResultMatrix
 logger = logging.getLogger(__name__)
 
 
-def plot_experiment(mat, title="Experiment", axes_swapped=False, show_stdev=False, key_loc="lower right",
-                    outfile=None, wait=True):
+def plot_experiment(mat, title="Experiment", axes_swapped=False, measure="Statistic", show_stdev=False,
+                    key_loc="lower right", outfile=None, wait=True):
     """
     :param mat: the result matrix to plot
     :type mat: ResultMatrix
@@ -34,6 +34,8 @@ def plot_experiment(mat, title="Experiment", axes_swapped=False, show_stdev=Fals
     :type title: str
     :param axes_swapped: whether the axes whether swapped ("sets x cls" or "cls x sets")
     :type axes_swapped: bool
+    :param measure: the measure that is being displayed
+    :type measure: str
     :param show_stdev: whether to show the standard deviation as error bar
     :type show_stdev: bool
     :param key_loc: the location string for the key
@@ -54,11 +56,11 @@ def plot_experiment(mat, title="Experiment", axes_swapped=False, show_stdev=Fals
 
     fig, ax = plt.subplots()
     if axes_swapped:
-        ax.set_xlabel("Datasets")
+        ax.set_xlabel(measure)
         ax.set_ylabel("Classifiers")
     else:
         ax.set_xlabel("Classifiers")
-        ax.set_ylabel("Datasets")
+        ax.set_ylabel(measure)
     ax.set_title(title)
     fig.canvas.set_window_title(title)
     ax.grid(True)

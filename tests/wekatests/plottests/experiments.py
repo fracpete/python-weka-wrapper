@@ -59,8 +59,8 @@ class TestExperiments(weka_test.WekaTest):
         tester.multi_resultset_full(0, comparison_col)
 
         # plot
-        plot.plot_experiment(matrix, title="Random split (CC/StdDev)", show_stdev=True, wait=False)
-        plot.plot_experiment(matrix, title="Random split (CC)", wait=False)
+        plot.plot_experiment(matrix, title="Random split (w/ StdDev)", measure="Correlation coefficient", show_stdev=True, wait=False)
+        plot.plot_experiment(matrix, title="Random split", measure="Correlation coefficient", wait=False)
 
 
 def suite():
