@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # experiments.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import logging
 import javabridge
@@ -373,6 +373,174 @@ class ResultMatrix(OptionHandler):
             jobject = ResultMatrix.new_instance(classname)
         self.enforce_type(jobject, "weka.experiment.ResultMatrix")
         super(ResultMatrix, self).__init__(jobject=jobject, options=options)
+
+    @property
+    def rows(self):
+        """
+        Returns the row count.
+        :return: the count
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "getRowCount", "()I")
+
+    @property
+    def columns(self):
+        """
+        Returns the column count.
+        :return: the count
+        :rtype: int
+        """
+        return javabridge.call(self.jobject, "getColCount", "()I")
+
+    def is_col_hidden(self, index):
+        """
+        Returns whether the column is hidden.
+        :param index: the 0-based column index
+        :type index: int
+        :return: true if hidden
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "getColHidden", "(I)Z", index)
+
+    def hide_col(self, index):
+        """
+        Hides the column.
+        :param index: the 0-based column index
+        :type index: int
+        """
+        javabridge.call(self.jobject, "setColHidden", "(IZ)V", index, True)
+
+    def show_col(self, index):
+        """
+        Shows the column.
+        :param index: the 0-based column index
+        :type index: int
+        """
+        javabridge.call(self.jobject, "setColHidden", "(IZ)V", index, False)
+
+    def is_row_hidden(self, index):
+        """
+        Returns whether the row is hidden.
+        :param index: the 0-based row index
+        :type index: int
+        :return: true if hidden
+        :rtype: bool
+        """
+        return javabridge.call(self.jobject, "getRowHidden", "(I)Z", index)
+
+    def hide_row(self, index):
+        """
+        Hides the row.
+        :param index: the 0-based row index
+        :type index: int
+        """
+        javabridge.call(self.jobject, "setRowHidden", "(IZ)V", index, True)
+
+    def show_row(self, index):
+        """
+        Shows the row.
+        :param index: the 0-based row index
+        :type index: int
+        """
+        javabridge.call(self.jobject, "setRowHidden", "(IZ)V", index, False)
+
+    def get_row_name(self, index):
+        """
+        Returns the row name.
+        :param index: the 0-based row index
+        :type index: int
+        :return: the row name, None if invalid index
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "getRowName", "(I)Ljava/lang/String;", index)
+
+    def set_row_name(self, index, name):
+        """
+        Sets the row name.
+        :param index: the 0-based row index
+        :type index: int
+        :param name: the name of the row
+        :type name: str
+        """
+        javabridge.call(self.jobject, "setRowName", "(ILjava/lang/String;)V", index, name)
+
+    def get_col_name(self, index):
+        """
+        Returns the column name.
+        :param index: the 0-based row index
+        :type index: int
+        :return: the column name, None if invalid index
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "getColName", "(I)Ljava/lang/String;", index)
+
+    def set_col_name(self, index, name):
+        """
+        Sets the column name.
+        :param index: the 0-based row index
+        :type index: int
+        :param name: the name of the column
+        :type name: str
+        """
+        javabridge.call(self.jobject, "setColName", "(ILjava/lang/String;)V", index, name)
+
+    def get_mean(self, col, row):
+        """
+        Returns the mean at this location (if valid location).
+        :param col: the 0-based column index
+        :type col: int
+        :param row: the 0-based row index
+        :type row: int
+        :return: the mean
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "getMean", "(II)D", col, row)
+
+    def set_mean(self, col, row, mean):
+        """
+        Sets the mean at this location (if valid location).
+        :param col: the 0-based column index
+        :type col: int
+        :param row: the 0-based row index
+        :type row: int
+        :param mean: the mean to set
+        :type mean: float
+        """
+        javabridge.call(self.jobject, "setMean", "(IID)V", col, row, mean)
+
+    def get_stdev(self, col, row):
+        """
+        Returns the standard deviation at this location (if valid location).
+        :param col: the 0-based column index
+        :type col: int
+        :param row: the 0-based row index
+        :type row: int
+        :return: the standard deviation
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "getStdDev", "(II)D", col, row)
+
+    def set_stdev(self, col, row, stdev):
+        """
+        Sets the standard deviation at this location (if valid location).
+        :param col: the 0-based column index
+        :type col: int
+        :param row: the 0-based row index
+        :type row: int
+        :param stdev: the standard deviation to set
+        :type stdev: float
+        """
+        javabridge.call(self.jobject, "setStdDev", "(IID)V", col, row, stdev)
+
+    def average(self, col):
+        """
+        Returns the average mean at this location (if valid location).
+        :param col: the 0-based column index
+        :type col: int
+        :return: the mean
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "getAverage", "(I)D", col)
 
     def to_string_matrix(self):
         """
