@@ -12,13 +12,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # all_tests.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm
 import wekatests.plottests.classifiers
 import wekatests.plottests.clusterers
 import wekatests.plottests.dataset
+import wekatests.plottests.experiments
 import wekatests.plottests.graph
 
 
@@ -38,6 +39,7 @@ def suite():
     result.addTests(wekatests.plottests.classifiers.suite())
     result.addTests(wekatests.plottests.clusterers.suite())
     result.addTests(wekatests.plottests.dataset.suite())
+    result.addTests(wekatests.plottests.experiments.suite())
     result.addTests(wekatests.plottests.graph.suite())
     return result
 
