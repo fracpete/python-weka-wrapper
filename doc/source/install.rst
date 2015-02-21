@@ -26,7 +26,7 @@ You can find videos on `YouTube <https://www.youtube.com/channel/UCYkzno8dbnAasW
 Prerequisites for all plaforms
 ------------------------------
 
-You need an `Oracle JDK (1.7.x) <http://www.oracle.com/technetwork/java/javase/downloads/>`_
+You need an `Oracle JDK (1.6+) <http://www.oracle.com/technetwork/java/javase/downloads/>`_
 installed and the `JAVA_HOME` `environment variable <http://docs.oracle.com/cd/E19182-01/820-7851/inst_cli_jdk_javahome_t/index.html>`_
 pointing to the installation directory in order to use *python-weka-wrapper* library.
 
@@ -94,12 +94,16 @@ Mac OSX
 Please following `these <http://docs.python-guide.org/en/latest/starting/install/osx/>`_
 general instructions for installing Python.
 
-In order to compile C/C++ code, you need to install *Xcode*.
+In order to compile C/C++ code, you need to install *Xcode* through Apple's App Store.
+
+Weka still works with Java 6, so installing Apple's Java 6 version is the easiest (run the command `java` in a terminal and the follow the instructions on screen). However, Java 6 is no longer maintained and may pose a security risk. When using a non-Apple Java version, it looks like you will have to install *javabridge* from source rather than through `pip` (see `here < https://github.com/CellProfiler/python-javabridge/issues/25>_` for more details - note: this hasn't been tested).
+
+Also, install *graphviz* using homebrew (`brew install graphviz`) for visualizing trees and graphs.
 
 You need to install the following Python packages:
 
 * numpy
-* PIL
+* pillow
 * matplotlib
 * pygraphviz
 
