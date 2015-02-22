@@ -96,7 +96,7 @@ general instructions for installing Python.
 
 In order to compile C/C++ code, you need to install *Xcode* through Apple's App Store. Once installed you can install the *XCode command-line tools* by issuing the command `xcode-select --install` in a terminal.
 
-Also, install *graphviz* using homebrew (`brew install graphviz`) for visualizing trees and graphs.
+Also, install *graphviz* using homebrew (`brew install pkg-config` and `brew install graphviz`) for visualizing trees and graphs.
 
 You need to install the following Python packages:
 
