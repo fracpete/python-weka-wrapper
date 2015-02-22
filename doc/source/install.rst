@@ -91,7 +91,7 @@ Once these libraries are installed, you can use `pip` to install the remaining P
 Mac OSX
 -------
 
-Please following `these <http://docs.python-guide.org/en/latest/starting/install/osx/>`_
+Please follow `these <http://docs.python-guide.org/en/latest/starting/install/osx/>`_
 general instructions for installing Python.
 
 In order to compile C/C++ code, you need to install *Xcode* through Apple's App Store. Once installed you can install the *XCode command-line tools* by issuing the command `xcode-select --install` in a terminal.
