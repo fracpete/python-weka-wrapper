@@ -21,6 +21,7 @@ You can find videos on `YouTube <https://www.youtube.com/channel/UCYkzno8dbnAasW
 * `Ubuntu 14.04 (64-bit) <https://www.youtube.com/watch?v=8d0PVBlttM4>`_
 * `Windows 7 (32-bit) <https://www.youtube.com/watch?v=KdDt9rT5wTo>`_
 * `Windows 8.1 (64-bit) <https://www.youtube.com/watch?v=PeUfDVOA_1Y>`_
+* `Mac OSX 10.9.5 (Mavericks) <https://www.youtube.com/watch?v=CORXWYam36E>`_
 
 
 Prerequisites for all plaforms
