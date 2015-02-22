@@ -94,7 +94,7 @@ Mac OSX
 Please following `these <http://docs.python-guide.org/en/latest/starting/install/osx/>`_
 general instructions for installing Python.
 
-In order to compile C/C++ code, you need to install *Xcode* through Apple's App Store.
+In order to compile C/C++ code, you need to install *Xcode* through Apple's App Store. Once installed you can install the *XCode command-line tools* by issuing the command `xcode-select --install` in a terminal.
 
 Weka still works with Java 6, so installing Apple's Java 6 version is the easiest (run the command `java` in a terminal and the follow the instructions on screen). However, Java 6 is no longer maintained and may pose a security risk. When using a non-Apple Java version, it looks like you will have to install *javabridge* from source rather than through `pip` (see `here <https://github.com/CellProfiler/python-javabridge/issues/25>`_ for more details - *note:* this hasn't been tested).
 
