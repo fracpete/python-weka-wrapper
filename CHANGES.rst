@@ -7,6 +7,7 @@ Changelog
 - added method `ndarray_to_instances` to `weka.converters` module for converting Numpy 2-dimensional array into `Instances` object
 - added method `plot_learning_curve` to `weka.plot.classifiers` module for creating learning curves for multiple classifiers for a specific metric
 - added plotting of experiments with `plot_experiment` methid in `weka.plot.experiments` module
+- `Instance.create_instance` method now takes list of tuples (index, internal float value) when generating sparse instances
 - ...
 
 
