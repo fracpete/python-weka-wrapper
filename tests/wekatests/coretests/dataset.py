@@ -131,6 +131,27 @@ class TestDataset(weka_test.WekaTest):
         inst.weight = 0.5
         self.assertEqual(0.5, inst.weight, msg="weights differ")
 
+        values = [1.0, 2.0, 3.0]
+        inst = dataset.Instance.create_instance(values, classname="weka.core.DenseInstance")
+        self.assertEqual(3, inst.num_attributes, msg="#attributes differ")
+        self.assertEqual(1.0, inst.get_value(0), msg="value at #" + str(0) + " differs")
+        self.assertEqual(2.0, inst.get_value(1), msg="value at #" + str(1) + " differs")
+        self.assertEqual(3.0, inst.get_value(2), msg="value at #" + str(2) + " differs")
+
+        values = [0.0, 2.0, 0.0]
+        inst = dataset.Instance.create_instance(values, classname="weka.core.SparseInstance")
+        self.assertEqual(3, inst.num_attributes, msg="#attributes differ")
+        self.assertEqual(0.0, inst.get_value(0), msg="value at #" + str(0) + " differs")
+        self.assertEqual(2.0, inst.get_value(1), msg="value at #" + str(1) + " differs")
+        self.assertEqual(0.0, inst.get_value(2), msg="value at #" + str(2) + " differs")
+
+        values = [(1, 2.0)]
+        inst = dataset.Instance.create_instance(values, classname="weka.core.SparseInstance", max_values=3)
+        self.assertEqual(3, inst.num_attributes, msg="#attributes differ")
+        self.assertEqual(0.0, inst.get_value(0), msg="value at #" + str(0) + " differs")
+        self.assertEqual(2.0, inst.get_value(1), msg="value at #" + str(1) + " differs")
+        self.assertEqual(0.0, inst.get_value(2), msg="value at #" + str(2) + " differs")
+
     def test_instances(self):
         """
         Tests the Instances class.
