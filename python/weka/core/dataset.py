@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # dataset.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import logging
@@ -648,21 +648,43 @@ class Instance(JavaObject):
         return javabridge.get_env().get_double_array_elements(javabridge.call(self.jobject, "toDoubleArray", "()[D"))
 
     @classmethod
-    def create_instance(cls, values, classname="weka.core.DenseInstance", weight=1.0):
+    def create_instance(cls, values, classname="weka.core.DenseInstance", weight=1.0, max_values=-1):
         """
         Creates a new instance.
-        :param values: the float values (internal format) to use (numpy array)
+        :param values: the float values (internal format) to use, numpy array or list. In case of list you can
+                       either just list all the values or use tuples ("(index,floatvalue)"). The indices of the
+                       tuples must be in ascending order and "mamax_values" must be set to the maximum number of attributes.
         :type values: ndarray or list
         :param classname: the classname of the instance (eg weka.core.DenseInstance).
         :type classname: str
         :param weight: the weight of the instance
         :type weight: float
+        :param max_values: the maximum number of attributes if list of tuples supplied
+        :type max_values: int
         """
         jni_classname = classname.replace(".", "/")
-        if type(values) is list:
-            values = numpy.array(values)
-        return Instance(
-            javabridge.make_instance(jni_classname, "(D[D)V", weight, javabridge.get_env().make_double_array(values)))
+        if (type(values) is list) and (type(values[0]) is tuple):
+            if max == -1:
+                raise Exception("Parameter 'max_values' must be set when using list of tuples!")
+            indices = []
+            vals = []
+            for (i, v) in values:
+                indices.append(i)
+                vals.append(v)
+            indices = numpy.array(indices, dtype=numpy.long)
+            vals = numpy.array(vals)
+            return Instance(
+                javabridge.make_instance(
+                    jni_classname, "(D[D[II)V",
+                    weight, javabridge.get_env().make_double_array(vals),
+                    javabridge.get_env().make_long_array(indices), max_values))
+        else:
+            if type(values) is list:
+                values = numpy.array(values)
+            return Instance(
+                javabridge.make_instance(
+                    jni_classname, "(D[D)V",
+                    weight, javabridge.get_env().make_double_array(values)))
 
 
 class Attribute(JavaObject):
