@@ -21,12 +21,13 @@ You can find videos on `YouTube <https://www.youtube.com/channel/UCYkzno8dbnAasW
 * `Ubuntu 14.04 (64-bit) <https://www.youtube.com/watch?v=8d0PVBlttM4>`_
 * `Windows 7 (32-bit) <https://www.youtube.com/watch?v=KdDt9rT5wTo>`_
 * `Windows 8.1 (64-bit) <https://www.youtube.com/watch?v=PeUfDVOA_1Y>`_
+* `Mac OSX 10.9.5 (Mavericks) <https://www.youtube.com/watch?v=CORXWYam36E>`_
 
 
 Prerequisites for all plaforms
 ------------------------------
 
-You need an `Oracle JDK (1.7.x) <http://www.oracle.com/technetwork/java/javase/downloads/>`_
+You need an `Oracle JDK (1.6+) <http://www.oracle.com/technetwork/java/javase/downloads/>`_
 installed and the `JAVA_HOME` `environment variable <http://docs.oracle.com/cd/E19182-01/820-7851/inst_cli_jdk_javahome_t/index.html>`_
 pointing to the installation directory in order to use *python-weka-wrapper* library.
 
@@ -91,15 +92,17 @@ Once these libraries are installed, you can use `pip` to install the remaining P
 Mac OSX
 -------
 
-Please following `these <http://docs.python-guide.org/en/latest/starting/install/osx/>`_
+Please follow `these <http://docs.python-guide.org/en/latest/starting/install/osx/>`_
 general instructions for installing Python.
 
-In order to compile C/C++ code, you need to install *Xcode*.
+In order to compile C/C++ code, you need to install *Xcode* through Apple's App Store. Once installed you can install the *XCode command-line tools* by issuing the command `xcode-select --install` in a terminal.
+
+Also, install *graphviz* using homebrew (`brew install pkg-config` and `brew install graphviz`) for visualizing trees and graphs.
 
 You need to install the following Python packages:
 
 * numpy
-* PIL
+* pillow
 * matplotlib
 * pygraphviz
 
