@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # jvm.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import os
@@ -66,7 +66,7 @@ def add_system_classpath():
     """
     Adds the system's classpath to the JVM's classpath.
     """
-    if not os.environ['CLASSPATH'] is None:
+    if os.environ['CLASSPATH'] is not None:
         parts = os.environ['CLASSPATH'].split(os.pathsep)
         for part in parts:
             javabridge.JARS.append(part)
@@ -76,7 +76,7 @@ def start(class_path=None, bundled=True, packages=False, system_cp=False, max_he
     """
     Initializes the javabridge connection (starts up the JVM).
     :param class_path: the additional classpath elements to add
-    :type class_path: str
+    :type class_path: list
     :param bundled: whether to add jars from the "lib" directory
     :type bundled: bool
     :param packages: whether to add jars from Weka packages as well
@@ -88,12 +88,12 @@ def start(class_path=None, bundled=True, packages=False, system_cp=False, max_he
     """
     global started
 
-    if not started is None:
+    if started is not None:
         logger.info("JVM already running, call jvm.stop() first")
         return
 
     # add user-defined jars first
-    if not class_path is None:
+    if class_path is not None:
         for cp in class_path:
             logger.debug("Adding user-supplied classpath=" + cp)
             javabridge.JARS.append(cp)
@@ -121,6 +121,6 @@ def start(class_path=None, bundled=True, packages=False, system_cp=False, max_he
 def stop():
     """ Kills the JVM. """
     global started
-    if not started is None:
+    if started is not None:
         started = None
         javabridge.kill_vm()
