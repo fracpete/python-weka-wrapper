@@ -18,7 +18,7 @@
 from weka.flow.base import Actor, InputConsumer, OutputProducer
 
 
-class Transformer(Actor, InputConsumer, OutputProducer):
+class Transformer(InputConsumer, OutputProducer):
     """
     The ancestor for all sources.
     """

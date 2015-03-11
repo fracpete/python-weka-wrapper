@@ -18,7 +18,7 @@
 from weka.flow.base import Actor, InputConsumer
 
 
-class Sink(Actor, InputConsumer):
+class Sink(InputConsumer):
     """
     The ancestor for all sinks.
     """
@@ -90,10 +90,27 @@ class Console(Sink):
         """
         return "Sink that outputs the payloads of the data on stdout."
 
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(Sink, self).fix_options(options)
+
+        if "prefix" not in options:
+            options["prefix"] = ""
+        if "prefix" not in self.help:
+            self.help["prefix"] = "The prefix for the output (string)."
+
+        return options
+
     def do_execute(self):
         """
         The actual execution of the actor.
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        print(self.input.payload)
+        print(self.options["prefix"] + self.input.payload)

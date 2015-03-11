@@ -20,7 +20,7 @@ import re
 from weka.flow.base import Actor, OutputProducer, Token
 
 
-class Source(Actor, OutputProducer):
+class Source(OutputProducer, Actor):
     """
     The ancestor for all sources.
     """
@@ -33,7 +33,7 @@ class Source(Actor, OutputProducer):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(Actor, self).__init__(name=name, options=options)
+        super(Source, self).__init__(name=name, options=options)
         super(OutputProducer, self).__init__()
 
 
@@ -50,7 +50,7 @@ class ListFiles(Source):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(Source, self).__init__(name=name, options=options)
+        super(ListFiles, self).__init__(name=name, options=options)
 
     def description(self):
         """
@@ -104,6 +104,8 @@ class ListFiles(Source):
         :type path: str
         :param collected: the files/dirs collected so far (full path)
         :type collected: list
+        :return: None if successful, error otherwise
+        :rtype: str
         """
         list_files = self.options["list_files"]
         list_dirs = self.options["list_dirs"]
@@ -112,17 +114,20 @@ class ListFiles(Source):
         if (self.options["regexp"] is not None) and (self.options["regexp"] != ".*"):
             pattern = re.compile(self.options["regexp"])
 
-        items = os.listdir(path)
-        for item in items:
-            fp = path + os.sep + item
-            if list_files and os.path.isfile(fp):
-                if (pattern is None) or pattern.match(item):
-                    collected.append(fp)
-            if list_dirs and os.path.isdir(fp):
-                if (pattern is None) or pattern.match(item):
-                    collected.append(fp)
-            if recursive and os.path.isdir(fp):
-                self._list(fp, collected)
+        try:
+            items = os.listdir(path)
+            for item in items:
+                fp = path + os.sep + item
+                if list_files and os.path.isfile(fp):
+                    if (pattern is None) or pattern.match(item):
+                        collected.append(fp)
+                if list_dirs and os.path.isdir(fp):
+                    if (pattern is None) or pattern.match(item):
+                        collected.append(fp)
+                if recursive and os.path.isdir(fp):
+                    self._list(fp, collected)
+        except Exception, e:
+            return "Error listing '" + path + "': " + str(e)
 
     def do_execute(self):
         """
@@ -135,8 +140,9 @@ class ListFiles(Source):
         if not os.path.isdir(self.options["dir"]):
             return "Location '" + self.options["dir"] + "' is not a directory!"
         collected = []
-        self._list(self.options["dir"], collected)
-        self._output = []
-        for c in collected:
-            self._output.append(Token(c))
-        return None
+        result = self._list(self.options["dir"], collected)
+        if result is None:
+            self._output = []
+            for c in collected:
+                self._output.append(Token(c))
+        return result

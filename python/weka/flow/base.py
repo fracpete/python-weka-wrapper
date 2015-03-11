@@ -33,7 +33,7 @@ class Actor(object):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        self._name = __name__
+        self._name = self.__class__.__name__
         self._parent = None
         self._full_name = None
         self._logger = None
@@ -58,7 +58,7 @@ class Actor(object):
         :return: the representation
         :rtype: str
         """
-        return self.__name__ + "(options=" + str(self.options) + ")"
+        return self.__class__.__module__ + "." + self.__class__.__name__ + "(options=" + str(self.options) + ")"
 
     def description(self):
         """
@@ -163,9 +163,8 @@ class Actor(object):
         if self._full_name is None:
             fn = self.name.replace(".", "\\.")
             parent = self._parent
-            while parent is not None:
-                fn = parent.name.replace(".", "\\.") + "." + fn
-                parent = parent.parent
+            if parent is not None:
+                fn = parent.full_name + "." + fn
             self._full_name = fn
 
         return self._full_name
@@ -178,10 +177,16 @@ class Actor(object):
         :return: the (potentially) fixed options
         :rtype: dict
         """
+        if "annotation" not in options:
+            options["annotation"] = None
+        if "annotation" not in self.help:
+            self.help["annotation"] = "The (optional) annotation for this actor."
+
         if "skip" not in options:
             options["skip"] = False
         if "skip" not in self.help:
             self.help["skip"] = "The name of the actor to use in the flow."
+
         return options
 
     @property
@@ -278,11 +283,13 @@ class Actor(object):
         :rtype: str
         """
         result = []
-        result.append(self.__name__)
-        result.append(re.sub(r'.', '=', self.__name__))
+        result.append(self.__class__.__name__)
+        result.append(re.sub(r'.', '=', self.__class__.__name__))
         result.append("")
+        result.append("DESCRIPTION")
         result.append(self.description())
         result.append("")
+        result.append("OPTIONS")
         opts = self.options.keys()
         opts.sort()
         for opt in opts:
@@ -291,6 +298,7 @@ class Actor(object):
             if helpstr is None:
                 helpstr = "-missing help-"
             result.append("\t" + helpstr)
+            result.append("")
         return '\n'.join(result)
 
     def print_help(self):
@@ -344,10 +352,15 @@ class InputConsumer(Actor):
     Actors that consume tokens inherit this class.
     """
 
-    def __init__(self):
+    def __init__(self, name=None, options=None):
         """
         Initializes the actor.
+        :param name: the name of the actor
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
         """
+        super(InputConsumer, self).__init__(name=name, options=options)
         self._input = None
 
     def check_input(self, token):
@@ -383,10 +396,15 @@ class OutputProducer(Actor):
     Actors that generate output tokens inherit this class.
     """
 
-    def __init__(self):
+    def __init__(self, name=None, options=None):
         """
         Initializes the actor.
+        :param name: the name of the actor
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
         """
+        super(OutputProducer, self).__init__(name=name, options=options)
         self._output = None
 
     def has_output(self):

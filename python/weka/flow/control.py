@@ -31,8 +31,8 @@ class ActorHandler(Actor):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(Actor, self).__init__(name=name, options=options)
-        self._directory = self.new_director()
+        super(ActorHandler, self).__init__(name=name, options=options)
+        self._director = self.new_director()
 
     def new_director(self):
         """
@@ -66,14 +66,14 @@ class ActorHandler(Actor):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Actor, self).fix_options(options)
+        options = super(ActorHandler, self).fix_options(options)
 
         if "actors" not in options:
             options["actors"] = self.default_actors()
         if "actors" not in self.help:
             self.help["actors"] = "The list of sub-actors that this actor manages."
 
-        self.check_actors(self.options["actors"])
+        self.check_actors(options["actors"])
 
         return options
 
@@ -170,7 +170,7 @@ class ActorHandler(Actor):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        result = super(Actor, self).setup()
+        result = super(ActorHandler, self).setup()
         if result is None:
             self.update_parent()
             try:
@@ -186,6 +186,14 @@ class ActorHandler(Actor):
                     break
         return result
 
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        return self._director.execute()
+
     def wrapup(self):
         """
         Finishes up after execution finishes, does not remove any graphical output.
@@ -194,7 +202,7 @@ class ActorHandler(Actor):
             if actor.options["skip"]:
                 continue
             actor.wrapup()
-        super(Actor, self).wrapup()
+        super(ActorHandler, self).wrapup()
 
     def cleanup(self):
         """
@@ -204,7 +212,7 @@ class ActorHandler(Actor):
             if actor.options["skip"]:
                 continue
             actor.cleanup()
-        super(Actor, self).cleanup()
+        super(ActorHandler, self).cleanup()
 
 
 class Director(object):
@@ -281,8 +289,7 @@ class SequentialDirector(Director, Stoppable):
         :param owner: the owning actor
         :type owner: Actor
         """
-        super(Director, self).__init__(owner)
-        super(Stoppable, self).__init__()
+        super(SequentialDirector, self).__init__(owner)
         self._stopping = False
         self._stopped = False
         self._record_output = True
@@ -368,7 +375,6 @@ class SequentialDirector(Director, Stoppable):
                 not_finished_actor = None
 
             # iterate over actors
-            curr = None
             token = None
             last_active = -1
             if self.owner.active > 0:
@@ -389,7 +395,8 @@ class SequentialDirector(Director, Stoppable):
                     else:
                         actor_result = curr.execute()
                         if actor_result is not None:
-                            self.owner.logger.error(curr.full_name + " generated following error output:\n" + actor_result)
+                            self.owner.logger.error(
+                                curr.full_name + " generated following error output:\n" + actor_result)
                             break
 
                     if isinstance(curr, OutputProducer) and curr.has_output():
@@ -403,10 +410,11 @@ class SequentialDirector(Director, Stoppable):
 
                 else:
                     # process token
-                    curr.input(token)
+                    curr.input = token
                     actor_result = curr.execute()
                     if actor_result is not None:
-                        self.owner.logger.error(curr.full_name + " generated following error output:\n" + actor_result)
+                        self.owner.logger.error(
+                            curr.full_name + " generated following error output:\n" + actor_result)
                         break
 
                     # was a new token produced?
@@ -437,7 +445,50 @@ class SequentialDirector(Director, Stoppable):
         return actor_result
 
 
-class Sequence(ActorHandler, InputConsumer):
+class Flow(ActorHandler):
+    """
+    Root actor for defining and executing flows.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the sequence.
+        :param name: the name of the sequence
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Flow, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Root actor for defining and executing flows."
+
+    def new_director(self):
+        """
+        Creates the director to use for handling the sub-actors.
+        :return: the director instance
+        :rtype: Director
+        """
+        result = SequentialDirector(self)
+        result.record_output = False
+        return result
+
+    def check_actors(self, actors):
+        """
+        Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+        :param actors: the actors to check
+        :type actors: list
+        """
+        super(Flow, self).check_actors(actors)
+        # TODO
+
+
+class Sequence(InputConsumer):
     """
     Simple sequence of actors that get executed one after the other. Accepts input.
     """
@@ -450,8 +501,7 @@ class Sequence(ActorHandler, InputConsumer):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(ActorHandler, self).__init__(name=name, options=options)
-        super(InputConsumer, self).__init__()
+        super(Flow, self).__init__(name=name, options=options)
 
     def description(self):
         """
@@ -477,17 +527,7 @@ class Sequence(ActorHandler, InputConsumer):
         :param actors: the actors to check
         :type actors: list
         """
-        super(ActorHandler, self).check_actors(actors)
+        super(Sequence, self).check_actors(actors)
         actor = self.first_active
         if not isinstance(actor, InputConsumer):
             raise Exception("First active actor does not accept input: " + actor.full_name)
-
-    def do_execute(self):
-        """
-        The actual execution of the actor.
-        :return: None if successful, otherwise error message
-        :rtype: str
-        """
-        actor = self.first_active
-        actor.input(self.input)
-        return actor.execute()
