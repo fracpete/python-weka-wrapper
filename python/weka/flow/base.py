@@ -33,10 +33,12 @@ class Actor(object):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
+        self._name = __name__
         self._parent = None
         self._full_name = None
         self._logger = None
-        self._options = self._fix_options({})
+        self._help = {}
+        self._options = self.fix_options({})
         if options is not None:
             self.options = options
         if name is not None:
@@ -58,6 +60,14 @@ class Actor(object):
         """
         return self.__name__ + "(options=" + str(self.options) + ")"
 
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        raise Exception("Not implemented!")
+
     @property
     def logger(self):
         """
@@ -76,7 +86,7 @@ class Actor(object):
         :return: the name
         :rtype: str
         """
-        return self._options["name"]
+        return self._name
 
     @name.setter
     def name(self, name):
@@ -85,7 +95,7 @@ class Actor(object):
         :param name: the name
         :type name: str
         """
-        self._options["name"] = name
+        self._name = name
 
     def unique_name(self, name):
         """
@@ -98,7 +108,7 @@ class Actor(object):
         result = name
 
         if self.parent is not None:
-            bname = re.sub(r'-[0-9]+$', '')
+            bname = re.sub(r'-[0-9]+$', '', name)
             names = []
             for actor in self.parent.actors:
                 names.append(actor.name)
@@ -126,7 +136,7 @@ class Actor(object):
         :param parent: the parent
         :type parent: Actor
         """
-        self._options["name"] = self.unique_name(self._options["name"])
+        self._name = self.unique_name(self._name)
         self._full_name = None
         self._logger = None
         self._parent = parent
@@ -168,10 +178,10 @@ class Actor(object):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        if "name" not in options:
-            options["name"] = self.__name__
         if "skip" not in options:
             options["skip"] = False
+        if "skip" not in self.help:
+            self.help["skip"] = "The name of the actor to use in the flow."
         return options
 
     @property
@@ -179,7 +189,7 @@ class Actor(object):
         """
         Obtains the currently set options of the actor.
         :return: the options
-        :rtype: str
+        :rtype: dict
         """
         return self._options
 
@@ -190,7 +200,16 @@ class Actor(object):
         :param options: the options
         :type options: dict
         """
-        self._options = self._fix_options(options)
+        self._options = self.fix_options(options)
+
+    @property
+    def help(self):
+        """
+        Obtains the help information per option for this actor.
+        :return: the help
+        :rtype: dict
+        """
+        return self._help
 
     def pre_execute(self):
         """
@@ -216,6 +235,14 @@ class Actor(object):
         """
         return None
 
+    def setup(self):
+        """
+        Configures the actor before execution.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        return None
+
     def execute(self):
         """
         Executes the actor.
@@ -231,6 +258,46 @@ class Actor(object):
         if result is None:
             result = self.post_execute()
         return result
+
+    def wrapup(self):
+        """
+        Finishes up after execution finishes, does not remove any graphical output.
+        """
+        return None
+
+    def cleanup(self):
+        """
+        Destructive finishing up after execution stopped.
+        """
+        return None
+
+    def generate_help(self):
+        """
+        Generates a help string for this actor.
+        :return: the help string
+        :rtype: str
+        """
+        result = []
+        result.append(self.__name__)
+        result.append(re.sub(r'.', '=', self.__name__))
+        result.append("")
+        result.append(self.description())
+        result.append("")
+        opts = self.options.keys()
+        opts.sort()
+        for opt in opts:
+            result.append(opt)
+            helpstr = self.help[opt]
+            if helpstr is None:
+                helpstr = "-missing help-"
+            result.append("\t" + helpstr)
+        return '\n'.join(result)
+
+    def print_help(self):
+        """
+        Prints a help string for this actor to stdout.
+        """
+        print(self.generate_help())
 
 
 class Token(object):

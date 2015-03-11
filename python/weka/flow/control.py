@@ -57,9 +57,11 @@ class ActorHandler(Actor):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Actor).fix_options(options)
+        options = super(Actor, self).fix_options(options)
         if "actors" not in options:
             options["actors"] = self.default_actors()
+        if "actors" not in self.help:
+            self.help["actors"] = "The list of sub-actors that this actor manages."
         self.check_actors(self.options["actors"])
         return options
 
@@ -143,6 +145,28 @@ class ActorHandler(Actor):
                 break
         return result
 
+    def update_parent(self):
+        """
+        Updates the parent in its sub-actors.
+        """
+        for actor in self.actors:
+            actor.parent = self
+
+    def setup(self):
+        """
+        Configures the actor before execution.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = super(Actor, self).setup()
+        if result is None:
+            self.update_parent()
+            try:
+                self.check_actors(self.actors)
+            except Exception, e:
+                result = str(e)
+        return result
+
 
 class Director(object):
     """
@@ -218,8 +242,8 @@ class SequentialDirectory(Director, Stoppable):
         :param owner: the owning actor
         :type owner: Actor
         """
-        super(Director).__init__(owner)
-        super(Stoppable).__init__()
+        super(Director, self).__init__(owner)
+        super(Stoppable, self).__init__()
         self._stopping = False
         self._stopped = False
         self._record_final_output = True
