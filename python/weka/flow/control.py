@@ -32,6 +32,15 @@ class ActorHandler(Actor):
         :type options: dict
         """
         super(Actor, self).__init__(name=name, options=options)
+        self._directory = self.new_director()
+
+    def new_director(self):
+        """
+        Creates the director to use for handling the sub-actors.
+        :return: the director instance
+        :rtype: Director
+        """
+        raise Exception("Not implemented!")
 
     def default_actors(self):
         """
@@ -58,11 +67,14 @@ class ActorHandler(Actor):
         :rtype: dict
         """
         options = super(Actor, self).fix_options(options)
+
         if "actors" not in options:
             options["actors"] = self.default_actors()
         if "actors" not in self.help:
             self.help["actors"] = "The list of sub-actors that this actor manages."
+
         self.check_actors(self.options["actors"])
+
         return options
 
     @property
@@ -165,7 +177,34 @@ class ActorHandler(Actor):
                 self.check_actors(self.actors)
             except Exception, e:
                 result = str(e)
+        if result is None:
+            for actor in self.actors:
+                if actor.options["skip"]:
+                    continue
+                result = actor.setup()
+                if result is not None:
+                    break
         return result
+
+    def wrapup(self):
+        """
+        Finishes up after execution finishes, does not remove any graphical output.
+        """
+        for actor in self.actors:
+            if actor.options["skip"]:
+                continue
+            actor.wrapup()
+        super(Actor, self).wrapup()
+
+    def cleanup(self):
+        """
+        Destructive finishing up after execution stopped.
+        """
+        for actor in self.actors:
+            if actor.options["skip"]:
+                continue
+            actor.cleanup()
+        super(Actor, self).cleanup()
 
 
 class Director(object):
@@ -231,9 +270,9 @@ class Director(object):
         return self.do_execute()
 
 
-class SequentialDirectory(Director, Stoppable):
+class SequentialDirector(Director, Stoppable):
     """
-    Director for sequenial execution of actors.
+    Director for sequential execution of actors.
     """
 
     def __init__(self, owner):
@@ -246,8 +285,35 @@ class SequentialDirectory(Director, Stoppable):
         super(Stoppable, self).__init__()
         self._stopping = False
         self._stopped = False
-        self._record_final_output = True
-        self._final_output = []
+        self._record_output = True
+        self._recorded_output = []
+
+    @property
+    def record_output(self):
+        """
+        Obtains whether to record the output of the last actor.
+        :return: true if to record
+        :rtype: bool
+        """
+        return self._record_output
+
+    @record_output.setter
+    def record_output(self, record):
+        """
+        Sets whether to record the output of the last actor.
+        :param record: true if to record
+        :type record: bool
+        """
+        self._record_output = record
+
+    @property
+    def recorded_output(self):
+        """
+        Obtains the recorded output.
+        :return: the output
+        :rtype: list
+        """
+        return self._recorded_output
 
     def stop_execution(self):
         """
@@ -357,9 +423,9 @@ class SequentialDirectory(Director, Stoppable):
                         token = None
 
                 # token from last actor generated? -> store
-                if (i == self.owner.last_active().index) and (token is not None):
-                    if self._record_final_output:
-                        self._final_output.append(token)
+                if (i == self.owner.last_active.index) and (token is not None):
+                    if self._record_output:
+                        self._recorded_output.append(token)
 
                 # no token produced, ignore rest of actors
                 if isinstance(curr, OutputProducer) and (token is None):
@@ -369,3 +435,59 @@ class SequentialDirectory(Director, Stoppable):
             finished = (not_finished_actor is None) and (len(pending_actors) == 0)
 
         return actor_result
+
+
+class Sequence(ActorHandler, InputConsumer):
+    """
+    Simple sequence of actors that get executed one after the other. Accepts input.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the sequence.
+        :param name: the name of the sequence
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(ActorHandler, self).__init__(name=name, options=options)
+        super(InputConsumer, self).__init__()
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Simple sequence of actors that get executed one after the other. Accepts input."
+
+    def new_director(self):
+        """
+        Creates the director to use for handling the sub-actors.
+        :return: the director instance
+        :rtype: Director
+        """
+        result = SequentialDirector(self)
+        result.record_output = False
+        return result
+
+    def check_actors(self, actors):
+        """
+        Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+        :param actors: the actors to check
+        :type actors: list
+        """
+        super(ActorHandler, self).check_actors(actors)
+        actor = self.first_active
+        if not isinstance(actor, InputConsumer):
+            raise Exception("First active actor does not accept input: " + actor.full_name)
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        actor = self.first_active
+        actor.input(self.input)
+        return actor.execute()

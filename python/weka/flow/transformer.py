@@ -34,3 +34,35 @@ class Transformer(Actor, InputConsumer, OutputProducer):
         super(Actor, self).__init__(name=name, options=options)
         super(InputConsumer, self).__init__()
         super(OutputProducer, self).__init__()
+
+
+class PassThrough(Transformer):
+    """
+    Dummy actor that just passes through the data.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Transformer, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Dummy actor that just passes through the data."
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        self._output.append(self.input)

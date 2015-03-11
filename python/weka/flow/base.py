@@ -211,6 +211,14 @@ class Actor(object):
         """
         return self._help
 
+    def setup(self):
+        """
+        Configures the actor before execution.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        return None
+
     def pre_execute(self):
         """
         Gets executed before the actual execution.
@@ -230,14 +238,6 @@ class Actor(object):
     def post_execute(self):
         """
         Gets executed after the actual execution.
-        :return: None if successful, otherwise error message
-        :rtype: str
-        """
-        return None
-
-    def setup(self):
-        """
-        Configures the actor before execution.
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -263,13 +263,13 @@ class Actor(object):
         """
         Finishes up after execution finishes, does not remove any graphical output.
         """
-        return None
+        pass
 
     def cleanup(self):
         """
         Destructive finishing up after execution stopped.
         """
-        return None
+        pass
 
     def generate_help(self):
         """
