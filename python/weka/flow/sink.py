@@ -34,6 +34,17 @@ class Sink(InputConsumer):
         super(Sink, self).__init__(name=name, options=options)
         super(InputConsumer, self).__init__()
 
+    def post_execute(self):
+        """
+        Gets executed after the actual execution.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = super(Sink, self).post_execute()
+        if result is None:
+            self.input = None
+        return result
+
 
 class Null(Sink):
     """
