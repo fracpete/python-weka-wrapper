@@ -16,7 +16,8 @@
 
 
 import os
-from weka.flow.base import Actor, InputConsumer, OutputProducer, Token
+import math
+from weka.flow.base import InputConsumer, OutputProducer, Token
 import weka.core.converters as converters
 import weka.core.utils as utils
 
@@ -341,4 +342,63 @@ class DeleteStorageValue(Transformer):
             return "No storage handler available!"
         self.storagehandler.storage.pop(self.resolve_option("storage_name"), None)
         self._output.append(self.input)
+        return None
+
+
+class MathExpression(Transformer):
+    """
+    Calculates a mathematical expression. The captial letter X in the expression gets replaced by
+    the value of the current token passing through. Uses the 'eval(str)' method for the calculation,
+    therefore mathematical functions can be accessed using the 'math' library, e.g., '1 + math.sin(X)'.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(MathExpression, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return \
+            "Calculates a mathematical expression. The captial letter X in the expression gets replaced by "\
+            + "the value of the current token passing through. Uses the 'eval(str)' method for the calculation, "\
+            + "therefore mathematical functions can be accessed using the 'math' library, e.g., '1 + math.sin(X)'."
+
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(MathExpression, self).fix_options(options)
+
+        opt = "expression"
+        if opt not in options:
+            options[opt] = "X"
+        if opt not in self.help:
+            self.help[opt] = "The mathematical expression to evaluate (string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        expr = self.resolve_option("expression")
+        expr = expr.replace("X", str(self.input.payload))
+        self._output.append(Token(eval(expr)))
         return None
