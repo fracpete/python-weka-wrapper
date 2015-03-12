@@ -271,6 +271,9 @@ class ActorHandler(Actor):
         if depth > 0:
             row += "|-"
         row += actor.name
+        quickinfo = actor.quickinfo
+        if quickinfo is not None:
+            row += " [" + quickinfo + "]"
         content.append(row)
 
         if isinstance(actor, ActorHandler):

@@ -93,6 +93,15 @@ class FileSupplier(Source):
         """
         return "Outputs a fixed list of files."
 
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "files: " + str(len(self.resolve_option("files")))
+
     def fix_options(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
@@ -144,6 +153,18 @@ class ListFiles(Source):
         :rtype: str
         """
         return "Source that list files in a directory."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "dir: " + str(self.resolve_option("dir")) \
+               + ", files: " + str(self.resolve_option("list_files")) \
+               + ", dirs: " + str(self.resolve_option("list_dirs")) \
+               + ", recursive: " + str(self.resolve_option("recursive"))
 
     def fix_options(self, options):
         """
@@ -262,6 +283,15 @@ class GetStorageValue(Source):
         """
         return "Outputs the specified value from storage."
 
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "name: " + str(self.resolve_option("storage_name"))
+
     def fix_options(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
@@ -317,6 +347,17 @@ class ForLoop(Source):
         :rtype: str
         """
         return "Outputs integers using the specified min, max and step."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "min: " + str(self.resolve_option("min")) \
+               + ", max: " + str(self.resolve_option("max")) \
+               + ", step: " + str(self.resolve_option("step"))
 
     def fix_options(self, options):
         """

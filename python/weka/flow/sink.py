@@ -101,6 +101,15 @@ class Console(Sink):
         """
         return "Sink that outputs the payloads of the data on stdout."
 
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "prefix: '" + str(self.resolve_option("prefix")) + "'"
+
     def fix_options(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.

@@ -278,6 +278,15 @@ class Actor(Stoppable):
         """
         self.options["skip"] = skip
 
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return None
+
     def to_options(self, k, v):
         """
         Hook method that allows conversion of individual options.

@@ -107,6 +107,17 @@ class LoadDataset(Transformer):
         """
         return "Loads a dataset from a file. Either all at once or incrementally."
 
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "incremental: " + str(self.resolve_option("incremental")) \
+               + ", custom: " + str(self.resolve_option("use_custom_loader")) \
+               + ", loader: " + str(self.resolve_option("custom_loader"))
+
     def fix_options(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
@@ -260,6 +271,15 @@ class SetStorageValue(Transformer):
         """
         return "Store the payload of the current token in internal storage using the specified name."
 
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "name: " + str(self.resolve_option("storage_name"))
+
     def fix_options(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
@@ -313,6 +333,15 @@ class DeleteStorageValue(Transformer):
         :rtype: str
         """
         return "Deletes the specified value from internal storage."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "name: " + str(self.resolve_option("storage_name"))
 
     def fix_options(self, options):
         """
@@ -373,6 +402,14 @@ class MathExpression(Transformer):
             + "the value of the current token passing through. Uses the 'eval(str)' method for the calculation, "\
             + "therefore mathematical functions can be accessed using the 'math' library, e.g., '1 + math.sin(X)'."
 
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "expression: " + str(self.resolve_option("expression"))
 
     def fix_options(self, options):
         """
