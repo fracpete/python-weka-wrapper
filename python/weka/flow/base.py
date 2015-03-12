@@ -234,6 +234,18 @@ class Actor(Stoppable):
         """
         self._options = self.fix_options(options)
 
+    def to_options(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        return v
+
     def to_options_dict(self):
         """
         Returns a dictionary of its options.
@@ -243,8 +255,23 @@ class Actor(Stoppable):
         result = {}
         result["name"] = self.name
         result["class"] = utils.get_classname(self)
-        result["options"] = self.options.copy()
+        options = self.options.copy()
+        result["options"] = {}
+        for k in options.keys():
+            result["options"][k] = self.to_options(k, options[k])
         return result
+
+    def from_options(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        return v
 
     def from_options_dict(self, d):
         """
@@ -499,6 +526,15 @@ class OutputProducer(Actor):
         """
         super(OutputProducer, self).__init__(name=name, options=options)
         self._output = None
+
+    def pre_execute(self):
+        """
+        Gets executed before the actual execution.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        self._output = []
+        return None
 
     def has_output(self):
         """
