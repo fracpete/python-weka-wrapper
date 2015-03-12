@@ -37,6 +37,58 @@ class Source(OutputProducer, Actor):
         super(OutputProducer, self).__init__()
 
 
+class FileSupplier(Source):
+    """
+    Outputs a fixed list of files.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(FileSupplier, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Outputs a fixed list of files."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(Source, self).fix_options(options)
+
+        if "files" not in options:
+            options["files"] = []
+        if "files" not in self.help:
+            self.help["files"] = "The files to output (list of string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        self._output = []
+        for f in self.options["files"]:
+            self._output.append(Token(f))
+        return None
+
+
 class ListFiles(Source):
     """
     Source that list files in a directory.

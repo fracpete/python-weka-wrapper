@@ -22,7 +22,27 @@ import weka.core.utils as utils
 import json
 
 
-class Actor(object):
+class Stoppable(object):
+    """
+    Classes that can be stopped.
+    """
+
+    def is_stopped(self):
+        """
+        Returns whether the object has been stopped.
+        :return: whether stopped
+        :rtype: bool
+        """
+        raise Exception("Not implemented!")
+
+    def stop_execution(self):
+        """
+        Triggers the stopping of the object.
+        """
+        raise Exception("Not implemented!")
+
+
+class Actor(Stoppable):
     """
     The ancestor for all actors.
     """
@@ -41,6 +61,7 @@ class Actor(object):
         self._logger = None
         self._help = {}
         self._options = self.fix_options({})
+        self._stopped = False
         if options is not None:
             self.options = options
         if name is not None:
@@ -60,7 +81,9 @@ class Actor(object):
         :return: the representation
         :rtype: str
         """
-        return self.__class__.__module__ + "." + self.__class__.__name__ + "(options=" + str(self.options) + ")"
+        return \
+            self.__class__.__module__ + "." + self.__class__.__name__ \
+            + "(name=" + self.name + ", options=" + str(self.options) + ")"
 
     def description(self):
         """
@@ -110,10 +133,12 @@ class Actor(object):
         result = name
 
         if self.parent is not None:
+            index = self.index
             bname = re.sub(r'-[0-9]+$', '', name)
             names = []
-            for actor in self.parent.actors:
-                names.append(actor.name)
+            for idx, actor in enumerate(self.parent.actors):
+                if idx != index:
+                    names.append(actor.name)
             result = bname
             count = 0
             while result in names:
@@ -256,6 +281,33 @@ class Actor(object):
         :rtype: dict
         """
         return self._help
+
+    @property
+    def storagehandler(self):
+        """
+        Returns the storage handler available to thise actor.
+        :return: the storage handler, None if not available
+        """
+        if isinstance(self, StorageHandler):
+            return self
+        elif self.parent is not None:
+            return self.parent.storagehandler
+        else:
+            return None
+
+    def is_stopped(self):
+        """
+        Returns whether the object has been stopped.
+        :return: whether stopped
+        :rtype: bool
+        """
+        return self._stopped
+
+    def stop_execution(self):
+        """
+        Triggers the stopping of the object.
+        """
+        self._stopped = True
 
     def setup(self):
         """
@@ -469,21 +521,49 @@ class OutputProducer(Actor):
         return result
 
 
-class Stoppable(object):
+class StorageHandler(object):
     """
-    Classes that can be stopped.
+    For classes that support internal storage (= dictionary).
     """
 
-    def is_stopped(self):
+    @property
+    def storage(self):
         """
-        Returns whether the object has been stopped.
-        :return: whether stopped
-        :rtype: bool
+        Returns the internal storage.
+        :return: the internal storage
+        :rtype: dict
         """
         raise Exception("Not implemented!")
 
-    def stop_execution(self):
-        """
-        Triggers the stopping of the object.
-        """
-        raise Exception("Not implemented!")
+
+def is_source(actor):
+    """
+    Checks whether the actor is a source.
+    :param actor: the actor to check
+    :type actor: Actor
+    :return: True if the actor is a source
+    :rtype: bool
+    """
+    return not isinstance(actor, InputConsumer) and isinstance(actor, OutputProducer)
+
+
+def is_transformer(actor):
+    """
+    Checks whether the actor is a transformer.
+    :param actor: the actor to check
+    :type actor: Actor
+    :return: True if the actor is a transformer
+    :rtype: bool
+    """
+    return isinstance(actor, InputConsumer) and isinstance(actor, OutputProducer)
+
+
+def is_sink(actor):
+    """
+    Checks whether the actor is a sink.
+    :param actor: the actor to check
+    :type actor: Actor
+    :return: True if the actor is a sink
+    :rtype: bool
+    """
+    return isinstance(actor, InputConsumer) and not isinstance(actor, OutputProducer)

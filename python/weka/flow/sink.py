@@ -113,4 +113,4 @@ class Console(Sink):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        print(self.options["prefix"] + self.input.payload)
+        print(self.options["prefix"] + str(self.input.payload))

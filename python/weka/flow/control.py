@@ -15,7 +15,8 @@
 # Copyright (C) 2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 
-from weka.flow.base import Actor, InputConsumer, OutputProducer, Stoppable
+import weka.flow.base as base
+from weka.flow.base import Actor, InputConsumer, OutputProducer, Stoppable, StorageHandler
 import weka.core.utils as utils
 
 
@@ -212,11 +213,19 @@ class ActorHandler(Actor):
                 result = str(e)
         if result is None:
             for actor in self.actors:
+                name = actor.name
+                newname = actor.unique_name(actor.name)
+                if name != newname:
+                    actor.name = newname
+        if result is None:
+            for actor in self.actors:
                 if actor.options["skip"]:
                     continue
                 result = actor.setup()
                 if result is not None:
                     break
+        if result is None:
+            result = self._director.setup()
         return result
 
     def do_execute(self):
@@ -290,6 +299,14 @@ class Director(object):
         """
         pass
 
+    def setup(self):
+        """
+        Performs some checks.
+        :return: None if successful, otherwise error message.
+        :rtype: str
+        """
+        return None
+
     def do_execute(self):
         """
         Actual execution of the director.
@@ -325,8 +342,27 @@ class SequentialDirector(Director, Stoppable):
         super(SequentialDirector, self).__init__(owner)
         self._stopping = False
         self._stopped = False
+        self._allow_source = False
         self._record_output = True
         self._recorded_output = []
+
+    @property
+    def allow_source(self):
+        """
+        Obtains whether to allow a source actor.
+        :return: true if to allow
+        :rtype: bool
+        """
+        return self._allow_source
+
+    @allow_source.setter
+    def allow_source(self, allow):
+        """
+        Sets whether to allow a source actor.
+        :param allow: true if to allow
+        :type allow: bool
+        """
+        self._allow_source = allow
 
     @property
     def record_output(self):
@@ -386,12 +422,44 @@ class SequentialDirector(Director, Stoppable):
         if not isinstance(owner, ActorHandler):
             raise Exception("Owner is not an ActorHandler: " + owner.__name__)
 
+    def check_actors(self):
+        """
+        Checks the actors of the owner. Raises an exception if invalid.
+        """
+        actors = []
+        for actor in self.owner.actors:
+            if actor.options["skip"]:
+                continue
+            actors.append(actor)
+        if len(actors) == 0:
+            return
+        if not self.allow_source and base.is_source(actors[0]):
+            raise Exception("Actor '" + actors[0].full_name + "' is a source, but no sources allowed!")
+        for i in xrange(1, len(actors)):
+            if not isinstance(actors[i], InputConsumer):
+                raise Exception("Actor '" + actors[i].full_name + "' does not accept any input!")
+
+    def setup(self):
+        """
+        Performs some checks.
+        :return: None if successful, otherwise error message.
+        :rtype: str
+        """
+        result = super(SequentialDirector, self).setup()
+        if result is None:
+            try:
+                self.check_actors()
+            except Exception, e:
+                result = str(e)
+        return result
+
     def do_execute(self):
         """
         Actual execution of the director.
         :return: None if successful, otherwise error message
         :rtype: str
         """
+
         self._stopped = False
         self._stopping = False
         not_finished_actor = self.owner.first_active
@@ -478,7 +546,7 @@ class SequentialDirector(Director, Stoppable):
         return actor_result
 
 
-class Flow(ActorHandler):
+class Flow(ActorHandler, StorageHandler):
     """
     Root actor for defining and executing flows.
     """
@@ -492,6 +560,7 @@ class Flow(ActorHandler):
         :type options: dict
         """
         super(Flow, self).__init__(name=name, options=options)
+        self._storage = {}
 
     def description(self):
         """
@@ -509,6 +578,7 @@ class Flow(ActorHandler):
         """
         result = SequentialDirector(self)
         result.record_output = False
+        result.allow_source = True
         return result
 
     def check_actors(self, actors):
@@ -519,6 +589,15 @@ class Flow(ActorHandler):
         """
         super(Flow, self).check_actors(actors)
         # TODO
+
+    @property
+    def storage(self):
+        """
+        Returns the internal storage.
+        :return: the internal storage
+        :rtype: dict
+        """
+        return self._storage
 
     @classmethod
     def load(cls, fname):
@@ -587,6 +666,7 @@ class Sequence(InputConsumer):
         """
         result = SequentialDirector(self)
         result.record_output = False
+        result.allow_source = False
         return result
 
     def check_actors(self, actors):
