@@ -380,6 +380,18 @@ class Actor(Stoppable):
         else:
             return self.parent.root
 
+    @property
+    def depth(self):
+        """
+        Returns the depth of this actor inside the overall flow.
+        :return: the depth
+        :rtype: int
+        """
+        if self.parent is None:
+            return 0
+        else:
+            return self.parent.depth + 1
+
     def is_stopped(self):
         """
         Returns whether the object has been stopped.
