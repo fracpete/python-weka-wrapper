@@ -96,7 +96,7 @@ class ActorHandler(Actor):
         """
         Restores the object from the given options dictionary.
         :param d: the dictionary to use for restoring the options
-        :type options: dict
+        :type d: dict
         """
         actors = d["actors"]
         num = len(actors)
@@ -105,7 +105,6 @@ class ActorHandler(Actor):
             cls = utils.get_class(item["class"])
             actor = cls(name=item["name"])
             actor.parent = self
-            # actor.name = item["name"]
             actor.from_options_dict(item["options"])
             self.actors.append(actor)
         d.pop("actors", None)
