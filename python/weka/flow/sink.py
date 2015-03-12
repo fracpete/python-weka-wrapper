@@ -15,7 +15,7 @@
 # Copyright (C) 2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 
-from weka.flow.base import Actor, InputConsumer
+from weka.flow.base import InputConsumer
 
 
 class Sink(InputConsumer):
@@ -31,7 +31,7 @@ class Sink(InputConsumer):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(Actor, self).__init__(name=name, options=options)
+        super(Sink, self).__init__(name=name, options=options)
         super(InputConsumer, self).__init__()
 
 
@@ -48,7 +48,7 @@ class Null(Sink):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(Sink, self).__init__(name=name, options=options)
+        super(Null, self).__init__(name=name, options=options)
 
     def description(self):
         """
@@ -64,7 +64,7 @@ class Null(Sink):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        pass
+        return None
 
 
 class Console(Sink):
@@ -80,7 +80,7 @@ class Console(Sink):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(Sink, self).__init__(name=name, options=options)
+        super(Console, self).__init__(name=name, options=options)
 
     def description(self):
         """
@@ -98,7 +98,7 @@ class Console(Sink):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Sink, self).fix_options(options)
+        options = super(Console, self).fix_options(options)
 
         if "prefix" not in options:
             options["prefix"] = ""
@@ -114,3 +114,4 @@ class Console(Sink):
         :rtype: str
         """
         print(self.options["prefix"] + str(self.input.payload))
+        return None
