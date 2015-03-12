@@ -327,7 +327,8 @@ class Actor(Stoppable):
                 self.options[k] = d[k]
             d.pop(k, None)
 
-    def to_json(self):
+    @property
+    def json(self):
         """
         Returns the options as JSON.
         :return: the object as string
@@ -335,7 +336,8 @@ class Actor(Stoppable):
         """
         return json.dumps(self.to_options_dict())
 
-    def from_json(self, s):
+    @json.setter
+    def json(self, s):
         """
         Restores the object from the given JSON.
         :param s: the JSON string to parse

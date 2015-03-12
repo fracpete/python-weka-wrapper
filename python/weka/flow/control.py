@@ -613,7 +613,7 @@ class Flow(ActorHandler, StorageHandler):
         with open(fname) as f:
             content = f.readlines()
         result = Flow()
-        result.from_json(''.join(content))
+        result.json = ''.join(content)
         return result
 
     @classmethod
@@ -630,7 +630,7 @@ class Flow(ActorHandler, StorageHandler):
         result = None
         try:
             f = open(fname, 'w')
-            f.write(flow.to_json())
+            f.write(flow.json)
             f.close()
         except Exception, e:
             result = str(e)
