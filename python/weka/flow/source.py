@@ -70,10 +70,11 @@ class FileSupplier(Source):
         """
         options = super(FileSupplier, self).fix_options(options)
 
-        if "files" not in options:
-            options["files"] = []
-        if "files" not in self.help:
-            self.help["files"] = "The files to output (list of string)."
+        opt = "files"
+        if opt not in options:
+            options[opt] = []
+        if opt not in self.help:
+            self.help[opt] = "The files to output (list of string)."
 
         return options
 
@@ -84,7 +85,7 @@ class FileSupplier(Source):
         :rtype: str
         """
         self._output = []
-        for f in self.options["files"]:
+        for f in self.resolve_option("files"):
             self._output.append(Token(f))
         return None
 
@@ -122,30 +123,35 @@ class ListFiles(Source):
         """
         options = super(ListFiles, self).fix_options(options)
 
-        if "dir" not in options:
-            options["dir"] = "."
-        if "dir" not in self.help:
-            self.help["dir"] = "The directory to search (string)."
+        opt = "dir"
+        if opt not in options:
+            options[opt] = "."
+        if opt not in self.help:
+            self.help[opt] = "The directory to search (string)."
 
-        if "recursive" not in options:
-            options["recursive"] = False
-        if "recursive" not in self.help:
-            self.help["recursive"] = "Whether to search recursively (bool)."
+        opt = "recursive"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to search recursively (bool)."
 
-        if "list_files" not in options:
-            options["list_files"] = True
-        if "list_files" not in self.help:
-            self.help["list_files"] = "Whether to include files (bool)."
+        opt = "list_files"
+        if opt not in options:
+            options[opt] = True
+        if opt not in self.help:
+            self.help[opt] = "Whether to include files (bool)."
 
-        if "list_dirs" not in options:
-            options["list_dirs"] = False
-        if "list_dirs" not in self.help:
-            self.help["list_dirs"] = "Whether to include directories (bool)."
+        opt = "list_dirs"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to include directories (bool)."
 
-        if "regexp" not in options:
-            options["regexp"] = ".*"
-        if "regexp" not in self.help:
-            self.help["regexp"] = "The regular expression that files/dirs must match (string)."
+        opt = "regexp"
+        if opt not in options:
+            options[opt] = ".*"
+        if opt not in self.help:
+            self.help[opt] = "The regular expression that files/dirs must match (string)."
 
         return options
 
@@ -159,12 +165,13 @@ class ListFiles(Source):
         :return: None if successful, error otherwise
         :rtype: str
         """
-        list_files = self.options["list_files"]
-        list_dirs = self.options["list_dirs"]
-        recursive = self.options["recursive"]
+        list_files = self.resolve_option("list_files")
+        list_dirs = self.resolve_option("list_dirs")
+        recursive = self.resolve_option("recursive")
+        spattern = self.resolve_option("regexp")
         pattern = None
-        if (self.options["regexp"] is not None) and (self.options["regexp"] != ".*"):
-            pattern = re.compile(self.options["regexp"])
+        if (spattern is not None) and (spattern != ".*"):
+            pattern = re.compile(spattern)
 
         try:
             items = os.listdir(path)
@@ -187,12 +194,13 @@ class ListFiles(Source):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        if not os.path.exists(self.options["dir"]):
-            return "Directory '" + self.options["dir"] + "' does not exist!"
-        if not os.path.isdir(self.options["dir"]):
-            return "Location '" + self.options["dir"] + "' is not a directory!"
+        directory = self.resolve_option("dir")
+        if not os.path.exists(directory):
+            return "Directory '" + directory + "' does not exist!"
+        if not os.path.isdir(directory):
+            return "Location '" + directory + "' is not a directory!"
         collected = []
-        result = self._list(self.options["dir"], collected)
+        result = self._list(directory, collected)
         if result is None:
             for c in collected:
                 self._output.append(Token(c))
@@ -232,10 +240,11 @@ class GetStorageValue(Source):
         """
         options = super(GetStorageValue, self).fix_options(options)
 
-        if "storage_name" not in options:
-            options["storage_name"] = "unknown"
-        if "storage_name" not in self.help:
-            self.help["storage_name"] = "The name of the storage value to retrieve (string)."
+        opt = "storage_name"
+        if opt not in options:
+            options[opt] = "unknown"
+        if opt not in self.help:
+            self.help[opt] = "The name of the storage value to retrieve (string)."
 
         return options
 
@@ -247,7 +256,8 @@ class GetStorageValue(Source):
         """
         if self.storagehandler is None:
             return "No storage handler available!"
-        if self.options["storage_name"] not in self.storagehandler.storage:
-            return "No storage item called '" + self.options["storage_name"] + "' present!"
-        self._output.append(self.storagehandler.storage[self.options["storage_name"]])
+        sname = self.resolve_option("storage_name")
+        if sname not in self.storagehandler.storage:
+            return "No storage item called '" + sname + "' present!"
+        self._output.append(self.storagehandler.storage[sname])
         return None

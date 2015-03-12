@@ -71,10 +71,11 @@ class ActorHandler(Actor):
         """
         options = super(ActorHandler, self).fix_options(options)
 
-        if "actors" not in options:
-            options["actors"] = self.default_actors()
-        if "actors" not in self.help:
-            self.help["actors"] = "The list of sub-actors that this actor manages."
+        opt = "actors"
+        if opt not in options:
+            options[opt] = self.default_actors()
+        if opt not in self.help:
+            self.help[opt] = "The list of sub-actors that this actor manages."
 
         return options
 
@@ -143,7 +144,7 @@ class ActorHandler(Actor):
         """
         result = 0
         for actor in self.actors:
-            if not actor.options["skip"]:
+            if not actor.skip:
                 result += 1
         return result
 
@@ -156,7 +157,7 @@ class ActorHandler(Actor):
         """
         result = None
         for actor in self.actors:
-            if not actor.options["skip"]:
+            if not actor.skip:
                 result = actor
                 break
         return result
@@ -170,7 +171,7 @@ class ActorHandler(Actor):
         """
         result = None
         for actor in reversed(self.actors):
-            if not actor.options["skip"]:
+            if not actor.skip:
                 result = actor
                 break
         return result
@@ -218,7 +219,7 @@ class ActorHandler(Actor):
                     actor.name = newname
         if result is None:
             for actor in self.actors:
-                if actor.options["skip"]:
+                if actor.skip:
                     continue
                 result = actor.setup()
                 if result is not None:
@@ -240,7 +241,7 @@ class ActorHandler(Actor):
         Finishes up after execution finishes, does not remove any graphical output.
         """
         for actor in self.actors:
-            if actor.options["skip"]:
+            if actor.skip:
                 continue
             actor.wrapup()
         super(ActorHandler, self).wrapup()
@@ -250,7 +251,7 @@ class ActorHandler(Actor):
         Destructive finishing up after execution stopped.
         """
         for actor in self.actors:
-            if actor.options["skip"]:
+            if actor.skip:
                 continue
             actor.cleanup()
         super(ActorHandler, self).cleanup()
@@ -322,7 +323,7 @@ class Director(object):
         """
         if self.owner is None:
             return "No actor set as owner!"
-        if self.owner.options["skip"]:
+        if self.owner.skip:
             return None
         return self.do_execute()
 
@@ -427,7 +428,7 @@ class SequentialDirector(Director, Stoppable):
         """
         actors = []
         for actor in self.owner.actors:
-            if actor.options["skip"]:
+            if actor.skip:
                 continue
             actors.append(actor)
         if len(actors) == 0:
@@ -485,7 +486,7 @@ class SequentialDirector(Director, Stoppable):
                     break
 
                 curr = self.owner.actors[i]
-                if curr.options["skip"]:
+                if curr.skip:
                     continue
 
                 # no token? get pending one or produce new one
@@ -865,7 +866,7 @@ class BranchDirector(Director, Stoppable):
         """
         actors = []
         for actor in self.owner.actors:
-            if actor.options["skip"]:
+            if actor.skip:
                 continue
             actors.append(actor)
         if len(actors) == 0:

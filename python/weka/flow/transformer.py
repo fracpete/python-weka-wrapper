@@ -103,20 +103,23 @@ class LoadDataset(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        if "incremental" not in options:
-            options["incremental"] = False
-        if "incremental" not in self.help:
-            self.help["incremental"] = "Whether to load the dataset incrementally (bool)."
+        opt = "incremental"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to load the dataset incrementally (bool)."
 
-        if "use_custom_loader" not in options:
-            options["use_custom_loader"] = False
-        if "use_custom_loader" not in self.help:
-            self.help["use_custom_loader"] = "Whether to use a custom loader."
+        opt = "use_custom_loader"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to use a custom loader."
 
-        if "custom_loader" not in options:
-            options["custom_loader"] = converters.Loader(classname="weka.core.converters.ArffLoader")
-        if "custom_loader" not in self.help:
-            self.help["custom_loader"] = "The custom loader to use."
+        opt = "custom_loader"
+        if opt not in options:
+            options[opt] = converters.Loader(classname="weka.core.converters.ArffLoader")
+        if opt not in self.help:
+            self.help[opt] = "The custom loader to use."
 
         return super(LoadDataset, self).fix_options(options)
 
@@ -169,12 +172,12 @@ class LoadDataset(Transformer):
             return "File '" + fname + "' does not exist!"
         if not os.path.isfile(fname):
             return "Location '" + fname + "' is not a file!"
-        if self.options["use_custom_loader"]:
-            self._loader = self.options["custom_loader"]
+        if self.resolve_option("use_custom_loader"):
+            self._loader = self.resolve_option("custom_loader")
         else:
             self._loader = converters.loader_for_file(fname)
-        dataset = self._loader.load_file(fname, incremental=self.options["incremental"])
-        if not self.options["incremental"]:
+        dataset = self._loader.load_file(fname, incremental=self.resolve_option("incremental"))
+        if not self.resolve_option("incremental"):
             self._output.append(Token(dataset))
         else:
             self._iterator = self._loader.__iter__()
@@ -255,10 +258,11 @@ class SetStorageValue(Transformer):
         """
         options = super(SetStorageValue, self).fix_options(options)
 
-        if "storage_name" not in options:
-            options["storage_name"] = "unknown"
-        if "storage_name" not in self.help:
-            self.help["storage_name"] = "The storage value name for storing the payload under (string)."
+        opt = "storage_name"
+        if opt not in options:
+            options[opt] = "unknown"
+        if opt not in self.help:
+            self.help[opt] = "The storage value name for storing the payload under (string)."
 
         return options
 
@@ -270,7 +274,7 @@ class SetStorageValue(Transformer):
         """
         if self.storagehandler is None:
             return "No storage handler available!"
-        self.storagehandler.storage[self.options["storage_name"]] = self.input.payload
+        self.storagehandler.storage[self.resolve_option("storage_name")] = self.input.payload
         self._output.append(self.input)
         return None
 
@@ -308,10 +312,11 @@ class DeleteStorageValue(Transformer):
         """
         options = super(DeleteStorageValue, self).fix_options(options)
 
-        if "storage_name" not in options:
-            options["storage_name"] = "unknown"
-        if "storage_name" not in self.help:
-            self.help["storage_name"] = "The name of the storage value to delete (string)."
+        opt = "storage_name"
+        if opt not in options:
+            options[opt] = "unknown"
+        if opt not in self.help:
+            self.help[opt] = "The name of the storage value to delete (string)."
 
         return options
 
@@ -323,6 +328,6 @@ class DeleteStorageValue(Transformer):
         """
         if self.storagehandler is None:
             return "No storage handler available!"
-        self.storagehandler.storage.pop(self.options["storage_name"], None)
+        self.storagehandler.storage.pop(self.resolve_option("storage_name"), None)
         self._output.append(self.input)
         return None

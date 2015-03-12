@@ -100,10 +100,11 @@ class Console(Sink):
         """
         options = super(Console, self).fix_options(options)
 
-        if "prefix" not in options:
-            options["prefix"] = ""
-        if "prefix" not in self.help:
-            self.help["prefix"] = "The prefix for the output (string)."
+        opt = "prefix"
+        if opt not in options:
+            options[opt] = ""
+        if opt not in self.help:
+            self.help[opt] = "The prefix for the output (string)."
 
         return options
 
@@ -113,5 +114,5 @@ class Console(Sink):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        print(self.options["prefix"] + str(self.input.payload))
+        print(self.resolve_option("prefix") + str(self.input.payload))
         return None

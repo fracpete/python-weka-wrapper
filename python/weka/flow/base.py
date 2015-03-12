@@ -15,11 +15,11 @@
 # Copyright (C) 2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 
-import uuid
+import json
 import logging
 import re
+import uuid
 import weka.core.utils as utils
-import json
 
 
 class Stoppable(object):
@@ -204,15 +204,17 @@ class Actor(Stoppable):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        if "annotation" not in options:
-            options["annotation"] = None
-        if "annotation" not in self.help:
-            self.help["annotation"] = "The (optional) annotation for this actor."
+        opt = "annotation"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The (optional) annotation for this actor."
 
-        if "skip" not in options:
-            options["skip"] = False
-        if "skip" not in self.help:
-            self.help["skip"] = "The name of the actor to use in the flow."
+        opt = "skip"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "The name of the actor to use in the flow."
 
         return options
 
@@ -225,6 +227,29 @@ class Actor(Stoppable):
         """
         return self._options
 
+    def resolve_option(self, name, default=None):
+        """
+        Resolves the option, i.e., interprets "@{...}" values and retrievs them instead from internal
+        storage.
+        :param name: the name of the option
+        :type name: str
+        :param default: the optional default value
+        :type default: object
+        :return: the resolved value
+        :rtype: object
+        """
+        value = self.options[name]
+        if value is None:
+            return default
+        elif isinstance(value, str) and value.startswith("@{") and value.endswith("}"):
+            stname = value[2:len(value)-1]
+            if self.storagehandler is not None:
+                return self.storagehandler.storage[stname]
+            else:
+                return default
+        else:
+            return value
+
     @options.setter
     def options(self, options):
         """
@@ -233,6 +258,24 @@ class Actor(Stoppable):
         :type options: dict
         """
         self._options = self.fix_options(options)
+
+    @property
+    def skip(self):
+        """
+        Obtains whether the actor is disabled (skipped).
+        :return: True if skipped
+        :rtype: bool
+        """
+        return self.resolve_option("skip")
+
+    @skip.setter
+    def skip(self, skip):
+        """
+        Sets whether the actor is skipped.
+        :param skip: True if skipped
+        :type skip: bool
+        """
+        self.options["skip"] = skip
 
     def to_options(self, k, v):
         """
@@ -374,7 +417,7 @@ class Actor(Stoppable):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        if self.options["skip"]:
+        if self.skip:
             return None
 
         result = self.pre_execute()
