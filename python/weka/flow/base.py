@@ -365,6 +365,18 @@ class Actor(Stoppable):
         else:
             return None
 
+    @property
+    def root(self):
+        """
+        Returns the top-level actor.
+        :return: the top-level actor
+        :rtype: Actor
+        """
+        if self.parent is None:
+            return self
+        else:
+            return self.parent.root
+
     def is_stopped(self):
         """
         Returns whether the object has been stopped.
