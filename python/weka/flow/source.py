@@ -37,6 +37,39 @@ class Source(OutputProducer, Actor):
         super(OutputProducer, self).__init__()
 
 
+class Start(Source):
+    """
+    Outputs a None token for triggering other actors.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Start, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Outputs a None token for triggering other actors."
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        self._output.append(Token(None))
+        return None
+
+
 class FileSupplier(Source):
     """
     Outputs a fixed list of files.
@@ -84,7 +117,6 @@ class FileSupplier(Source):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        self._output = []
         for f in self.resolve_option("files"):
             self._output.append(Token(f))
         return None
@@ -168,7 +200,7 @@ class ListFiles(Source):
         list_files = self.resolve_option("list_files")
         list_dirs = self.resolve_option("list_dirs")
         recursive = self.resolve_option("recursive")
-        spattern = self.resolve_option("regexp")
+        spattern = str(self.resolve_option("regexp"))
         pattern = None
         if (spattern is not None) and (spattern != ".*"):
             pattern = re.compile(spattern)
@@ -194,7 +226,7 @@ class ListFiles(Source):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        directory = self.resolve_option("dir")
+        directory = str(self.resolve_option("dir"))
         if not os.path.exists(directory):
             return "Directory '" + directory + "' does not exist!"
         if not os.path.isdir(directory):
@@ -260,4 +292,71 @@ class GetStorageValue(Source):
         if sname not in self.storagehandler.storage:
             return "No storage item called '" + sname + "' present!"
         self._output.append(self.storagehandler.storage[sname])
+        return None
+
+
+class ForLoop(Source):
+    """
+    Outputs integers using the specified min, max and step.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(ForLoop, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Outputs integers using the specified min, max and step."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(ForLoop, self).fix_options(options)
+
+        opt = "min"
+        if opt not in options:
+            options[opt] = 1
+        if opt not in self.help:
+            self.help[opt] = "The minimum for the loop (included, int)."
+
+        opt = "max"
+        if opt not in options:
+            options[opt] = 10
+        if opt not in self.help:
+            self.help[opt] = "The maximum for the loop (included, int)."
+
+        opt = "step"
+        if opt not in options:
+            options[opt] = 1
+        if opt not in self.help:
+            self.help[opt] = "The step size (int)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        for i in xrange(
+                int(self.resolve_option("min")),
+                int(self.resolve_option("max")) + 1,
+                int(self.resolve_option("step"))):
+            self._output.append(Token(i))
         return None
