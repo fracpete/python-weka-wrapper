@@ -16,6 +16,7 @@
 
 
 from weka.flow.base import Actor, InputConsumer, OutputProducer, Stoppable
+import weka.core.utils as utils
 
 
 class ActorHandler(Actor):
@@ -76,6 +77,39 @@ class ActorHandler(Actor):
         self.check_actors(options["actors"])
 
         return options
+
+    def to_options_dict(self):
+        """
+        Returns a dictionary of its options.
+        :return: the options as dictionary
+        :rtype: dict
+        """
+        result = super(ActorHandler, self).to_options_dict()
+        result["options"].pop("actors", None)
+        actors = {}
+        for index, actor in enumerate(self.actors):
+            actors[index] = actor.to_options_dict()
+        result["actors"] = actors
+        return result
+
+    def from_options_dict(self, d):
+        """
+        Restores the object from the given options dictionary.
+        :param d: the dictionary to use for restoring the options
+        :type options: dict
+        """
+        actors = d["actors"]
+        num = len(actors)
+        for i in xrange(num):
+            item = actors[str(i)]
+            cls = utils.get_class(item["class"])
+            actor = cls(name=item["name"])
+            actor.parent = self
+            # actor.name = item["name"]
+            actor.from_options_dict(item["options"])
+            self.actors.append(actor)
+        d.pop("actors", None)
+        super(ActorHandler, self).from_options_dict(d)
 
     @property
     def actors(self):

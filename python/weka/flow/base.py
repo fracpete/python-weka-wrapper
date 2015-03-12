@@ -18,6 +18,8 @@
 import uuid
 import logging
 import re
+import weka.core.utils as utils
+import json
 
 
 class Actor(object):
@@ -206,6 +208,45 @@ class Actor(object):
         :type options: dict
         """
         self._options = self.fix_options(options)
+
+    def to_options_dict(self):
+        """
+        Returns a dictionary of its options.
+        :return: the options as dictionary
+        :rtype: dict
+        """
+        result = {}
+        result["name"] = self.name
+        result["class"] = utils.get_classname(self)
+        result["options"] = self.options.copy()
+        return result
+
+    def from_options_dict(self, d):
+        """
+        Restores the object from the given options dictionary.
+        :param d: the dictionary to use for restoring the options
+        :type d: dict
+        """
+        for k in d.keys():
+            if k in self.options:
+                self.options[k] = d[k]
+            d.pop(k, None)
+
+    def to_json(self):
+        """
+        Returns the options as JSON.
+        :return: the object as string
+        :rtype: str
+        """
+        return json.dumps(self.to_options_dict())
+
+    def from_json(self, s):
+        """
+        Restores the object from the given JSON.
+        :param s: the JSON string to parse
+        :type s: str
+        """
+        self.from_options_dict(json.loads(s))
 
     @property
     def help(self):
