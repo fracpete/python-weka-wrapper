@@ -18,6 +18,7 @@
 import os
 from weka.flow.base import Actor, InputConsumer, OutputProducer, Token
 import weka.core.converters as converters
+import weka.core.utils as utils
 
 
 class Transformer(InputConsumer, OutputProducer):
@@ -119,13 +120,50 @@ class LoadDataset(Transformer):
 
         return super(LoadDataset, self).fix_options(options)
 
+    def to_options(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        if k == "custom_loader":
+            return utils.to_commandline(v)
+        return super(LoadDataset, self).to_options(k, v)
+
+    def from_options(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        if k == "custom_loader":
+            return utils.from_commandline(v, converters.Loader)
+        return super(LoadDataset, self).from_options(k, v)
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, str):
+            return
+        raise Exception("Unhandled class: " + utils.get_classname(token.payload))
+
     def do_execute(self):
         """
         The actual execution of the actor.
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        self._output = []
         fname = str(self.input.payload)
         if not os.path.exists(fname):
             return "File '" + fname + "' does not exist!"
@@ -140,6 +178,7 @@ class LoadDataset(Transformer):
             self._output.append(Token(dataset))
         else:
             self._iterator = self._loader.__iter__()
+        return None
 
     def has_output(self):
         """
@@ -181,3 +220,109 @@ class LoadDataset(Transformer):
         self._loader = None
         self._iterator = None
         super(LoadDataset, self).wrapup()
+
+
+class SetStorageValue(Transformer):
+    """
+    Store the payload of the current token in internal storage using the specified name.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(SetStorageValue, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Store the payload of the current token in internal storage using the specified name."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(SetStorageValue, self).fix_options(options)
+
+        if "storage_name" not in options:
+            options["storage_name"] = "unknown"
+        if "storage_name" not in self.help:
+            self.help["storage_name"] = "The storage value name for storing the payload under (string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        if self.storagehandler is None:
+            return "No storage handler available!"
+        self.storagehandler.storage[self.options["storage_name"]] = self.input.payload
+        self._output.append(self.input)
+        return None
+
+
+class DeleteStorageValue(Transformer):
+    """
+    Deletes the specified value from internal storage.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(DeleteStorageValue, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Deletes the specified value from internal storage."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(DeleteStorageValue, self).fix_options(options)
+
+        if "storage_name" not in options:
+            options["storage_name"] = "unknown"
+        if "storage_name" not in self.help:
+            self.help["storage_name"] = "The name of the storage value to delete (string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        if self.storagehandler is None:
+            return "No storage handler available!"
+        self.storagehandler.storage.pop(self.options["storage_name"], None)
+        self._output.append(self.input)
+        return None
