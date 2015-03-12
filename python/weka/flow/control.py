@@ -436,7 +436,7 @@ class SequentialDirector(Director, Stoppable):
             raise Exception("Actor '" + actors[0].full_name + "' is a source, but no sources allowed!")
         for i in xrange(1, len(actors)):
             if not isinstance(actors[i], InputConsumer):
-                raise Exception("Actor '" + actors[i].full_name + "' does not accept any input!")
+                raise Exception("Actor does not accept any input: " + actors[i].full_name)
 
     def setup(self):
         """
@@ -810,4 +810,134 @@ class Trigger(ActorHandler, Transformer):
         result = self._director.execute()
         if result is None:
             self._output.append(self.input)
+        return result
+
+
+class BranchDirector(Director, Stoppable):
+    """
+    Director for the Branch actor.
+    """
+
+    def __init__(self, owner):
+        """
+        Initializes the director
+        :param owner: the owning actor
+        :type owner: Actor
+        """
+        super(BranchDirector, self).__init__(owner)
+        self._stopping = False
+        self._stopped = False
+
+    def stop_execution(self):
+        """
+        Triggers the stopping of the object.
+        """
+        if not (self._stopping or self._stopped):
+            self._stopping = True
+
+    def is_stopping(self):
+        """
+        Returns whether the director is in the process of stopping
+        :return:
+        """
+        return self._stopping
+
+    def is_stopped(self):
+        """
+        Returns whether the object has been stopped.
+        :return: whether stopped
+        :rtype: bool
+        """
+        return self._stopped
+
+    def check_owner(self, owner):
+        """
+        Checks the owner. Raises an exception if invalid.
+        :param owner: the owner to check
+        :type owner: Actor
+        """
+        if not isinstance(owner, Branch):
+            raise Exception("Owner is not a Branch: " + owner.__name__)
+
+    def check_actors(self):
+        """
+        Checks the actors of the owner. Raises an exception if invalid.
+        """
+        actors = []
+        for actor in self.owner.actors:
+            if actor.options["skip"]:
+                continue
+            actors.append(actor)
+        if len(actors) == 0:
+            return
+        for actor in actors:
+            if not isinstance(actor, InputConsumer):
+                raise Exception("Actor does not accept any input: " + actor.full_name)
+
+    def setup(self):
+        """
+        Performs some checks.
+        :return: None if successful, otherwise error message.
+        :rtype: str
+        """
+        result = super(BranchDirector, self).setup()
+        if result is None:
+            try:
+                self.check_actors()
+            except Exception, e:
+                result = str(e)
+        return result
+
+    def do_execute(self):
+        """
+        Actual execution of the director.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+
+        result = None
+        self._stopped = False
+        self._stopping = False
+
+        for actor in self.owner.actors:
+            if self.is_stopping():
+                break
+            actor.input = self.owner.input
+            result = actor.execute()
+            if result is not None:
+                break
+
+        return result
+
+
+class Branch(ActorHandler, InputConsumer):
+    """
+    Passes on the input token to all of its sub-actors, one after the other.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the sequence.
+        :param name: the name of the sequence
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Branch, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Passes on the input token to all of its sub-actors, one after the other."
+
+    def new_director(self):
+        """
+        Creates the director to use for handling the sub-actors.
+        :return: the director instance
+        :rtype: Director
+        """
+        result = BranchDirector(self)
         return result
