@@ -68,7 +68,7 @@ class FileSupplier(Source):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Source, self).fix_options(options)
+        options = super(FileSupplier, self).fix_options(options)
 
         if "files" not in options:
             options["files"] = []
@@ -120,7 +120,7 @@ class ListFiles(Source):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Source, self).fix_options(options)
+        options = super(ListFiles, self).fix_options(options)
 
         if "dir" not in options:
             options["dir"] = "."
@@ -194,7 +194,60 @@ class ListFiles(Source):
         collected = []
         result = self._list(self.options["dir"], collected)
         if result is None:
-            self._output = []
             for c in collected:
                 self._output.append(Token(c))
         return result
+
+
+class GetStorageValue(Source):
+    """
+    Outputs the specified value from storage.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(GetStorageValue, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Outputs the specified value from storage."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(GetStorageValue, self).fix_options(options)
+
+        if "storage_name" not in options:
+            options["storage_name"] = "unknown"
+        if "storage_name" not in self.help:
+            self.help["storage_name"] = "The name of the storage value to retrieve (string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        if self.storagehandler is None:
+            return "No storage handler available!"
+        if self.options["storage_name"] not in self.storagehandler.storage:
+            return "No storage item called '" + self.options["storage_name"] + "' present!"
+        self._output.append(self.storagehandler.storage[self.options["storage_name"]])
+        return None
