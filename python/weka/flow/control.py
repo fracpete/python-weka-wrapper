@@ -17,6 +17,7 @@
 
 import weka.flow.base as base
 from weka.flow.base import Actor, InputConsumer, OutputProducer, Stoppable, StorageHandler
+from weka.flow.transformer import Transformer
 import weka.core.utils as utils
 
 
@@ -74,8 +75,6 @@ class ActorHandler(Actor):
             options["actors"] = self.default_actors()
         if "actors" not in self.help:
             self.help["actors"] = "The list of sub-actors that this actor manages."
-
-        self.check_actors(options["actors"])
 
         return options
 
@@ -588,7 +587,9 @@ class Flow(ActorHandler, StorageHandler):
         :type actors: list
         """
         super(Flow, self).check_actors(actors)
-        # TODO
+        actor = self.first_active
+        if not base.is_source(actor):
+            raise Exception("First active actor is not a source: " + actor.full_name)
 
     @property
     def storage(self):
@@ -648,7 +649,7 @@ class Sequence(InputConsumer):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(Flow, self).__init__(name=name, options=options)
+        super(Sequence, self).__init__(name=name, options=options)
 
     def description(self):
         """
@@ -679,3 +680,134 @@ class Sequence(InputConsumer):
         actor = self.first_active
         if not isinstance(actor, InputConsumer):
             raise Exception("First active actor does not accept input: " + actor.full_name)
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        self.first_active.input = self.input
+        result = self._director.execute()
+        if result is None:
+            self._output.append(self.input)
+        return result
+
+
+class Tee(ActorHandler, Transformer):
+    """
+    'Tees off' the current token to be processed in the sub-tree before passing it on.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the sequence.
+        :param name: the name of the sequence
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Tee, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "'Tees off' the current token to be processed in the sub-tree before passing it on."
+
+    def new_director(self):
+        """
+        Creates the director to use for handling the sub-actors.
+        :return: the director instance
+        :rtype: Director
+        """
+        result = SequentialDirector(self)
+        result.record_output = False
+        result.allow_source = False
+        return result
+
+    def check_actors(self, actors):
+        """
+        Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+        :param actors: the actors to check
+        :type actors: list
+        """
+        super(Tee, self).check_actors(actors)
+        actor = self.first_active
+        if actor is None:
+            raise Exception("No active actor!")
+        if not isinstance(actor, InputConsumer):
+            raise Exception("First active actor does not accept input: " + actor.full_name)
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        self.first_active.input = self.input
+        result = self._director.execute()
+        if result is None:
+            self._output.append(self.input)
+        return result
+
+
+class Trigger(ActorHandler, Transformer):
+    """
+    'Triggers' the sub-tree with each token passing through and then passes the token on.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the sequence.
+        :param name: the name of the sequence
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Trigger, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "'Triggers' the sub-tree with each token passing through and then passes the token on."
+
+    def new_director(self):
+        """
+        Creates the director to use for handling the sub-actors.
+        :return: the director instance
+        :rtype: Director
+        """
+        result = SequentialDirector(self)
+        result.record_output = False
+        result.allow_source = True
+        return result
+
+    def check_actors(self, actors):
+        """
+        Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+        :param actors: the actors to check
+        :type actors: list
+        """
+        super(Trigger, self).check_actors(actors)
+        actor = self.first_active
+        if actor is None:
+            raise Exception("No active actor!")
+        if not base.is_source(actor):
+            raise Exception("First active actor is not a source: " + actor.full_name)
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = self._director.execute()
+        if result is None:
+            self._output.append(self.input)
+        return result
