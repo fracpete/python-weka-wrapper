@@ -520,6 +520,41 @@ class Flow(ActorHandler):
         super(Flow, self).check_actors(actors)
         # TODO
 
+    @classmethod
+    def load(cls, fname):
+        """
+        Loads the flow from a JSON file.
+        :param fname: the file to load
+        :type fname: str
+        :return: the flow
+        :rtype: Flow
+        """
+        with open(fname) as f:
+            content = f.readlines()
+        result = Flow()
+        result.from_json(''.join(content))
+        return result
+
+    @classmethod
+    def save(cls, flow, fname):
+        """
+        Saves the flow to a JSON file.
+        :param flow: the flow to save
+        :type flow: Flow
+        :param fname: the file to load
+        :type fname: str
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = None
+        try:
+            f = open(fname, 'w')
+            f.write(flow.to_json())
+            f.close()
+        except Exception, e:
+            result = str(e)
+        return result
+
 
 class Sequence(InputConsumer):
     """
