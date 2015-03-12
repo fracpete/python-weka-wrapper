@@ -37,6 +37,17 @@ class Transformer(InputConsumer, OutputProducer):
         super(InputConsumer, self).__init__(name=name, options=options)
         super(OutputProducer, self).__init__(name=name, options=options)
 
+    def post_execute(self):
+        """
+        Gets executed after the actual execution.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = super(Transformer, self).post_execute()
+        if result is None:
+            self.input = None
+        return result
+
 
 class PassThrough(Transformer):
     """
@@ -176,7 +187,7 @@ class LoadDataset(Transformer):
             self._loader = self.resolve_option("custom_loader")
         else:
             self._loader = converters.loader_for_file(fname)
-        dataset = self._loader.load_file(fname, incremental=self.resolve_option("incremental"))
+        dataset = self._loader.load_file(fname, incremental=bool(self.resolve_option("incremental")))
         if not self.resolve_option("incremental"):
             self._output.append(Token(dataset))
         else:
