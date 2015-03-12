@@ -256,6 +256,38 @@ class ActorHandler(Actor):
             actor.cleanup()
         super(ActorHandler, self).cleanup()
 
+    def _build_tree(self, actor, content):
+        """
+        Builds the tree for the given actor.
+        :param actor: the actor to process
+        :type actor: Actor
+        :param content: the rows of the tree collected so far
+        :type content: list
+        """
+        depth = actor.depth
+        row = ""
+        for i in xrange(depth - 1):
+            row += "| "
+        if depth > 0:
+            row += "|-"
+        row += actor.name
+        content.append(row)
+
+        if isinstance(actor, ActorHandler):
+            for sub in actor.actors:
+                self._build_tree(sub, content)
+
+    @property
+    def tree(self):
+        """
+        Returns a tree representation of this sub-flow.
+        :return: the tree
+        :rtype: str
+        """
+        content = []
+        self._build_tree(self, content)
+        return '\n'.join(content)
+
 
 class Director(object):
     """
