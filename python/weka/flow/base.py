@@ -18,6 +18,7 @@
 import json
 import logging
 import re
+import traceback
 import uuid
 import weka.core.utils as utils
 
@@ -436,7 +437,11 @@ class Actor(Stoppable):
 
         result = self.pre_execute()
         if result is None:
-            result = self.do_execute()
+            try:
+                result = self.do_execute()
+            except Exception, e:
+                result = traceback.format_exc()
+                print(self.full_name + "\n" + result)
         if result is None:
             result = self.post_execute()
         return result
