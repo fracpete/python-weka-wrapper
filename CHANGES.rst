@@ -9,6 +9,7 @@ Changelog
 - added plotting of experiments with `plot_experiment` methid in `weka.plot.experiments` module
 - `Instance.create_instance` method now takes list of tuples (index, internal float value) when generating sparse instances
 - added `weka.core.database` module for loading data from a database
+- added `make_copy` class method to `Clusterer` class
 - ...
 
 

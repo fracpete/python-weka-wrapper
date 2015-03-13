@@ -146,6 +146,20 @@ class Clusterer(OptionHandler):
         else:
             return None
 
+    @classmethod
+    def make_copy(cls, clusterer):
+        """
+        Creates a copy of the clusterer.
+        :param clusterer: the clustererto copy
+        :type clusterer: Clusterer
+        :return: the copy of the clusterer
+        :rtype: Clusterer
+        """
+        return Clusterer(
+            jobject=javabridge.static_call(
+                "weka/clusterers/AbstractClusterer", "makeCopy",
+                "(Lweka/clusterers/Clusterer;)Lweka/clusterers/Clusterer;", clusterer.jobject))
+
 
 class SingleClustererEnhancer(Clusterer):
     """
