@@ -103,7 +103,7 @@ class Actor(Stoppable):
         """
         if self._logger is None:
             self._logger = logging.getLogger(self.full_name)
-        return self._options
+        return self._logger
 
     @property
     def name(self):
@@ -653,6 +653,52 @@ class StorageHandler(object):
         :rtype: dict
         """
         raise Exception("Not implemented!")
+
+    def expand(self, s):
+        """
+        Expands all occurrences of "@{...}" within the string with the actual values currently stored
+        in internal storage.
+        :param s: the string to expand
+        :type s: str
+        :return: the expanded string
+        :rtype: str
+        """
+        result = s
+        while result.contains("@{"):
+            start = result.index("@{")
+            end = result.index("}", start)
+            name = result[start + 2, end]
+            value = self.storage[name]
+            if value is None:
+                raise("Storage value '" + name + "' not present, failed to expand string: " + s)
+            else:
+                result = result[1:start] + str(value) + result[end + 1:]
+
+    def pad(self, name):
+        """
+        Pads the name with "@{...}".
+        :param name: the name to pad
+        :type name: str
+        :return: the padded name
+        :rtype: str
+        """
+        if name.startswith("@{"):
+            return name
+        else:
+            return "@{" + name + "}"
+
+    def extract(self, padded):
+        """
+        Removes the surrounding "@{...}" from the name.
+        :param padded: the padded string
+        :type padded: str
+        :return: the extracted name
+        :rtype: str
+        """
+        if padded.startswith("@{") and padded.endswith("}"):
+            return padded[2:len(padded)-1]
+        else:
+            return padded
 
 
 def is_source(actor):
