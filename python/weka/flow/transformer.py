@@ -18,8 +18,11 @@
 import os
 import math
 from weka.flow.base import InputConsumer, OutputProducer, Token
+from weka.flow.container import ModelContainer
 import weka.core.converters as converters
+from weka.core.dataset import Instance, Instances
 import weka.core.utils as utils
+from weka.classifiers import Classifier
 
 
 class Transformer(InputConsumer, OutputProducer):
@@ -46,7 +49,7 @@ class Transformer(InputConsumer, OutputProducer):
         """
         result = super(Transformer, self).post_execute()
         if result is None:
-            self.input = None
+            self._input = None
         return result
 
 
@@ -116,7 +119,7 @@ class LoadDataset(Transformer):
         """
         return "incremental: " + str(self.resolve_option("incremental")) \
                + ", custom: " + str(self.resolve_option("use_custom_loader")) \
-               + ", loader: " + str(self.resolve_option("custom_loader"))
+               + ", loader: " + utils.to_commandline(self.resolve_option("custom_loader"))
 
     def fix_options(self, options):
         """
@@ -180,9 +183,11 @@ class LoadDataset(Transformer):
         :param token: the token to check
         :type token: Token
         """
+        if token is None:
+            raise Exception(self.full_name + ": No token provided!")
         if isinstance(token.payload, str):
             return
-        raise Exception("Unhandled class: " + utils.get_classname(token.payload))
+        raise Exception(self.full_name + ": Unhandled class: " + utils.get_classname(token.payload))
 
     def do_execute(self):
         """
@@ -438,4 +443,163 @@ class MathExpression(Transformer):
         expr = self.resolve_option("expression")
         expr = expr.replace("X", str(self.input.payload))
         self._output.append(Token(eval(expr)))
+        return None
+
+
+class ClassSelector(Transformer):
+    """
+    Sets/unsets the class index of a dataset.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(ClassSelector, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Sets/unsets the class index of a dataset."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+
+        return "index: " + str(self.resolve_option("index"))
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(ClassSelector, self).fix_options(options)
+
+        opt = "index"
+        if opt not in options:
+            options[opt] = "last"
+        if opt not in self.help:
+            self.help[opt] = "The class index (1-based number); 'first' and 'last' are accepted as well (string)."
+
+        opt = "unset"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to unset the class index (bool)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        data = self.input.payload
+        index = str(self.resolve_option("index"))
+        unset = bool(self.resolve_option("unset"))
+        if unset:
+            data.no_class()
+        else:
+            if index == "first":
+                data.class_is_first()
+            elif index == "last":
+                data.class_is_last()
+            else:
+                data.class_index = int(index) - 1
+        self._output.append(Token(data))
+        return None
+
+
+class TrainClassifier(Transformer):
+    """
+    Trains the classifier on the incoming dataset and forwards a ModelContainer with the trained
+    model and the dataset header.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(TrainClassifier, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return \
+            "Trains the classifier on the incoming dataset and forwards a ModelContainer with the trained " \
+            + "model and the dataset header."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "classifier: " + utils.to_commandline(self.resolve_option("classifier"))
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(TrainClassifier, self).fix_options(options)
+
+        opt = "classifier"
+        if opt not in options:
+            options[opt] = Classifier(classname="weka.classifiers.rules.ZeroR")
+        if opt not in self.help:
+            self.help[opt] = "The classifier to train (Classifier)."
+
+        return options
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, Instances):
+            return
+        if isinstance(token.payload, Instance):
+            return
+        raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        data = self.input.payload
+        cls = self.resolve_option("classifier")
+        cls = Classifier.make_copy(cls)
+        cls.build_classifier(data)
+        cont = ModelContainer(model=cls, header=Instances.template_instances(data))
+        self._output.append(Token(cont))
         return None
