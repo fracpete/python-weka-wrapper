@@ -16,7 +16,7 @@
 
 
 import weka.flow.base as base
-from weka.flow.base import Actor, InputConsumer, OutputProducer, Stoppable, StorageHandler
+from weka.flow.base import Actor, InputConsumer, OutputProducer, Stoppable, StorageHandler, Token
 from weka.flow.transformer import Transformer
 import weka.core.utils as utils
 
@@ -976,4 +976,74 @@ class Branch(ActorHandler, InputConsumer):
         :rtype: Director
         """
         result = BranchDirector(self)
+        return result
+
+
+class ContainerValuePicker(Tee):
+    """
+    Picks the specified value from the container and 'tees' it off.
+    """
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Picks the specified value from the container and 'tees' it off."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "value: " + str(self.resolve_option("value")) + ", switch: " + str(self.resolve_option("switch"))
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(ContainerValuePicker, self).fix_options(options)
+
+        opt = "value"
+        if opt not in options:
+            options[opt] = "Model"
+        if opt not in self.help:
+            self.help[opt] = "The name of the container value to pick from the container (string)."
+
+        opt = "switch"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to switch the ouputs, i.e., forward the container to the sub-flow and the " \
+                             + "container value to the following actor instead (bool)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        cont = self.input.payload
+        name = str(self.resolve_option("value"))
+        value = cont.get(name)
+        switch = bool(self.resolve_option("switch"))
+        if switch:
+            self.first_active.input = self.input
+            result = self._director.execute()
+            if result is None:
+                self._output.append(Token(value))
+        else:
+            self.first_active.input = Token(value)
+            result = self._director.execute()
+            if result is None:
+                self._output.append(self.input)
         return result
