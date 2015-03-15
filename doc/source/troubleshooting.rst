@@ -1,6 +1,14 @@
 Troubleshooting
 ===============
 
+General
+-------
+
+* **Q:** How do I install `.whl` files?
+
+  **A:** `.whl` are *Python Wheels* archives, which you can install using pip (>= 1.4). See also `this website <http://pythonwheels.com/>`_.
+
+
 Mac OSX
 -------
 
@@ -57,4 +65,12 @@ Mac OSX
   **A:** Apparently, the XCode command-line are not installed. You can install
   them by opening a terminal and running the following command: 
   `xcode-select --install`
+
+
+Ubuntu (server)
+===============
+
+* **Q:** On a headless Ubuntu server, building a classifier results in Python exiting, printing the error message `GLib-GIO-ERROR **: Settings schema 'org.gnome.system.proxy' is not installed`. How to fix?
+  **A:** Simply run the following command to fix this:
+  `sudo apt-get install gsettings-desktop-schemas`
  
