@@ -62,6 +62,7 @@ Mac OSX
 
 * **Q:** Installing `pygraphviz` fails with error message 
   `ld: library not found for -lcgraph`. What is wrong?
+
   **A:** Apparently, the XCode command-line are not installed. You can install
   them by opening a terminal and running the following command: 
   `xcode-select --install`
@@ -71,6 +72,7 @@ Ubuntu (server)
 ===============
 
 * **Q:** On a headless Ubuntu server, building a classifier results in Python exiting, printing the error message `GLib-GIO-ERROR **: Settings schema 'org.gnome.system.proxy' is not installed`. How to fix?
+
   **A:** Simply run the following command to fix this:
   `sudo apt-get install gsettings-desktop-schemas`
 
@@ -79,6 +81,7 @@ Windows
 =======
 
 * **Q:** The Windows SDK 7.1 installer fails (eg when behind a proxy). What now?
+
   **A:** You can download an ISO image of the SDK from
   `here <http://www.microsoft.com/en-us/download/details.aspx?id=8442>`_
   (`GRMSDK_EN_DVD.iso` is the 32-bit version and `GRMSDKX_EN_DVD.iso` is the 64-bit version).
