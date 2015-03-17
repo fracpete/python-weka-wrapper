@@ -99,16 +99,21 @@ class ActorHandler(Actor):
         :param d: the dictionary to use for restoring the options
         :type d: dict
         """
-        actors = d["actors"]
-        num = len(actors)
-        for i in xrange(num):
-            item = actors[str(i)]
-            cls = utils.get_class(item["class"])
-            actor = cls(name=item["name"])
-            actor.parent = self
-            actor.from_options_dict(item["options"])
-            self.actors.append(actor)
-        d.pop("actors", None)
+        if "actors" in d:
+            actors = d["actors"]
+            num = len(actors)
+            for i in xrange(num):
+                item = actors[str(i)]
+                cls = utils.get_class(item["class"])
+                actor = cls(name=item["name"])
+                actor.parent = self
+                actor.from_options_dict(item["options"])
+                if isinstance(actor, ActorHandler) and ("actors" in item):
+                    opts = {}
+                    opts["actors"] = item["actors"]
+                    actor.from_options_dict(opts)
+                self.actors.append(actor)
+            d.pop("actors", None)
         super(ActorHandler, self).from_options_dict(d)
 
     @property
@@ -627,7 +632,7 @@ class Flow(ActorHandler, StorageHandler):
         """
         super(Flow, self).check_actors(actors)
         actor = self.first_active
-        if not base.is_source(actor):
+        if (actor is not None) and not base.is_source(actor):
             raise Exception("First active actor is not a source: " + actor.full_name)
 
     @property
@@ -717,7 +722,7 @@ class Sequence(InputConsumer):
         """
         super(Sequence, self).check_actors(actors)
         actor = self.first_active
-        if not isinstance(actor, InputConsumer):
+        if (actor is not None) and not isinstance(actor, InputConsumer):
             raise Exception("First active actor does not accept input: " + actor.full_name)
 
     def do_execute(self):
@@ -747,6 +752,7 @@ class Tee(ActorHandler, Transformer):
         :type options: dict
         """
         super(Tee, self).__init__(name=name, options=options)
+        self._requires_active_actors = True
 
     def description(self):
         """
@@ -810,8 +816,9 @@ class Tee(ActorHandler, Transformer):
         super(Tee, self).check_actors(actors)
         actor = self.first_active
         if actor is None:
-            raise Exception("No active actor!")
-        if not isinstance(actor, InputConsumer):
+            if self._requires_active_actors:
+                raise Exception("No active actor!")
+        elif not isinstance(actor, InputConsumer):
             raise Exception("First active actor does not accept input: " + actor.full_name)
 
     def do_execute(self):
@@ -1036,8 +1043,8 @@ class Branch(ActorHandler, InputConsumer):
 
     def __init__(self, name=None, options=None):
         """
-        Initializes the sequence.
-        :param name: the name of the sequence
+        Initializes the branch.
+        :param name: the name of the branch
         :type name: str
         :param options: the dictionary with the options (str -> object).
         :type options: dict
@@ -1066,6 +1073,17 @@ class ContainerValuePicker(Tee):
     """
     Picks the specified value from the container and 'tees' it off.
     """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the actor.
+        :param name: the name of the actor
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(ContainerValuePicker, self).__init__(name=name, options=options)
+        self._requires_active_actors = False
 
     def description(self):
         """
