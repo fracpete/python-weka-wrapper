@@ -20,6 +20,9 @@ import weka.core.serialization as serialization
 from weka.core.dataset import Instances
 from weka.flow.base import InputConsumer
 from weka.flow.container import ModelContainer
+from weka.classifiers import Evaluation
+import weka.plot.classifiers as pltclassifier
+import weka.plot.clusterers as pltclusterer
 import weka.plot.dataset as pltdataset
 
 
@@ -410,6 +413,117 @@ class MatrixPlot(Sink):
             percent=float(self.resolve_option("percent")),
             seed=int(self.resolve_option("seed")),
             size=int(self.resolve_option("size")),
+            title=self.resolve_option("title"),
+            outfile=self.resolve_option("outfile"),
+            wait=bool(self.resolve_option("wait")))
+        return result
+
+
+class ClassifierErrors(Sink):
+    """
+    Displays the errors obtained through a classifier evaluation.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(ClassifierErrors, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Displays the errors obtained through a classifier evaluation."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(ClassifierErrors, self).fix_options(options)
+
+        opt = "absolute"
+        if opt not in options:
+            options[opt] = True
+        if opt not in self.help:
+            self.help[opt] = "Whether to use absolute errors as size or relative ones (bool)."
+
+        opt = "max_relative_size"
+        if opt not in options:
+            options[opt] = 50
+        if opt not in self.help:
+            self.help[opt] = "The maximum size in point in case of relative mode (int)."
+
+        opt = "absolute_size"
+        if opt not in options:
+            options[opt] = 50
+        if opt not in self.help:
+            self.help[opt] = "The size in point in case of absolute mode (int)."
+
+        opt = "title"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The title for the plot (str)."
+
+        opt = "outfile"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The file to store the plot in (str)."
+
+        opt = "wait"
+        if opt not in options:
+            options[opt] = True
+        if opt not in self.help:
+            self.help[opt] = "Whether to wait for user to close the plot window (bool)."
+
+        return options
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "absolute: " + str(self.options["absolute"]) \
+               + ", title: " + str(self.options["title"]) \
+               + ", outfile: " + str(self.options["outfile"]) \
+               + ", wait: " + str(self.options["wait"])
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if not isinstance(token.payload, Evaluation):
+            raise Exception(self.full_name + ": Input token is not an Evaluation object!")
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = None
+        evl = self.input.payload
+        pltclassifier.plot_classifier_errors(
+            evl.predictions,
+            absolute=bool(self.resolve_option("absolute")),
+            max_relative_size=int(self.resolve_option("max_relative_size")),
+            absolute_size=int(self.resolve_option("absolute_size")),
             title=self.resolve_option("title"),
             outfile=self.resolve_option("outfile"),
             wait=bool(self.resolve_option("wait")))
