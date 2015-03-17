@@ -25,8 +25,9 @@ from weka.flow.container import ModelContainer
 import weka.core.converters as converters
 from weka.core.dataset import Instances
 import weka.core.utils as utils
-from weka.classifiers import Classifier
-from weka.clusterers import Clusterer
+from weka.classifiers import Classifier, Evaluation, PredictionOutput
+from weka.clusterers import Clusterer, ClusterEvaluation
+from weka.core.classes import Random
 
 
 class Transformer(InputConsumer, OutputProducer):
@@ -178,7 +179,7 @@ class LoadDataset(Transformer):
         :rtype: object
         """
         if k == "custom_loader":
-            return utils.from_commandline(v, classname=utils.to_commandline(converters.Loader))
+            return utils.from_commandline(v, classname=utils.get_classname(converters.Loader()))
         return super(LoadDataset, self).from_options(k, v)
 
     def check_input(self, token):
@@ -724,6 +725,40 @@ class Train(Transformer):
 
         return options
 
+    def to_options(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        if k == "setup":
+            return base.to_commandline(v)
+        return super(Train, self).to_options(k, v)
+
+    def from_options(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        if k == "setup":
+            try:
+                return utils.from_commandline(v, classname=utils.get_classname(Classifier()))
+            except Exception, e:
+                try:
+                    return utils.from_commandline(v, classname=utils.get_classname(Clusterer()))
+                except Exception, e2:
+                    return utils.from_commandline(v, classname=utils.get_classname(Associator()))
+        return super(Train, self).from_options(k, v)
+
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
@@ -838,7 +873,7 @@ class Filter(Transformer):
         :rtype: object
         """
         if k == "filter":
-            return utils.from_commandline(v, classname=utils.to_commandline(filters.Filter))
+            return utils.from_commandline(v, classname=utils.to_commandline(filters.Filter()))
         return super(Filter, self).from_options(k, v)
 
     def check_input(self, token):
@@ -934,4 +969,226 @@ class DeleteFile(Transformer):
         if (pattern is None) or (pattern.match(fname)):
             os.remove(fname)
         self._output.append(self.input)
+        return None
+
+
+class CrossValidate(Transformer):
+    """
+    Cross-validates the classifier/clusterer on the incoming dataset. In case of a classifier, the Evaluation object
+    is forwarded. For clusterers the loglikelihood.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(CrossValidate, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Cross-validates the classifier/clusterer on the incoming dataset. In case of a classifier, the "\
+               "Evaluation object is forwarded. For clusterers the loglikelihood."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "setup: " + base.to_commandline(self.options["setup"]) + ", folds: " + str(self.options["folds"])
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(CrossValidate, self).fix_options(options)
+
+        opt = "setup"
+        if opt not in options:
+            options[opt] = Classifier(classname="weka.classifiers.rules.ZeroR")
+        if opt not in self.help:
+            self.help[opt] = "The classifier/clusterer to train (Classifier/Clusterer)."
+
+        opt = "folds"
+        if opt not in options:
+            options[opt] = 10
+        if opt not in self.help:
+            self.help[opt] = "The number of folds for CV (int)."
+
+        opt = "seed"
+        if opt not in options:
+            options[opt] = 1
+        if opt not in self.help:
+            self.help[opt] = "The seed value for randomizing the data (int)."
+
+        opt = "discard_predictions"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Discard classifier predictions to save memory (bool)."
+
+        opt = "output"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "For capturing the classifier's prediction output (PredictionOutput)."
+
+        return options
+
+    def to_options(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        if k == "setup":
+            return base.to_commandline(v)
+        if k == "output":
+            return base.to_commandline(v)
+        return super(CrossValidate, self).to_options(k, v)
+
+    def from_options(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        if k == "setup":
+            try:
+                return utils.from_commandline(v, classname=utils.get_classname(Classifier()))
+            except Exception, e:
+                return utils.from_commandline(v, classname=utils.get_classname(Clusterer()))
+        if k == "output":
+            return utils.from_commandline(v, classname=utils.get_classname(PredictionOutput()))
+        return super(CrossValidate, self).from_options(k, v)
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        data = self.input.payload
+        cls = self.resolve_option("setup")
+        if isinstance(cls, Classifier):
+            cls = Classifier.make_copy(cls)
+            evl = Evaluation(data)
+            evl.discard_predictions = bool(self.resolve_option("discard_predictions"))
+            evl.crossvalidate_model(
+                cls,
+                data,
+                int(self.resolve_option("folds")),
+                Random(int(self.resolve_option("seed"))),
+                self.resolve_option("output"))
+            self._output.append(Token(evl))
+        elif isinstance(cls, Clusterer):
+            cls = Clusterer.make_copy(cls)
+            evl = ClusterEvaluation()
+            llh = evl.crossvalidate_model(
+                cls,
+                data,
+                int(self.resolve_option("folds")),
+                Random(int(self.resolve_option("seed"))))
+            self._output.append(Token(llh))
+        else:
+            return "Unhandled class: " + utils.get_classname(cls)
+        return None
+
+
+class EvaluationSummary(Transformer):
+    """
+    Generates a summary string from an Evaluation object.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(EvaluationSummary, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Generates a summary string from an Evaluation object."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "title: " + str(self.options["title"]) \
+               + ", complexity: " + str(self.options["complexity"]) \
+               + ", matrix: " + str(self.options["matrix"])
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(EvaluationSummary, self).fix_options(options)
+
+        opt = "title"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The title for the output (string)."
+
+        opt = "complexity"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to output complexity information (bool)."
+
+        opt = "matrix"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to output the confusion matrix (bool)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        evl = self.input.payload
+        summary = evl.summary(title=self.resolve_option("title"), complexity=bool(self.resolve_option("complexity")))
+        if bool(self.resolve_option("matrix")):
+            summary += "\n" + evl.matrix(title=self.resolve_option("title"))
+        self._output.append(Token(summary))
         return None
