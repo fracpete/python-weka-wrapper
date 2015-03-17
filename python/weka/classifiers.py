@@ -39,7 +39,7 @@ class Classifier(OptionHandler):
     Wrapper class for classifiers.
     """
 
-    def __init__(self, classname=None, jobject=None, options=None):
+    def __init__(self, classname="weka.classifiers.rules.ZeroR", jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
         :param classname: the classname of the classifier
@@ -1491,7 +1491,7 @@ class PredictionOutput(OptionHandler):
     Must be derived from weka.classifiers.evaluation.output.prediction.AbstractOutput
     """
 
-    def __init__(self, classname=None, jobject=None, options=None):
+    def __init__(self, classname="weka.classifiers.evaluation.output.prediction.PlainText", jobject=None, options=None):
         """
         Initializes the specified output generator using either the classname or the supplied JB_Object.
         :param classname: the classname of the generator

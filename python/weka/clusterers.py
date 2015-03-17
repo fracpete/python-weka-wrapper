@@ -36,7 +36,7 @@ class Clusterer(OptionHandler):
     Wrapper class for clusterers.
     """
 
-    def __init__(self, classname=None, jobject=None, options=None):
+    def __init__(self, classname="weka.clusterers.SimpleKMeans", jobject=None, options=None):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
         :param classname: the classname of the clusterer

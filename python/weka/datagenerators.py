@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # datagenerators.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import logging
@@ -33,7 +33,7 @@ class DataGenerator(OptionHandler):
     Wrapper class for datagenerators.
     """
 
-    def __init__(self, classname=None, jobject=None, options=None):
+    def __init__(self, classname="weka.datagenerators.classifiers.classification.Agrawal", jobject=None, options=None):
         """
         Initializes the specified datagenerator using either the classname or the supplied JB_Object.
         :param classname: the classname of the datagenerator

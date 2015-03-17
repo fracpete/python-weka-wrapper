@@ -37,7 +37,7 @@ class Filter(OptionHandler):
     Wrapper class for filters.
     """
 
-    def __init__(self, classname=None, jobject=None, options=None):
+    def __init__(self, classname="weka.filters.AllFilter", jobject=None, options=None):
         """
         Initializes the specified filter using either the classname or the supplied JB_Object.
         :param classname: the classname of the filter

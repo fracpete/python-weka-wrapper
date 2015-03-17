@@ -30,7 +30,7 @@ class Experiment(OptionHandler):
     Wrapper class for an experiment.
     """
 
-    def __init__(self, classname=None, jobject=None, options=None):
+    def __init__(self, classname="weka.experiment.Experiment", jobject=None, options=None):
         """
         Initializes the specified experiment using either the classname or the supplied JB_Object.
         :param classname: the classname of the experiment
@@ -359,7 +359,7 @@ class ResultMatrix(OptionHandler):
     For generating results from an Experiment run.
     """
 
-    def __init__(self, classname=None, jobject=None, options=None):
+    def __init__(self, classname="weka.experiment.ResultMatrixPlainText", jobject=None, options=None):
         """
         Initializes the specified ResultMatrix using either the classname or the supplied JB_Object.
         :param classname: the classname of the ResultMatrix
@@ -588,7 +588,7 @@ class Tester(OptionHandler):
     For generating statistical results from an experiment.
     """
 
-    def __init__(self, classname=None, jobject=None, options=None):
+    def __init__(self, classname="weka.experiment.PairedCorrectedTTester", jobject=None, options=None):
         """
         Initializes the specified tester using either the classname or the supplied JB_Object.
         :param classname: the classname of the tester
