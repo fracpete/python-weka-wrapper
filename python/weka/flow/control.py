@@ -680,7 +680,7 @@ class Flow(ActorHandler, StorageHandler):
         return result
 
 
-class Sequence(InputConsumer):
+class Sequence(ActorHandler, InputConsumer):
     """
     Simple sequence of actors that get executed one after the other. Accepts input.
     """
@@ -694,6 +694,7 @@ class Sequence(InputConsumer):
         :type options: dict
         """
         super(Sequence, self).__init__(name=name, options=options)
+        self._output = []
 
     def description(self):
         """
