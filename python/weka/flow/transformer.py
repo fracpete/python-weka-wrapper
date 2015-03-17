@@ -16,6 +16,7 @@
 
 
 import os
+from weka.associations import Associator
 from weka.flow.base import InputConsumer, OutputProducer, Token
 from weka.flow.container import ModelContainer
 import weka.core.converters as converters
@@ -525,9 +526,9 @@ class ClassSelector(Transformer):
         return None
 
 
-class TrainClassifier(Transformer):
+class Train(Transformer):
     """
-    Trains the classifier on the incoming dataset and forwards a ModelContainer with the trained
+    Trains the classifier/clusterer/associator on the incoming dataset and forwards a ModelContainer with the trained
     model and the dataset header.
     """
 
@@ -539,7 +540,7 @@ class TrainClassifier(Transformer):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
-        super(TrainClassifier, self).__init__(name=name, options=options)
+        super(Train, self).__init__(name=name, options=options)
 
     def description(self):
         """
@@ -548,7 +549,7 @@ class TrainClassifier(Transformer):
         :rtype: str
         """
         return \
-            "Trains the classifier on the incoming dataset and forwards a ModelContainer with the trained " \
+            "Trains the classifier/clusterer/associator on the incoming dataset and forwards a ModelContainer with the trained " \
             + "model and the dataset header."
 
     @property
@@ -558,7 +559,7 @@ class TrainClassifier(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "classifier: " + utils.to_commandline(self.resolve_option("classifier"))
+        return "setup: " + utils.to_commandline(self.resolve_option("setup"))
 
     def fix_options(self, options):
         """
@@ -568,13 +569,13 @@ class TrainClassifier(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(TrainClassifier, self).fix_options(options)
+        options = super(Train, self).fix_options(options)
 
-        opt = "classifier"
+        opt = "setup"
         if opt not in options:
             options[opt] = Classifier(classname="weka.classifiers.rules.ZeroR")
         if opt not in self.help:
-            self.help[opt] = "The classifier to train (Classifier)."
+            self.help[opt] = "The classifier/clusterer/associator to train (Classifier/Clusterer/Associator)."
 
         return options
 
@@ -586,8 +587,8 @@ class TrainClassifier(Transformer):
         """
         if isinstance(token.payload, Instances):
             return
-        if isinstance(token.payload, Instance):
-            return
+        # if isinstance(token.payload, Instance):
+        #     return
         raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
 
     def do_execute(self):
@@ -596,92 +597,20 @@ class TrainClassifier(Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        # TODO incremental classifiers
+        # TODO incremental classifiers/clusterers
         data = self.input.payload
-        cls = self.resolve_option("classifier")
-        cls = Classifier.make_copy(cls)
-        cls.build_classifier(data)
-        cont = ModelContainer(model=cls, header=Instances.template_instances(data))
-        self._output.append(Token(cont))
-        return None
-
-
-class TrainClusterer(Transformer):
-    """
-    Trains the clusterer on the incoming dataset and forwards a ModelContainer with the trained
-    model and the dataset header.
-    """
-
-    def __init__(self, name=None, options=None):
-        """
-        Initializes the transformer.
-        :param name: the name of the transformer
-        :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
-        """
-        super(TrainClusterer, self).__init__(name=name, options=options)
-
-    def description(self):
-        """
-        Returns a description of the actor.
-        :return: the description
-        :rtype: str
-        """
-        return \
-            "Trains the clusterer on the incoming dataset and forwards a ModelContainer with the trained " \
-            + "model and the dataset header."
-
-    @property
-    def quickinfo(self):
-        """
-        Returns a short string describing some of the options of the actor.
-        :return: the info, None if not available
-        :rtype: str
-        """
-        return "clusterer: " + utils.to_commandline(self.resolve_option("clusterer"))
-
-    def fix_options(self, options):
-        """
-        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
-        :param options: the options to fix
-        :type options: dict
-        :return: the (potentially) fixed options
-        :rtype: dict
-        """
-        options = super(TrainClusterer, self).fix_options(options)
-
-        opt = "clusterer"
-        if opt not in options:
-            options[opt] = Clusterer(classname="weka.clusterers.SimpleKMeans")
-        if opt not in self.help:
-            self.help[opt] = "The clusterer to train (Clusterer)."
-
-        return options
-
-    def check_input(self, token):
-        """
-        Performs checks on the input token. Raises an exception if unsupported.
-        :param token: the token to check
-        :type token: Token
-        """
-        if isinstance(token.payload, Instances):
-            return
-        if isinstance(token.payload, Instance):
-            return
-        raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
-
-    def do_execute(self):
-        """
-        The actual execution of the actor.
-        :return: None if successful, otherwise error message
-        :rtype: str
-        """
-        # TODO incremental clusterers
-        data = self.input.payload
-        cls = self.resolve_option("clusterer")
-        cls = Clusterer.make_copy(cls)
-        cls.build_clusterer(data)
+        cls = self.resolve_option("setup")
+        if isinstance(cls, Classifier):
+            cls = Classifier.make_copy(cls)
+            cls.build_classifier(data)
+        elif isinstance(cls, Clusterer):
+            cls = Clusterer.make_copy(cls)
+            cls.build_clusterer(data)
+        elif isinstance(cls, Associator):
+            cls = Associator.make_copy(cls)
+            cls.build_associations(data)
+        else:
+            return "Unhandled class: " + utils.get_classname(cls)
         cont = ModelContainer(model=cls, header=Instances.template_instances(data))
         self._output.append(Token(cont))
         return None
