@@ -11,6 +11,7 @@ Changelog
 - added `weka.core.database` module for loading data from a database
 - added `make_copy` class method to `Clusterer` class
 - added `make_copy` class method to `Associator` class
+- added `make_copy` class method to `Filter` class
 - ...
 
 

@@ -24,6 +24,30 @@ import wekatests.tests.weka_test as weka_test
 
 class TestFilters(weka_test.WekaTest):
 
+    def test_instantiate_classifier(self):
+        """
+        Tests the instantiation of several classifier classes.
+        """
+        cname = "weka.filters.unsupervised.attribute.Remove"
+        options = None
+        flter = filters.Filter(classname=cname, options=["-R", "1,3"])
+        self.assertIsNotNone(flter, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, flter.classname, msg="Classnames differ!")
+
+    def test_make_copy(self):
+        """
+        Tests the make_copy class method.
+        """
+        cname = "weka.filters.unsupervised.attribute.Remove"
+        options = None
+        flter = filters.Filter(classname=cname, options=["-R", "1,3"])
+        self.assertIsNotNone(flter, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, flter.classname, msg="Classnames differ!")
+
+        flter2 = filters.Filter.make_copy(flter)
+        self.assertIsNotNone(flter2, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, flter2.classname, msg="Classnames differ!")
+
     def test_capabilities(self):
         """
         Tests the capabilities.

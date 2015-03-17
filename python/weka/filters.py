@@ -124,6 +124,20 @@ class Filter(OptionHandler):
                 "(Lweka/core/Instances;Lweka/filters/Filter;)Lweka/core/Instances;",
                 data.jobject, self.jobject))
 
+    @classmethod
+    def make_copy(cls, flter):
+        """
+        Creates a copy of the filter.
+        :param flter: the filter to copy
+        :type flter: Filter
+        :return: the copy of the filter
+        :rtype: Filter
+        """
+        return Filter(
+            jobject=javabridge.static_call(
+                "weka/filters/Filter", "makeCopy",
+                "(Lweka/filters/Filter;)Lweka/filters/Filter;", flter.jobject))
+
 
 class MultiFilter(Filter):
     """
