@@ -664,10 +664,10 @@ class StorageHandler(object):
         :rtype: str
         """
         result = s
-        while result.contains("@{"):
+        while result.index("@{") > -1:
             start = result.index("@{")
             end = result.index("}", start)
-            name = result[start + 2, end]
+            name = result[start + 2:end]
             value = self.storage[name]
             if value is None:
                 raise("Storage value '" + name + "' not present, failed to expand string: " + s)
