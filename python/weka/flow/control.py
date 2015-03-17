@@ -270,7 +270,10 @@ class ActorHandler(Actor):
             row += "| "
         if depth > 0:
             row += "|-"
-        row += actor.name
+        name = actor.name
+        if name != actor.__class__.__name__:
+            name = actor.__class__.__name__ + " '" + name + "'"
+        row += name
         quickinfo = actor.quickinfo
         if quickinfo is not None:
             row += " [" + quickinfo + "]"
