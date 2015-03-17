@@ -47,6 +47,18 @@ class TestClusterers(weka_test.WekaTest):
         cls.clusterer = clusterers.Clusterer(classname=cname)
         self.assertEqual(cname, cls.clusterer.classname, msg="Base clusterer classnames differ!")
 
+    def test_make_copy(self):
+        """
+        Tests the make_copy class method of the Clusterer class.
+        """
+        cname = "weka.clusterers.SimpleKMeans"
+        cls = clusterers.Clusterer(classname=cname)
+        self.assertIsNotNone(cls, msg="Failed to instantiate clusterer!")
+        self.assertEqual(cname, cls.classname, msg="Classnames differ!")
+        cls2 = clusterers.Clusterer.make_copy(cls)
+        self.assertIsNotNone(cls2, msg="Failed to instantiate clusterer!")
+        self.assertEqual(cname, cls2.classname, msg="Classnames differ!")
+
     def test_capabilities(self):
         """
         Tests the capabilities.
