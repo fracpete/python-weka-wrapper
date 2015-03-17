@@ -382,6 +382,148 @@ class DeleteStorageValue(Transformer):
         return None
 
 
+class InitStorageValue(Transformer):
+    """
+    Initializes the storage value with the provided value (interpreted by 'eval' method).
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(InitStorageValue, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Initializes the storage value with the provided value (interpreted by 'eval' method)."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "name: " + str(self.options["storage_name"]) + ", value: " + str(self.options["value"])
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(InitStorageValue, self).fix_options(options)
+
+        opt = "storage_name"
+        if opt not in options:
+            options[opt] = "unknown"
+        if opt not in self.help:
+            self.help[opt] = "The name of the storage value to delete (string)."
+
+        opt = "value"
+        if opt not in options:
+            options[opt] = "1"
+        if opt not in self.help:
+            self.help[opt] = "The initial value (string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        if self.storagehandler is None:
+            return "No storage handler available!"
+        self.storagehandler.storage[self.resolve_option("storage_name")] = eval(self.resolve_option("value"))
+        self._output.append(self.input)
+        return None
+
+
+class UpdateStorageValue(Transformer):
+    """
+    Updates the specified storage value using the epxression interpreted by 'eval' method.
+    The current value is available through the variable {X} in the expression.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(UpdateStorageValue, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Updates the specified storage value using the epxression interpreted by 'eval' method.\n"\
+               "The current value is available through the variable {X} in the expression."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "name: " + str(self.options["storage_name"]) + ", expression: " + str(self.options["expression"])
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(UpdateStorageValue, self).fix_options(options)
+
+        opt = "storage_name"
+        if opt not in options:
+            options[opt] = "unknown"
+        if opt not in self.help:
+            self.help[opt] = "The name of the storage value to delete (string)."
+
+        opt = "expression"
+        if opt not in options:
+            options[opt] = "int({X} + 1)"
+        if opt not in self.help:
+            self.help[opt] = "The initial value (string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        if self.storagehandler is None:
+            return "No storage handler available!"
+        expr = str(self.resolve_option("expression")).replace(
+            "{X}", str(self.storagehandler.storage[str(self.resolve_option("storage_name"))]))
+        self.storagehandler.storage[self.resolve_option("storage_name")] = eval(expr)
+        self._output.append(self.input)
+        return None
+
+
 class MathExpression(Transformer):
     """
     Calculates a mathematical expression. The captial letter X in the expression gets replaced by
