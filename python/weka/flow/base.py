@@ -209,13 +209,13 @@ class Actor(Stoppable):
         if opt not in options:
             options[opt] = None
         if opt not in self.help:
-            self.help[opt] = "The (optional) annotation for this actor."
+            self.help[opt] = "The (optional) annotation for this actor (string)."
 
         opt = "skip"
         if opt not in options:
             options[opt] = False
         if opt not in self.help:
-            self.help[opt] = "The name of the actor to use in the flow."
+            self.help[opt] = "Whether to skip (disable) this actor (bool)."
 
         return options
 
