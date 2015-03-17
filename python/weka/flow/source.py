@@ -18,6 +18,7 @@
 import os
 import re
 from weka.flow.base import Actor, OutputProducer, Token
+from weka.core.database import InstanceQuery
 
 
 class Source(OutputProducer, Actor):
@@ -400,4 +401,104 @@ class ForLoop(Source):
                 int(self.resolve_option("max")) + 1,
                 int(self.resolve_option("step"))):
             self._output.append(Token(i))
+        return None
+
+
+class LoadDatabase(Source):
+    """
+    Loads a dataset from the database.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the source.
+        :param name: the name of the source
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(LoadDatabase, self).__init__(name=name, options=options)
+        self._loader = None
+        self._iterator = None
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Loads a dataset from a database using a supplied SQL query."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "url: " + str(self.resolve_option("db_url")) \
+               + ", query: " + str(self.resolve_option("query"))
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        opt = "db_url"
+        if opt not in options:
+            options[opt] = "jdbc:mysql://somehost:3306/somedatabase"
+        if opt not in self.help:
+            self.help[opt] = "The JDBC database URL to connect to (str)."
+
+        opt = "user"
+        if opt not in options:
+            options[opt] = "user"
+        if opt not in self.help:
+            self.help[opt] = "The database user to use for connecting (str)."
+
+        opt = "password"
+        if opt not in options:
+            options[opt] = "secret"
+        if opt not in self.help:
+            self.help[opt] = "The password for the database user (str)."
+
+        opt = "query"
+        if opt not in options:
+            options[opt] = "SELECT * FROM table"
+        if opt not in self.help:
+            self.help[opt] = "The SQL query for generating the dataset (str)."
+
+        opt = "sparse"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to return the data in sparse format (bool)."
+
+        opt = "custom_props"
+        if opt not in options:
+            options[opt] = ""
+        if opt not in self.help:
+            self.help[opt] = "Custom properties filename (str)."
+
+        return super(LoadDatabase, self).fix_options(options)
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        iquery = InstanceQuery()
+        iquery.db_url = str(self.resolve_option("db_url"))
+        iquery.user = str(self.resolve_option("user"))
+        iquery.password = str(self.resolve_option("password"))
+        props = str(self.resolve_option("custom_props"))
+        if (len(props) > 0) and os.path.isfile(props):
+            iquery.custom_properties = props
+        iquery.query = str(self.resolve_option("query"))
+        data = iquery.retrieve_instances()
+        self._output.append(Token(data))
         return None
