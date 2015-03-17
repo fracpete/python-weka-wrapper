@@ -16,6 +16,7 @@
 
 
 import os
+import re
 from weka.associations import Associator
 import weka.filters as filters
 import weka.flow.base as base
@@ -866,4 +867,71 @@ class Filter(Transformer):
             self._filter.inputformat(data)
         filtered = self._filter.filter(data)
         self._output.append(Token(filtered))
+        return None
+
+
+class DeleteFile(Transformer):
+    """
+    Deletes the incoming files that match the regular expression.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(DeleteFile, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Deletes the incoming files that match the regular expression."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "regexp: " + str(self.options["regexp"])
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(DeleteFile, self).fix_options(options)
+
+        opt = "regexp"
+        if opt not in options:
+            options[opt] = ".*"
+        if opt not in self.help:
+            self.help[opt] = "The regular expression that the files must match (string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        fname = str(self.input.payload)
+        spattern = str(self.resolve_option("regexp"))
+        pattern = None
+        if (spattern is not None) and (spattern != ".*"):
+            pattern = re.compile(spattern)
+        if (pattern is None) or (pattern.match(fname)):
+            os.remove(fname)
+        self._output.append(self.input)
         return None
