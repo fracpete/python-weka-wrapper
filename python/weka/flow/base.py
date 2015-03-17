@@ -334,7 +334,7 @@ class Actor(Stoppable):
         """
         for k in d.keys():
             if k in self.options:
-                self.options[k] = d[k]
+                self.options[k] = self.from_options(k, d[k])
             d.pop(k, None)
 
     @property
@@ -344,7 +344,7 @@ class Actor(Stoppable):
         :return: the object as string
         :rtype: str
         """
-        return json.dumps(self.to_options_dict())
+        return json.dumps(self.to_options_dict(), sort_keys=True, indent=2, separators=(',', ': '))
 
     @json.setter
     def json(self, s):
@@ -354,6 +354,16 @@ class Actor(Stoppable):
         :type s: str
         """
         self.from_options_dict(json.loads(s))
+
+    def shallow_copy(self):
+        """
+        Returns a shallow copy of itself.
+        :return: the copy
+        :rtype: Actor
+        """
+        result = self.__class__()
+        result.json = self.json
+        return result
 
     @property
     def help(self):
