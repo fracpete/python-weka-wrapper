@@ -17,11 +17,12 @@
 
 import os
 from weka.associations import Associator
+import weka.filters as filters
 import weka.flow.base as base
 from weka.flow.base import InputConsumer, OutputProducer, Token
 from weka.flow.container import ModelContainer
 import weka.core.converters as converters
-from weka.core.dataset import Instance, Instances
+from weka.core.dataset import Instances
 import weka.core.utils as utils
 from weka.classifiers import Classifier
 from weka.clusterers import Clusterer
@@ -147,7 +148,7 @@ class LoadDataset(Transformer):
         if opt not in options:
             options[opt] = converters.Loader(classname="weka.core.converters.ArffLoader")
         if opt not in self.help:
-            self.help[opt] = "The custom loader to use."
+            self.help[opt] = "The custom loader to use (Loader)."
 
         return super(LoadDataset, self).fix_options(options)
 
@@ -176,7 +177,7 @@ class LoadDataset(Transformer):
         :rtype: object
         """
         if k == "custom_loader":
-            return utils.from_commandline(v, converters.Loader)
+            return utils.from_commandline(v, classname=utils.to_commandline(converters.Loader))
         return super(LoadDataset, self).from_options(k, v)
 
     def check_input(self, token):
@@ -442,7 +443,7 @@ class MathExpression(Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        expr = self.resolve_option("expression")
+        expr = str(self.resolve_option("expression"))
         expr = expr.replace("X", str(self.input.payload))
         self._output.append(Token(eval(expr)))
         return None
@@ -614,4 +615,112 @@ class Train(Transformer):
             return "Unhandled class: " + utils.get_classname(cls)
         cont = ModelContainer(model=cls, header=Instances.template_instances(data))
         self._output.append(Token(cont))
+        return None
+
+
+class Filter(Transformer):
+    """
+    Filters a dataset with the specified filter setup.
+    Automatically resets the filter if the dataset differs.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Filter, self).__init__(name=name, options=options)
+        self._filter = None
+        self._header = None
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Filters a dataset with the specified filter setup.\n"\
+               "Automatically resets the filter if the dataset differs."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "filter: " + base.to_commandline(self.options["filter"])
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        opt = "filter"
+        if opt not in options:
+            options[opt] = filters.Filter(classname="weka.filters.AllFilter")
+        if opt not in self.help:
+            self.help[opt] = "The filter to apply to the dataset (Filter)."
+
+        return super(Filter, self).fix_options(options)
+
+    def to_options(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        if k == "filter":
+            return base.to_commandline(v)
+        return super(Filter, self).to_options(k, v)
+
+    def from_options(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        if k == "filter":
+            return utils.from_commandline(v, classname=utils.to_commandline(filters.Filter))
+        return super(Filter, self).from_options(k, v)
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if token is None:
+            raise Exception(self.full_name + ": No token provided!")
+        if isinstance(token.payload, Instances):
+            return
+        raise Exception(self.full_name + ": Unhandled class: " + utils.get_classname(token.payload))
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        data = self.input.payload
+        if (self._filter is None) or self._header.equal_headers(data) is not None:
+            self._header = Instances.template_instances(data)
+            self._filter = filters.Filter.make_copy(self.resolve_option("filter"))
+            self._filter.inputformat(data)
+        filtered = self._filter.filter(data)
+        self._output.append(Token(filtered))
         return None
