@@ -17,8 +17,10 @@
 
 import traceback
 import weka.core.serialization as serialization
+from weka.core.dataset import Instances
 from weka.flow.base import InputConsumer
 from weka.flow.container import ModelContainer
+import weka.plot.dataset as pltdataset
 
 
 class Sink(InputConsumer):
@@ -300,4 +302,115 @@ class ModelWriter(FileOutputSink):
         serialization.write_all(
             str(self.resolve_option("output")),
             [cont.get("Model").jobject, cont.get("Header").jobject])
+        return result
+
+
+class MatrixPlot(Sink):
+    """
+    Displays the Instances object as matrix plot.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(MatrixPlot, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Displays the Instances object as matrix plot."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(MatrixPlot, self).fix_options(options)
+
+        opt = "percent"
+        if opt not in options:
+            options[opt] = 100.0
+        if opt not in self.help:
+            self.help[opt] = "The percentage of the data to display (0-100, float)."
+
+        opt = "seed"
+        if opt not in options:
+            options[opt] = 1
+        if opt not in self.help:
+            self.help[opt] = "The seed value for randomizing the plot when viewing a subset (int)."
+
+        opt = "size"
+        if opt not in options:
+            options[opt] = 10
+        if opt not in self.help:
+            self.help[opt] = "The size of the circles in the plot (int)."
+
+        opt = "title"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The title for the plot (str)."
+
+        opt = "outfile"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The file to store the plot in (str)."
+
+        opt = "wait"
+        if opt not in options:
+            options[opt] = True
+        if opt not in self.help:
+            self.help[opt] = "Whether to wait for user to close the plot window (bool)."
+
+        return options
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "percent: " + str(self.options["percent"]) \
+               + ", title: " + str(self.options["title"]) \
+               + ", outfile: " + str(self.options["outfile"]) \
+               + ", wait: " + str(self.options["wait"])
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if not isinstance(token.payload, Instances):
+            raise Exception(self.full_name + ": Input token is not an Instances object!")
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = None
+        data = self.input.payload
+        pltdataset.matrix_plot(
+            data,
+            percent=float(self.resolve_option("percent")),
+            seed=int(self.resolve_option("seed")),
+            size=int(self.resolve_option("size")),
+            title=self.resolve_option("title"),
+            outfile=self.resolve_option("outfile"),
+            wait=bool(self.resolve_option("wait")))
         return result
