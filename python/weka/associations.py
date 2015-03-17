@@ -66,6 +66,20 @@ class Associator(OptionHandler):
         """
         javabridge.call(self.jobject, "buildAssociations", "(Lweka/core/Instances;)V", data.jobject)
 
+    @classmethod
+    def make_copy(cls, associator):
+        """
+        Creates a copy of the clusterer.
+        :param associator: the associator to copy
+        :type associator: Associator
+        :return: the copy of the associator
+        :rtype: Associator
+        """
+        return Associator(
+            jobject=javabridge.static_call(
+                "weka/associations/AbstractAssociator", "makeCopy",
+                "(Lweka/associations/Associator;)Lweka/associations/Associator;", associator.jobject))
+
 
 def main():
     """

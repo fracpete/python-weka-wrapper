@@ -33,6 +33,19 @@ class TestAssociations(weka_test.WekaTest):
         self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
         self.assertEqual(cname, cls.classname, "Classnames differ!")
 
+    def test_make_copy(self):
+        """
+        Tests the make_copy class method of the Associator class.
+        """
+        cname = "weka.associations.Apriori"
+        options = None
+        cls = associations.Associator(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, cls.classname, "Classnames differ!")
+        cls2 = associations.Associator.make_copy(cls)
+        self.assertIsNotNone(cls2, msg="Failed to instantiate: " + cname + "/" + str(options))
+        self.assertEqual(cname, cls2.classname, "Classnames differ!")
+
     def test_capabilities(self):
         """
         Tests the capabilities.
