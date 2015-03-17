@@ -716,6 +716,7 @@ class Filter(Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
+        # TODO: incremental filtering
         data = self.input.payload
         if (self._filter is None) or self._header.equal_headers(data) is not None:
             self._header = Instances.template_instances(data)
