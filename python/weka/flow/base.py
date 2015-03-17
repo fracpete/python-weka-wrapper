@@ -244,7 +244,7 @@ class Actor(Stoppable):
             return default
         elif isinstance(value, str) and value.startswith("@{") and value.endswith("}"):
             stname = value[2:len(value)-1]
-            if self.storagehandler is not None:
+            if (self.storagehandler is not None) and (stname in self.storagehandler.storage):
                 return self.storagehandler.storage[stname]
             else:
                 return default
@@ -664,7 +664,7 @@ class StorageHandler(object):
         :rtype: str
         """
         result = s
-        while result.index("@{") > -1:
+        while result.find("@{") > -1:
             start = result.index("@{")
             end = result.index("}", start)
             name = result[start + 2:end]
@@ -673,6 +673,7 @@ class StorageHandler(object):
                 raise("Storage value '" + name + "' not present, failed to expand string: " + s)
             else:
                 result = result[1:start] + str(value) + result[end + 1:]
+        return result
 
     def pad(self, name):
         """
@@ -732,3 +733,18 @@ def is_sink(actor):
     :rtype: bool
     """
     return isinstance(actor, InputConsumer) and not isinstance(actor, OutputProducer)
+
+
+def to_commandline(o):
+    """
+    Turns the object into a commandline string. However, first checks whether a string represents
+    a internal value placeholder (@{...}).
+    :param o: the object to turn into commandline
+    :type o: object
+    :return: the commandline
+    :rtype: str
+    """
+    if isinstance(o, str) and o.startswith("@{") and o.endswith("}"):
+        return o
+    else:
+        return utils.to_commandline(o)

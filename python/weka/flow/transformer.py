@@ -17,6 +17,7 @@
 
 import os
 from weka.associations import Associator
+import weka.flow.base as base
 from weka.flow.base import InputConsumer, OutputProducer, Token
 from weka.flow.container import ModelContainer
 import weka.core.converters as converters
@@ -118,9 +119,9 @@ class LoadDataset(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "incremental: " + str(self.resolve_option("incremental")) \
-               + ", custom: " + str(self.resolve_option("use_custom_loader")) \
-               + ", loader: " + utils.to_commandline(self.resolve_option("custom_loader"))
+        return "incremental: " + str(self.options["incremental"]) \
+               + ", custom: " + str(self.options["use_custom_loader"]) \
+               + ", loader: " + base.to_commandline(self.options["custom_loader"])
 
     def fix_options(self, options):
         """
@@ -161,7 +162,7 @@ class LoadDataset(Transformer):
         :rtype: object
         """
         if k == "custom_loader":
-            return utils.to_commandline(v)
+            return base.to_commandline(v)
         return super(LoadDataset, self).to_options(k, v)
 
     def from_options(self, k, v):
@@ -284,7 +285,7 @@ class SetStorageValue(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "name: " + str(self.resolve_option("storage_name"))
+        return "name: " + str(self.options["storage_name"])
 
     def fix_options(self, options):
         """
@@ -347,7 +348,7 @@ class DeleteStorageValue(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "name: " + str(self.resolve_option("storage_name"))
+        return "name: " + str(self.options["storage_name"])
 
     def fix_options(self, options):
         """
@@ -415,7 +416,7 @@ class MathExpression(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "expression: " + str(self.resolve_option("expression"))
+        return "expression: " + str(self.options["expression"])
 
     def fix_options(self, options):
         """
@@ -478,7 +479,7 @@ class ClassSelector(Transformer):
         :rtype: str
         """
 
-        return "index: " + str(self.resolve_option("index"))
+        return "index: " + str(self.options["index"])
 
     def fix_options(self, options):
         """
@@ -559,7 +560,7 @@ class Train(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "setup: " + utils.to_commandline(self.resolve_option("setup"))
+        return "setup: " + base.to_commandline(self.options["setup"])
 
     def fix_options(self, options):
         """

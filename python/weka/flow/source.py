@@ -101,7 +101,7 @@ class FileSupplier(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "files: " + str(len(self.resolve_option("files")))
+        return "files: " + str(len(self.options["files"]))
 
     def fix_options(self, options):
         """
@@ -162,10 +162,10 @@ class ListFiles(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "dir: " + str(self.resolve_option("dir")) \
-               + ", files: " + str(self.resolve_option("list_files")) \
+        return "dir: " + str(self.options["dir"]) \
+               + ", files: " + str(self.options["list_files"]) \
                + ", dirs: " + str(self.resolve_option("list_dirs")) \
-               + ", recursive: " + str(self.resolve_option("recursive"))
+               + ", recursive: " + str(self.options["recursive"])
 
     def fix_options(self, options):
         """
@@ -291,7 +291,7 @@ class GetStorageValue(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "name: " + str(self.resolve_option("storage_name"))
+        return "name: " + str(self.options["storage_name"])
 
     def fix_options(self, options):
         """
@@ -356,9 +356,9 @@ class ForLoop(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "min: " + str(self.resolve_option("min")) \
-               + ", max: " + str(self.resolve_option("max")) \
-               + ", step: " + str(self.resolve_option("step"))
+        return "min: " + str(self.options["min"]) \
+               + ", max: " + str(self.options["max"]) \
+               + ", step: " + str(self.options["step"])
 
     def fix_options(self, options):
         """
@@ -436,8 +436,8 @@ class LoadDatabase(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "url: " + str(self.resolve_option("db_url")) \
-               + ", query: " + str(self.resolve_option("query"))
+        return "url: " + str(self.options["db_url"]) \
+               + ", query: " + str(self.options["query"])
 
     def fix_options(self, options):
         """

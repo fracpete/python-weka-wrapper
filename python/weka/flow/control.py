@@ -756,6 +756,40 @@ class Tee(ActorHandler, Transformer):
         """
         return "'Tees off' the current token to be processed in the sub-tree before passing it on."
 
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        cond = str(self.options["condition"])
+        if len(cond) > 0:
+            return "condition: " + cond
+        else:
+            return None
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(Tee, self).fix_options(options)
+
+        opt = "condition"
+        if opt not in options:
+            options[opt] = "True"
+        if opt not in self.help:
+            self.help[opt] = "The (optional) condition for teeing off the tokens; uses the 'eval' method, "\
+                             "ie the expression must evaluate to a boolean value; storage values placeholders "\
+                             "'@{...}' get replaced with their string representations before evaluating the "\
+                             "expression (string)."
+
+        return options
+
     def new_director(self):
         """
         Creates the director to use for handling the sub-actors.
@@ -786,8 +820,14 @@ class Tee(ActorHandler, Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        self.first_active.input = self.input
-        result = self._director.execute()
+        result = None
+        teeoff = True
+        cond = self.storagehandler.expand(str(self.resolve_option("condition")))
+        if len(cond) > 0:
+            teeoff = bool(eval(cond))
+        if teeoff:
+            self.first_active.input = self.input
+            result = self._director.execute()
         if result is None:
             self._output.append(self.input)
         return result
@@ -815,6 +855,40 @@ class Trigger(ActorHandler, Transformer):
         :rtype: str
         """
         return "'Triggers' the sub-tree with each token passing through and then passes the token on."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        cond = str(self.resolve_option("condition"))
+        if len(cond) > 0:
+            return "condition: " + cond
+        else:
+            return None
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(Trigger, self).fix_options(options)
+
+        opt = "condition"
+        if opt not in options:
+            options[opt] = "True"
+        if opt not in self.help:
+            self.help[opt] = "The (optional) condition for teeing off the tokens; uses the 'eval' method, "\
+                             "ie the expression must evaluate to a boolean value; storage values placeholders "\
+                             "'@{...}' get replaced with their string representations before evaluating the "\
+                             "expression (string)."
+
+        return options
 
     def new_director(self):
         """
@@ -846,7 +920,13 @@ class Trigger(ActorHandler, Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        result = self._director.execute()
+        result = None
+        teeoff = True
+        cond = self.storagehandler.expand(str(self.resolve_option("condition")))
+        if len(cond) > 0:
+            teeoff = bool(eval(cond))
+        if teeoff:
+            result = self._director.execute()
         if result is None:
             self._output.append(self.input)
         return result
@@ -1002,7 +1082,7 @@ class ContainerValuePicker(Tee):
         :return: the info, None if not available
         :rtype: str
         """
-        return "value: " + str(self.resolve_option("value")) + ", switch: " + str(self.resolve_option("switch"))
+        return "value: " + str(self.options["value"]) + ", switch: " + str(self.options["switch"])
 
     def fix_options(self, options):
         """

@@ -111,7 +111,7 @@ class Console(Sink):
         :return: the info, None if not available
         :rtype: str
         """
-        return "prefix: '" + str(self.resolve_option("prefix")) + "'"
+        return "prefix: '" + str(self.options["prefix"]) + "'"
 
     def fix_options(self, options):
         """
@@ -163,7 +163,7 @@ class FileOutputSink(Sink):
         :return: the info, None if not available
         :rtype: str
         """
-        return "output: '" + str(self.resolve_option("output")) + "'"
+        return "output: '" + str(self.options["output"]) + "'"
 
     def fix_options(self, options):
         """
@@ -214,7 +214,7 @@ class DumpFile(FileOutputSink):
         :return: the info, None if not available
         :rtype: str
         """
-        return super(DumpFile, self).quickinfo + ", append: " + str(self.resolve_option("append"))
+        return super(DumpFile, self).quickinfo + ", append: " + str(self.options["append"])
 
     def fix_options(self, options):
         """
