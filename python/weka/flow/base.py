@@ -61,17 +61,17 @@ class Configurable(object):
 
     def __repr__(self):
         """
-        Returns Python code for instantiating the actor.
+        Returns Python code for instantiating the object.
         :return: the representation
         :rtype: str
         """
         return \
             self.__class__.__module__ + "." + self.__class__.__name__ \
-            + "(name=" + self.name + ", options=" + str(self.options) + ")"
+            + "(options=" + str(self.options) + ")"
 
     def description(self):
         """
-        Returns a description of the actor.
+        Returns a description of the object.
         :return: the description
         :rtype: str
         """
@@ -115,6 +115,8 @@ class Configurable(object):
         :return: the potentially processed value
         :rtype: object
         """
+        if isinstance(v, Configurable):
+            return v.to_options_dict()
         return v
 
     def to_options_dict(self):
@@ -124,7 +126,6 @@ class Configurable(object):
         :rtype: dict
         """
         result = {}
-        result["name"] = self.name
         result["class"] = utils.get_classname(self)
         options = self.options.copy()
         result["options"] = {}
@@ -142,6 +143,12 @@ class Configurable(object):
         :return: the potentially parsed value
         :rtype: object
         """
+        if isinstance(v, dict):
+            if "class" in v:
+                obj = utils.get_class(v["class"])()
+                if isinstance(obj, Configurable) and "options" in v:
+                    obj.from_options_dict(v["options"])
+                return obj
         return v
 
     def from_options_dict(self, d):
@@ -177,7 +184,7 @@ class Configurable(object):
         """
         Returns a shallow copy of itself.
         :return: the copy
-        :rtype: Actor
+        :rtype: object
         """
         result = self.__class__()
         result.json = self.json
@@ -253,6 +260,16 @@ class Actor(Configurable, Stoppable):
         :rtype: str
         """
         return self.full_name + ": " + str(self._options)
+
+    def __repr__(self):
+        """
+        Returns Python code for instantiating the object.
+        :return: the representation
+        :rtype: str
+        """
+        return \
+            self.__class__.__module__ + "." + self.__class__.__name__ \
+            + "(name=" + self.name + ", options=" + str(self.options) + ")"
 
     @property
     def logger(self):
@@ -378,6 +395,27 @@ class Actor(Configurable, Stoppable):
             self.help[opt] = "Whether to skip (disable) this actor (bool)."
 
         return super(Actor, self).fix_options(options)
+
+    def to_options_dict(self):
+        """
+        Returns a dictionary of its options.
+        :return: the options as dictionary
+        :rtype: dict
+        """
+        result = super(Actor, self).to_options_dict()
+        result["name"] = self.name
+        return result
+
+    def from_options_dict(self, d):
+        """
+        Restores the object from the given options dictionary.
+        :param d: the dictionary to use for restoring the options
+        :type d: dict
+        """
+        if "name" in d:
+            self.name = d["name"]
+            d.pop("name", None)
+        super(Actor, self).from_options_dict(d)
 
     def resolve_option(self, name, default=None):
         """
