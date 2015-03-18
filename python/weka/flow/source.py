@@ -17,8 +17,11 @@
 
 import os
 import re
+import weka.flow.base as base
 from weka.flow.base import Actor, OutputProducer, Token
 from weka.core.database import InstanceQuery
+import weka.datagenerators as datagen
+import weka.core.utils as utils
 
 
 class Source(OutputProducer, Actor):
@@ -501,4 +504,103 @@ class LoadDatabase(Source):
         iquery.query = str(self.resolve_option("query"))
         data = iquery.retrieve_instances()
         self._output.append(Token(data))
+        return None
+
+
+class DataGenerator(Source):
+    """
+    Generates artificial data using the specified data generator.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the source.
+        :param name: the name of the source
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(DataGenerator, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Generates artificial data using the specified data generator."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "setup: " + base.to_commandline(self.options["setup"])
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        opt = "setup"
+        if opt not in options:
+            options[opt] = datagen.DataGenerator(classname="weka.datagenerators.classifiers.classification.Agrawal")
+        if opt not in self.help:
+            self.help[opt] = "The data generator to use (DataGenerator)."
+
+        opt = "incremental"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to output the data incrementally, in case the generator supports that (bool)."
+
+        return super(DataGenerator, self).fix_options(options)
+
+    def to_options(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        if k == "setup":
+            return base.to_commandline(v)
+        return super(DataGenerator, self).to_options(k, v)
+
+    def from_options(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        if k == "setup":
+            return utils.from_commandline(v, classname=utils.to_commandline(datagen.DataGenerator()))
+        return super(DataGenerator, self).from_options(k, v)
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        generator = datagen.DataGenerator.make_copy(self.resolve_option("setup"))
+        generator.dataset_format = generator.define_data_format()
+        if bool(self.resolve_option("incremental")) and generator.single_mode_flag:
+            for i in xrange(generator.num_examples_act):
+                self._output.append(Token(generator.generate_example()))
+        else:
+            data = generator.generate_examples()
+            self._output.append(Token(data))
         return None

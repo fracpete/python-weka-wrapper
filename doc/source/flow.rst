@@ -52,6 +52,7 @@ Sources
 
 The following *source* actors are available:
 
+ * **DataGenerator** outputs artificial data
  * **FileSupplier** outputs predefined file names
  * **ForLoop** outputs integer tokens as defined by the loop setup (min, max, step)
  * **GetStorageValue** outputs a storage from internal storage
