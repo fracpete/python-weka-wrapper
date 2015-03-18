@@ -12,12 +12,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # classes.py
-# Copyright (C) 2014-2155 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import javabridge
 import weka.core.jvm as jvm
-import weka.core.utils as utils
+import weka.classifiers
 import weka.core.classes as classes
 import wekatests.tests.weka_test as weka_test
 
@@ -161,6 +161,33 @@ class TestClasses(weka_test.WekaTest):
         self.assertEqual(1, stag.selected.ident, "ID differs")
         stag = classes.SelectedTag(tag_text="2", tags=tags)
         self.assertEqual(2, stag.selected.ident, "ID differs")
+
+    def test_get_class(self):
+        """
+        Tests the get_class method.
+        """
+        cls = classes.get_class("weka.classifiers.Classifier")
+        self.assertIsNotNone(cls)
+        self.assertEqual("weka.classifiers.Classifier", classes.get_classname(cls))
+
+    def test_get_classname(self):
+        """
+        Tests the get_class method.
+        """
+        # Python class
+        cls = classes.get_class("weka.classifiers.Classifier")
+        self.assertIsNotNone(cls)
+        self.assertEqual("weka.classifiers.Classifier", classes.get_classname(cls))
+
+        # Python object
+        cls = weka.classifiers.Classifier(classname="weka.classifiers.trees.J48")
+        self.assertIsNotNone(cls)
+        self.assertEqual("weka.classifiers.Classifier", classes.get_classname(cls))
+
+        # Java object
+        cls = weka.classifiers.Classifier(classname="weka.classifiers.trees.J48")
+        self.assertIsNotNone(cls)
+        self.assertEqual("weka.classifiers.trees.J48", classes.get_classname(cls.jobject))
 
 
 def suite():

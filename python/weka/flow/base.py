@@ -21,6 +21,7 @@ import re
 import traceback
 import uuid
 import weka.core.utils as utils
+import weka.core.classes as classes
 
 
 class Stoppable(object):
@@ -126,7 +127,7 @@ class Configurable(object):
         :rtype: dict
         """
         result = {}
-        result["class"] = utils.get_classname(self)
+        result["class"] = classes.get_classname(self)
         options = self.options.copy()
         result["options"] = {}
         for k in options.keys():
@@ -145,7 +146,7 @@ class Configurable(object):
         """
         if isinstance(v, dict):
             if "class" in v:
-                obj = utils.get_class(v["class"])()
+                obj = classes.get_class(v["class"])()
                 if isinstance(obj, Configurable) and "options" in v:
                     obj.from_options_dict(v["options"])
                 return obj

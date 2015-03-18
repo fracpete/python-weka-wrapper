@@ -14,10 +14,56 @@
 # classes.py
 # Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
+import inspect
 import types
 import javabridge
 from javabridge import JWrapper, JClassWrapper
 from javabridge.jutil import JavaException
+
+
+def get_class(classname):
+    """
+    Returns the class object associated with the dot-notation classname.
+    Taken from here: http://stackoverflow.com/a/452981
+    :param classname: the classname
+    :type classname: str
+    :return: the class object
+    :rtype: object
+    """
+    parts = classname.split('.')
+    module = ".".join(parts[:-1])
+    m = __import__(module)
+    for comp in parts[1:]:
+        m = getattr(m, comp)
+    return m
+
+
+def get_jclass(classname):
+    """
+    Returns the Java class object associated with the dot-notation classname.
+    :param classname: the classname
+    :type classname: str
+    :return: the class object
+    :rtype: JB_Object
+    """
+    return javabridge.class_for_name(classname=classname)
+
+
+def get_classname(obj):
+    """
+    Returns the classname of the JB_Object, Python class or object.
+    :param obj: the java object or Python class/object to get the classname for
+    :type obj: object
+    :return: the classname
+    :rtype: str
+    """
+    if isinstance(obj, javabridge.JB_Object):
+        cls = javabridge.call(obj, "getClass", "()Ljava/lang/Class;")
+        return javabridge.call(cls, "getName", "()Ljava/lang/String;")
+    elif inspect.isclass(obj):
+        return obj.__module__ + "." + obj.__name__
+    else:
+        return get_classname(obj.__class__)
 
 
 class JavaObject(object):

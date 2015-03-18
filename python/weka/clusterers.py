@@ -21,6 +21,7 @@ import sys
 import argparse
 import weka.core.jvm as jvm
 import weka.core.utils as utils
+import weka.core.classes as classes
 from weka.core.classes import JavaObject
 from weka.core.classes import OptionHandler
 from weka.core.classes import Random
@@ -81,7 +82,7 @@ class Clusterer(OptionHandler):
         if self.is_updateable:
             javabridge.call(self.jobject, "updateClusterer", "(Lweka/core/Instance;)V", inst.jobject)
         else:
-            logger.critical(utils.get_classname(self.jobject) + " is not updateable!")
+            logger.critical(classes.get_classname(self.jobject) + " is not updateable!")
 
     def update_finished(self):
         """
@@ -90,7 +91,7 @@ class Clusterer(OptionHandler):
         if self.is_updateable:
             javabridge.call(self.jobject, "updateFinished", "()V")
         else:
-            logger.critical(utils.get_classname(self.jobject) + " is not updateable!")
+            logger.critical(classes.get_classname(self.jobject) + " is not updateable!")
 
     def cluster_instance(self, inst):
         """

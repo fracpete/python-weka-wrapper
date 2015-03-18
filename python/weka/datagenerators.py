@@ -21,6 +21,7 @@ import sys
 import argparse
 import weka.core.jvm as jvm
 import weka.core.utils as utils
+import weka.core.classes as classes
 from weka.core.classes import OptionHandler
 from weka.core.dataset import Instances, Instance
 
@@ -162,7 +163,7 @@ class DataGenerator(OptionHandler):
         :rtype: DataGenerator
         """
         return utils.from_commandline(
-            utils.to_commandline(generator), classname=utils.get_classname(DataGenerator()))
+            utils.to_commandline(generator), classname=classes.get_classname(DataGenerator()))
 
 
 def main():
