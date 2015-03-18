@@ -6,6 +6,7 @@ inspired by the `ADAMS workflow engine <https://adams.cms.waikato.ac.nz/>`_. It 
 aimed at automating tasks and being easy to extends as well. Instead of linking operators with explicit
 connections, this flow uses a tree structure for implicitly defining how the data is processed.
 
+
 Overview
 --------
 
@@ -23,6 +24,18 @@ Due to the limitation of the tree structure of providing only 1-to-n connections
 internally in a flow using a simple dictionary. Special actors store, retrieve, update and delete these
 objects.
 
+For finding out more about a specific actor, you use one of the following actor methods:
+
+ * `print_help()` -- outputs a description of actor and its options on stdout
+ * `generate_help()` -- generates the help string output by `print_help()`
+
+Printing the layout of a flow is very simple. Assuming you have a flow variable called `myflow`, you simply
+use the `tree` method to output the structure: `print(myflow.tree)`
+
+All actors can return and restore from JSON as well, simply use the following property to access or
+set the JSON representation: `json`
+
+
 Life cycle
 ----------
 
@@ -32,6 +45,7 @@ The typical life-cycle of a flow (actually any actor) can be described through t
  # **execute()** performs the execution of actors (outputs error message if failed, None otherwise)
  # **wrapup()** finishes up the execution
  # **cleanup()** destructive, frees up memory
+
 
 Sources
 -------
@@ -44,6 +58,7 @@ The following *source* actors are available:
  * **ListFiles** lists files/directories
  * **LoadDatabase** loads data from a database using an SQL query
  * **Start** dummy source that just triggers the execution of other actors following
+
 
 Transformers
 ------------
@@ -66,6 +81,7 @@ The following *transformers* are available:
  * **UpdateStorageValue** applies an expression to update an internal storage value, e.g.
    incrementing a counter
 
+
  Sinks
  -----
 
@@ -79,6 +95,7 @@ The following *transformers* are available:
   * **Null** simply swallows any token (like `/dev/null` on Linux)
   * **PRC** plots a precision-recall curve from an Evaluation object
   * **ROC** plots a receiver-operator curver from an Evaluation object
+
 
  Control actors
  --------------
@@ -94,6 +111,7 @@ The following *transformers* are available:
     the processing; optional condition available that determines when a token gets tee'd off
   * **Trigger** executes its sub-actors whenever a token passes through (i.e., when the condition evaluates to True)
 
+
 Examples
 --------
 
@@ -102,3 +120,41 @@ Check out the examples available through the *python-weka-wrapper-examples* proj
   https://github.com/fracpete/python-weka-wrapper-examples
 
 The example scripts are located in the `src/wekaexamples/flow` sub-directory.
+
+
+Extending
+---------
+
+Adding additional flow components is quite easy:
+
+ * Choose the superclass, based on how the actor is supposed to behave:
+
+   * **source** -- `weka.flow.source.Source`
+   * **transformer** -- `weka.flow.transformer.Transformer`
+   * **sink** -- `weka.flow.sink.Sink`
+
+ * add the new class with a constructor like this `def __init__(self, name=None, options=None):`
+
+ * add a `description` method that returns a string, describing what your actor does
+
+ * added a `fix_options` method that ensures that options are present and help for them as well
+   (e.g., `transformer.ClassSelector`)
+
+ * if you have options that aren't simple objects, but classes, then you need to implement the
+   following methods as well (e.g., `transformer.LoadDataset` for the `custom_loader` option)
+
+   * `to_options`
+   * `from_options`
+
+ * if you want to output some additional info in the tree layout, implement a `quickinfo` method
+   (e.g., `transformer.ClassSelector`)
+
+ * override the `setup` method if you require some additional checks (e.g., file actually exists)
+   or setup steps (e.g., loading of model from disk); return None if everything OK, otherwise
+   the error; don't forget to call the super-method.
+
+ * transformers or sink can check the input data by overriding the `check_input` method
+
+ * the actual execution or processing of input data happens in the `do_execute` method;
+   return an error string if something failed, otherwise None; sources and transformers
+   can append the generated data (wrapped in Token objects) to the `self._output` list
