@@ -75,6 +75,7 @@ The following *transformers* are available:
  * **LoadDataset** loads the data stored in the file received as input, either using automatic
    determined loader or user-specified one
  * **MathExpression** computes a numeric value from a expression and numeric input
+ * **ModelReader** reads classifier/clusterer models from disk
  * **PassThrough** is a dummy that just passes through the tokens
  * **SetStorageValue** stores the payload of the current token in internal storage
  * **Train** builds a classifier/clusterer/associator and passes on a ModelContainer

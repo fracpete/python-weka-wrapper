@@ -17,8 +17,10 @@
 
 import os
 import re
+import javabridge
 import math  # required for MathExpression
 from weka.associations import Associator
+import weka.core.serialization as serialization
 import weka.filters as filters
 import weka.flow.base as base
 from weka.flow.base import InputConsumer, OutputProducer, Token
@@ -1192,4 +1194,55 @@ class EvaluationSummary(Transformer):
         if bool(self.resolve_option("matrix")):
             summary += "\n" + evl.matrix(title=self.resolve_option("title"))
         self._output.append(Token(summary))
+        return None
+
+
+class ModelReader(Transformer):
+    """
+    Reads the serialized model (Classifier/Clusterer) from disk and forwards a ModelContainer.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(ModelReader, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Reads the serialized model from disk and forwards a ModelContainer."
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        fname = self.input.payload
+        data = serialization.read_all(fname)
+        if len(data) == 1:
+            if javabridge.is_instance_of(data[0], "weka/classifiers/Classifier"):
+                cont = ModelContainer(model=Classifier(jobject=data[0]))
+            elif javabridge.is_instance_of(data[0], "weka/clusterers/Clusterer"):
+                cont = ModelContainer(model=Clusterer(jobject=data[0]))
+            else:
+                return "Unhandled class: " + utils.get_classname(data[0])
+        elif len(data) == 2:
+            if javabridge.is_instance_of(data[0], "weka/classifiers/Classifier"):
+                cont = ModelContainer(model=Classifier(jobject=data[0]), header=Instances(data[1]))
+            elif javabridge.is_instance_of(data[0], "weka/clusterers/Clusterer"):
+                cont = ModelContainer(model=Clusterer(jobject=data[0]), header=Instances(data[1]))
+            else:
+                return "Unhandled class: " + utils.get_classname(data[0])
+        else:
+            return "Expected 1 or 2 objects, but got " + str(len(data)) + " instead reading: " + fname
+        self._output.append(Token(cont))
         return None
