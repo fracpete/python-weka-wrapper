@@ -40,7 +40,6 @@ class Actor(Configurable, Stoppable):
         self._name = self.__class__.__name__
         self._parent = None
         self._full_name = None
-        self._logger = None
         self._stopped = False
         if name is not None:
             self.name = name
@@ -63,16 +62,13 @@ class Actor(Configurable, Stoppable):
             self.__class__.__module__ + "." + self.__class__.__name__ \
             + "(name=" + self.name + ", options=" + str(self.options) + ")"
 
-    @property
-    def logger(self):
+    def new_logger(self):
         """
-        Returns the logger object.
-        :return: the logger
+        Returns a new logger instance.
+        :return: the logger instance
         :rtype: logger
         """
-        if self._logger is None:
-            self._logger = logging.getLogger(self.full_name)
-        return self._logger
+        return logging.getLogger(self.full_name)
 
     @property
     def name(self):

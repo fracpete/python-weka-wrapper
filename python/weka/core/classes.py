@@ -16,6 +16,7 @@
 
 import inspect
 import json
+import logging
 import re
 import types
 import javabridge
@@ -877,6 +878,7 @@ class Configurable(object):
         :param options: the dictionary with the options (str -> object).
         :type options: dict
         """
+        self._logger = None
         self._help = {}
         self._options = self.fix_options({})
         if options is not None:
@@ -1012,6 +1014,25 @@ class Configurable(object):
         result = self.__class__()
         result.json = self.json
         return result
+
+    def new_logger(self):
+        """
+        Returns a new logger instance.
+        :return: the logger instance
+        :rtype: logger
+        """
+        return logging.getLogger(get_classname(self))
+
+    @property
+    def logger(self):
+        """
+        Returns the logger object.
+        :return: the logger
+        :rtype: logger
+        """
+        if self._logger is None:
+            self._logger = self.new_logger()
+        return self._logger
 
     @property
     def help(self):

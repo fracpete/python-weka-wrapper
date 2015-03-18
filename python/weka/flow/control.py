@@ -18,7 +18,7 @@
 import weka.flow.base as base
 from weka.flow.base import Actor, InputConsumer, OutputProducer, Stoppable, StorageHandler, Token
 from weka.flow.transformer import Transformer
-import weka.core.utils as utils
+import weka.core.classes as classes
 
 
 class ActorHandler(Actor):
@@ -104,7 +104,7 @@ class ActorHandler(Actor):
             num = len(actors)
             for i in xrange(num):
                 item = actors[str(i)]
-                cls = utils.get_class(item["class"])
+                cls = classes.get_class(item["class"])
                 actor = cls(name=item["name"])
                 actor.parent = self
                 actor.from_options_dict(item["options"])
