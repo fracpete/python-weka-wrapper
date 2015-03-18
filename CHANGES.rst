@@ -12,6 +12,7 @@ Changelog
 - added `make_copy` class method to `Clusterer` class
 - added `make_copy` class method to `Associator` class
 - added `make_copy` class method to `Filter` class
+- added `make_copy` class method to `DataGenerator` class
 - most classes (like Classifier and Filter) now have a default classname value in the constructor
 - added `TextDirectoryLoader` class to `weka.core.converters`
 - ...

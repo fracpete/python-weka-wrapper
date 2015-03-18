@@ -152,6 +152,18 @@ class DataGenerator(OptionHandler):
             "(Lweka/datagenerators/DataGenerator;[Ljava/lang/String;)V",
             generator.jobject, args)
 
+    @classmethod
+    def make_copy(cls, generator):
+        """
+        Creates a copy of the generator.
+        :param generator: the generator to copy
+        :type generator: DataGenerator
+        :return: the copy of the generator
+        :rtype: DataGenerator
+        """
+        return utils.from_commandline(
+            utils.to_commandline(generator), classname=utils.get_classname(DataGenerator()))
+
 
 def main():
     """
