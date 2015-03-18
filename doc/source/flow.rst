@@ -67,6 +67,7 @@ Transformers
 The following *transformers* are available:
 
  * **ClassSelector** sets/unsets the class attribute of a dataset
+ * **Convert** applies simple conversion schemes to the data passing through
  * **CrossValidate** performs cross-validation on a classifier or clusterer
  * **DeleteFile** deletes files that match a regular expression
  * **DeleteStorageValue** deletes a value from internal storage

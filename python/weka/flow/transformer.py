@@ -31,6 +31,7 @@ import weka.core.utils as utils
 from weka.classifiers import Classifier, Evaluation, PredictionOutput
 from weka.clusterers import Clusterer, ClusterEvaluation
 from weka.core.classes import Random
+import weka.flow.conversion as conversion
 
 
 class Transformer(InputConsumer, OutputProducer):
@@ -1414,4 +1415,101 @@ class ModelReader(Transformer):
         else:
             return "Expected 1 or 2 objects, but got " + str(len(data)) + " instead reading: " + fname
         self._output.append(Token(cont))
+        return None
+
+
+class Convert(Transformer):
+    """
+    Converts the input data with the given conversion setup.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Convert, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Converts the input data with the given conversion setup."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "setup: " + str(self.options["setup"])
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        opt = "setup"
+        if opt not in options:
+            options[opt] = conversion.PassThrough()
+        if opt not in self.help:
+            self.help[opt] = "The conversion to apply to the input data (Conversion)."
+
+        return super(Convert, self).fix_options(options)
+
+    def to_options(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        return super(Convert, self).to_options(k, v)
+
+    def from_options(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        return super(Convert, self).from_options(k, v)
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if token is None:
+            raise Exception(self.full_name + ": No token provided!")
+        self.options["setup"].check_input(token.payload)
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        conv = self.options["setup"].shallow_copy()
+        conv.input = self._input.payload
+        result = conv.convert()
+        if result is None:
+            if conv.output is not None:
+                self._output.append(Token(conv.output))
         return None
