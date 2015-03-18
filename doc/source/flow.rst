@@ -116,6 +116,14 @@ The following *transformers* are available:
   * **Trigger** executes its sub-actors whenever a token passes through (i.e., when the condition evaluates to True)
 
 
+Conversions
+-----------
+
+The following *conversion* schemes can be used in conjunction with the *Convert* transformer:
+
+ * **PassThrough** is a dummy conversion that just passes through the data
+
+
 Examples
 --------
 
