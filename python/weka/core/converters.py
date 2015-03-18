@@ -135,6 +135,35 @@ class IncrementalLoaderIterator(object):
             return Instance(result)
 
 
+class TextDirectoryLoader(OptionHandler):
+    """
+    Wrapper class for TextDirectoryLoader.
+    """
+
+    def __init__(self, jobject=None, options=None):
+        """
+        Initializes the text directory loader either using a new instance or the JB_Object.
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        if jobject is None:
+            jobject = TextDirectoryLoader.new_instance("weka.core.converters.TextDirectoryLoader")
+        self.enforce_type(jobject, "weka.core.converters.TextDirectoryLoader")
+        super(TextDirectoryLoader, self).__init__(jobject=jobject, options=options)
+
+    def load(self):
+        """
+        Loads the text files from the specified directory and returns the Instances object.
+        In case of incremental loading, only the structure.
+        :return: the full dataset or the header (if incremental)
+        :rtype: Instances
+        """
+        javabridge.call(self.jobject, "reset", "()V")
+        return Instances(javabridge.call(self.jobject, "getDataSet", "()Lweka/core/Instances;"))
+
+
 class Saver(OptionHandler):
     """
     Wrapper class for Savers.
