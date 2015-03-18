@@ -528,3 +528,211 @@ class ClassifierErrors(Sink):
             outfile=self.resolve_option("outfile"),
             wait=bool(self.resolve_option("wait")))
         return result
+
+
+class ROC(Sink):
+    """
+    Displays the ROC curve obtained from a classifier evaluation.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(ROC, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Displays the ROC curve obtained from a classifier evaluation."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(ROC, self).fix_options(options)
+
+        opt = "class_index"
+        if opt not in options:
+            options[opt] = [0]
+        if opt not in self.help:
+            self.help[opt] = "The list of 0-based class-label indices to display (list)."
+
+        opt = "key_loc"
+        if opt not in options:
+            options[opt] = "lower right"
+        if opt not in self.help:
+            self.help[opt] = "The location of the key in the plot (str)."
+
+        opt = "title"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The title for the plot (str)."
+
+        opt = "outfile"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The file to store the plot in (str)."
+
+        opt = "wait"
+        if opt not in options:
+            options[opt] = True
+        if opt not in self.help:
+            self.help[opt] = "Whether to wait for user to close the plot window (bool)."
+
+        return options
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "classes: " + str(self.options["class_index"]) \
+               + ", title: " + str(self.options["title"]) \
+               + ", outfile: " + str(self.options["outfile"]) \
+               + ", wait: " + str(self.options["wait"])
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if not isinstance(token.payload, Evaluation):
+            raise Exception(self.full_name + ": Input token is not an Evaluation object!")
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = None
+        evl = self.input.payload
+        pltclassifier.plot_roc(
+            evl,
+            class_index=self.resolve_option("class_index"),
+            title=self.resolve_option("title"),
+            key_loc=self.resolve_option("key_loc"),
+            outfile=self.resolve_option("outfile"),
+            wait=bool(self.resolve_option("wait")))
+        return result
+
+
+class PRC(Sink):
+    """
+    Displays the PRC curve obtained from a classifier evaluation.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(PRC, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Displays the PRC curve obtained from a classifier evaluation."
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(PRC, self).fix_options(options)
+
+        opt = "class_index"
+        if opt not in options:
+            options[opt] = [0]
+        if opt not in self.help:
+            self.help[opt] = "The list of 0-based class-label indices to display (list)."
+
+        opt = "key_loc"
+        if opt not in options:
+            options[opt] = "lower center"
+        if opt not in self.help:
+            self.help[opt] = "The location of the key in the plot (str)."
+
+        opt = "title"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The title for the plot (str)."
+
+        opt = "outfile"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The file to store the plot in (str)."
+
+        opt = "wait"
+        if opt not in options:
+            options[opt] = True
+        if opt not in self.help:
+            self.help[opt] = "Whether to wait for user to close the plot window (bool)."
+
+        return options
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "classes: " + str(self.options["class_index"]) \
+               + ", title: " + str(self.options["title"]) \
+               + ", outfile: " + str(self.options["outfile"]) \
+               + ", wait: " + str(self.options["wait"])
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if not isinstance(token.payload, Evaluation):
+            raise Exception(self.full_name + ": Input token is not an Evaluation object!")
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = None
+        evl = self.input.payload
+        pltclassifier.plot_prc(
+            evl,
+            class_index=self.resolve_option("class_index"),
+            title=self.resolve_option("title"),
+            key_loc=self.resolve_option("key_loc"),
+            outfile=self.resolve_option("outfile"),
+            wait=bool(self.resolve_option("wait")))
+        return result
