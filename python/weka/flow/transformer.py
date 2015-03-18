@@ -126,11 +126,11 @@ class LoadDataset(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "incremental: " + str(self.options["incremental"]) \
-               + ", custom: " + str(self.options["use_custom_loader"]) \
-               + ", loader: " + base.to_commandline(self.options["custom_loader"])
+        return "incremental: " + str(self.config["incremental"]) \
+               + ", custom: " + str(self.config["use_custom_loader"]) \
+               + ", loader: " + base.to_commandline(self.config["custom_loader"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -156,9 +156,9 @@ class LoadDataset(Transformer):
         if opt not in self.help:
             self.help[opt] = "The custom loader to use (Loader)."
 
-        return super(LoadDataset, self).fix_options(options)
+        return super(LoadDataset, self).fix_config(options)
 
-    def to_options(self, k, v):
+    def to_config(self, k, v):
         """
         Hook method that allows conversion of individual options.
         :param k: the key of the option
@@ -170,9 +170,9 @@ class LoadDataset(Transformer):
         """
         if k == "custom_loader":
             return base.to_commandline(v)
-        return super(LoadDataset, self).to_options(k, v)
+        return super(LoadDataset, self).to_config(k, v)
 
-    def from_options(self, k, v):
+    def from_config(self, k, v):
         """
         Hook method that allows converting values from the dictionary
         :param k: the key in the dictionary
@@ -184,7 +184,7 @@ class LoadDataset(Transformer):
         """
         if k == "custom_loader":
             return utils.from_commandline(v, classname=utils.get_classname(converters.Loader()))
-        return super(LoadDataset, self).from_options(k, v)
+        return super(LoadDataset, self).from_config(k, v)
 
     def check_input(self, token):
         """
@@ -292,9 +292,9 @@ class SetStorageValue(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "name: " + str(self.options["storage_name"])
+        return "name: " + str(self.config["storage_name"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -302,7 +302,7 @@ class SetStorageValue(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(SetStorageValue, self).fix_options(options)
+        options = super(SetStorageValue, self).fix_config(options)
 
         opt = "storage_name"
         if opt not in options:
@@ -355,9 +355,9 @@ class DeleteStorageValue(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "name: " + str(self.options["storage_name"])
+        return "name: " + str(self.config["storage_name"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -365,7 +365,7 @@ class DeleteStorageValue(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(DeleteStorageValue, self).fix_options(options)
+        options = super(DeleteStorageValue, self).fix_config(options)
 
         opt = "storage_name"
         if opt not in options:
@@ -418,9 +418,9 @@ class InitStorageValue(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "name: " + str(self.options["storage_name"]) + ", value: " + str(self.options["value"])
+        return "name: " + str(self.config["storage_name"]) + ", value: " + str(self.config["value"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -428,7 +428,7 @@ class InitStorageValue(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(InitStorageValue, self).fix_options(options)
+        options = super(InitStorageValue, self).fix_config(options)
 
         opt = "storage_name"
         if opt not in options:
@@ -489,9 +489,9 @@ class UpdateStorageValue(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "name: " + str(self.options["storage_name"]) + ", expression: " + str(self.options["expression"])
+        return "name: " + str(self.config["storage_name"]) + ", expression: " + str(self.config["expression"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -499,7 +499,7 @@ class UpdateStorageValue(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(UpdateStorageValue, self).fix_options(options)
+        options = super(UpdateStorageValue, self).fix_config(options)
 
         opt = "storage_name"
         if opt not in options:
@@ -565,9 +565,9 @@ class MathExpression(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "expression: " + str(self.options["expression"])
+        return "expression: " + str(self.config["expression"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -575,7 +575,7 @@ class MathExpression(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(MathExpression, self).fix_options(options)
+        options = super(MathExpression, self).fix_config(options)
 
         opt = "expression"
         if opt not in options:
@@ -628,9 +628,9 @@ class ClassSelector(Transformer):
         :rtype: str
         """
 
-        return "index: " + str(self.options["index"])
+        return "index: " + str(self.config["index"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -638,7 +638,7 @@ class ClassSelector(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(ClassSelector, self).fix_options(options)
+        options = super(ClassSelector, self).fix_config(options)
 
         opt = "index"
         if opt not in options:
@@ -721,9 +721,9 @@ class Train(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "setup: " + base.to_commandline(self.options["setup"])
+        return "setup: " + base.to_commandline(self.config["setup"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -731,7 +731,7 @@ class Train(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Train, self).fix_options(options)
+        options = super(Train, self).fix_config(options)
 
         opt = "setup"
         if opt not in options:
@@ -741,7 +741,7 @@ class Train(Transformer):
 
         return options
 
-    def to_options(self, k, v):
+    def to_config(self, k, v):
         """
         Hook method that allows conversion of individual options.
         :param k: the key of the option
@@ -753,9 +753,9 @@ class Train(Transformer):
         """
         if k == "setup":
             return base.to_commandline(v)
-        return super(Train, self).to_options(k, v)
+        return super(Train, self).to_config(k, v)
 
-    def from_options(self, k, v):
+    def from_config(self, k, v):
         """
         Hook method that allows converting values from the dictionary
         :param k: the key in the dictionary
@@ -773,7 +773,7 @@ class Train(Transformer):
                     return utils.from_commandline(v, classname=utils.get_classname(Clusterer()))
                 except Exception, e2:
                     return utils.from_commandline(v, classname=utils.get_classname(Associator()))
-        return super(Train, self).from_options(k, v)
+        return super(Train, self).from_config(k, v)
 
     def check_input(self, token):
         """
@@ -846,9 +846,9 @@ class Filter(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "setup: " + base.to_commandline(self.options["setup"])
+        return "setup: " + base.to_commandline(self.config["setup"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -862,9 +862,9 @@ class Filter(Transformer):
         if opt not in self.help:
             self.help[opt] = "The filter to apply to the dataset (Filter)."
 
-        return super(Filter, self).fix_options(options)
+        return super(Filter, self).fix_config(options)
 
-    def to_options(self, k, v):
+    def to_config(self, k, v):
         """
         Hook method that allows conversion of individual options.
         :param k: the key of the option
@@ -876,9 +876,9 @@ class Filter(Transformer):
         """
         if k == "setup":
             return base.to_commandline(v)
-        return super(Filter, self).to_options(k, v)
+        return super(Filter, self).to_config(k, v)
 
-    def from_options(self, k, v):
+    def from_config(self, k, v):
         """
         Hook method that allows converting values from the dictionary
         :param k: the key in the dictionary
@@ -890,7 +890,7 @@ class Filter(Transformer):
         """
         if k == "setup":
             return utils.from_commandline(v, classname=utils.to_commandline(filters.Filter()))
-        return super(Filter, self).from_options(k, v)
+        return super(Filter, self).from_config(k, v)
 
     def check_input(self, token):
         """
@@ -951,9 +951,9 @@ class DeleteFile(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "regexp: " + str(self.options["regexp"])
+        return "regexp: " + str(self.config["regexp"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -961,7 +961,7 @@ class DeleteFile(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(DeleteFile, self).fix_options(options)
+        options = super(DeleteFile, self).fix_config(options)
 
         opt = "regexp"
         if opt not in options:
@@ -1020,9 +1020,9 @@ class CrossValidate(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "setup: " + base.to_commandline(self.options["setup"]) + ", folds: " + str(self.options["folds"])
+        return "setup: " + base.to_commandline(self.config["setup"]) + ", folds: " + str(self.config["folds"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -1030,7 +1030,7 @@ class CrossValidate(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(CrossValidate, self).fix_options(options)
+        options = super(CrossValidate, self).fix_config(options)
 
         opt = "setup"
         if opt not in options:
@@ -1064,7 +1064,7 @@ class CrossValidate(Transformer):
 
         return options
 
-    def to_options(self, k, v):
+    def to_config(self, k, v):
         """
         Hook method that allows conversion of individual options.
         :param k: the key of the option
@@ -1078,9 +1078,9 @@ class CrossValidate(Transformer):
             return base.to_commandline(v)
         if k == "output":
             return base.to_commandline(v)
-        return super(CrossValidate, self).to_options(k, v)
+        return super(CrossValidate, self).to_config(k, v)
 
-    def from_options(self, k, v):
+    def from_config(self, k, v):
         """
         Hook method that allows converting values from the dictionary
         :param k: the key in the dictionary
@@ -1097,7 +1097,7 @@ class CrossValidate(Transformer):
                 return utils.from_commandline(v, classname=utils.get_classname(Clusterer()))
         if k == "output":
             return utils.from_commandline(v, classname=utils.get_classname(PredictionOutput()))
-        return super(CrossValidate, self).from_options(k, v)
+        return super(CrossValidate, self).from_config(k, v)
 
     def check_input(self, token):
         """
@@ -1172,9 +1172,9 @@ class Evaluate(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "storage: " + self.options["storage_name"]
+        return "storage: " + self.config["storage_name"]
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -1182,7 +1182,7 @@ class Evaluate(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Evaluate, self).fix_options(options)
+        options = super(Evaluate, self).fix_config(options)
 
         opt = "storage_name"
         if opt not in options:
@@ -1204,7 +1204,7 @@ class Evaluate(Transformer):
 
         return options
 
-    def to_options(self, k, v):
+    def to_config(self, k, v):
         """
         Hook method that allows conversion of individual options.
         :param k: the key of the option
@@ -1216,9 +1216,9 @@ class Evaluate(Transformer):
         """
         if k == "output":
             return base.to_commandline(v)
-        return super(Evaluate, self).to_options(k, v)
+        return super(Evaluate, self).to_config(k, v)
 
-    def from_options(self, k, v):
+    def from_config(self, k, v):
         """
         Hook method that allows converting values from the dictionary
         :param k: the key in the dictionary
@@ -1230,7 +1230,7 @@ class Evaluate(Transformer):
         """
         if k == "output":
             return utils.from_commandline(v, classname=utils.get_classname(PredictionOutput()))
-        return super(Evaluate, self).from_options(k, v)
+        return super(Evaluate, self).from_config(k, v)
 
     def check_input(self, token):
         """
@@ -1302,11 +1302,11 @@ class EvaluationSummary(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "title: " + str(self.options["title"]) \
-               + ", complexity: " + str(self.options["complexity"]) \
-               + ", matrix: " + str(self.options["matrix"])
+        return "title: " + str(self.config["title"]) \
+               + ", complexity: " + str(self.config["complexity"]) \
+               + ", matrix: " + str(self.config["matrix"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -1314,7 +1314,7 @@ class EvaluationSummary(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(EvaluationSummary, self).fix_options(options)
+        options = super(EvaluationSummary, self).fix_config(options)
 
         opt = "title"
         if opt not in options:
@@ -1448,9 +1448,9 @@ class Convert(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "setup: " + str(self.options["setup"])
+        return "setup: " + str(self.config["setup"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -1464,9 +1464,9 @@ class Convert(Transformer):
         if opt not in self.help:
             self.help[opt] = "The conversion to apply to the input data (Conversion)."
 
-        return super(Convert, self).fix_options(options)
+        return super(Convert, self).fix_config(options)
 
-    def to_options(self, k, v):
+    def to_config(self, k, v):
         """
         Hook method that allows conversion of individual options.
         :param k: the key of the option
@@ -1476,9 +1476,9 @@ class Convert(Transformer):
         :return: the potentially processed value
         :rtype: object
         """
-        return super(Convert, self).to_options(k, v)
+        return super(Convert, self).to_config(k, v)
 
-    def from_options(self, k, v):
+    def from_config(self, k, v):
         """
         Hook method that allows converting values from the dictionary
         :param k: the key in the dictionary
@@ -1488,7 +1488,7 @@ class Convert(Transformer):
         :return: the potentially parsed value
         :rtype: object
         """
-        return super(Convert, self).from_options(k, v)
+        return super(Convert, self).from_config(k, v)
 
     def check_input(self, token):
         """
@@ -1498,7 +1498,7 @@ class Convert(Transformer):
         """
         if token is None:
             raise Exception(self.full_name + ": No token provided!")
-        self.options["setup"].check_input(token.payload)
+        self.config["setup"].check_input(token.payload)
 
     def do_execute(self):
         """
@@ -1506,7 +1506,7 @@ class Convert(Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        conv = self.options["setup"].shallow_copy()
+        conv = self.config["setup"].shallow_copy()
         conv.input = self._input.payload
         result = conv.convert()
         if result is None:

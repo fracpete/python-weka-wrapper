@@ -104,9 +104,9 @@ class FileSupplier(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "files: " + str(len(self.options["files"]))
+        return "files: " + str(len(self.config["files"]))
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -114,7 +114,7 @@ class FileSupplier(Source):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(FileSupplier, self).fix_options(options)
+        options = super(FileSupplier, self).fix_config(options)
 
         opt = "files"
         if opt not in options:
@@ -165,12 +165,12 @@ class ListFiles(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "dir: " + str(self.options["dir"]) \
-               + ", files: " + str(self.options["list_files"]) \
+        return "dir: " + str(self.config["dir"]) \
+               + ", files: " + str(self.config["list_files"]) \
                + ", dirs: " + str(self.resolve_option("list_dirs")) \
-               + ", recursive: " + str(self.options["recursive"])
+               + ", recursive: " + str(self.config["recursive"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -178,7 +178,7 @@ class ListFiles(Source):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(ListFiles, self).fix_options(options)
+        options = super(ListFiles, self).fix_config(options)
 
         opt = "dir"
         if opt not in options:
@@ -294,9 +294,9 @@ class GetStorageValue(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "name: " + str(self.options["storage_name"])
+        return "name: " + str(self.config["storage_name"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -304,7 +304,7 @@ class GetStorageValue(Source):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(GetStorageValue, self).fix_options(options)
+        options = super(GetStorageValue, self).fix_config(options)
 
         opt = "storage_name"
         if opt not in options:
@@ -359,11 +359,11 @@ class ForLoop(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "min: " + str(self.options["min"]) \
-               + ", max: " + str(self.options["max"]) \
-               + ", step: " + str(self.options["step"])
+        return "min: " + str(self.config["min"]) \
+               + ", max: " + str(self.config["max"]) \
+               + ", step: " + str(self.config["step"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -371,7 +371,7 @@ class ForLoop(Source):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(ForLoop, self).fix_options(options)
+        options = super(ForLoop, self).fix_config(options)
 
         opt = "min"
         if opt not in options:
@@ -439,10 +439,10 @@ class LoadDatabase(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "url: " + str(self.options["db_url"]) \
-               + ", query: " + str(self.options["query"])
+        return "url: " + str(self.config["db_url"]) \
+               + ", query: " + str(self.config["query"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -486,7 +486,7 @@ class LoadDatabase(Source):
         if opt not in self.help:
             self.help[opt] = "Custom properties filename (str)."
 
-        return super(LoadDatabase, self).fix_options(options)
+        return super(LoadDatabase, self).fix_config(options)
 
     def do_execute(self):
         """
@@ -537,9 +537,9 @@ class DataGenerator(Source):
         :return: the info, None if not available
         :rtype: str
         """
-        return "setup: " + base.to_commandline(self.options["setup"])
+        return "setup: " + base.to_commandline(self.config["setup"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -559,9 +559,9 @@ class DataGenerator(Source):
         if opt not in self.help:
             self.help[opt] = "Whether to output the data incrementally, in case the generator supports that (bool)."
 
-        return super(DataGenerator, self).fix_options(options)
+        return super(DataGenerator, self).fix_config(options)
 
-    def to_options(self, k, v):
+    def to_config(self, k, v):
         """
         Hook method that allows conversion of individual options.
         :param k: the key of the option
@@ -573,9 +573,9 @@ class DataGenerator(Source):
         """
         if k == "setup":
             return base.to_commandline(v)
-        return super(DataGenerator, self).to_options(k, v)
+        return super(DataGenerator, self).to_config(k, v)
 
-    def from_options(self, k, v):
+    def from_config(self, k, v):
         """
         Hook method that allows converting values from the dictionary
         :param k: the key in the dictionary
@@ -587,7 +587,7 @@ class DataGenerator(Source):
         """
         if k == "setup":
             return utils.from_commandline(v, classname=utils.to_commandline(datagen.DataGenerator()))
-        return super(DataGenerator, self).from_options(k, v)
+        return super(DataGenerator, self).from_config(k, v)
 
     def do_execute(self):
         """

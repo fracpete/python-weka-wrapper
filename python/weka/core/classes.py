@@ -69,6 +69,234 @@ def get_classname(obj):
         return get_classname(obj.__class__)
 
 
+class Stoppable(object):
+    """
+    Classes that can be stopped.
+    """
+
+    def is_stopped(self):
+        """
+        Returns whether the object has been stopped.
+        :return: whether stopped
+        :rtype: bool
+        """
+        raise Exception("Not implemented!")
+
+    def stop_execution(self):
+        """
+        Triggers the stopping of the object.
+        """
+        raise Exception("Not implemented!")
+
+
+class Configurable(object):
+    """
+    The ancestor for all actors.
+    """
+
+    def __init__(self, options=None):
+        """
+        Initializes the object.
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        self._logger = None
+        self._help = {}
+        self._config = self.fix_config({})
+        if options is not None:
+            self.config = options
+
+    def __repr__(self):
+        """
+        Returns Python code for instantiating the object.
+        :return: the representation
+        :rtype: str
+        """
+        return \
+            self.__class__.__module__ + "." + self.__class__.__name__ \
+            + "(options=" + str(self.config) + ")"
+
+    def description(self):
+        """
+        Returns a description of the object.
+        :return: the description
+        :rtype: str
+        """
+        raise Exception("Not implemented!")
+
+    def fix_config(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        return options
+
+    @property
+    def config(self):
+        """
+        Obtains the currently set options of the actor.
+        :return: the options
+        :rtype: dict
+        """
+        return self._config
+
+    @config.setter
+    def config(self, options):
+        """
+        Sets the options of the actor.
+        :param options: the options
+        :type options: dict
+        """
+        self._config = self.fix_config(options)
+
+    def to_config(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        if isinstance(v, Configurable):
+            return v.to_config_dict()
+        return v
+
+    def to_config_dict(self):
+        """
+        Returns a dictionary of its options.
+        :return: the options as dictionary
+        :rtype: dict
+        """
+        result = {}
+        result["class"] = get_classname(self)
+        options = self.config.copy()
+        result["options"] = {}
+        for k in options.keys():
+            result["options"][k] = self.to_config(k, options[k])
+        return result
+
+    def from_config(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        if isinstance(v, dict):
+            if "class" in v:
+                obj = get_class(v["class"])()
+                if isinstance(obj, Configurable) and "options" in v:
+                    obj.from_config_dict(v["options"])
+                return obj
+        return v
+
+    def from_config_dict(self, d):
+        """
+        Restores the object from the given options dictionary.
+        :param d: the dictionary to use for restoring the options
+        :type d: dict
+        """
+        for k in d.keys():
+            if k in self.config:
+                self.config[k] = self.from_config(k, d[k])
+            d.pop(k, None)
+
+    @property
+    def json(self):
+        """
+        Returns the options as JSON.
+        :return: the object as string
+        :rtype: str
+        """
+        return json.dumps(self.to_config_dict(), sort_keys=True, indent=2, separators=(',', ': '))
+
+    @json.setter
+    def json(self, s):
+        """
+        Restores the object from the given JSON.
+        :param s: the JSON string to parse
+        :type s: str
+        """
+        self.from_config_dict(json.loads(s))
+
+    def shallow_copy(self):
+        """
+        Returns a shallow copy of itself.
+        :return: the copy
+        :rtype: object
+        """
+        result = self.__class__()
+        result.json = self.json
+        return result
+
+    def new_logger(self):
+        """
+        Returns a new logger instance.
+        :return: the logger instance
+        :rtype: logger
+        """
+        return logging.getLogger(get_classname(self))
+
+    @property
+    def logger(self):
+        """
+        Returns the logger object.
+        :return: the logger
+        :rtype: logger
+        """
+        if self._logger is None:
+            self._logger = self.new_logger()
+        return self._logger
+
+    @property
+    def help(self):
+        """
+        Obtains the help information per option for this actor.
+        :return: the help
+        :rtype: dict
+        """
+        return self._help
+
+    def generate_help(self):
+        """
+        Generates a help string for this actor.
+        :return: the help string
+        :rtype: str
+        """
+        result = []
+        result.append(self.__class__.__name__)
+        result.append(re.sub(r'.', '=', self.__class__.__name__))
+        result.append("")
+        result.append("DESCRIPTION")
+        result.append(self.description())
+        result.append("")
+        result.append("OPTIONS")
+        opts = self.config.keys()
+        opts.sort()
+        for opt in opts:
+            result.append(opt)
+            helpstr = self.help[opt]
+            if helpstr is None:
+                helpstr = "-missing help-"
+            result.append("\t" + helpstr)
+            result.append("")
+        return '\n'.join(result)
+
+    def print_help(self):
+        """
+        Prints a help string for this actor to stdout.
+        """
+        print(self.generate_help())
+
+
 class JavaObject(object):
     """
     Basic Java object.
@@ -363,7 +591,6 @@ class Enum(JavaObject):
         """
         if jobject is None:
             enumclass = javabridge.class_for_name(classname=enum)
-            enum = enum.replace(".", "/")
             jobject = javabridge.static_call(
                 "java/lang/Enum", "valueOf",
                 "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;",
@@ -456,7 +683,7 @@ class OptionHandler(JavaObject):
         """
         super(OptionHandler, self).__init__(jobject)
         self.is_optionhandler = OptionHandler.check_type(jobject, "weka.core.OptionHandler")
-        if (not options is None) and (len(options) > 0):
+        if (options is not None) and (len(options) > 0):
             self.options = options
         
     def global_info(self):
@@ -845,231 +1072,3 @@ class SelectedTag(JavaObject):
         for i in xrange(length):
             result.append(Tag(javabridge.get_env().get_string(wrapped[i])))
         return result
-
-
-class Stoppable(object):
-    """
-    Classes that can be stopped.
-    """
-
-    def is_stopped(self):
-        """
-        Returns whether the object has been stopped.
-        :return: whether stopped
-        :rtype: bool
-        """
-        raise Exception("Not implemented!")
-
-    def stop_execution(self):
-        """
-        Triggers the stopping of the object.
-        """
-        raise Exception("Not implemented!")
-
-
-class Configurable(object):
-    """
-    The ancestor for all actors.
-    """
-
-    def __init__(self, options=None):
-        """
-        Initializes the object.
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
-        """
-        self._logger = None
-        self._help = {}
-        self._options = self.fix_options({})
-        if options is not None:
-            self.options = options
-
-    def __repr__(self):
-        """
-        Returns Python code for instantiating the object.
-        :return: the representation
-        :rtype: str
-        """
-        return \
-            self.__class__.__module__ + "." + self.__class__.__name__ \
-            + "(options=" + str(self.options) + ")"
-
-    def description(self):
-        """
-        Returns a description of the object.
-        :return: the description
-        :rtype: str
-        """
-        raise Exception("Not implemented!")
-
-    def fix_options(self, options):
-        """
-        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
-        :param options: the options to fix
-        :type options: dict
-        :return: the (potentially) fixed options
-        :rtype: dict
-        """
-        return options
-
-    @property
-    def options(self):
-        """
-        Obtains the currently set options of the actor.
-        :return: the options
-        :rtype: dict
-        """
-        return self._options
-
-    @options.setter
-    def options(self, options):
-        """
-        Sets the options of the actor.
-        :param options: the options
-        :type options: dict
-        """
-        self._options = self.fix_options(options)
-
-    def to_options(self, k, v):
-        """
-        Hook method that allows conversion of individual options.
-        :param k: the key of the option
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially processed value
-        :rtype: object
-        """
-        if isinstance(v, Configurable):
-            return v.to_options_dict()
-        return v
-
-    def to_options_dict(self):
-        """
-        Returns a dictionary of its options.
-        :return: the options as dictionary
-        :rtype: dict
-        """
-        result = {}
-        result["class"] = get_classname(self)
-        options = self.options.copy()
-        result["options"] = {}
-        for k in options.keys():
-            result["options"][k] = self.to_options(k, options[k])
-        return result
-
-    def from_options(self, k, v):
-        """
-        Hook method that allows converting values from the dictionary
-        :param k: the key in the dictionary
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially parsed value
-        :rtype: object
-        """
-        if isinstance(v, dict):
-            if "class" in v:
-                obj = get_class(v["class"])()
-                if isinstance(obj, Configurable) and "options" in v:
-                    obj.from_options_dict(v["options"])
-                return obj
-        return v
-
-    def from_options_dict(self, d):
-        """
-        Restores the object from the given options dictionary.
-        :param d: the dictionary to use for restoring the options
-        :type d: dict
-        """
-        for k in d.keys():
-            if k in self.options:
-                self.options[k] = self.from_options(k, d[k])
-            d.pop(k, None)
-
-    @property
-    def json(self):
-        """
-        Returns the options as JSON.
-        :return: the object as string
-        :rtype: str
-        """
-        return json.dumps(self.to_options_dict(), sort_keys=True, indent=2, separators=(',', ': '))
-
-    @json.setter
-    def json(self, s):
-        """
-        Restores the object from the given JSON.
-        :param s: the JSON string to parse
-        :type s: str
-        """
-        self.from_options_dict(json.loads(s))
-
-    def shallow_copy(self):
-        """
-        Returns a shallow copy of itself.
-        :return: the copy
-        :rtype: object
-        """
-        result = self.__class__()
-        result.json = self.json
-        return result
-
-    def new_logger(self):
-        """
-        Returns a new logger instance.
-        :return: the logger instance
-        :rtype: logger
-        """
-        return logging.getLogger(get_classname(self))
-
-    @property
-    def logger(self):
-        """
-        Returns the logger object.
-        :return: the logger
-        :rtype: logger
-        """
-        if self._logger is None:
-            self._logger = self.new_logger()
-        return self._logger
-
-    @property
-    def help(self):
-        """
-        Obtains the help information per option for this actor.
-        :return: the help
-        :rtype: dict
-        """
-        return self._help
-
-    def generate_help(self):
-        """
-        Generates a help string for this actor.
-        :return: the help string
-        :rtype: str
-        """
-        result = []
-        result.append(self.__class__.__name__)
-        result.append(re.sub(r'.', '=', self.__class__.__name__))
-        result.append("")
-        result.append("DESCRIPTION")
-        result.append(self.description())
-        result.append("")
-        result.append("OPTIONS")
-        opts = self.options.keys()
-        opts.sort()
-        for opt in opts:
-            result.append(opt)
-            helpstr = self.help[opt]
-            if helpstr is None:
-                helpstr = "-missing help-"
-            result.append("\t" + helpstr)
-            result.append("")
-        return '\n'.join(result)
-
-    def print_help(self):
-        """
-        Prints a help string for this actor to stdout.
-        """
-        print(self.generate_help())

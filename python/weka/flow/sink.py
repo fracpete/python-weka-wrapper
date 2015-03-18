@@ -116,9 +116,9 @@ class Console(Sink):
         :return: the info, None if not available
         :rtype: str
         """
-        return "prefix: '" + str(self.options["prefix"]) + "'"
+        return "prefix: '" + str(self.config["prefix"]) + "'"
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -126,7 +126,7 @@ class Console(Sink):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Console, self).fix_options(options)
+        options = super(Console, self).fix_config(options)
 
         opt = "prefix"
         if opt not in options:
@@ -168,9 +168,9 @@ class FileOutputSink(Sink):
         :return: the info, None if not available
         :rtype: str
         """
-        return "output: '" + str(self.options["output"]) + "'"
+        return "output: '" + str(self.config["output"]) + "'"
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -178,7 +178,7 @@ class FileOutputSink(Sink):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(FileOutputSink, self).fix_options(options)
+        options = super(FileOutputSink, self).fix_config(options)
 
         opt = "output"
         if opt not in options:
@@ -219,9 +219,9 @@ class DumpFile(FileOutputSink):
         :return: the info, None if not available
         :rtype: str
         """
-        return super(DumpFile, self).quickinfo + ", append: " + str(self.options["append"])
+        return super(DumpFile, self).quickinfo + ", append: " + str(self.config["append"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -229,7 +229,7 @@ class DumpFile(FileOutputSink):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(DumpFile, self).fix_options(options)
+        options = super(DumpFile, self).fix_config(options)
 
         opt = "append"
         if opt not in options:
@@ -331,7 +331,7 @@ class MatrixPlot(Sink):
         """
         return "Displays the Instances object as matrix plot."
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -339,7 +339,7 @@ class MatrixPlot(Sink):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(MatrixPlot, self).fix_options(options)
+        options = super(MatrixPlot, self).fix_config(options)
 
         opt = "percent"
         if opt not in options:
@@ -386,10 +386,10 @@ class MatrixPlot(Sink):
         :return: the info, None if not available
         :rtype: str
         """
-        return "percent: " + str(self.options["percent"]) \
-               + ", title: " + str(self.options["title"]) \
-               + ", outfile: " + str(self.options["outfile"]) \
-               + ", wait: " + str(self.options["wait"])
+        return "percent: " + str(self.config["percent"]) \
+               + ", title: " + str(self.config["title"]) \
+               + ", outfile: " + str(self.config["outfile"]) \
+               + ", wait: " + str(self.config["wait"])
 
     def check_input(self, token):
         """
@@ -442,7 +442,7 @@ class ClassifierErrors(Sink):
         """
         return "Displays the errors obtained through a classifier evaluation."
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -450,7 +450,7 @@ class ClassifierErrors(Sink):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(ClassifierErrors, self).fix_options(options)
+        options = super(ClassifierErrors, self).fix_config(options)
 
         opt = "absolute"
         if opt not in options:
@@ -497,10 +497,10 @@ class ClassifierErrors(Sink):
         :return: the info, None if not available
         :rtype: str
         """
-        return "absolute: " + str(self.options["absolute"]) \
-               + ", title: " + str(self.options["title"]) \
-               + ", outfile: " + str(self.options["outfile"]) \
-               + ", wait: " + str(self.options["wait"])
+        return "absolute: " + str(self.config["absolute"]) \
+               + ", title: " + str(self.config["title"]) \
+               + ", outfile: " + str(self.config["outfile"]) \
+               + ", wait: " + str(self.config["wait"])
 
     def check_input(self, token):
         """
@@ -553,7 +553,7 @@ class ROC(Sink):
         """
         return "Displays the ROC curve obtained from a classifier evaluation."
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -561,7 +561,7 @@ class ROC(Sink):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(ROC, self).fix_options(options)
+        options = super(ROC, self).fix_config(options)
 
         opt = "class_index"
         if opt not in options:
@@ -602,10 +602,10 @@ class ROC(Sink):
         :return: the info, None if not available
         :rtype: str
         """
-        return "classes: " + str(self.options["class_index"]) \
-               + ", title: " + str(self.options["title"]) \
-               + ", outfile: " + str(self.options["outfile"]) \
-               + ", wait: " + str(self.options["wait"])
+        return "classes: " + str(self.config["class_index"]) \
+               + ", title: " + str(self.config["title"]) \
+               + ", outfile: " + str(self.config["outfile"]) \
+               + ", wait: " + str(self.config["wait"])
 
     def check_input(self, token):
         """
@@ -657,7 +657,7 @@ class PRC(Sink):
         """
         return "Displays the PRC curve obtained from a classifier evaluation."
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -665,7 +665,7 @@ class PRC(Sink):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(PRC, self).fix_options(options)
+        options = super(PRC, self).fix_config(options)
 
         opt = "class_index"
         if opt not in options:
@@ -706,10 +706,10 @@ class PRC(Sink):
         :return: the info, None if not available
         :rtype: str
         """
-        return "classes: " + str(self.options["class_index"]) \
-               + ", title: " + str(self.options["title"]) \
-               + ", outfile: " + str(self.options["outfile"]) \
-               + ", wait: " + str(self.options["wait"])
+        return "classes: " + str(self.config["class_index"]) \
+               + ", title: " + str(self.config["title"]) \
+               + ", outfile: " + str(self.config["outfile"]) \
+               + ", wait: " + str(self.config["wait"])
 
     def check_input(self, token):
         """

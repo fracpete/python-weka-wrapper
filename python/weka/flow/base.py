@@ -50,7 +50,7 @@ class Actor(Configurable, Stoppable):
         :return: the setup
         :rtype: str
         """
-        return self.full_name + ": " + str(self._options)
+        return self.full_name + ": " + str(self._config)
 
     def __repr__(self):
         """
@@ -60,7 +60,7 @@ class Actor(Configurable, Stoppable):
         """
         return \
             self.__class__.__module__ + "." + self.__class__.__name__ \
-            + "(name=" + self.name + ", options=" + str(self.options) + ")"
+            + "(name=" + self.name + ", options=" + str(self.config) + ")"
 
     def new_logger(self):
         """
@@ -162,7 +162,7 @@ class Actor(Configurable, Stoppable):
 
         return self._full_name
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -182,19 +182,19 @@ class Actor(Configurable, Stoppable):
         if opt not in self.help:
             self.help[opt] = "Whether to skip (disable) this actor (bool)."
 
-        return super(Actor, self).fix_options(options)
+        return super(Actor, self).fix_config(options)
 
-    def to_options_dict(self):
+    def to_config_dict(self):
         """
         Returns a dictionary of its options.
         :return: the options as dictionary
         :rtype: dict
         """
-        result = super(Actor, self).to_options_dict()
+        result = super(Actor, self).to_config_dict()
         result["name"] = self.name
         return result
 
-    def from_options_dict(self, d):
+    def from_config_dict(self, d):
         """
         Restores the object from the given options dictionary.
         :param d: the dictionary to use for restoring the options
@@ -203,7 +203,7 @@ class Actor(Configurable, Stoppable):
         if "name" in d:
             self.name = d["name"]
             d.pop("name", None)
-        super(Actor, self).from_options_dict(d)
+        super(Actor, self).from_config_dict(d)
 
     def resolve_option(self, name, default=None):
         """
@@ -216,7 +216,7 @@ class Actor(Configurable, Stoppable):
         :return: the resolved value
         :rtype: object
         """
-        value = self.options[name]
+        value = self.config[name]
         if value is None:
             return default
         elif isinstance(value, str) and value.startswith("@{") and value.endswith("}"):
@@ -244,7 +244,7 @@ class Actor(Configurable, Stoppable):
         :param skip: True if skipped
         :type skip: bool
         """
-        self.options["skip"] = skip
+        self.config["skip"] = skip
 
     @property
     def quickinfo(self):

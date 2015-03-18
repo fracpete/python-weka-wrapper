@@ -61,7 +61,7 @@ class ActorHandler(Actor):
         """
         pass
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -69,7 +69,7 @@ class ActorHandler(Actor):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(ActorHandler, self).fix_options(options)
+        options = super(ActorHandler, self).fix_config(options)
 
         opt = "actors"
         if opt not in options:
@@ -79,21 +79,21 @@ class ActorHandler(Actor):
 
         return options
 
-    def to_options_dict(self):
+    def to_config_dict(self):
         """
         Returns a dictionary of its options.
         :return: the options as dictionary
         :rtype: dict
         """
-        result = super(ActorHandler, self).to_options_dict()
+        result = super(ActorHandler, self).to_config_dict()
         result["options"].pop("actors", None)
         actors = {}
         for index, actor in enumerate(self.actors):
-            actors[index] = actor.to_options_dict()
+            actors[index] = actor.to_config_dict()
         result["actors"] = actors
         return result
 
-    def from_options_dict(self, d):
+    def from_config_dict(self, d):
         """
         Restores the object from the given options dictionary.
         :param d: the dictionary to use for restoring the options
@@ -107,14 +107,14 @@ class ActorHandler(Actor):
                 cls = classes.get_class(item["class"])
                 actor = cls(name=item["name"])
                 actor.parent = self
-                actor.from_options_dict(item["options"])
+                actor.from_config_dict(item["options"])
                 if isinstance(actor, ActorHandler) and ("actors" in item):
                     opts = {}
                     opts["actors"] = item["actors"]
-                    actor.from_options_dict(opts)
+                    actor.from_config_dict(opts)
                 self.actors.append(actor)
             d.pop("actors", None)
-        super(ActorHandler, self).from_options_dict(d)
+        super(ActorHandler, self).from_config_dict(d)
 
     @property
     def actors(self):
@@ -123,7 +123,7 @@ class ActorHandler(Actor):
         :return: the sub-actors
         :rtype: list
         """
-        result = self.options["actors"]
+        result = self.config["actors"]
         if result is None:
             result = []
         return result
@@ -138,7 +138,7 @@ class ActorHandler(Actor):
         if actors is None:
             actors = self.default_actors()
         self.check_actors(actors)
-        self.options["actors"] = actors
+        self.config["actors"] = actors
 
     @property
     def active(self):
@@ -770,13 +770,13 @@ class Tee(ActorHandler, Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        cond = str(self.options["condition"])
+        cond = str(self.config["condition"])
         if len(cond) > 0:
             return "condition: " + cond
         else:
             return None
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -784,7 +784,7 @@ class Tee(ActorHandler, Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Tee, self).fix_options(options)
+        options = super(Tee, self).fix_config(options)
 
         opt = "condition"
         if opt not in options:
@@ -877,7 +877,7 @@ class Trigger(ActorHandler, Transformer):
         else:
             return None
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -885,7 +885,7 @@ class Trigger(ActorHandler, Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(Trigger, self).fix_options(options)
+        options = super(Trigger, self).fix_config(options)
 
         opt = "condition"
         if opt not in options:
@@ -1101,9 +1101,9 @@ class ContainerValuePicker(Tee):
         :return: the info, None if not available
         :rtype: str
         """
-        return "value: " + str(self.options["value"]) + ", switch: " + str(self.options["switch"])
+        return "value: " + str(self.config["value"]) + ", switch: " + str(self.config["switch"])
 
-    def fix_options(self, options):
+    def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
         :param options: the options to fix
@@ -1111,7 +1111,7 @@ class ContainerValuePicker(Tee):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        options = super(ContainerValuePicker, self).fix_options(options)
+        options = super(ContainerValuePicker, self).fix_config(options)
 
         opt = "value"
         if opt not in options:

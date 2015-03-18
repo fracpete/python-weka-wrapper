@@ -352,7 +352,7 @@ def plot_learning_curve(classifiers, train, test=None, increments=100, metric="p
             replace("#", str(i)).\
             replace("@", cl.classname).\
             replace("!", cl.classname[cl.classname.rfind(".") + 1:]).\
-            replace("$", utils.join_options(cl.options))
+            replace("$", utils.join_options(cl.config))
         ax.plot(steps, evl, label=plot_label)
     plt.draw()
     plt.legend(loc=key_loc, shadow=True)
