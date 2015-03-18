@@ -17,6 +17,7 @@
 
 import os
 import re
+import math  # required for MathExpression
 from weka.associations import Associator
 import weka.filters as filters
 import weka.flow.base as base
@@ -528,9 +529,9 @@ class UpdateStorageValue(Transformer):
 
 class MathExpression(Transformer):
     """
-    Calculates a mathematical expression. The captial letter X in the expression gets replaced by
+    Calculates a mathematical expression. The placeholder {X} in the expression gets replaced by
     the value of the current token passing through. Uses the 'eval(str)' method for the calculation,
-    therefore mathematical functions can be accessed using the 'math' library, e.g., '1 + math.sin(X)'.
+    therefore mathematical functions can be accessed using the 'math' library, e.g., '1 + math.sin({X})'.
     """
 
     def __init__(self, name=None, options=None):
@@ -550,9 +551,9 @@ class MathExpression(Transformer):
         :rtype: str
         """
         return \
-            "Calculates a mathematical expression. The captial letter X in the expression gets replaced by "\
+            "Calculates a mathematical expression. The placeholder {X} in the expression gets replaced by "\
             + "the value of the current token passing through. Uses the 'eval(str)' method for the calculation, "\
-            + "therefore mathematical functions can be accessed using the 'math' library, e.g., '1 + math.sin(X)'."
+            + "therefore mathematical functions can be accessed using the 'math' library, e.g., '1 + math.sin({X})'."
 
     @property
     def quickinfo(self):
@@ -575,7 +576,7 @@ class MathExpression(Transformer):
 
         opt = "expression"
         if opt not in options:
-            options[opt] = "X"
+            options[opt] = "{X}"
         if opt not in self.help:
             self.help[opt] = "The mathematical expression to evaluate (string)."
 
@@ -588,7 +589,7 @@ class MathExpression(Transformer):
         :rtype: str
         """
         expr = str(self.resolve_option("expression"))
-        expr = expr.replace("X", str(self.input.payload))
+        expr = expr.replace("{X}", str(self.input.payload))
         self._output.append(Token(eval(expr)))
         return None
 
