@@ -845,7 +845,7 @@ class Filter(Transformer):
         :return: the info, None if not available
         :rtype: str
         """
-        return "filter: " + base.to_commandline(self.options["filter"])
+        return "setup: " + base.to_commandline(self.options["setup"])
 
     def fix_options(self, options):
         """
@@ -855,7 +855,7 @@ class Filter(Transformer):
         :return: the (potentially) fixed options
         :rtype: dict
         """
-        opt = "filter"
+        opt = "setup"
         if opt not in options:
             options[opt] = filters.Filter(classname="weka.filters.AllFilter")
         if opt not in self.help:
@@ -873,7 +873,7 @@ class Filter(Transformer):
         :return: the potentially processed value
         :rtype: object
         """
-        if k == "filter":
+        if k == "setup":
             return base.to_commandline(v)
         return super(Filter, self).to_options(k, v)
 
@@ -887,7 +887,7 @@ class Filter(Transformer):
         :return: the potentially parsed value
         :rtype: object
         """
-        if k == "filter":
+        if k == "setup":
             return utils.from_commandline(v, classname=utils.to_commandline(filters.Filter()))
         return super(Filter, self).from_options(k, v)
 
@@ -913,7 +913,7 @@ class Filter(Transformer):
         data = self.input.payload
         if (self._filter is None) or self._header.equal_headers(data) is not None:
             self._header = Instances.template_instances(data)
-            self._filter = filters.Filter.make_copy(self.resolve_option("filter"))
+            self._filter = filters.Filter.make_copy(self.resolve_option("setup"))
             self._filter.inputformat(data)
         filtered = self._filter.filter(data)
         self._output.append(Token(filtered))
