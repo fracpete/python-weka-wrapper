@@ -319,7 +319,7 @@ class GetStorageValue(Source):
         """
         if self.storagehandler is None:
             return "No storage handler available!"
-        sname = self.resolve_option("storage_name")
+        sname = str(self.resolve_option("storage_name"))
         if sname not in self.storagehandler.storage:
             return "No storage item called '" + sname + "' present!"
         self._output.append(self.storagehandler.storage[sname])
