@@ -653,12 +653,24 @@ class ClassSelector(Transformer):
 
         return options
 
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, Instances):
+            return
+        # TODO Instance class
+        raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
+
     def do_execute(self):
         """
         The actual execution of the actor.
         :return: None if successful, otherwise error message
         :rtype: str
         """
+        # TODO Instance class
         data = self.input.payload
         index = str(self.resolve_option("index"))
         unset = bool(self.resolve_option("unset"))
@@ -1086,6 +1098,16 @@ class CrossValidate(Transformer):
             return utils.from_commandline(v, classname=utils.get_classname(PredictionOutput()))
         return super(CrossValidate, self).from_options(k, v)
 
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, Instances):
+            return
+        raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
+
     def do_execute(self):
         """
         The actual execution of the actor.
@@ -1119,9 +1141,139 @@ class CrossValidate(Transformer):
         return None
 
 
+class Evaluate(Transformer):
+    """
+    Evaluates a trained classifier obtained from internal storage on the dataset passing through.
+    """
+
+    def __init__(self, name=None, options=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param options: the dictionary with the options (str -> object).
+        :type options: dict
+        """
+        super(Evaluate, self).__init__(name=name, options=options)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Evaluates a trained classifier obtained from internal storage on the dataset passing through."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "storage: " + self.options["storage_name"]
+
+    def fix_options(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(Evaluate, self).fix_options(options)
+
+        opt = "storage_name"
+        if opt not in options:
+            options[opt] = "unknown"
+        if opt not in self.help:
+            self.help[opt] = "The name of the classifier model in storage (string)."
+
+        opt = "discard_predictions"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Discard classifier predictions to save memory (bool)."
+
+        opt = "output"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "For capturing the classifier's prediction output (PredictionOutput)."
+
+        return options
+
+    def to_options(self, k, v):
+        """
+        Hook method that allows conversion of individual options.
+        :param k: the key of the option
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially processed value
+        :rtype: object
+        """
+        if k == "output":
+            return base.to_commandline(v)
+        return super(Evaluate, self).to_options(k, v)
+
+    def from_options(self, k, v):
+        """
+        Hook method that allows converting values from the dictionary
+        :param k: the key in the dictionary
+        :type k: str
+        :param v: the value
+        :type v: object
+        :return: the potentially parsed value
+        :rtype: object
+        """
+        if k == "output":
+            return utils.from_commandline(v, classname=utils.get_classname(PredictionOutput()))
+        return super(Evaluate, self).from_options(k, v)
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, Instances):
+            return
+        raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        data = self.input.payload
+        if self.storagehandler is None:
+            return "No storage handler available!"
+        sname = str(self.resolve_option("storage_name"))
+        if sname not in self.storagehandler.storage:
+            return "No storage item called '" + sname + "' present!"
+        cls = self.storagehandler.storage[sname]
+        if isinstance(cls, Classifier):
+            evl = Evaluation(data)
+            evl.discard_predictions = bool(self.resolve_option("discard_predictions"))
+            evl.test_model(
+                cls,
+                data,
+                self.resolve_option("output"))
+        elif isinstance(cls, Clusterer):
+            evl = ClusterEvaluation()
+            evl.set_model(cls)
+            evl.test_model(data)
+        else:
+            return "Unhandled class: " + utils.get_classname(cls)
+        self._output.append(Token(evl))
+        return None
+
+
 class EvaluationSummary(Transformer):
     """
-    Generates a summary string from an Evaluation object.
+    Generates a summary string from an Evaluation/ClusterEvaluation object.
     """
 
     def __init__(self, name=None, options=None):
@@ -1173,15 +1325,29 @@ class EvaluationSummary(Transformer):
         if opt not in options:
             options[opt] = False
         if opt not in self.help:
-            self.help[opt] = "Whether to output complexity information (bool)."
+            self.help[opt] = "Whether to output classifier complexity information (bool)."
 
         opt = "matrix"
         if opt not in options:
             options[opt] = False
         if opt not in self.help:
-            self.help[opt] = "Whether to output the confusion matrix (bool)."
+            self.help[opt] = "Whether to output the classifier confusion matrix (bool)."
 
         return options
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, Evaluation):
+            return None
+        if isinstance(token.payload, ClusterEvaluation):
+            return None
+        raise Exception(
+            self.full_name + ": Input token is not a supported Evaluation object - "
+            + utils.get_classname(token.payload))
 
     def do_execute(self):
         """
@@ -1190,9 +1356,12 @@ class EvaluationSummary(Transformer):
         :rtype: str
         """
         evl = self.input.payload
-        summary = evl.summary(title=self.resolve_option("title"), complexity=bool(self.resolve_option("complexity")))
-        if bool(self.resolve_option("matrix")):
-            summary += "\n" + evl.matrix(title=self.resolve_option("title"))
+        if isinstance(evl, Evaluation):
+            summary = evl.summary(title=self.resolve_option("title"), complexity=bool(self.resolve_option("complexity")))
+            if bool(self.resolve_option("matrix")):
+                summary += "\n" + evl.matrix(title=self.resolve_option("title"))
+        else:
+            summary = evl.cluster_results
         self._output.append(Token(summary))
         return None
 

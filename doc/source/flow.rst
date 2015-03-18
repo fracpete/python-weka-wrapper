@@ -69,7 +69,8 @@ The following *transformers* are available:
  * **CrossValidate** performs cross-validation on a classifier or clusterer
  * **DeleteFile** deletes files that match a regular expression
  * **DeleteStorageValue** deletes a value from internal storage
- * **EvaluationSummary** generates a summary from a classifier's Evaluation object
+ * **Evaluatie** evaluates a trained classifier/clusterer in internal storage on the data passing through
+ * **EvaluationSummary** generates a summary from a classifier/clusterer evaluation object
  * **Filter** applies a Weka filter to the data passing through
  * **InitStorageValue** sets the initial value for a internal storage value
  * **LoadDataset** loads the data stored in the file received as input, either using automatic
