@@ -288,3 +288,35 @@ Stop JVM
 .. code-block:: python
 
    jvm.stop()
+
+
+Database access
+---------------
+
+Thanks to JDBC (Java Database Connectivity) it is very easy to connect to SQL databases and load data
+as an Instances object. However, since we rely on 3rd-party libraries to achieve this, we need to
+specify the database JDBC driver jar when we are starting up the JVM. For instance, adding a MySQL
+driver called `mysql-connector-java-X.Y.Z-bin.jar`:
+
+.. code-block:: python
+
+   jvm.start(class_path=["/some/where/mysql-connector-java-X.Y.Z-bin.jar"])
+
+Assuming the following parameters:
+
+ * database host is `dbserver`
+ * database is called `mydb`
+ * database user is `me`
+ * database password is `verysecret`
+
+We can use the following code to select all the data from table `lotsadata`.
+
+.. code-block:: python
+
+   from weka.core.database import InstanceQuery
+   iquery = InstanceQuery()
+   iquery.db_url = "jdbc:mysql://dbserver:3306/mydb"
+   iquery.user = "me"
+   iquery.password = "verysecret"
+   iquery.query = "select * from lotsadata"
+   data = iquery.retrieve_instances()
