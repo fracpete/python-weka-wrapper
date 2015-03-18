@@ -322,7 +322,7 @@ class GetStorageValue(Source):
         sname = str(self.resolve_option("storage_name"))
         if sname not in self.storagehandler.storage:
             return "No storage item called '" + sname + "' present!"
-        self._output.append(self.storagehandler.storage[sname])
+        self._output.append(Token(self.storagehandler.storage[sname]))
         return None
 
 
