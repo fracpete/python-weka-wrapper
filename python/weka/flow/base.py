@@ -19,8 +19,8 @@ import logging
 import re
 import traceback
 import uuid
-import weka.core.utils as utils
 from weka.core.classes import Configurable, Stoppable
+import weka.core.classes as classes
 
 
 class Actor(Configurable, Stoppable):
@@ -28,15 +28,15 @@ class Actor(Configurable, Stoppable):
     The ancestor for all actors.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the actor.
         :param name: the name of the actor
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Actor, self).__init__(options=options)
+        super(Actor, self).__init__(config=config)
         self._name = self.__class__.__name__
         self._parent = None
         self._full_name = None
@@ -60,7 +60,7 @@ class Actor(Configurable, Stoppable):
         """
         return \
             self.__class__.__module__ + "." + self.__class__.__name__ \
-            + "(name=" + self.name + ", options=" + str(self.config) + ")"
+            + "(name=" + self.name + ", config=" + str(self.config) + ")"
 
     def new_logger(self):
         """
@@ -415,15 +415,15 @@ class InputConsumer(Actor):
     Actors that consume tokens inherit this class.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the actor.
         :param name: the name of the actor
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(InputConsumer, self).__init__(name=name, options=options)
+        super(InputConsumer, self).__init__(name=name, config=config)
         self._input = None
 
     def check_input(self, token):
@@ -459,15 +459,15 @@ class OutputProducer(Actor):
     Actors that generate output tokens inherit this class.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the actor.
         :param name: the name of the actor
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(OutputProducer, self).__init__(name=name, options=options)
+        super(OutputProducer, self).__init__(name=name, config=config)
         self._output = None
 
     def pre_execute(self):
@@ -607,4 +607,4 @@ def to_commandline(o):
     if isinstance(o, str) and o.startswith("@{") and o.endswith("}"):
         return o
     else:
-        return utils.to_commandline(o)
+        return classes.to_commandline(o)

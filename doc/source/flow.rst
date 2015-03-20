@@ -149,14 +149,15 @@ Adding additional flow components is quite easy:
 
  * add a `description` method that returns a string, describing what your actor does
 
- * added a `fix_options` method that ensures that options are present and help for them as well
+ * added a `fix_config` method that ensures that all configurations are present and help for them as well
    (e.g., `transformer.ClassSelector`)
 
- * if you have options that aren't simple objects, but classes, then you need to implement the
-   following methods as well (e.g., `transformer.LoadDataset` for the `custom_loader` option)
+ * if you have configuraitons that aren't simple objects, but classes not derived from Configurable or OptionHandler,
+   then you need to implement the following methods as well (e.g., `transformer.LoadDataset` for
+   the `custom_loader` configuration):
 
-   * `to_options`
-   * `from_options`
+   * `to_config`
+   * `from_config`
 
  * if you want to output some additional info in the tree layout, implement a `quickinfo` method
    (e.g., `transformer.ClassSelector`)

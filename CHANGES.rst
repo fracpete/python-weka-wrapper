@@ -15,7 +15,7 @@ Changelog
 - added `make_copy` class method to `DataGenerator` class
 - most classes (like Classifier and Filter) now have a default classname value in the constructor
 - added `TextDirectoryLoader` class to `weka.core.converters`
-- moved methods `get_class`, `get_jclass` and `get_classname` from `weka.core.utils` to `weka.core.classes`
+- moved all methods from `weka.core.utils` to `weka.core.classes`
 - ...
 
 

@@ -26,15 +26,15 @@ class ActorHandler(Actor):
     The ancestor for all actors that handle other actors.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the actor handler.
         :param name: the name of the actor handler
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ActorHandler, self).__init__(name=name, options=options)
+        super(ActorHandler, self).__init__(name=name, config=config)
         self._director = self.new_director()
 
     def new_director(self):
@@ -594,15 +594,15 @@ class Flow(ActorHandler, StorageHandler):
     Root actor for defining and executing flows.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the sequence.
         :param name: the name of the sequence
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Flow, self).__init__(name=name, options=options)
+        super(Flow, self).__init__(name=name, config=config)
         self._storage = {}
 
     def description(self):
@@ -685,15 +685,15 @@ class Sequence(ActorHandler, InputConsumer):
     Simple sequence of actors that get executed one after the other. Accepts input.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the sequence.
         :param name: the name of the sequence
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Sequence, self).__init__(name=name, options=options)
+        super(Sequence, self).__init__(name=name, config=config)
         self._output = []
 
     def description(self):
@@ -744,15 +744,15 @@ class Tee(ActorHandler, Transformer):
     'Tees off' the current token to be processed in the sub-tree before passing it on.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the sequence.
         :param name: the name of the sequence
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Tee, self).__init__(name=name, options=options)
+        super(Tee, self).__init__(name=name, config=config)
         self._requires_active_actors = True
 
     def description(self):
@@ -846,15 +846,15 @@ class Trigger(ActorHandler, Transformer):
     'Triggers' the sub-tree with each token passing through and then passes the token on.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the sequence.
         :param name: the name of the sequence
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Trigger, self).__init__(name=name, options=options)
+        super(Trigger, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -1042,15 +1042,15 @@ class Branch(ActorHandler, InputConsumer):
     Passes on the input token to all of its sub-actors, one after the other.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the branch.
         :param name: the name of the branch
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Branch, self).__init__(name=name, options=options)
+        super(Branch, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -1075,15 +1075,15 @@ class ContainerValuePicker(Tee):
     Picks the specified value from the container and 'tees' it off.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the actor.
         :param name: the name of the actor
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ContainerValuePicker, self).__init__(name=name, options=options)
+        super(ContainerValuePicker, self).__init__(name=name, config=config)
         self._requires_active_actors = False
 
     def description(self):

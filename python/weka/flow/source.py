@@ -17,11 +17,11 @@
 
 import os
 import re
+from weka.core.classes import to_commandline, from_commandline
 import weka.flow.base as base
 from weka.flow.base import Actor, OutputProducer, Token
 from weka.core.database import InstanceQuery
 import weka.datagenerators as datagen
-import weka.core.utils as utils
 
 
 class Source(OutputProducer, Actor):
@@ -29,15 +29,15 @@ class Source(OutputProducer, Actor):
     The ancestor for all sources.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the source.
         :param name: the name of the source
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Source, self).__init__(name=name, options=options)
+        super(Source, self).__init__(name=name, config=config)
         super(OutputProducer, self).__init__()
 
 
@@ -46,15 +46,15 @@ class Start(Source):
     Outputs a None token for triggering other actors.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Start, self).__init__(name=name, options=options)
+        super(Start, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -79,15 +79,15 @@ class FileSupplier(Source):
     Outputs a fixed list of files.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(FileSupplier, self).__init__(name=name, options=options)
+        super(FileSupplier, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -140,15 +140,15 @@ class ListFiles(Source):
     Source that list files in a directory.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ListFiles, self).__init__(name=name, options=options)
+        super(ListFiles, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -269,15 +269,15 @@ class GetStorageValue(Source):
     Outputs the specified value from storage.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(GetStorageValue, self).__init__(name=name, options=options)
+        super(GetStorageValue, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -334,15 +334,15 @@ class ForLoop(Source):
     Outputs integers using the specified min, max and step.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ForLoop, self).__init__(name=name, options=options)
+        super(ForLoop, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -412,15 +412,15 @@ class LoadDatabase(Source):
     Loads a dataset from the database.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the source.
         :param name: the name of the source
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(LoadDatabase, self).__init__(name=name, options=options)
+        super(LoadDatabase, self).__init__(name=name, config=config)
         self._loader = None
         self._iterator = None
 
@@ -512,15 +512,15 @@ class DataGenerator(Source):
     Generates artificial data using the specified data generator.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the source.
         :param name: the name of the source
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(DataGenerator, self).__init__(name=name, options=options)
+        super(DataGenerator, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -586,7 +586,7 @@ class DataGenerator(Source):
         :rtype: object
         """
         if k == "setup":
-            return utils.from_commandline(v, classname=utils.to_commandline(datagen.DataGenerator()))
+            return from_commandline(v, classname=to_commandline(datagen.DataGenerator()))
         return super(DataGenerator, self).from_config(k, v)
 
     def do_execute(self):

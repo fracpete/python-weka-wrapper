@@ -16,8 +16,7 @@
 
 import logging
 import javabridge
-import weka.core.utils as utils
-from weka.core.classes import OptionHandler, Range
+from weka.core.classes import OptionHandler, Range, from_commandline
 from weka.core.dataset import Instances
 from weka.classifiers import Classifier
 
@@ -133,7 +132,7 @@ class SimpleExperiment(OptionHandler):
                     classifiers, i, classifier.jobject)
             else:
                 javabridge.get_env().set_object_array_element(
-                    classifiers, i, utils.from_commandline(classifier).jobject)
+                    classifiers, i, from_commandline(classifier).jobject)
         javabridge.call(
             self.jobject, "setPropertyArray", "(Ljava/lang/Object;)V",
             classifiers)

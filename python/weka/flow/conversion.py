@@ -23,13 +23,13 @@ class Conversion(Configurable):
     Ancestor for conversions used by the 'Convert' transformer.
     """
 
-    def __init__(self, options=None):
+    def __init__(self, config=None):
         """
         Initializes the conversion.
-        :param options: list of options to use
-        :type options: list
+        :param config: list of options to use
+        :type config: list
         """
-        super(Conversion, self).__init__(options=options)
+        super(Conversion, self).__init__(config=config)
         self._input = None
         self._output = None
 

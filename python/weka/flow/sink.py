@@ -31,15 +31,15 @@ class Sink(InputConsumer):
     The ancestor for all sinks.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the sink.
         :param name: the name of the sink
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Sink, self).__init__(name=name, options=options)
+        super(Sink, self).__init__(name=name, config=config)
         super(InputConsumer, self).__init__()
 
     def post_execute(self):
@@ -59,15 +59,15 @@ class Null(Sink):
     Sink that just gobbles up all the data.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Null, self).__init__(name=name, options=options)
+        super(Null, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -91,15 +91,15 @@ class Console(Sink):
     Sink that outputs the payloads of the data on stdout.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Console, self).__init__(name=name, options=options)
+        super(Console, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -151,15 +151,15 @@ class FileOutputSink(Sink):
     Ancestor for sinks that output data to a file.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(FileOutputSink, self).__init__(name=name, options=options)
+        super(FileOutputSink, self).__init__(name=name, config=config)
 
     @property
     def quickinfo(self):
@@ -194,15 +194,15 @@ class DumpFile(FileOutputSink):
     Sink that outputs the payloads of the data to a file.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(DumpFile, self).__init__(name=name, options=options)
+        super(DumpFile, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -267,15 +267,15 @@ class ModelWriter(FileOutputSink):
     Writes a model to disk.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ModelWriter, self).__init__(name=name, options=options)
+        super(ModelWriter, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -313,15 +313,15 @@ class MatrixPlot(Sink):
     Displays the Instances object as matrix plot.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(MatrixPlot, self).__init__(name=name, options=options)
+        super(MatrixPlot, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -424,15 +424,15 @@ class ClassifierErrors(Sink):
     Displays the errors obtained through a classifier evaluation.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ClassifierErrors, self).__init__(name=name, options=options)
+        super(ClassifierErrors, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -535,15 +535,15 @@ class ROC(Sink):
     Displays the ROC curve obtained from a classifier evaluation.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ROC, self).__init__(name=name, options=options)
+        super(ROC, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -639,15 +639,15 @@ class PRC(Sink):
     Displays the PRC curve obtained from a classifier evaluation.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(PRC, self).__init__(name=name, options=options)
+        super(PRC, self).__init__(name=name, config=config)
 
     def description(self):
         """

@@ -22,6 +22,7 @@ import types
 import javabridge
 from javabridge import JWrapper, JClassWrapper
 from javabridge.jutil import JavaException
+from weka.core import types as arrays
 
 
 def get_class(classname):
@@ -94,17 +95,17 @@ class Configurable(object):
     The ancestor for all actors.
     """
 
-    def __init__(self, options=None):
+    def __init__(self, config=None):
         """
         Initializes the object.
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
         self._logger = None
         self._help = {}
         self._config = self.fix_config({})
-        if options is not None:
-            self.config = options
+        if config is not None:
+            self.config = config
 
     def __repr__(self):
         """
@@ -114,7 +115,7 @@ class Configurable(object):
         """
         return \
             self.__class__.__module__ + "." + self.__class__.__name__ \
-            + "(options=" + str(self.config) + ")"
+            + "(config=" + str(self.config) + ")"
 
     def description(self):
         """
@@ -192,10 +193,17 @@ class Configurable(object):
         """
         if isinstance(v, dict):
             if "class" in v:
-                obj = get_class(v["class"])()
+                cls = get_class(v["class"])
+                obj = cls()
                 if isinstance(obj, Configurable) and "options" in v:
                     obj.from_config_dict(v["options"])
-                return obj
+                    return obj
+                if isinstance(obj, OptionHandler) and ("jclass" in v):
+                    jcls = v["jclass"]
+                    jopt = None
+                    if "joptions" in v:
+                        jopt = split_options(v["joptions"])
+                    return cls(classname=jcls, options=jopt)
         return v
 
     def from_config_dict(self, d):
@@ -667,7 +675,7 @@ class Random(JavaObject):
         return javabridge.call(self.jobject, "nextDouble", "()D")
 
 
-class OptionHandler(JavaObject):
+class OptionHandler(JavaObject, Configurable):
     """
     Ancestor for option-handling classes. 
     Classes should implement the weka.core.OptionHandler interface to have any effect.
@@ -685,7 +693,12 @@ class OptionHandler(JavaObject):
         self.is_optionhandler = OptionHandler.check_type(jobject, "weka.core.OptionHandler")
         if (options is not None) and (len(options) > 0):
             self.options = options
-        
+        # we have to manually instantiate some objects, since multiple inheritance doesn't call
+        # Configurable constructor
+        self._logger = None
+        self._help = {}
+        self._config = self.fix_config({})
+
     def global_info(self):
         """
         Returns the globalInfo() result, None if not available.
@@ -695,6 +708,14 @@ class OptionHandler(JavaObject):
             return javabridge.call(self.jobject, "globalInfo", "()Ljava/lang/String;")
         except JavaException:
             return None
+
+    def description(self):
+        """
+        Returns a description of the object.
+        :return: the description
+        :rtype: str
+        """
+        return self.global_info()
 
     @property
     def options(self):
@@ -736,6 +757,18 @@ class OptionHandler(JavaObject):
         :rtype: str
         """
         return javabridge.to_string(self.jobject)
+
+    def to_config_dict(self):
+        """
+        Returns a dictionary of its options.
+        :return: the options as dictionary
+        :rtype: dict
+        """
+        result = super(OptionHandler, self).to_config_dict()
+        result["jclass"] = get_classname(self.jobject)
+        result["joptions"] = join_options(self.options)
+        result.pop("options", None)
+        return result
 
 
 class SingleIndex(JavaObject):
@@ -1072,3 +1105,67 @@ class SelectedTag(JavaObject):
         for i in xrange(length):
             result.append(Tag(javabridge.get_env().get_string(wrapped[i])))
         return result
+
+
+def join_options(options):
+    """
+    Turns the list of options back into a single commandline string.
+    :param options: the list of options to process
+    :type options: list
+    :return: the combined options
+    :rtype: str
+    """
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "joinOptions",
+        "([Ljava/lang/String;)Ljava/lang/String;",
+        options)
+
+
+def split_options(cmdline):
+    """
+    Splits the commandline into a list of options.
+    :param cmdline: the commandline string to split into individual options
+    :type cmdline: str
+    :return: the split list of commandline options
+    :rtype: list
+    """
+    return arrays.string_array_to_list(
+        javabridge.static_call(
+            "Lweka/core/Utils;", "splitOptions",
+            "(Ljava/lang/String;)[Ljava/lang/String;",
+            cmdline))
+
+
+def to_commandline(optionhandler):
+    """
+    Generates a commandline string from the OptionHandler instance.
+    :param optionhandler: the OptionHandler instance to turn into a commandline
+    :type optionhandler: OptionHandler
+    :return: the commandline string
+    :rtype: str
+    """
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "toCommandLine",
+        "(Ljava/lang/Object;)Ljava/lang/String;",
+        optionhandler.jobject)
+
+
+def from_commandline(cmdline, classname=None):
+    """
+    Creates an OptionHandler based on the provided commandline string.
+    :param cmdline: the commandline string to use
+    :type cmdline: str
+    :param classname: the classname of the wrapper to return other than OptionHandler (in dot-notation)
+    :type classname: str
+    :return: the generated option handler instance
+    :rtype: object
+    """
+    params = split_options(cmdline)
+    cls = params[0]
+    params = params[1:]
+    handler = OptionHandler(jobject=javabridge.make_instance(cls.replace(".", "/"), "()V"), options=params)
+    if classname is None:
+        return handler
+    else:
+        c = get_class(classname)
+        return c(jobject=handler.jobject)

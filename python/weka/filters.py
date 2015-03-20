@@ -20,8 +20,7 @@ import os
 import sys
 import argparse
 import weka.core.jvm as jvm
-import weka.core.utils as utils
-from weka.core.classes import OptionHandler
+from weka.core.classes import OptionHandler, join_options
 from weka.core.capabilities import Capabilities
 from weka.core.converters import Loader
 from weka.core.converters import Saver
@@ -222,7 +221,7 @@ def main():
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
+    logger.debug("Commandline: " + join_options(sys.argv[1:]))
 
     try:
         flter = Filter(parsed.filter)

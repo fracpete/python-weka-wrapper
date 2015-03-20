@@ -15,8 +15,8 @@
 # Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
+from weka.core.classes import join_options, split_options, from_commandline
 import weka.core.jvm as jvm
-import weka.core.utils as utils
 import wekatests.tests.weka_test as weka_test
 
 
@@ -26,22 +26,22 @@ class TestUtils(weka_test.WekaTest):
         """
         Tests the split_options method.
         """
-        self.assertEqual(0, len(utils.split_options("")))
-        self.assertEqual(2, len(utils.split_options("-t /some/where/test.arff")))
+        self.assertEqual(0, len(split_options("")))
+        self.assertEqual(2, len(split_options("-t /some/where/test.arff")))
 
     def test_join_options(self):
         """
         Tests the join_options method.
         """
-        self.assertEqual("", str(utils.join_options([])))
-        self.assertEqual("-t /some/where/test.arff", str(utils.join_options(["-t", "/some/where/test.arff"])))
+        self.assertEqual("", str(join_options([])))
+        self.assertEqual("-t /some/where/test.arff", str(join_options(["-t", "/some/where/test.arff"])))
 
     def test_from_and_to_commandline(self):
         """
         Tests the from_commandline and to_commandline methods.
         """
         cmdline = "weka.classifiers.trees.J48 -C 0.3 -M 4"
-        cls = utils.from_commandline(
+        cls = from_commandline(
             cmdline=cmdline, classname="weka.classifiers.Classifier")
         self.assertIsNotNone(cls)
         self.assertEqual(cmdline, cls.to_commandline())

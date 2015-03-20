@@ -20,9 +20,8 @@ import os
 import sys
 import argparse
 import weka.core.jvm as jvm
-import weka.core.utils as utils
 import weka.core.classes as classes
-from weka.core.classes import OptionHandler
+from weka.core.classes import OptionHandler, join_options, to_commandline, from_commandline
 from weka.core.dataset import Instances, Instance
 
 # logging setup
@@ -162,8 +161,8 @@ class DataGenerator(OptionHandler):
         :return: the copy of the generator
         :rtype: DataGenerator
         """
-        return utils.from_commandline(
-            utils.to_commandline(generator), classname=classes.get_classname(DataGenerator()))
+        return from_commandline(
+            to_commandline(generator), classname=classes.get_classname(DataGenerator()))
 
 
 def main():
@@ -184,7 +183,7 @@ def main():
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
+    logger.debug("Commandline: " + join_options(sys.argv[1:]))
 
     try:
         generator = DataGenerator(classname=parsed.datagenerator)

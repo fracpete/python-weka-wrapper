@@ -20,9 +20,8 @@ import os
 import sys
 import argparse
 import weka.core.jvm as jvm
-import weka.core.utils as utils
 import weka.core.converters as converters
-from weka.core.classes import OptionHandler
+from weka.core.classes import OptionHandler, join_options
 from weka.core.capabilities import Capabilities
 
 # logging setup
@@ -101,7 +100,7 @@ def main():
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
 
-    logger.debug("Commandline: " + utils.join_options(sys.argv[1:]))
+    logger.debug("Commandline: " + join_options(sys.argv[1:]))
 
     try:
         associator = Associator(classname=parsed.associator)

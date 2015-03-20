@@ -20,6 +20,7 @@ import re
 import javabridge
 import math  # required for MathExpression
 from weka.associations import Associator
+import weka.core.classes as classes
 import weka.core.serialization as serialization
 import weka.filters as filters
 import weka.flow.base as base
@@ -27,10 +28,9 @@ from weka.flow.base import InputConsumer, OutputProducer, Token
 from weka.flow.container import ModelContainer
 import weka.core.converters as converters
 from weka.core.dataset import Instances
-import weka.core.utils as utils
 from weka.classifiers import Classifier, Evaluation, PredictionOutput
 from weka.clusterers import Clusterer, ClusterEvaluation
-from weka.core.classes import Random
+from weka.core.classes import Random, to_commandline, from_commandline
 import weka.flow.conversion as conversion
 
 
@@ -39,16 +39,16 @@ class Transformer(InputConsumer, OutputProducer):
     The ancestor for all sources.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(InputConsumer, self).__init__(name=name, options=options)
-        super(OutputProducer, self).__init__(name=name, options=options)
+        super(InputConsumer, self).__init__(name=name, config=config)
+        super(OutputProducer, self).__init__(name=name, config=config)
 
     def post_execute(self):
         """
@@ -67,15 +67,15 @@ class PassThrough(Transformer):
     Dummy actor that just passes through the data.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(PassThrough, self).__init__(name=name, options=options)
+        super(PassThrough, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -99,15 +99,15 @@ class LoadDataset(Transformer):
     Loads a dataset from a file.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(LoadDataset, self).__init__(name=name, options=options)
+        super(LoadDataset, self).__init__(name=name, config=config)
         self._loader = None
         self._iterator = None
 
@@ -158,34 +158,6 @@ class LoadDataset(Transformer):
 
         return super(LoadDataset, self).fix_config(options)
 
-    def to_config(self, k, v):
-        """
-        Hook method that allows conversion of individual options.
-        :param k: the key of the option
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially processed value
-        :rtype: object
-        """
-        if k == "custom_loader":
-            return base.to_commandline(v)
-        return super(LoadDataset, self).to_config(k, v)
-
-    def from_config(self, k, v):
-        """
-        Hook method that allows converting values from the dictionary
-        :param k: the key in the dictionary
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially parsed value
-        :rtype: object
-        """
-        if k == "custom_loader":
-            return utils.from_commandline(v, classname=utils.get_classname(converters.Loader()))
-        return super(LoadDataset, self).from_config(k, v)
-
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
@@ -196,7 +168,7 @@ class LoadDataset(Transformer):
             raise Exception(self.full_name + ": No token provided!")
         if isinstance(token.payload, str):
             return
-        raise Exception(self.full_name + ": Unhandled class: " + utils.get_classname(token.payload))
+        raise Exception(self.full_name + ": Unhandled class: " + classes.get_classname(token.payload))
 
     def do_execute(self):
         """
@@ -267,15 +239,15 @@ class SetStorageValue(Transformer):
     Store the payload of the current token in internal storage using the specified name.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(SetStorageValue, self).__init__(name=name, options=options)
+        super(SetStorageValue, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -330,15 +302,15 @@ class DeleteStorageValue(Transformer):
     Deletes the specified value from internal storage.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(DeleteStorageValue, self).__init__(name=name, options=options)
+        super(DeleteStorageValue, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -393,15 +365,15 @@ class InitStorageValue(Transformer):
     Initializes the storage value with the provided value (interpreted by 'eval' method).
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(InitStorageValue, self).__init__(name=name, options=options)
+        super(InitStorageValue, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -463,15 +435,15 @@ class UpdateStorageValue(Transformer):
     The current value is available through the variable {X} in the expression.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(UpdateStorageValue, self).__init__(name=name, options=options)
+        super(UpdateStorageValue, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -537,15 +509,15 @@ class MathExpression(Transformer):
     therefore mathematical functions can be accessed using the 'math' library, e.g., '1 + math.sin({X})'.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(MathExpression, self).__init__(name=name, options=options)
+        super(MathExpression, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -602,15 +574,15 @@ class ClassSelector(Transformer):
     Sets/unsets the class index of a dataset.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ClassSelector, self).__init__(name=name, options=options)
+        super(ClassSelector, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -694,15 +666,15 @@ class Train(Transformer):
     model and the dataset header.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Train, self).__init__(name=name, options=options)
+        super(Train, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -741,40 +713,6 @@ class Train(Transformer):
 
         return options
 
-    def to_config(self, k, v):
-        """
-        Hook method that allows conversion of individual options.
-        :param k: the key of the option
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially processed value
-        :rtype: object
-        """
-        if k == "setup":
-            return base.to_commandline(v)
-        return super(Train, self).to_config(k, v)
-
-    def from_config(self, k, v):
-        """
-        Hook method that allows converting values from the dictionary
-        :param k: the key in the dictionary
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially parsed value
-        :rtype: object
-        """
-        if k == "setup":
-            try:
-                return utils.from_commandline(v, classname=utils.get_classname(Classifier()))
-            except Exception, e:
-                try:
-                    return utils.from_commandline(v, classname=utils.get_classname(Clusterer()))
-                except Exception, e2:
-                    return utils.from_commandline(v, classname=utils.get_classname(Associator()))
-        return super(Train, self).from_config(k, v)
-
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
@@ -806,7 +744,7 @@ class Train(Transformer):
             cls = Associator.make_copy(cls)
             cls.build_associations(data)
         else:
-            return "Unhandled class: " + utils.get_classname(cls)
+            return "Unhandled class: " + classes.get_classname(cls)
         cont = ModelContainer(model=cls, header=Instances.template_instances(data))
         self._output.append(Token(cont))
         return None
@@ -818,15 +756,15 @@ class Filter(Transformer):
     Automatically resets the filter if the dataset differs.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Filter, self).__init__(name=name, options=options)
+        super(Filter, self).__init__(name=name, config=config)
         self._filter = None
         self._header = None
 
@@ -864,34 +802,6 @@ class Filter(Transformer):
 
         return super(Filter, self).fix_config(options)
 
-    def to_config(self, k, v):
-        """
-        Hook method that allows conversion of individual options.
-        :param k: the key of the option
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially processed value
-        :rtype: object
-        """
-        if k == "setup":
-            return base.to_commandline(v)
-        return super(Filter, self).to_config(k, v)
-
-    def from_config(self, k, v):
-        """
-        Hook method that allows converting values from the dictionary
-        :param k: the key in the dictionary
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially parsed value
-        :rtype: object
-        """
-        if k == "setup":
-            return utils.from_commandline(v, classname=utils.to_commandline(filters.Filter()))
-        return super(Filter, self).from_config(k, v)
-
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
@@ -902,7 +812,7 @@ class Filter(Transformer):
             raise Exception(self.full_name + ": No token provided!")
         if isinstance(token.payload, Instances):
             return
-        raise Exception(self.full_name + ": Unhandled class: " + utils.get_classname(token.payload))
+        raise Exception(self.full_name + ": Unhandled class: " + classes.get_classname(token.payload))
 
     def do_execute(self):
         """
@@ -926,15 +836,15 @@ class DeleteFile(Transformer):
     Deletes the incoming files that match the regular expression.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(DeleteFile, self).__init__(name=name, options=options)
+        super(DeleteFile, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -994,15 +904,15 @@ class CrossValidate(Transformer):
     is forwarded. For clusterers the loglikelihood.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(CrossValidate, self).__init__(name=name, options=options)
+        super(CrossValidate, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -1064,41 +974,6 @@ class CrossValidate(Transformer):
 
         return options
 
-    def to_config(self, k, v):
-        """
-        Hook method that allows conversion of individual options.
-        :param k: the key of the option
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially processed value
-        :rtype: object
-        """
-        if k == "setup":
-            return base.to_commandline(v)
-        if k == "output":
-            return base.to_commandline(v)
-        return super(CrossValidate, self).to_config(k, v)
-
-    def from_config(self, k, v):
-        """
-        Hook method that allows converting values from the dictionary
-        :param k: the key in the dictionary
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially parsed value
-        :rtype: object
-        """
-        if k == "setup":
-            try:
-                return utils.from_commandline(v, classname=utils.get_classname(Classifier()))
-            except Exception, e:
-                return utils.from_commandline(v, classname=utils.get_classname(Clusterer()))
-        if k == "output":
-            return utils.from_commandline(v, classname=utils.get_classname(PredictionOutput()))
-        return super(CrossValidate, self).from_config(k, v)
-
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
@@ -1138,7 +1013,7 @@ class CrossValidate(Transformer):
                 Random(int(self.resolve_option("seed"))))
             self._output.append(Token(llh))
         else:
-            return "Unhandled class: " + utils.get_classname(cls)
+            return "Unhandled class: " + classes.get_classname(cls)
         return None
 
 
@@ -1147,15 +1022,15 @@ class Evaluate(Transformer):
     Evaluates a trained classifier obtained from internal storage on the dataset passing through.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Evaluate, self).__init__(name=name, options=options)
+        super(Evaluate, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -1204,34 +1079,6 @@ class Evaluate(Transformer):
 
         return options
 
-    def to_config(self, k, v):
-        """
-        Hook method that allows conversion of individual options.
-        :param k: the key of the option
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially processed value
-        :rtype: object
-        """
-        if k == "output":
-            return base.to_commandline(v)
-        return super(Evaluate, self).to_config(k, v)
-
-    def from_config(self, k, v):
-        """
-        Hook method that allows converting values from the dictionary
-        :param k: the key in the dictionary
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially parsed value
-        :rtype: object
-        """
-        if k == "output":
-            return utils.from_commandline(v, classname=utils.get_classname(PredictionOutput()))
-        return super(Evaluate, self).from_config(k, v)
-
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
@@ -1267,7 +1114,7 @@ class Evaluate(Transformer):
             evl.set_model(cls)
             evl.test_model(data)
         else:
-            return "Unhandled class: " + utils.get_classname(cls)
+            return "Unhandled class: " + classes.get_classname(cls)
         self._output.append(Token(evl))
         return None
 
@@ -1277,15 +1124,15 @@ class EvaluationSummary(Transformer):
     Generates a summary string from an Evaluation/ClusterEvaluation object.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(EvaluationSummary, self).__init__(name=name, options=options)
+        super(EvaluationSummary, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -1348,7 +1195,7 @@ class EvaluationSummary(Transformer):
             return None
         raise Exception(
             self.full_name + ": Input token is not a supported Evaluation object - "
-            + utils.get_classname(token.payload))
+            + classes.get_classname(token.payload))
 
     def do_execute(self):
         """
@@ -1372,15 +1219,15 @@ class ModelReader(Transformer):
     Reads the serialized model (Classifier/Clusterer) from disk and forwards a ModelContainer.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(ModelReader, self).__init__(name=name, options=options)
+        super(ModelReader, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -1404,14 +1251,14 @@ class ModelReader(Transformer):
             elif javabridge.is_instance_of(data[0], "weka/clusterers/Clusterer"):
                 cont = ModelContainer(model=Clusterer(jobject=data[0]))
             else:
-                return "Unhandled class: " + utils.get_classname(data[0])
+                return "Unhandled class: " + classes.get_classname(data[0])
         elif len(data) == 2:
             if javabridge.is_instance_of(data[0], "weka/classifiers/Classifier"):
                 cont = ModelContainer(model=Classifier(jobject=data[0]), header=Instances(data[1]))
             elif javabridge.is_instance_of(data[0], "weka/clusterers/Clusterer"):
                 cont = ModelContainer(model=Clusterer(jobject=data[0]), header=Instances(data[1]))
             else:
-                return "Unhandled class: " + utils.get_classname(data[0])
+                return "Unhandled class: " + classes.get_classname(data[0])
         else:
             return "Expected 1 or 2 objects, but got " + str(len(data)) + " instead reading: " + fname
         self._output.append(Token(cont))
@@ -1423,15 +1270,15 @@ class Convert(Transformer):
     Converts the input data with the given conversion setup.
     """
 
-    def __init__(self, name=None, options=None):
+    def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
         :param name: the name of the transformer
         :type name: str
-        :param options: the dictionary with the options (str -> object).
-        :type options: dict
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
         """
-        super(Convert, self).__init__(name=name, options=options)
+        super(Convert, self).__init__(name=name, config=config)
 
     def description(self):
         """
@@ -1465,30 +1312,6 @@ class Convert(Transformer):
             self.help[opt] = "The conversion to apply to the input data (Conversion)."
 
         return super(Convert, self).fix_config(options)
-
-    def to_config(self, k, v):
-        """
-        Hook method that allows conversion of individual options.
-        :param k: the key of the option
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially processed value
-        :rtype: object
-        """
-        return super(Convert, self).to_config(k, v)
-
-    def from_config(self, k, v):
-        """
-        Hook method that allows converting values from the dictionary
-        :param k: the key in the dictionary
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially parsed value
-        :rtype: object
-        """
-        return super(Convert, self).from_config(k, v)
 
     def check_input(self, token):
         """
