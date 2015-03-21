@@ -22,15 +22,16 @@ import math  # required for MathExpression
 from weka.associations import Associator
 import weka.core.classes as classes
 import weka.core.serialization as serialization
+import weka.attribute_selection as attsel
 import weka.filters as filters
 import weka.flow.base as base
 from weka.flow.base import InputConsumer, OutputProducer, Token
-from weka.flow.container import ModelContainer
+from weka.flow.container import ModelContainer, AttributeSelectionContainer
 import weka.core.converters as converters
 from weka.core.dataset import Instances
-from weka.classifiers import Classifier, Evaluation, PredictionOutput
+from weka.classifiers import Classifier, Evaluation
 from weka.clusterers import Clusterer, ClusterEvaluation
-from weka.core.classes import Random, to_commandline, from_commandline
+from weka.core.classes import Random
 import weka.flow.conversion as conversion
 
 
@@ -1335,4 +1336,96 @@ class Convert(Transformer):
         if result is None:
             if conv.output is not None:
                 self._output.append(Token(conv.output))
+        return None
+
+
+class AttributeSelection(Transformer):
+    """
+    Performs attribute selection on the incoming dataset using the specified search and evaluation scheme.
+    Outputs a AttributeSelectionContainer with the results string, reduced dataset and seleted attributes.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(AttributeSelection, self).__init__(name=name, config=config)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return \
+            "Performs attribute selection on the incoming dataset using the specified search and evaluation scheme.\n" \
+            "Outputs a AttributeSelectionContainer with the results string, reduced dataset and seleted attributes."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "search: " + base.to_commandline(self.config["search"]) + ", eval: " \
+               + base.to_commandline(self.config["eval"])
+
+    def fix_config(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        opt = "search"
+        if opt not in options:
+            options[opt] = attsel.ASSearch(classname="weka.attributeSelection.BestFirst")
+        if opt not in self.help:
+            self.help[opt] = "The search algorithm to use (ASSearch)."
+
+        opt = "eval"
+        if opt not in options:
+            options[opt] = attsel.ASEvaluation(classname="weka.attributeSelection.CfsSubsetEval")
+        if opt not in self.help:
+            self.help[opt] = "The evaluation algorithm to use (ASEvaluation)."
+
+        return super(AttributeSelection, self).fix_config(options)
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if token is None:
+            raise Exception(self.full_name + ": No token provided!")
+        if not isinstance(token.payload, Instances):
+            raise Exception(self.full_name + ": Not an Instances object!")
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        data = self.input.payload
+        search = self.config["search"].shallow_copy()
+        evl = self.config["eval"].shallow_copy()
+        asel = attsel.AttributeSelection()
+        asel.search(search)
+        asel.evaluator(evl)
+        asel.select_attributes(data)
+        cont = AttributeSelectionContainer(
+            original=data,
+            reduced=asel.reduce_dimensionality(data),
+            num_atts=asel.number_attributes_selected,
+            selected=asel.selected_attributes,
+            results=asel.results_string)
+        self._output.append(Token(cont))
         return None

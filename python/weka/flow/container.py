@@ -75,6 +75,27 @@ class Container(object):
         """
         return str(self.data)
 
+    def generate_help(self):
+        """
+        Generates a help string for this container.
+        :return: the help string
+        :rtype: str
+        """
+        result = []
+        result.append(self.__class__.__name__)
+        result.append(re.sub(r'.', '=', self.__class__.__name__))
+        result.append("")
+        result.append("Supported value names:")
+        for a in self.allowed:
+            result.append(a)
+        return '\n'.join(result)
+
+    def print_help(self):
+        """
+        Prints a help string for this actor to stdout.
+        """
+        print(self.generate_help())
+
 
 class ModelContainer(Container):
     """
@@ -87,13 +108,14 @@ class ModelContainer(Container):
         :param model: the model to store (eg Classifier or Clusterer)
         :type model: object
         :param header: the header instances
-        :
+        :type header: Instances
         """
         super(ModelContainer, self).__init__()
         self.set("Model", model)
         if header is not None:
             header = Instances.template_instances(header)
         self.set("Header", header)
+        self._allowed = ["Model", "Header"]
 
     def is_valid(self):
         """
@@ -102,3 +124,39 @@ class ModelContainer(Container):
         :rtype: bool
         """
         return ("Model" in self._data) or ("Model" in self._data and "Header" in self._data)
+
+
+class AttributeSelectionContainer(Container):
+    """
+    Container for models.
+    """
+
+    def __init__(self, original=None, reduced=None, num_atts=None, selected=None, results=None):
+        """
+        Initializes the container.
+        :param original: the original dataset
+        :type original: Instances
+        :param reduced: the reduced dataset
+        :type reduced: Instances
+        :param num_atts: the number of attributes
+        :type num_atts: int
+        :param selected: the list of selected attribute indices (0-based)
+        :type selected: list
+        :param results: the generated results string
+        :type results: str
+        """
+        super(AttributeSelectionContainer, self).__init__()
+        self.set("Original", original)
+        self.set("Reduced", reduced)
+        self.set("NumAttributes", num_atts)
+        self.set("Selected", selected)
+        self.set("Results", results)
+        self._allowed = ["Original", "Reduced", "NumAttributes", "Selected", "Results"]
+
+    def is_valid(self):
+        """
+        Checks whether the container is valid.
+        :return: True if the container is valid
+        :rtype: bool
+        """
+        return ("Reduced" in self._data) and ("NumAttributes" in self._data) and ("Selected" in self._data)

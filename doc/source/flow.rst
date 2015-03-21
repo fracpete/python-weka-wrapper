@@ -66,6 +66,7 @@ Transformers
 
 The following *transformers* are available:
 
+ * **AttributeSelection** performs attribute selection on a dataset
  * **ClassSelector** sets/unsets the class attribute of a dataset
  * **Convert** applies simple conversion schemes to the data passing through
  * **CrossValidate** performs cross-validation on a classifier or clusterer
