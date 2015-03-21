@@ -1134,18 +1134,21 @@ class ContainerValuePicker(Tee):
         :return: None if successful, otherwise error message
         :rtype: str
         """
+        result = None
         cont = self.input.payload
         name = str(self.resolve_option("value"))
         value = cont.get(name)
         switch = bool(self.resolve_option("switch"))
         if switch:
-            self.first_active.input = self.input
-            result = self._director.execute()
+            if self.first_active is not None:
+                self.first_active.input = self.input
+                result = self._director.execute()
             if result is None:
                 self._output.append(Token(value))
         else:
-            self.first_active.input = Token(value)
-            result = self._director.execute()
+            if self.first_active is not None:
+                self.first_active.input = Token(value)
+                result = self._director.execute()
             if result is None:
                 self._output.append(self.input)
         return result
