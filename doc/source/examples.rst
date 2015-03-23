@@ -45,6 +45,21 @@ Load dataset and print it
    print(data)
 
 
+Build classifier on dataset, output predictions
+-----------------------------------------------
+
+.. code-block:: python
+
+   from weka.classifiers import Classifier
+   cls = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
+   cls.build_classifier(data)
+
+   for index, inst in enumerate(data):
+       pred = cls.classify_instance(inst)
+       dist = cls.distribution_for_instance(inst)
+       print(str(index+1) + ": label index=" + str(pred) + ", class distribution=" + str(dist))
+
+
 Build classifier on dataset, print model and draw graph
 -------------------------------------------------------
 

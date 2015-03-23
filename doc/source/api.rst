@@ -116,6 +116,19 @@ on a dataset and output the summary and some specific statistics:
    >>> print("pctCorrect: " + str(evaluation.percent_correct))
    >>> print("incorrect: " + str(evaluation.incorrect))
 
+Here we train a classifier and output predictions:
+
+.. code-block:: python
+
+   >>> from weka.classifiers import Classifier
+   >>> data = ...             # previously loaded data
+   >>> data.class_is_last()   # set class attribute
+   >>> cls = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
+   >>> cls.build_classifier(data)
+   >>> for index, inst in enumerate(data):
+   >>>     pred = cls.classify_instance(inst)
+   >>>     dist = cls.distribution_for_instance(inst)
+   >>>     print(str(index+1) + ": label index=" + str(pred) + ", class distribution=" + str(dist))
 
 Clusterers
 ----------
