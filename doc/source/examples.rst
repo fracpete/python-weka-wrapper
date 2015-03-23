@@ -189,6 +189,12 @@ Clustering
 
    print(clusterer)
 
+   # cluster the data
+   for inst in data:
+       cl = clusterer.cluster_instance(inst)  # 0-based cluster index
+       dist = clusterer.distribution_for_instance(inst)   # cluster membership distribution
+       print("cluster=" + str(cl) + ", distribution=" + str(dist))
+
 
 Associations
 ------------

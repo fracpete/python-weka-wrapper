@@ -131,6 +131,15 @@ using a previously loaded dataset without a class attribute:
    >>> clusterer.build_clusterer(data)
    >>> print(clusterer)
 
+Once a clusterer is built, it can be used to cluster Instance objects:
+
+.. code-block:: python
+
+   >>> for inst in data:
+   >>>     cl = clusterer.cluster_instance(inst)  # 0-based cluster index
+   >>>     dist = clusterer.distribution_for_instance(inst)   # cluster membership distribution
+   >>>     print("cluster=" + str(cl) + ", distribution=" + str(dist))
+
 
 Attribute selection
 -------------------
