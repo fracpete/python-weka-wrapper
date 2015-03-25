@@ -146,7 +146,7 @@ class TestDataset(weka_test.WekaTest):
         self.assertEqual(0.0, inst.get_value(2), msg="value at #" + str(2) + " differs")
 
         values = [(1, 2.0)]
-        inst = dataset.Instance.create_instance(values, classname="weka.core.SparseInstance", max_values=3)
+        inst = dataset.Instance.create_sparse_instance(values, 3, classname="weka.core.SparseInstance")
         self.assertEqual(3, inst.num_attributes, msg="#attributes differ")
         self.assertEqual(0.0, inst.get_value(0), msg="value at #" + str(0) + " differs")
         self.assertEqual(2.0, inst.get_value(1), msg="value at #" + str(1) + " differs")
