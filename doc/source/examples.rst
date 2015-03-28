@@ -284,6 +284,8 @@ Filters
 Packages
 --------
 
+The following examples show how to list, install and uninstall an *official* package:
+
 .. code-block:: python
 
    import weka.core.packages as packages
@@ -301,6 +303,20 @@ Packages
    items = packages.installed_packages()
    for item in items:
        print(item.name + " " + item.url)
+
+You can also install *unofficial* packages. The following example installs a previously downloaded zip file:
+
+.. code-block:: python
+
+   import weka.core.packages as packages
+   packages.install_package("/some/where/funky-package-1.0.0.zip")
+
+And here installing it directly from a URL:
+
+.. code-block:: python
+
+   import weka.core.packages as packages
+   packages.install_package("http://some.server.com/funky-package-1.0.0.zip")
 
 
 Stop JVM
