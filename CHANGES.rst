@@ -16,6 +16,9 @@ Changelog
 - most classes (like Classifier and Filter) now have a default classname value in the constructor
 - added `TextDirectoryLoader` class to `weka.core.converters`
 - moved all methods from `weka.core.utils` to `weka.core.classes`
+- fixed `Attribute.index_of` method for determining label index
+- fixed `Attribute.add_string_value` method (used incorrect JNI parameter)
+- `create_instance` and `create_sparse_instance` methods of class `Instance` now ensure that list values are float
 - ...
 
 

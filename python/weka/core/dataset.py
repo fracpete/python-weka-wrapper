@@ -660,6 +660,8 @@ class Instance(JavaObject):
         """
         jni_classname = classname.replace(".", "/")
         if type(values) is list:
+            for i in xrange(len(values)):
+                values[i] = float(values[i])
             values = numpy.array(values)
         return Instance(
             javabridge.make_instance(
@@ -686,7 +688,7 @@ class Instance(JavaObject):
         vals = []
         for (i, v) in values:
             indices.append(i)
-            vals.append(v)
+            vals.append(float(v))
         indices = numpy.array(indices, dtype=numpy.int32)
         vals = numpy.array(vals)
         return Instance(
@@ -750,7 +752,7 @@ class Attribute(JavaObject):
         :return: the 0-based index
         :rtype: int
         """
-        return javabridge.call(self.jobject, "indexOf", "(Ljava/lang/String;)I", label)
+        return javabridge.call(self.jobject, "indexOfValue", "(Ljava/lang/String;)I", label)
 
     def value(self, index):
         """
@@ -916,7 +918,7 @@ class Attribute(JavaObject):
         :return: the index
         :rtype: int
         """
-        return javabridge.call(self.jobject, "addStringValue", "(S)I", s)
+        return javabridge.call(self.jobject, "addStringValue", "(Ljava/lang/String;)I", s)
 
     def add_relation(self, instances):
         """

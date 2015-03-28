@@ -234,6 +234,51 @@ class TestDataset(weka_test.WekaTest):
         inst1 = data1.get_instance(0)
         self.assertEqual(inst1.values.tolist(), inst2.values.tolist(), msg="values differ (set)")
 
+        # create instances
+        atts = []
+        atts.append(dataset.Attribute.create_numeric("num"))
+        atts.append(dataset.Attribute.create_nominal("nom", ["yes", "no"]))
+        atts.append(dataset.Attribute.create_string("str"))
+        atts.append(dataset.Attribute.create_date("dat", "yyyy-MM-dd"))
+        data = dataset.Instances.create_instances("created", atts, 3)
+        # 1. row
+        values = []
+        values.append(1.1)
+        values.append(data.attribute(1).index_of("no"))
+        values.append(data.attribute(2).add_string_value("blah de blah"))
+        values.append(data.attribute(3).parse_date("2015-10-12"))
+        inst = dataset.Instance.create_instance(values)
+        data.add_instance(inst)
+        # 2. row
+        values = []
+        values.append(1.2)
+        values.append(data.attribute(1).index_of("yes"))
+        values.append(data.attribute(2).add_string_value("pi day!"))
+        values.append(data.attribute(3).parse_date("2001-12-31"))
+        inst = dataset.Instance.create_instance(values)
+        data.add_instance(inst)
+        # 3. row
+        values = []
+        values.append(1.3)
+        values.append(data.attribute(1).index_of("no"))
+        values.append(data.attribute(2).add_string_value("hello world"))
+        values.append(data.attribute(3).parse_date("2011-02-03"))
+        inst = dataset.Instance.create_instance(values)
+        data.add_instance(inst)
+
+        self.assertEqual(data.get_instance(0).get_value(0), 1.1, msg="Numeric value differs")
+        self.assertEqual(data.get_instance(1).get_value(0), 1.2, msg="Numeric value differs")
+        self.assertEqual(data.get_instance(2).get_value(0), 1.3, msg="Numeric value differs")
+        self.assertEqual(data.get_instance(0).get_string_value(1), "no", msg="Nominal value differs")
+        self.assertEqual(data.get_instance(1).get_string_value(1), "yes", msg="Nominal value differs")
+        self.assertEqual(data.get_instance(2).get_string_value(1), "no", msg="Nominal value differs")
+        self.assertEqual(data.get_instance(0).get_string_value(2), "blah de blah", msg="String value differs")
+        self.assertEqual(data.get_instance(1).get_string_value(2), "pi day!", msg="String value differs")
+        self.assertEqual(data.get_instance(2).get_string_value(2), "hello world", msg="String value differs")
+        self.assertEqual(data.get_instance(0).get_value(3), data.attribute(3).parse_date("2015-10-12"), msg="Date value differs")
+        self.assertEqual(data.get_instance(1).get_value(3), data.attribute(3).parse_date("2001-12-31"), msg="Date value differs")
+        self.assertEqual(data.get_instance(2).get_value(3), data.attribute(3).parse_date("2011-02-03"), msg="Date value differs")
+
 
 def suite():
     """
