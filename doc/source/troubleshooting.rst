@@ -69,7 +69,7 @@ Mac OSX
 
 
 Ubuntu (server)
-===============
+---------------
 
 * **Q:** On a headless Ubuntu server, building a classifier results in Python exiting, printing the error message `GLib-GIO-ERROR **: Settings schema 'org.gnome.system.proxy' is not installed`. How to fix?
 
@@ -78,7 +78,7 @@ Ubuntu (server)
 
 
 Windows
-=======
+-------
 
 * **Q:** The Windows SDK 7.1 installer fails (eg when behind a proxy). What now?
 
