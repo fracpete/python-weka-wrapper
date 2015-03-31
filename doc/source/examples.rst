@@ -45,6 +45,20 @@ Load dataset and print it
    print(data)
 
 
+Output help from underlying OptionHandler
+-----------------------------------------
+
+If the underlying Java class implements the ``weka.core.OptionHandler`` method, then
+you can use the ``to_help()`` method to generate a string containing the ``globalInfo()``
+and ``listOptions()`` information:
+
+.. code-block:: python
+
+   from weka.classifiers import Classifier
+   cls = Classifier(classname="weka.classifiers.trees.J48")
+   print(cls.to_help())
+
+
 Build classifier on dataset, output predictions
 -----------------------------------------------
 

@@ -675,6 +675,57 @@ class Random(JavaObject):
         return javabridge.call(self.jobject, "nextDouble", "()D")
 
 
+class Option(JavaObject):
+    """
+    Wrapper for the weka.core.Option class.
+    """
+
+    def __init__(self, jobject):
+        """
+        Initializes the wrapper with the specified option object.
+        :param jobject: the java object to wrap
+        :type jobject: JB_Object
+        """
+        super(Option, self).__init__(jobject)
+        Option.enforce_type(jobject, "weka.core.Option")
+
+    @property
+    def name(self):
+        """
+        Returns the name of the option.
+        :return: the name
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "name", "()Ljava/lang/String;")
+
+    @property
+    def description(self):
+        """
+        Returns the description of the option.
+        :return: the description
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "description", "()Ljava/lang/String;")
+
+    @property
+    def synopsis(self):
+        """
+        Returns the synopsis of the option.
+        :return: the synopsis
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "synopsis", "()Ljava/lang/String;")
+
+    @property
+    def num_arguments(self):
+        """
+        Returns the synopsis of the option.
+        :return: the synopsis
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "numArguments", "()I")
+
+
 class OptionHandler(JavaObject, Configurable):
     """
     Ancestor for option-handling classes. 
@@ -749,6 +800,31 @@ class OptionHandler(JavaObject, Configurable):
             "Lweka/core/Utils;", "toCommandLine",
             "(Ljava/lang/Object;)Ljava/lang/String;",
             self.jobject)
+
+    def to_help(self):
+        """
+        Returns a string that contains the 'global_info' text and the options.
+        :return: the generated help string
+        :rtype: str
+        """
+        result = []
+        result.append(self.classname)
+        result.append("=" * len(self.classname))
+        result.append("")
+        result.append("DESCRIPTION")
+        result.append("")
+        result.append(self.global_info())
+        result.append("")
+        result.append("OPTIONS")
+        result.append("")
+        options = javabridge.call(self.jobject, "listOptions", "()Ljava/util/Enumeration;")
+        enum = javabridge.get_enumeration_wrapper(options)
+        while enum.hasMoreElements():
+            opt = Option(enum.nextElement())
+            result.append(opt.synopsis)
+            result.append(opt.description)
+            result.append("")
+        return '\n'.join(result)
 
     def __str__(self):
         """

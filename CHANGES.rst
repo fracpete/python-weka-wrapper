@@ -19,6 +19,8 @@ Changelog
 - fixed `Attribute.index_of` method for determining label index
 - fixed `Attribute.add_string_value` method (used incorrect JNI parameter)
 - `create_instance` and `create_sparse_instance` methods of class `Instance` now ensure that list values are float
+- added `to_help` method to `OptionHandler` class which outputs a help string generated from the base class's
+  `globalInfo` and `listOptions` methods
 - ...
 
 
