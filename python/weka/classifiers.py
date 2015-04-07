@@ -340,7 +340,7 @@ class Kernel(OptionHandler):
         :type inst1: Instance
         """
         jinst1 = None
-        if not inst1 is None:
+        if inst1 is not None:
             jinst1 = inst1.jobject
         return javabridge.call(self.jobject, "eval", "(IILweka/core/Instance;)D", id1, id2, jinst1)
 
@@ -803,7 +803,7 @@ class Evaluation(JavaObject):
         :param output: the output generator to use
         :type output: PredictionOutput
         """
-        if not rnd is None:
+        if rnd is not None:
             data.randomize(rnd)
         train_size = int(round(data.num_instances * percentage / 100))
         test_size = data.num_instances - train_size
