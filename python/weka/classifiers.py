@@ -540,7 +540,7 @@ class CostMatrix(JavaObject):
         :param num_classes: the number of classes
         :type num_classes: int
         """
-        if not matrx is None:
+        if matrx is not None:
             if isinstance(matrx, CostMatrix):
                 jobject = javabridge.make_instance(
                     "weka/classifiers/CostMatrix", "(Lweka/classifiers/CostMatrix;)V", matrx.jobject)
@@ -737,7 +737,8 @@ class CostMatrix(JavaObject):
         """
         return CostMatrix(
             matrx=javabridge.static_call(
-                "weka/classifiers/CostMatrix", "parseMatlab", "(Ljava/lang/String;)Lweka/classifiers/CostMatrix;", matlab))
+                "weka/classifiers/CostMatrix", "parseMatlab",
+                "(Ljava/lang/String;)Lweka/classifiers/CostMatrix;", matlab))
 
 
 class Evaluation(JavaObject):
