@@ -21,6 +21,7 @@ Changelog
 - `create_instance` and `create_sparse_instance` methods of class `Instance` now ensure that list values are float
 - added `to_help` method to `OptionHandler` class which outputs a help string generated from the base class's
   `globalInfo` and `listOptions` methods
+- fixed `test_model` method of `Evaluation` class when supplying a `PredictionOutput` object (previously generated `No dataset structure provided!` exception)
 - ...
 
 

@@ -828,6 +828,7 @@ class Evaluation(JavaObject):
         if output is None:
             generator = []
         else:
+            output.header = data
             generator = [output.jobject]
         cls = javabridge.call(
             self.jobject, "evaluateModel",
