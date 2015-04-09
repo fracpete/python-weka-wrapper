@@ -21,6 +21,7 @@ import logging
 import argparse
 import weka.core.jvm as jvm
 import weka.core.types as arrays
+import weka.core.classes as classes
 from numpy import *
 from weka.core.classes import JavaObject, join_options
 from weka.core.classes import OptionHandler
@@ -83,7 +84,7 @@ class Classifier(OptionHandler):
         if self.is_updateable:
             javabridge.call(self.jobject, "updateClassifier", "(Lweka/core/Instance;)V", inst.jobject)
         else:
-            logger.critical(wutils.get_classname(self.jobject) + " is not updateable!")
+            logger.critical(classes.get_classname(self.jobject) + " is not updateable!")
 
     def classify_instance(self, inst):
         """
@@ -382,7 +383,7 @@ class KernelClassifier(Classifier):
                 "weka/classifiers/KernelHelper", "hasKernelProperty",
                 "(Ljava/lang/Object;)Z",
                 jobject):
-            raise Exception("Does not handle a kernel: " + wutils.get_classname(jobject))
+            raise Exception("Does not handle a kernel: " + classes.get_classname(jobject))
         super(KernelClassifier, self).__init__(classname=classname, jobject=jobject, options=options)
 
     @property
