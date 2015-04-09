@@ -425,7 +425,7 @@ class InitStorageValue(Transformer):
         """
         if self.storagehandler is None:
             return "No storage handler available!"
-        self.storagehandler.storage[self.resolve_option("storage_name")] = eval(self.resolve_option("value"))
+        self.storagehandler.storage[self.resolve_option("storage_name")] = eval(str(self.resolve_option("value")))
         self._output.append(self.input)
         return None
 
@@ -453,7 +453,8 @@ class UpdateStorageValue(Transformer):
         :rtype: str
         """
         return "Updates the specified storage value using the epxression interpreted by 'eval' method.\n"\
-               "The current value is available through the variable {X} in the expression."
+               "The current value is available through the variable {X} in the expression.\n"\
+               "Any storage value can be referenced using @{name} with 'name' being the name of the storage value."
 
     @property
     def quickinfo(self):
@@ -478,13 +479,13 @@ class UpdateStorageValue(Transformer):
         if opt not in options:
             options[opt] = "unknown"
         if opt not in self.help:
-            self.help[opt] = "The name of the storage value to delete (string)."
+            self.help[opt] = "The name of the storage value to update (string)."
 
         opt = "expression"
         if opt not in options:
             options[opt] = "int({X} + 1)"
         if opt not in self.help:
-            self.help[opt] = "The initial value (string)."
+            self.help[opt] = "The expression for updating the storage value; use {X} for current value (string)."
 
         return options
 
@@ -498,6 +499,7 @@ class UpdateStorageValue(Transformer):
             return "No storage handler available!"
         expr = str(self.resolve_option("expression")).replace(
             "{X}", str(self.storagehandler.storage[str(self.resolve_option("storage_name"))]))
+        expr = self.storagehandler.expand(expr)
         self.storagehandler.storage[self.resolve_option("storage_name")] = eval(expr)
         self._output.append(self.input)
         return None
@@ -635,7 +637,8 @@ class ClassSelector(Transformer):
         """
         if isinstance(token.payload, Instances):
             return
-        # TODO Instance class
+        if isinstance(token.payload, Instance):
+            return
         raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
 
     def do_execute(self):
@@ -644,8 +647,13 @@ class ClassSelector(Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        # TODO Instance class
-        data = self.input.payload
+        if isinstance(self.input.payload, Instances):
+            inst = None
+            data = self.input.payload
+        elif isinstance(self.input.payload, Instance):
+            inst = self.input.payload
+            data = inst.dataset
+
         index = str(self.resolve_option("index"))
         unset = bool(self.resolve_option("unset"))
         if unset:
@@ -657,7 +665,12 @@ class ClassSelector(Transformer):
                 data.class_is_last()
             else:
                 data.class_index = int(index) - 1
-        self._output.append(Token(data))
+
+        if inst is None:
+            self._output.append(Token(data))
+        else:
+            self._output.append(Token(inst))
+
         return None
 
 
@@ -676,6 +689,8 @@ class Train(Transformer):
         :type config: dict
         """
         super(Train, self).__init__(name=name, config=config)
+        self._model = None
+        self._header = None
 
     def description(self):
         """
@@ -722,8 +737,8 @@ class Train(Transformer):
         """
         if isinstance(token.payload, Instances):
             return
-        # if isinstance(token.payload, Instance):
-        #     return
+        if isinstance(token.payload, Instance):
+            return
         raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
 
     def do_execute(self):
@@ -732,21 +747,48 @@ class Train(Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        # TODO incremental classifiers/clusterers
-        data = self.input.payload
-        cls = self.resolve_option("setup")
-        if isinstance(cls, Classifier):
-            cls = Classifier.make_copy(cls)
-            cls.build_classifier(data)
-        elif isinstance(cls, Clusterer):
-            cls = Clusterer.make_copy(cls)
-            cls.build_clusterer(data)
-        elif isinstance(cls, Associator):
-            cls = Associator.make_copy(cls)
-            cls.build_associations(data)
+        if isinstance(self.input.payload, Instances):
+            inst = None
+            data = self.input.payload
         else:
-            return "Unhandled class: " + classes.get_classname(cls)
-        cont = ModelContainer(model=cls, header=Instances.template_instances(data))
+            inst = self.input.payload
+            data = inst.dataset
+
+        retrain = False
+        if (self._header is None) or (self._header.equal_headers(data) is not None) or (inst is None):
+            retrain = True
+            self._header = Instances.template_instances(data, 0)
+
+        if retrain or (self._model is None):
+            cls = self.resolve_option("setup")
+            if isinstance(cls, Classifier):
+                self._model = Classifier.make_copy(cls)
+            elif isinstance(cls, Clusterer):
+                self._model = Clusterer.make_copy(cls)
+            elif isinstance(cls, Associator):
+                self._model = Associator.make_copy(cls)
+            else:
+                return "Unhandled class: " + classes.get_classname(cls)
+
+        if retrain:
+            if inst is not None:
+                data = Instances.template_instances(data, 1)
+                data.add_instance(inst)
+            if isinstance(self._model, Classifier):
+                self._model.build_classifier(data)
+            elif isinstance(self._model, Clusterer):
+                self._model.build_clusterer(data)
+            elif isinstance(self._model, Associator):
+                self._model.build_associations(data)
+        else:
+            if isinstance(self._model, Classifier):
+                self._model.update_classifier(inst)
+            elif isinstance(self._model, Clusterer):
+                self._model.update_clusterer(inst)
+            else:
+                return "Cannot train incrementally: " + classes.get_classname(self._model)
+
+        cont = ModelContainer(model=self._model, header=self._header)
         self._output.append(Token(cont))
         return None
 
