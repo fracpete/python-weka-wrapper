@@ -40,7 +40,7 @@ class Sink(InputConsumer):
         :type config: dict
         """
         super(Sink, self).__init__(name=name, config=config)
-        super(InputConsumer, self).__init__()
+        super(InputConsumer, self).__init__(name=name, config=config)
 
     def post_execute(self):
         """
