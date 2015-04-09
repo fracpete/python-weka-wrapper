@@ -437,7 +437,7 @@ class JavaObject(object):
         :type jni_intf_or_class: str
         """
         if not cls.check_type(jobject, intf_or_class, jni_intf_or_class):
-            raise TypeError("Object does not implement or subclass " + intf_or_class + "!")
+            raise TypeError("Object does not implement or subclass " + intf_or_class + ": " + get_classname(jobject))
 
     @classmethod
     def new_instance(cls, classname, jni_classname=None):
