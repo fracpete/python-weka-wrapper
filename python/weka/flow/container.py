@@ -14,6 +14,7 @@
 # container.py
 # Copyright (C) 2015 Fracpete (pythonwekawrapper at gmail dot com)
 
+import re
 from weka.core.dataset import Instances
 
 
@@ -73,7 +74,7 @@ class Container(object):
         :return: the content
         :rtype: str
         """
-        return str(self.data)
+        return str(self._data)
 
     def generate_help(self):
         """
