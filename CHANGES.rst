@@ -22,6 +22,7 @@ Changelog
 - added `to_help` method to `OptionHandler` class which outputs a help string generated from the base class's
   `globalInfo` and `listOptions` methods
 - fixed `test_model` method of `Evaluation` class when supplying a `PredictionOutput` object (previously generated `No dataset structure provided!` exception)
+- added `batch_finished` method to `Filter` class for incremental filtering
 - ...
 
 

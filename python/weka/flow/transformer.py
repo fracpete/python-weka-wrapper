@@ -28,7 +28,7 @@ import weka.flow.base as base
 from weka.flow.base import InputConsumer, OutputProducer, Token
 from weka.flow.container import ModelContainer, AttributeSelectionContainer
 import weka.core.converters as converters
-from weka.core.dataset import Instances
+from weka.core.dataset import Instances, Instance
 from weka.classifiers import Classifier, Evaluation
 from weka.clusterers import Clusterer, ClusterEvaluation
 from weka.core.classes import Random
@@ -813,6 +813,8 @@ class Filter(Transformer):
             raise Exception(self.full_name + ": No token provided!")
         if isinstance(token.payload, Instances):
             return
+        if isinstance(token.payload, Instance):
+            return
         raise Exception(self.full_name + ": Unhandled class: " + classes.get_classname(token.payload))
 
     def do_execute(self):
@@ -821,14 +823,34 @@ class Filter(Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        # TODO: incremental filtering
-        data = self.input.payload
-        if (self._filter is None) or self._header.equal_headers(data) is not None:
-            self._header = Instances.template_instances(data)
-            self._filter = filters.Filter.make_copy(self.resolve_option("setup"))
-            self._filter.inputformat(data)
-        filtered = self._filter.filter(data)
-        self._output.append(Token(filtered))
+        if isinstance(self.input.payload, Instance):
+            inst = self.input.payload
+            data = Instances.template_instances(inst.dataset, 1)
+            data.add_instance(inst)
+        else:
+            inst = None
+            data = self.input.payload
+
+        if inst is None:
+            if (self._filter is None) or self._header.equal_headers(data) is not None:
+                self._header = Instances.template_instances(data)
+                self._filter = filters.Filter.make_copy(self.resolve_option("setup"))
+                self._filter.inputformat(data)
+            filtered = self._filter.filter(data)
+            self._output.append(Token(filtered))
+        else:
+            if (self._filter is None) or self._header.equal_headers(data) is not None:
+                self._header = Instances.template_instances(data)
+                self._filter = filters.Filter.make_copy(self.resolve_option("setup"))
+                self._filter.inputformat(data)
+                filtered = self._filter.filter(data)
+                self._output.append(Token(filtered.get_instance(0)))
+            else:
+                self._filter.input(inst)
+                self._filter.batch_finished()
+                filtered = self._filter.output()
+                self._output.append(Token(filtered))
+
         return None
 
 

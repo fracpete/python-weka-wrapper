@@ -51,6 +51,7 @@ class Filter(OptionHandler):
         self.enforce_type(jobject, "weka.filters.Filter")
         super(Filter, self).__init__(jobject=jobject, options=options)
         self.__input = javabridge.make_call(self.jobject, "input", "(Lweka/core/Instance;)Z")
+        self.__batchfinished = javabridge.make_call(self.jobject, "batchFinished", "()Z")
         self.__output = javabridge.make_call(self.jobject, "output", "()Lweka/core/Instance;")
         self.__outputformat = javabridge.make_call(self.jobject, "getOutputFormat", "()Lweka/core/Instances;")
 
@@ -75,8 +76,18 @@ class Filter(OptionHandler):
         Inputs the Instance.
         :param inst: the instance to filter
         :type inst: Instance
+        :return: True if filtered can be collected from output
+        :rtype: bool
         """
         return self.__input(inst.jobject)
+
+    def batch_finished(self):
+        """
+        Signals the filter that the batch of data has finished.
+        :return: True if instances can be collected from the output
+        :rtype: bool
+        """
+        return self.__batchfinished()
 
     def outputformat(self):
         """
