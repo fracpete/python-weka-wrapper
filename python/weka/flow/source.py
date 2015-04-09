@@ -38,7 +38,7 @@ class Source(OutputProducer, Actor):
         :type config: dict
         """
         super(Source, self).__init__(name=name, config=config)
-        super(OutputProducer, self).__init__()
+        super(OutputProducer, self).__init__(name=name, config=config)
 
 
 class Start(Source):
