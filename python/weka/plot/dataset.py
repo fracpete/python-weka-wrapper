@@ -65,7 +65,7 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=N
         inst = data.get_instance(i)
         x.append(inst.get_value(index_x))
         y.append(inst.get_value(index_y))
-        if not c is None:
+        if c is not None:
             c.append(inst.get_value(inst.class_index))
 
     # plot data
@@ -85,7 +85,7 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=N
     ax.grid(True)
     fig.canvas.set_window_title(data.relationname)
     plt.draw()
-    if not outfile is None:
+    if outfile is not None:
         plt.savefig(outfile)
     if wait:
         plt.show()
@@ -155,7 +155,62 @@ def matrix_plot(data, percent=100.0, seed=1, size=10, title=None, outfile=None, 
         title += " (%0.1f%%)" % percent
     fig.canvas.set_window_title(title)
     plt.draw()
-    if not outfile is None:
+    if outfile is not None:
+        plt.savefig(outfile)
+    if wait:
+        plt.show()
+
+
+def line_plot(data, atts=None, percent=100.0, seed=1, title=None, outfile=None, wait=True):
+    """
+    Uses the internal format to plot the dataset, one line per instance.
+    :param data: the dataset
+    :type data: Instances
+    :param atts: the list of 0-based attribute indices of attributes to plot
+    :type atts: list
+    :param percent: the percentage of the dataset to use for plotting
+    :type percent: float
+    :param seed: the seed value to use for subsampling
+    :type seed: int
+    :param title: an optional title
+    :type title: str
+    :param outfile: the (optional) file to save the generated plot to. The extension determines the file format.
+    :type outfile: str
+    :param wait: whether to wait for the user to close the plot
+    :type wait: bool
+    """
+    if not plot.matplotlib_available:
+        logger.error("Matplotlib is not installed, plotting unavailable!")
+        return
+
+    # create subsample
+    data = plot.create_subsample(data, percent=percent, seed=seed)
+
+    fig = plt.figure()
+
+    if atts is None:
+        x = []
+        for i in xrange(data.num_attributes):
+            x.append(i)
+    else:
+        x = atts
+
+    ax = fig.add_subplot(111)
+    ax.set_xlabel("attributes")
+    ax.set_ylabel("value")
+    ax.grid(True)
+    for index_y in xrange(data.num_instances):
+        y = []
+        for index_x in x:
+            y.append(data.get_instance(index_y).get_value(index_x))
+        ax.plot(x, y, "o-", alpha=0.5)
+    if title is None:
+        title = data.relationname
+    if percent != 100:
+        title += " (%0.1f%%)" % percent
+    fig.canvas.set_window_title(title)
+    plt.draw()
+    if outfile is not None:
         plt.savefig(outfile)
     if wait:
         plt.show()

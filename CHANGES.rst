@@ -23,6 +23,7 @@ Changelog
   `globalInfo` and `listOptions` methods
 - fixed `test_model` method of `Evaluation` class when supplying a `PredictionOutput` object (previously generated `No dataset structure provided!` exception)
 - added `batch_finished` method to `Filter` class for incremental filtering
+- added `line_plot` method to `weka.plot.dataset` module for plotting dataset using internal format (one line plot per instance)
 - ...
 
 
