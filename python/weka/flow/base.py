@@ -219,7 +219,10 @@ class Actor(Configurable, Stoppable):
         value = self.config[name]
         if value is None:
             return default
-        elif isinstance(value, str) and value.startswith("@{") and value.endswith("}"):
+        elif isinstance(value, str) \
+                and value.startswith("@{") \
+                and value.endswith("}") \
+                and (value.find("@{", 1) == -1):
             stname = value[2:len(value)-1]
             if (self.storagehandler is not None) and (stname in self.storagehandler.storage):
                 return self.storagehandler.storage[stname]
@@ -532,10 +535,11 @@ class StorageHandler(object):
             if value is None:
                 raise("Storage value '" + name + "' not present, failed to expand string: " + s)
             else:
-                result = result[1:start] + str(value) + result[end + 1:]
+                result = result[0:start] + str(value) + result[end + 1:]
         return result
 
-    def pad(self, name):
+    @classmethod
+    def pad(cls, name):
         """
         Pads the name with "@{...}".
         :param name: the name to pad
@@ -548,7 +552,8 @@ class StorageHandler(object):
         else:
             return "@{" + name + "}"
 
-    def extract(self, padded):
+    @classmethod
+    def extract(cls, padded):
         """
         Removes the surrounding "@{...}" from the name.
         :param padded: the padded string
