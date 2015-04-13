@@ -12,14 +12,41 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # serialization.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import logging
+import weka.core.classes as classes
 from weka.core.classes import JavaObject
+from javabridge.jutil import JavaException
 
 # logging setup
 logger = logging.getLogger(__name__)
+
+
+def deepcopy(obj):
+    """
+    Creates a deep copy of the JavaObject (or derived class) or JB_Object.
+    :param obj: the object to create a copy of
+    :type obj: object
+    :return: the copy, None if failed to copy
+    :rtype: object
+    """
+    if isinstance(obj, JavaObject):
+        wrapped = True
+        jobject = obj.jobject
+    else:
+        wrapped = False
+        jobject = obj
+    try:
+        serialized = javabridge.make_instance("weka/core/SerializedObject", "(Ljava/lang/Object;)V", jobject)
+        jcopy = javabridge.call(serialized, "getObject", "()Ljava/lang/Object;")
+        if wrapped:
+            jcopy = obj.__class__(jobject=jcopy)
+        return jcopy
+    except JavaException, e:
+        print("Failed to create copy of " + classes.get_classname(obj) + ": " + str(e))
+        return None
 
 
 def read(filename):
