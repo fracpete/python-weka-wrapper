@@ -66,6 +66,15 @@ class Instances(JavaObject):
         """
         return javabridge.call(self.jobject, "relationName", "()Ljava/lang/String;")
 
+    @relationname.setter
+    def relationname(self, value):
+        """
+        Sets the name of the dataset.
+        :param value: the name
+        :type value: str
+        """
+        javabridge.call(self.jobject, "setRelationName", "(Ljava/lang/String;)V", value)
+
     @property
     def num_attributes(self):
         """
