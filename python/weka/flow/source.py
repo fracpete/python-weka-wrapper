@@ -604,3 +604,66 @@ class DataGenerator(Source):
             data = generator.generate_examples()
             self._output.append(Token(data))
         return None
+
+
+class CombineStorage(Source):
+    """
+    Expands the storage items specified in format string and forwards the generated string.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(CombineStorage, self).__init__(name=name, config=config)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Expands the storage items specified in format string and forwards the generated string."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "format: " + str(self.config["format"])
+
+    def fix_config(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(CombineStorage, self).fix_config(options)
+
+        opt = "format"
+        if opt not in options:
+            options[opt] = ""
+        if opt not in self.help:
+            self.help[opt] = "The format to use for generating the combined string; use '@{blah}' for accessing "\
+                             "storage item 'blah' (string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        formatstr = str(self.resolve_option("format"))
+        expanded = self.storagehandler.expand(formatstr)
+        self._output.append(Token(expanded))
+        return None

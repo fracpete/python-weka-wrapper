@@ -52,6 +52,7 @@ Sources
 
 The following *source* actors are available:
 
+ * **CombineStorage** expands storage items in a format string and forwards the generated string
  * **DataGenerator** outputs artificial data
  * **FileSupplier** outputs predefined file names
  * **ForLoop** outputs integer tokens as defined by the loop setup (min, max, step)
