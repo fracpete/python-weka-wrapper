@@ -843,6 +843,12 @@ class Filter(Transformer):
         if opt not in self.help:
             self.help[opt] = "The filter to apply to the dataset (Filter)."
 
+        opt = "keep_relationname"
+        if opt not in options:
+            options[opt] = False
+        if opt not in self.help:
+            self.help[opt] = "Whether to keep the original relation name (bool)."
+
         return super(Filter, self).fix_config(options)
 
     def check_input(self, token):
@@ -872,6 +878,8 @@ class Filter(Transformer):
         else:
             inst = None
             data = self.input.payload
+        relname = data.relationname
+        keep = self.resolve_option("keep_relationname")
 
         if inst is None:
             if (self._filter is None) or self._header.equal_headers(data) is not None:
@@ -879,6 +887,8 @@ class Filter(Transformer):
                 self._filter = filters.Filter.make_copy(self.resolve_option("setup"))
                 self._filter.inputformat(data)
             filtered = self._filter.filter(data)
+            if keep:
+                filtered.relationname = relname
             self._output.append(Token(filtered))
         else:
             if (self._filter is None) or self._header.equal_headers(data) is not None:
@@ -886,11 +896,15 @@ class Filter(Transformer):
                 self._filter = filters.Filter.make_copy(self.resolve_option("setup"))
                 self._filter.inputformat(data)
                 filtered = self._filter.filter(data)
+                if keep:
+                    filtered.relationname = relname
                 self._output.append(Token(filtered.get_instance(0)))
             else:
                 self._filter.input(inst)
                 self._filter.batch_finished()
                 filtered = self._filter.output()
+                if keep:
+                    filtered.dataset.relationname = relname
                 self._output.append(Token(filtered))
 
         return None
