@@ -406,6 +406,15 @@ class JavaObject(object):
         """
         return JClassWrapper(javabridge.call(self.jobject, "getClass", "()Ljava/lang/Class;"))
 
+    @property
+    def is_serializable(self):
+        """
+        Returns true if the object is serialiable.
+        :return: true if serializable
+        :rtype: bool
+        """
+        return JavaObject.check_type(self.jobject, "java.io.Serializable")
+
     @classmethod
     def check_type(cls, jobject, intf_or_class, jni_intf_or_class=None):
         """
