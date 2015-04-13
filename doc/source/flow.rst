@@ -70,6 +70,7 @@ The following *transformers* are available:
  * **AttributeSelection** performs attribute selection on a dataset
  * **ClassSelector** sets/unsets the class attribute of a dataset
  * **Convert** applies simple conversion schemes to the data passing through
+ * **Copy** creates a deep copy of serializable Java objects
  * **CrossValidate** performs cross-validation on a classifier or clusterer
  * **DeleteFile** deletes files that match a regular expression
  * **DeleteStorageValue** deletes a value from internal storage
@@ -82,6 +83,7 @@ The following *transformers* are available:
  * **MathExpression** computes a numeric value from a expression and numeric input
  * **ModelReader** reads classifier/clusterer models from disk
  * **PassThrough** is a dummy that just passes through the tokens
+ * **RenameRelation** updates the relation name of Instance/Instances objects
  * **SetStorageValue** stores the payload of the current token in internal storage
  * **Train** builds a classifier/clusterer/associator and passes on a ModelContainer
  * **UpdateStorageValue** applies an expression to update an internal storage value, e.g.
@@ -96,6 +98,8 @@ The following *transformers* are available:
   * **ClassifierErrors** displays the classifier errors obtained from an Evaluation object
   * **Console** just outputs a string representation of the object on stdout
   * **DumpFile** similar to *Console*, but stores the string representation in a file
+  * **InstanceDumper** dumps incoming Instance/Instances object in a file
+  * **LinePlot** displays an Instances object as line plot, using the internal format
   * **MatrixPlot** displays an Instances object as matrix plot
   * **ModelWriter** stores a trained model on disk
   * **Null** simply swallows any token (like `/dev/null` on Linux)

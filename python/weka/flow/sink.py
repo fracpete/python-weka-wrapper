@@ -17,7 +17,7 @@
 
 import traceback
 import weka.core.serialization as serialization
-from weka.core.dataset import Instances
+from weka.core.dataset import Instances, Instance
 from weka.flow.base import InputConsumer
 from weka.flow.container import ModelContainer
 from weka.classifiers import Evaluation
@@ -419,6 +419,117 @@ class MatrixPlot(Sink):
         return result
 
 
+class LinePlot(Sink):
+    """
+    Displays the Instances object as line plot using the internal format, one line per Instance.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(LinePlot, self).__init__(name=name, config=config)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Displays the Instances object as line plot using the internal format, one line per Instance."
+
+    def fix_config(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(LinePlot, self).fix_config(options)
+
+        opt = "attributes"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The list of 0-based attribute indices to print; None for all (int)."
+
+        opt = "percent"
+        if opt not in options:
+            options[opt] = 100.0
+        if opt not in self.help:
+            self.help[opt] = "The percentage of the data to display (0-100, float)."
+
+        opt = "seed"
+        if opt not in options:
+            options[opt] = 1
+        if opt not in self.help:
+            self.help[opt] = "The seed value for randomizing the plot when viewing a subset (int)."
+
+        opt = "title"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The title for the plot (str)."
+
+        opt = "outfile"
+        if opt not in options:
+            options[opt] = None
+        if opt not in self.help:
+            self.help[opt] = "The file to store the plot in (str)."
+
+        opt = "wait"
+        if opt not in options:
+            options[opt] = True
+        if opt not in self.help:
+            self.help[opt] = "Whether to wait for user to close the plot window (bool)."
+
+        return options
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "percent: " + str(self.config["percent"]) \
+               + ", title: " + str(self.config["title"]) \
+               + ", outfile: " + str(self.config["outfile"]) \
+               + ", wait: " + str(self.config["wait"])
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if not isinstance(token.payload, Instances):
+            raise Exception(self.full_name + ": Input token is not an Instances object!")
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = None
+        data = self.input.payload
+        pltdataset.line_plot(
+            data,
+            atts=self.resolve_option("attributes"),
+            percent=float(self.resolve_option("percent")),
+            seed=int(self.resolve_option("seed")),
+            title=self.resolve_option("title"),
+            outfile=self.resolve_option("outfile"),
+            wait=bool(self.resolve_option("wait")))
+        return result
+
+
 class ClassifierErrors(Sink):
     """
     Displays the errors obtained through a classifier evaluation.
@@ -735,4 +846,82 @@ class PRC(Sink):
             key_loc=self.resolve_option("key_loc"),
             outfile=self.resolve_option("outfile"),
             wait=bool(self.resolve_option("wait")))
+        return result
+
+
+class InstanceDumper(FileOutputSink):
+    """
+    Sink that dumps the incoming Instance/Instances into a file.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(InstanceDumper, self).__init__(name=name, config=config)
+        self._header = None
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Sink that dumps the incoming Instance/Instances objects in a file."
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, Instance):
+            return
+        if isinstance(token.payload, Instances):
+            return
+        raise Exception(self.full_name + ": Input token is neither an Instance nor Instances object!")
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        result = None
+
+        data = self.input.payload
+        if isinstance(self._input.payload, Instance):
+            inst = self.input.payload
+            data = inst.dataset
+        elif isinstance(self.input.payload, Instances):
+            data = self.input.payload
+            inst = None
+
+        append = True
+        if self._header is None or (self._header.equal_headers(data) is not None):
+            self._header = Instances.template_instances(data, 0)
+            outstr = str(data)
+            append = False
+        elif inst is not None:
+            outstr = str(inst)
+        else:
+            outstr = str(data)
+
+        f = None
+        try:
+            if append:
+                f = open(str(self.resolve_option("output")), "a")
+            else:
+                f = open(str(self.resolve_option("output")), "w")
+            f.write(outstr)
+            f.write("\n")
+        except Exception, e:
+            result = self.full_name + "\n" + traceback.format_exc()
+        finally:
+            if f is not None:
+                f.close()
         return result

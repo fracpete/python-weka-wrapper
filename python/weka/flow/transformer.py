@@ -1507,3 +1507,120 @@ class AttributeSelection(Transformer):
             results=asel.results_string)
         self._output.append(Token(cont))
         return None
+
+
+class RenameRelation(Transformer):
+    """
+    Updates the relation name of Instance/Instances objects passing through.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(RenameRelation, self).__init__(name=name, config=config)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Updates the relation name of Instance/Instances objects passing through."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "name: " + str(self.config["name"])
+
+    def fix_config(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(RenameRelation, self).fix_config(options)
+
+        opt = "name"
+        if opt not in options:
+            options[opt] = "newname"
+        if opt not in self.help:
+            self.help[opt] = "The new relation name to use (string)."
+
+        return options
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, Instance):
+            return
+        if isinstance(token.payload, Instances):
+            return
+        raise Exception(self.full_name + ": Input token is neither an Instance nor Instances object!")
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        relname = self.resolve_option("name")
+        if isinstance(self.input.payload, Instance):
+            self.input.payload.dataset.relationname = relname
+        else:
+            self.input.payload.relationname = relname
+        self._output.append(self.input)
+        return None
+
+
+class Copy(Transformer):
+    """
+    Creates a deep copy of the token passing through (must be a serializable JavaObject),
+    other objects just get passed on.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(Copy, self).__init__(name=name, config=config)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Creates a deep copy of the token passing through (must be a serializable JavaObject), "\
+               "other objects just get passed on."
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        if isinstance(self.input.payload, classes.JavaObject) and self.input.payload.is_serializable:
+            copy = serialization.deepcopy(self.input.payload)
+            if copy is not None:
+                self._output.append(Token(copy))
+        else:
+            self._output.append(self.input)
+        return None
