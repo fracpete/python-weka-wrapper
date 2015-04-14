@@ -83,6 +83,7 @@ The following *transformers* are available:
  * **MathExpression** computes a numeric value from a expression and numeric input
  * **ModelReader** reads classifier/clusterer models from disk
  * **PassThrough** is a dummy that just passes through the tokens
+ * **Predict** applies classifier/clusterer model (serialized file or from storage) to incoming Instance objects
  * **RenameRelation** updates the relation name of Instance/Instances objects
  * **SetStorageValue** stores the payload of the current token in internal storage
  * **Train** builds a classifier/clusterer/associator and passes on a ModelContainer

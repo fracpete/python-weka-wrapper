@@ -26,7 +26,7 @@ import weka.attribute_selection as attsel
 import weka.filters as filters
 import weka.flow.base as base
 from weka.flow.base import InputConsumer, OutputProducer, Token
-from weka.flow.container import ModelContainer, AttributeSelectionContainer
+from weka.flow.container import ModelContainer, AttributeSelectionContainer, ClassificationContainer, ClusteringContainer
 import weka.core.converters as converters
 from weka.core.dataset import Instances, Instance
 from weka.classifiers import Classifier, Evaluation
@@ -1623,4 +1623,121 @@ class Copy(Transformer):
                 self._output.append(Token(copy))
         else:
             self._output.append(self.input)
+        return None
+
+
+class Predict(Transformer):
+    """
+    Uses the serialized model or, if pointing to a directory, the specified model from storage for
+    making a prediction on the incoming Instance object. The model can be either a Classifier or Clusterer.
+    Outputs either a ClassificationContainer or ClusteringContainer.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(Predict, self).__init__(name=name, config=config)
+        self._model = None
+        self._is_classifier = None
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return \
+            "Uses the serialized model or, if pointing to a directory, the specified model from storage for "\
+            "making a prediction on the incoming Instance object. The model can be either a Classifier or Clusterer.\n"\
+            "Outputs either a ClassificationContainer or ClusteringContainer."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "model: " + self.config["model"] + ", storage: " + self.config["storage_name"]
+
+    def fix_config(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(Predict, self).fix_config(options)
+
+        opt = "model"
+        if opt not in options:
+            options[opt] = "."
+        if opt not in self.help:
+            self.help[opt] = "The serialized model to use for making predictions (string)."
+
+        opt = "storage_name"
+        if opt not in options:
+            options[opt] = "unknown"
+        if opt not in self.help:
+            self.help[opt] = "The name of the model (or ModelContainer) in storage to use (string)."
+
+        return options
+
+    def check_input(self, token):
+        """
+        Performs checks on the input token. Raises an exception if unsupported.
+        :param token: the token to check
+        :type token: Token
+        """
+        if isinstance(token.payload, Instance):
+            return
+        raise Exception(self.full_name + ": Unhandled data type: " + str(token.payload.__class__.__name__))
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        inst = self.input.payload
+        if not inst.has_class:
+            return "No class set!"
+
+        # load model?
+        if self._model is None:
+            model = None
+            fname = str(self.resolve_option("model"))
+            if os.path.isfile(fname):
+                model = serialization.read(fname)
+            else:
+                name = self.resolve_option("storage_name")
+                if name in self.storagehandler.storage:
+                    model = self.storagehandler.storage.get(name)
+                    if isinstance(model, ModelContainer):
+                        model = model.get("Model").jobject
+            if model is None:
+                return "No model available from storage or serialized file!"
+            self._is_classifier = javabridge.is_instance_of(model, "weka/classifiers/Classifier")
+            if self._is_classifier:
+                self._model = Classifier(jobject=model)
+            else:
+                self._model = Clusterer(jobject=model)
+
+        if self._is_classifier:
+            cls = self._model.classify_instance(inst)
+            dist = self._model.distribution_for_instance(inst)
+            label = inst.class_attribute.value(int(cls))
+            cont = ClassificationContainer(inst=inst, classification=cls, distribution=dist, label=label)
+        else:
+            cls = self._model.cluster_instance(inst)
+            dist = self._model.distribution_for_instance(inst)
+            cont = ClusteringContainer(inst=inst, cluster=int(cls), distribution=dist)
+
+        self._output.append(Token(cont))
         return None

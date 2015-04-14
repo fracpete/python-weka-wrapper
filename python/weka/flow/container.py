@@ -161,3 +161,95 @@ class AttributeSelectionContainer(Container):
         :rtype: bool
         """
         return ("Reduced" in self._data) and ("NumAttributes" in self._data) and ("Selected" in self._data)
+
+
+class ModelContainer(Container):
+    """
+    Container for models.
+    """
+
+    def __init__(self, model=None, header=None):
+        """
+        Initializes the container.
+        :param model: the model to store (eg Classifier or Clusterer)
+        :type model: object
+        :param header: the header instances
+        :type header: Instances
+        """
+        super(ModelContainer, self).__init__()
+        self.set("Model", model)
+        if header is not None:
+            header = Instances.template_instances(header)
+        self.set("Header", header)
+        self._allowed = ["Model", "Header"]
+
+    def is_valid(self):
+        """
+        Checks whether the container is valid.
+        :return: True if the container is valid
+        :rtype: bool
+        """
+        return ("Model" in self._data) or ("Model" in self._data and "Header" in self._data)
+
+
+class ClassificationContainer(Container):
+    """
+    Container for predictions (classifiers).
+    """
+
+    def __init__(self, inst=None, classification=None, label=None, distribution=None):
+        """
+        Initializes the container.
+        :param inst: the instance used for making the prediction
+        :type inst: Instance
+        :param classification: the classification (numeric value or 0-based label index)
+        :type classification: float
+        :param label: classification label (for nominal classes)
+        :type label: str
+        :param distribution: the class distribution
+        :type distribution: ndarray
+        """
+        super(ClassificationContainer, self).__init__()
+        self.set("Instance", inst)
+        self.set("Classification", classification)
+        self.set("Label", label)
+        self.set("Distribution", distribution)
+        self._allowed = ["Instance", "Classification", "Label", "Distribution"]
+
+    def is_valid(self):
+        """
+        Checks whether the container is valid.
+        :return: True if the container is valid
+        :rtype: bool
+        """
+        return ("Instance" in self._data) and ("Classification" in self._data)
+
+
+class ClusteringContainer(Container):
+    """
+    Container for predictions (clusterers).
+    """
+
+    def __init__(self, inst=None, cluster=None, distribution=None):
+        """
+        Initializes the container.
+        :param inst: the instance used for making the prediction
+        :type inst: Instance
+        :param cluster: the cluster
+        :type cluster: int
+        :param distribution: the class distribution
+        :type distribution: ndarray
+        """
+        super(ClusteringContainer, self).__init__()
+        self.set("Instance", inst)
+        self.set("Cluster", cluster)
+        self.set("Distribution", distribution)
+        self._allowed = ["Instance", "Cluster", "Distribution"]
+
+    def is_valid(self):
+        """
+        Checks whether the container is valid.
+        :return: True if the container is valid
+        :rtype: bool
+        """
+        return ("Instance" in self._data) and ("Cluster" in self._data)
