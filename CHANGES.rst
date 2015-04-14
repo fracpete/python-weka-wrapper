@@ -25,6 +25,7 @@ Changelog
 - added `batch_finished` method to `Filter` class for incremental filtering
 - added `line_plot` method to `weka.plot.dataset` module for plotting dataset using internal format (one line plot per instance)
 - added `is_serializable` property to `JavaObject` class
+- added `has_class` convenience property to `Instance` class
 - ...
 
 

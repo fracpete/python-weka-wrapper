@@ -174,7 +174,7 @@ class Instances(JavaObject):
 
     def has_class(self):
         """
-        Returns whether a class attribute is set(convenience method).
+        Returns whether a class attribute is set (convenience method).
         :return: whether a class attribute is currently set
         :rtype: bool
         """
@@ -552,6 +552,14 @@ class Instance(JavaObject):
         :rtype: int
         """
         return self.__class_index()
+
+    def has_class(self):
+        """
+        Returns whether a class attribute is set (convenience method).
+        :return: whether a class attribute is currently set
+        :rtype: bool
+        """
+        return self.class_index != -1
 
     def set_value(self, index, value):
         """
