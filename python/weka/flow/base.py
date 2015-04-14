@@ -305,7 +305,7 @@ class Actor(Configurable, Stoppable):
 
     def stop_execution(self):
         """
-        Triggers the stopping of the object.
+        Triggers the stopping of the actor.
         """
         self._stopped = True
 

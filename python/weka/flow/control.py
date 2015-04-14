@@ -241,6 +241,12 @@ class ActorHandler(Actor):
         """
         return self._director.execute()
 
+    def stop_execution(self):
+        """
+        Triggers the stopping of the actor.
+        """
+        self._director.stop_execution()
+
     def wrapup(self):
         """
         Finishes up after execution finishes, does not remove any graphical output.
@@ -439,6 +445,8 @@ class SequentialDirector(Director, Stoppable):
         Triggers the stopping of the object.
         """
         if not (self._stopping or self._stopped):
+            for actor in self.owner.actors:
+                actor.stop_execution()
             self._stopping = True
 
     def is_stopping(self):
@@ -960,6 +968,8 @@ class BranchDirector(Director, Stoppable):
         Triggers the stopping of the object.
         """
         if not (self._stopping or self._stopped):
+            for actor in self.owner.actors:
+                actor.stop_execution()
             self._stopping = True
 
     def is_stopping(self):
@@ -1027,7 +1037,7 @@ class BranchDirector(Director, Stoppable):
         self._stopping = False
 
         for actor in self.owner.actors:
-            if self.is_stopping():
+            if self.is_stopping() or self.is_stopped():
                 break
             actor.input = self.owner.input
             result = actor.execute()
@@ -1152,3 +1162,37 @@ class ContainerValuePicker(Tee):
             if result is None:
                 self._output.append(self.input)
         return result
+
+
+class Stop(InputConsumer):
+    """
+    Stops the execution of the flow.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the branch.
+        :param name: the name of the branch
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(Stop, self).__init__(name=name, config=config)
+        super(InputConsumer, self).__init__(name=name, config=config)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Stops the execution of the flow."
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        self.root.stop_execution()
+        return None
