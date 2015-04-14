@@ -26,6 +26,7 @@ Changelog
 - added `line_plot` method to `weka.plot.dataset` module for plotting dataset using internal format (one line plot per instance)
 - added `is_serializable` property to `JavaObject` class
 - added `has_class` convenience property to `Instance` class
+- added `__repr__` method to `JavaObject` classes (simply calls `toString()` method)
 - ...
 
 

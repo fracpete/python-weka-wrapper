@@ -327,6 +327,13 @@ class JavaObject(object):
         """
         return javabridge.to_string(self.jobject)
 
+    def __repr__(self):
+        """
+        Just calls the toString() method.
+        :rtype: str
+        """
+        return javabridge.to_string(self.jobject)
+
     def __unicode__(self):
         """
         Just calls the toString() method.
