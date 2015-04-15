@@ -877,16 +877,6 @@ class OptionHandler(JavaObject, Configurable):
         if self.is_optionhandler:
             javabridge.call(self.jobject, "setOptions", "([Ljava/lang/String;)V", types.string_list_to_array(options))
 
-    def shallow_copy(self):
-        """
-        Returns a shallow copy of itself.
-        :return: the copy
-        :rtype: object
-        """
-        obj = self.new_instance(classname=self.classname)
-        result = self.__class__(obj, options=self.options)
-        return result
-
     def to_commandline(self):
         """
         Generates a commandline string from the JavaObject instance.
