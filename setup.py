@@ -104,11 +104,11 @@ setup(
         "weka": ["lib/*.jar"],
     },
     include_package_data=True,
-    version="0.2.2",
+    version="0.3.0",
     author='Peter "fracpete" Reutemann',
     author_email='pythonwekawrapper at gmail dot com',
     install_requires=[
-        "javabridge>=1.0.9",
+        "javabridge>=1.0.11",
         "numpy"
     ],
     extras_require={

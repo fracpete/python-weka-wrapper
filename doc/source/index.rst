@@ -11,14 +11,15 @@ Introduction
 The library uses the `javabridge <https://pypi.python.org/pypi/javabridge>`_ library for starting up,
 communicating with and shutting down the Java Virtual Machine in which the Weka processes get executed.
 
-*python-weka-wrapper* provides a thin wrapper around the basic (non-GUI) functionality of Weka.
-You can automatically add all your Weka packages to the classpath. Additional jars can be added as well.
+*python-weka-wrapper* provides a thin wrapper around the basic (non-GUI) functionality of Weka (some plots are
+available using Python functionality). You can automatically add all your Weka packages to the classpath.
+Additional jars can be added as well.
 
-Project homepage: https://github.com/fracpete/python-weka-wrapper
+Links:
 
-MLOSS project: https://mloss.org/software/view/548/
-
-Google Group: https://groups.google.com/forum/#!forum/python-weka-wrapper
+* `Project homepage <https://github.com/fracpete/python-weka-wrapper>`_
+* `MLOSS project <https://mloss.org/software/view/548/>`_
+* `Google Group <https://groups.google.com/forum/#!forum/python-weka-wrapper>`_
 
 
 Requirements
@@ -28,7 +29,7 @@ The library has the following requirements:
 
 * Python 2.7 (does not work with Python 3)
 
- * javabridge (>=1.0.9, required)
+ * javabridge (>=1.0.11, required)
  * pygraphviz (optional)
  * PIL (optional)
  * matplotlib (optional)
@@ -52,3 +53,4 @@ Contents
    virtualenv
    sourcecode
    examples
+   flow

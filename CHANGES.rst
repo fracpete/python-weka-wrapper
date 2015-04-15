@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.3 (????-??-??)
+0.3.0 (2015-04-15)
 ------------------
 
 - added method `ndarray_to_instances` to `weka.converters` module for converting Numpy 2-dimensional array into `Instances` object
@@ -31,7 +31,7 @@ Changelog
 - added `Stopwords` class in module `weka.core.stopwords`
 - added `Tokenizer` class in module `weka.core.tokenizers`
 - added `StringToWordVector` filter class in module `weka.filters`
-- ...
+- added simple workflow engine (see documentation on *Flow*)
 
 
 0.2.2 (2015-01-05)
