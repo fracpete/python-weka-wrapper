@@ -43,6 +43,8 @@ class Actor(Configurable, Stoppable):
         self._stopped = False
         if name is not None:
             self.name = name
+        if not classes.has_dict_handler("Actor"):
+            classes.register_dict_handler("Actor", Actor.from_dict)
 
     def __str__(self):
         """
@@ -184,26 +186,38 @@ class Actor(Configurable, Stoppable):
 
         return super(Actor, self).fix_config(options)
 
-    def to_config_dict(self):
+    def to_dict(self):
         """
-        Returns a dictionary of its options.
-        :return: the options as dictionary
+        Returns a dictionary that represents this object, to be used for JSONification.
+        :return: the object dictionary
         :rtype: dict
         """
-        result = super(Actor, self).to_config_dict()
+        result = super(Actor, self).to_dict()
+        result["type"] = "Actor"
         result["name"] = self.name
         return result
 
-    def from_config_dict(self, d):
+    @classmethod
+    def from_dict(cls, d):
         """
-        Restores the object from the given options dictionary.
-        :param d: the dictionary to use for restoring the options
+        Restores an object state from a dictionary, used in de-JSONification.
+        :param d: the object dictionary
         :type d: dict
+        :return: the object
+        :rtype: object
         """
-        if "name" in d:
-            self.name = d["name"]
-            d.pop("name", None)
-        super(Actor, self).from_config_dict(d)
+        conf = {}
+        for k in d["config"]:
+            v = d["config"][k]
+            if isinstance(v, dict):
+                if u"type" in v:
+                    typestr = v[u"type"]
+                else:
+                    typestr = v["type"]
+                conf[str(k)] = classes.get_dict_handler(typestr)(v)
+            else:
+                conf[str(k)] = v
+        return classes.get_class(d["class"])(name=d["name"], config=conf)
 
     def resolve_option(self, name, default=None):
         """

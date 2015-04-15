@@ -73,6 +73,18 @@ class TestClasses(weka_test.WekaTest):
         jobj = classes.JavaObject(obj)
         self.assertEqual(cls, jobj.classname, "Classname differs!")
 
+    def test_shallowcopy(self):
+        """
+        Tests the shallow_copy method.
+        """
+        cls = "weka.classifiers.trees.J48"
+        obj = classes.JavaObject.new_instance(cls)
+        self.assertIsNotNone(obj, "Failed to instantiate Java object: " + cls)
+        jobj = classes.OptionHandler(obj)
+        self.assertEqual(cls, jobj.classname, "Classname differs!")
+        jobj2 = jobj.shallow_copy()
+        self.assertEqual(jobj.to_commandline(), jobj2.to_commandline(), "Commandlines differs!")
+
     def test_javaarray(self):
         """
         Tests the JavaArray class.

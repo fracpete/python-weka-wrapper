@@ -196,6 +196,8 @@ class CommandlineToAny(Conversion):
         """
         if isinstance(obj, str):
             return
+        if isinstance(obj, unicode):
+            return
         raise Exception("Unsupported class: " + self._input.__class__.__name__)
 
     def convert(self):

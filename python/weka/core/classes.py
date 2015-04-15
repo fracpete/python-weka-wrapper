@@ -90,7 +90,108 @@ class Stoppable(object):
         raise Exception("Not implemented!")
 
 
-class Configurable(object):
+from_dict_handlers = {}
+"""
+The methods that handle the restoration from a JSON dictionary, stored under their 'type'.
+"""
+
+
+def register_dict_handler(typestr, handler):
+    """
+    Registers a handler for restoring an object from a JSON dictionary.
+    :param typestr: the type of the object
+    :type typestr: str
+    :param handler: the method
+    """
+    global from_dict_handlers
+    from_dict_handlers[typestr] = handler
+
+
+def deregister_dict_handler(typestr):
+    """
+    Deregisters a handler for restoring an object from a JSON dictionary.
+    :param typestr: the type of the object
+    :type typestr: str
+    """
+    global from_dict_handlers
+    del from_dict_handlers[typestr]
+
+
+def has_dict_handler(typestr):
+    """
+    Returns the handler for restoring an object from a JSON dictionary.
+    :param typestr: the type of the object
+    :type typestr: str
+    :return: the handler, None if not available
+    """
+    global from_dict_handlers
+    return typestr in from_dict_handlers
+
+
+def get_dict_handler(typestr):
+    """
+    Returns the handler for restoring an object from a JSON dictionary.
+    :param typestr: the type of the object
+    :type typestr: str
+    :return: the handler, None if not available
+    """
+    global from_dict_handlers
+    return from_dict_handlers[str(typestr)]
+
+
+class JSONObject(object):
+    """
+    Ancestor for classes that can be represented as JSON and restored from JSON.
+    """
+
+    def to_dict(self):
+        """
+        Returns a dictionary that represents this object, to be used for JSONification.
+        :return: the object dictionary
+        :rtype: dict
+        """
+        raise Exception("Not implemented!")
+
+    @classmethod
+    def from_dict(cls, d):
+        """
+        Restores an object state from a dictionary, used in de-JSONification.
+        :param d: the object dictionary
+        :type d: dict
+        :return: the object
+        :rtype: object
+        """
+        raise Exception("Not implemented!")
+
+    def to_json(self):
+        """
+        Returns the options as JSON.
+        :return: the object as string
+        :rtype: str
+        """
+        return json.dumps(self.to_dict(), sort_keys=True, indent=2, separators=(',', ': '))
+
+    @classmethod
+    def from_json(cls, s):
+        """
+        Restores the object from the given JSON.
+        :param s: the JSON string to parse
+        :type s: str
+        :return: the
+        """
+        d = json.loads(s)
+        return get_dict_handler(d["type"])(d)
+
+    def shallow_copy(self):
+        """
+        Returns a shallow copy of itself.
+        :return: the copy
+        :rtype: object
+        """
+        return self.from_json(self.to_json())
+
+
+class Configurable(JSONObject):
     """
     The ancestor for all actors.
     """
@@ -106,6 +207,8 @@ class Configurable(object):
         self._config = self.fix_config({})
         if config is not None:
             self.config = config
+        if not has_dict_handler("Configurable"):
+            register_dict_handler("Configurable", Configurable.from_dict)
 
     def __repr__(self):
         """
@@ -153,89 +256,39 @@ class Configurable(object):
         """
         self._config = self.fix_config(options)
 
-    def to_config(self, k, v):
+    def to_dict(self):
         """
-        Hook method that allows conversion of individual options.
-        :param k: the key of the option
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially processed value
-        :rtype: object
-        """
-        if isinstance(v, Configurable):
-            return v.to_config_dict()
-        return v
-
-    def to_config_dict(self):
-        """
-        Returns a dictionary of its options.
-        :return: the options as dictionary
+        Returns a dictionary that represents this object, to be used for JSONification.
+        :return: the object dictionary
         :rtype: dict
         """
         result = {}
+        result["type"] = "Configurable"
         result["class"] = get_classname(self)
-        options = self.config.copy()
-        result["options"] = {}
-        for k in options.keys():
-            result["options"][k] = self.to_config(k, options[k])
+        result["config"] = {}
+        for k in self._config:
+            v = self._config[k]
+            if isinstance(v, JSONObject):
+                result["config"][k] = v.to_dict()
+            else:
+                result["config"][k] = v
         return result
 
-    def from_config(self, k, v):
+    @classmethod
+    def from_dict(cls, d):
         """
-        Hook method that allows converting values from the dictionary
-        :param k: the key in the dictionary
-        :type k: str
-        :param v: the value
-        :type v: object
-        :return: the potentially parsed value
-        :rtype: object
-        """
-        if isinstance(v, dict):
-            if "class" in v:
-                cls = get_class(v["class"])
-                obj = cls()
-                if isinstance(obj, Configurable) and "options" in v:
-                    obj.from_config_dict(v["options"])
-                    return obj
-                if isinstance(obj, OptionHandler) and ("jclass" in v):
-                    jcls = v["jclass"]
-                    jopt = None
-                    if "joptions" in v:
-                        jopt = split_options(v["joptions"])
-                    return cls(classname=jcls, options=jopt)
-        return v
-
-    def from_config_dict(self, d):
-        """
-        Restores the object from the given options dictionary.
-        :param d: the dictionary to use for restoring the options
+        Restores its state from a dictionary, used in de-JSONification.
+        :param d: the object dictionary
         :type d: dict
         """
-        for k in d.keys():
-            if k in self.config:
-                self.config[k] = self.from_config(k, d[k])
-            elif k == "class":
-                self = self.from_config(k, d[k])
-            d.pop(k, None)
-
-    @property
-    def json(self):
-        """
-        Returns the options as JSON.
-        :return: the object as string
-        :rtype: str
-        """
-        return json.dumps(self.to_config_dict(), sort_keys=True, indent=2, separators=(',', ': '))
-
-    @json.setter
-    def json(self, s):
-        """
-        Restores the object from the given JSON.
-        :param s: the JSON string to parse
-        :type s: str
-        """
-        self.from_config_dict(json.loads(s))
+        conf = {}
+        for k in d["config"]:
+            v = d["config"][k]
+            if isinstance(v, dict):
+                conf[str(k)] = get_dict_handler(d["config"]["type"])(v)
+            else:
+                conf[str(k)] = v
+        return get_class(str(d["class"]))(config=conf)
 
     def new_logger(self):
         """
@@ -297,7 +350,7 @@ class Configurable(object):
         print(self.generate_help())
 
 
-class JavaObject(object):
+class JavaObject(JSONObject):
     """
     Basic Java object.
     """
@@ -311,6 +364,8 @@ class JavaObject(object):
         if jobject is None:
             raise Exception("No Java object supplied!")
         self.jobject = jobject
+        if not has_dict_handler("JavaObject"):
+            register_dict_handler("JavaObject", JavaObject.from_dict)
 
     def __str__(self):
         """
@@ -413,6 +468,28 @@ class JavaObject(object):
         :rtype: bool
         """
         return JavaObject.check_type(self.jobject, "java.io.Serializable")
+
+    def to_dict(self):
+        """
+        Returns a dictionary that represents this object, to be used for JSONification.
+        :return: the object dictionary
+        :rtype: dict
+        """
+        result = {}
+        result["type"] = "JavaObject"
+        result["class"] = self.classname
+        return result
+
+    @classmethod
+    def from_dict(cls, d):
+        """
+        Restores an object state from a dictionary, used in de-JSONification.
+        :param d: the object dictionary
+        :type d: dict
+        :return: the object
+        :rtype: object
+        """
+        return JavaObject(cls.new_instance(d["class"]))
 
     @classmethod
     def check_type(cls, jobject, intf_or_class, jni_intf_or_class=None):
@@ -757,6 +834,8 @@ class OptionHandler(JavaObject, Configurable):
         self._logger = None
         self._help = {}
         self._config = self.fix_config({})
+        if not has_dict_handler("OptionHandler"):
+            register_dict_handler("OptionHandler", OptionHandler.from_dict)
 
     def global_info(self):
         """
@@ -797,6 +876,16 @@ class OptionHandler(JavaObject, Configurable):
         """
         if self.is_optionhandler:
             javabridge.call(self.jobject, "setOptions", "([Ljava/lang/String;)V", types.string_list_to_array(options))
+
+    def shallow_copy(self):
+        """
+        Returns a shallow copy of itself.
+        :return: the copy
+        :rtype: object
+        """
+        obj = self.new_instance(classname=self.classname)
+        result = self.__class__(obj, options=self.options)
+        return result
 
     def to_commandline(self):
         """
@@ -842,16 +931,28 @@ class OptionHandler(JavaObject, Configurable):
         """
         return javabridge.to_string(self.jobject)
 
-    def to_config_dict(self):
+    def to_dict(self):
         """
-        Returns a dictionary of its options.
-        :return: the options as dictionary
+        Returns a dictionary that represents this object, to be used for JSONification.
+        :return: the object dictionary
         :rtype: dict
         """
-        result = super(OptionHandler, self).to_config_dict()
-        result["jclass"] = get_classname(self.jobject)
-        result["joptions"] = join_options(self.options)
-        result.pop("options", None)
+        result = super(OptionHandler, self).to_dict()
+        result["type"] = "OptionHandler"
+        result["options"] = join_options(self.options)
+        return result
+
+    @classmethod
+    def from_dict(cls, d):
+        """
+        Restores an object state from a dictionary, used in de-JSONification.
+        :param d: the object dictionary
+        :type d: dict
+        :return: the object
+        :rtype: object
+        """
+        result = OptionHandler(cls.new_instance(d["class"]))
+        result.options = split_options(d["options"])
         return result
 
 

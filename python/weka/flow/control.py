@@ -36,6 +36,8 @@ class ActorHandler(Actor):
         """
         super(ActorHandler, self).__init__(name=name, config=config)
         self._director = self.new_director()
+        if not classes.has_dict_handler("ActorHandler"):
+            classes.register_dict_handler("ActorHandler", ActorHandler.from_dict)
 
     def new_director(self):
         """
@@ -79,42 +81,39 @@ class ActorHandler(Actor):
 
         return options
 
-    def to_config_dict(self):
+    def to_dict(self):
         """
-        Returns a dictionary of its options.
-        :return: the options as dictionary
+        Returns a dictionary that represents this object, to be used for JSONification.
+        :return: the object dictionary
         :rtype: dict
         """
-        result = super(ActorHandler, self).to_config_dict()
-        result["options"].pop("actors", None)
-        actors = {}
-        for index, actor in enumerate(self.actors):
-            actors[index] = actor.to_config_dict()
-        result["actors"] = actors
+        result = super(ActorHandler, self).to_dict()
+        result["type"] = "ActorHandler"
+        del result["config"]["actors"]
+        result["actors"] = []
+        for actor in self.actors:
+            result["actors"].append(actor.to_dict())
         return result
 
-    def from_config_dict(self, d):
+    @classmethod
+    def from_dict(cls, d):
         """
-        Restores the object from the given options dictionary.
-        :param d: the dictionary to use for restoring the options
+        Restores an object state from a dictionary, used in de-JSONification.
+        :param d: the object dictionary
         :type d: dict
+        :return: the object
+        :rtype: object
         """
+        result = super(ActorHandler, cls).from_dict(d)
         if "actors" in d:
-            actors = d["actors"]
-            num = len(actors)
-            for i in xrange(num):
-                item = actors[str(i)]
-                cls = classes.get_class(item["class"])
-                actor = cls(name=item["name"])
-                actor.parent = self
-                actor.from_config_dict(item["options"])
-                if isinstance(actor, ActorHandler) and ("actors" in item):
-                    opts = {}
-                    opts["actors"] = item["actors"]
-                    actor.from_config_dict(opts)
-                self.actors.append(actor)
-            d.pop("actors", None)
-        super(ActorHandler, self).from_config_dict(d)
+            l = d["actors"]
+            for e in l:
+                if u"type" in e:
+                    typestr = e[u"type"]
+                else:
+                    typestr = e["type"]
+                result.actors.append(classes.get_dict_handler(typestr)(e))
+        return result
 
     @property
     def actors(self):
@@ -663,9 +662,7 @@ class Flow(ActorHandler, StorageHandler):
         """
         with open(fname) as f:
             content = f.readlines()
-        result = Flow()
-        result.json = ''.join(content)
-        return result
+        return Flow.from_json(''.join(content))
 
     @classmethod
     def save(cls, flow, fname):
@@ -681,7 +678,7 @@ class Flow(ActorHandler, StorageHandler):
         result = None
         try:
             f = open(fname, 'w')
-            f.write(flow.json)
+            f.write(flow.to_json())
             f.close()
         except Exception, e:
             result = str(e)
