@@ -1408,7 +1408,7 @@ class Convert(Transformer):
         :return: None if successful, otherwise error message
         :rtype: str
         """
-        conv = self.config["setup"].shallow_copy()
+        conv = self.config["setup"]
         conv.input = self._input.payload
         result = conv.convert()
         if result is None:
@@ -1493,8 +1493,8 @@ class AttributeSelection(Transformer):
         :rtype: str
         """
         data = self.input.payload
-        search = self.config["search"].shallow_copy()
-        evl = self.config["eval"].shallow_copy()
+        search = self.config["search"]
+        evl = self.config["eval"]
         asel = attsel.AttributeSelection()
         asel.search(search)
         asel.evaluator(evl)

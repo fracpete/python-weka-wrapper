@@ -215,6 +215,8 @@ class Configurable(object):
         for k in d.keys():
             if k in self.config:
                 self.config[k] = self.from_config(k, d[k])
+            elif k == "class":
+                self = self.from_config(k, d[k])
             d.pop(k, None)
 
     @property
@@ -234,16 +236,6 @@ class Configurable(object):
         :type s: str
         """
         self.from_config_dict(json.loads(s))
-
-    def shallow_copy(self):
-        """
-        Returns a shallow copy of itself.
-        :return: the copy
-        :rtype: object
-        """
-        result = self.__class__()
-        result.json = self.json
-        return result
 
     def new_logger(self):
         """
