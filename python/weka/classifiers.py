@@ -170,6 +170,7 @@ class SingleClassifierEnhancer(Classifier):
     def classifier(self):
         """
         Returns the base classifier.
+        ;return: the base classifier
         :rtype: Classifier
         """
         return Classifier(jobject=javabridge.call(self.jobject, "getClassifier", "()Lweka/classifiers/Classifier;"))
@@ -179,6 +180,7 @@ class SingleClassifierEnhancer(Classifier):
         """
         Sets the base classifier.
         :param classifier: the base classifier to use
+        :type classifier: Classifier
         """
         javabridge.call(self.jobject, "setClassifier", "(Lweka/classifiers/Classifier;)V", classifier.jobject)
 
