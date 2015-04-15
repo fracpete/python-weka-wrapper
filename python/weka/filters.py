@@ -26,6 +26,9 @@ from weka.core.converters import Loader
 from weka.core.converters import Saver
 from weka.core.dataset import Instances
 from weka.core.dataset import Instance
+from weka.core.stemmers import Stemmer
+from weka.core.stopwords import Stopwords
+from weka.core.tokenizers import Tokenizer
 
 # logging setup
 logger = logging.getLogger("weka.filters")
@@ -193,6 +196,86 @@ class MultiFilter(Filter):
         for fltr in filters:
             obj.append(fltr.jobject)
         javabridge.call(self.jobject, "setFilters", "([Lweka/filters/Filter;)V", obj)
+
+
+class StringToWordVector(Filter):
+    """
+    Wrapper class for weka.filters.unsupervised.attribute.StringToWordVector.
+    """
+
+    def __init__(self, jobject=None, options=None):
+        """
+        Initializes the StringToWordVector instance using either creating new instance or using the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: list of commandline options
+        :type options: list
+        """
+        if jobject is None:
+            classname = "weka.filters.unsupervised.attribute.StringToWordVector"
+            jobject = StringToWordVector.new_instance(classname)
+        self.enforce_type(jobject, "weka.filters.unsupervised.attribute.StringToWordVector")
+        super(StringToWordVector, self).__init__(jobject=jobject, options=options)
+
+    @property
+    def stemmer(self):
+        """
+        Returns the stemmer.
+        :return: the stemmer
+        :rtype: Stemmer
+        """
+        return Stemmer(
+            jobject=javabridge.call(self.jobject, "getStemmer", "()Lweka/core/stemmers/Stemmer;"))
+
+    @stemmer.setter
+    def stemmer(self, stemmer):
+        """
+        Sets the stemmer.
+        :param stemmer: the stemmer to use
+        :type stemmer: Stemmer
+        """
+        javabridge.call(
+            self.jobject, "setStemmer", "(Lweka/core/stemmers/Stemmer;)V", stemmer.jobject)
+
+    @property
+    def stopwords(self):
+        """
+        Returns the stopwords handler.
+        :return: the stopwords handler
+        :rtype: Stopwords
+        """
+        return Stopwords(
+            jobject=javabridge.call(self.jobject, "getStopwordsHandler", "()Lweka/core/stopwords/StopwordsHandler;"))
+
+    @stopwords.setter
+    def stopwords(self, stopwords):
+        """
+        Sets the stopwords handler.
+        :param stopwords: the stopwords handler to use
+        :type stopwords: Stopwords
+        """
+        javabridge.call(
+            self.jobject, "setStopwordsHandler", "(Lweka/core/stopwords/StopwordsHandler;)V", stopwords.jobject)
+
+    @property
+    def tokenizer(self):
+        """
+        Returns the tokenizer.
+        :return: the tokenizer
+        :rtype: Tokenizer
+        """
+        return Tokenizer(
+            jobject=javabridge.call(self.jobject, "getTokenizer", "()Lweka/core/tokenizers/Tokenizer;"))
+
+    @tokenizer.setter
+    def tokenizer(self, tokenizer):
+        """
+        Sets the tokenizer.
+        :param tokenizer: the tokenizer to use
+        :type tokenizer: Tokenizer
+        """
+        javabridge.call(
+            self.jobject, "setTokenizer", "(Lweka/core/tokenizers/Tokenizer;)V", tokenizer.jobject)
 
 
 def main():

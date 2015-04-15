@@ -27,6 +27,10 @@ Changelog
 - added `is_serializable` property to `JavaObject` class
 - added `has_class` convenience property to `Instance` class
 - added `__repr__` method to `JavaObject` classes (simply calls `toString()` method)
+- added `Stemmer` class in module `weka.core.stemmers`
+- added `Stopwords` class in module `weka.core.stopwords`
+- added `Tokenizer` class in module `weka.core.tokenizers`
+- added `StringToWordVector` filter class in module `weka.filters`
 - ...
 
 
