@@ -16,6 +16,7 @@
 
 
 from weka.flow.base import Configurable
+import weka.core.classes as classes
 
 
 class Conversion(Configurable):
@@ -26,12 +27,20 @@ class Conversion(Configurable):
     def __init__(self, config=None):
         """
         Initializes the conversion.
-        :param config: list of options to use
-        :type config: list
+        :param config: dictionary of options to use
+        :type config: dict
         """
         super(Conversion, self).__init__(config=config)
         self._input = None
         self._output = None
+
+    def __str__(self):
+        """
+        Returns a short representation of the actor's setup.
+        :return: the setup
+        :rtype: str
+        """
+        return classes.get_classname(self) + ": " + str(self._config)
 
     def check_input(self, obj):
         """
@@ -83,6 +92,14 @@ class PassThrough(Conversion):
     Dummy conversion, just passes through the data.
     """
 
+    def __init__(self, config=None):
+        """
+        Initializes the conversion.
+        :param config: dictionary of options to use
+        :type config: dict
+        """
+        super(PassThrough, self).__init__(config=config)
+
     def description(self):
         """
         Returns the description for the conversion.
@@ -98,4 +115,95 @@ class PassThrough(Conversion):
         :rtype: str
         """
         self._output = self._input
+        return None
+
+
+class AnyToCommandline(Conversion):
+    """
+    Generates a commandline string, e.g., from a classifier.
+    """
+
+    def __init__(self, config=None):
+        """
+        Initializes the conversion.
+        :param config: dictionary of options to use
+        :type config: dict
+        """
+        super(AnyToCommandline, self).__init__(config=config)
+
+    def description(self):
+        """
+        Returns the description for the conversion.
+        :return: the description
+        :rtype: str
+        """
+        return "Generates a commandline string, e.g., from a classifier."
+
+    def convert(self):
+        """
+        Performs the actual conversion.
+        :return: None if successful, otherwise errors message
+        :rtype: str
+        """
+        self._output = classes.to_commandline(self._input)
+        return None
+
+
+class CommandlineToAny(Conversion):
+    """
+    Generates an object from a commandline string, e.g., from a classifier setup.
+    """
+
+    def __init__(self, config=None):
+        """
+        Initializes the conversion.
+        :param config: dictionary of options to use
+        :type config: dict
+        """
+        super(CommandlineToAny, self).__init__(config=config)
+
+    def description(self):
+        """
+        Returns the description for the conversion.
+        :return: the description
+        :rtype: str
+        """
+        return "Generates an object from a commandline string, e.g., from a classifier setup."
+
+    def fix_config(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(CommandlineToAny, self).fix_config(options)
+
+        opt = "wrapper"
+        if opt not in options:
+            options[opt] = "weka.core.classes.OptionHandler"
+        if opt not in self.help:
+            self.help[opt] = "The name of the wrapper class to use (string)."
+
+        return options
+
+    def check_input(self, obj):
+        """
+        Performs checks on the input object. Raises an exception if unsupported.
+        :param obj: the object to check
+        :type obj: object
+        """
+        if isinstance(obj, str):
+            return
+        raise Exception("Unsupported class: " + self._input.__class__.__name__)
+
+    def convert(self):
+        """
+        Performs the actual conversion.
+        :return: None if successful, otherwise errors message
+        :rtype: str
+        """
+        cname = str(self.config["wrapper"])
+        self._output = classes.from_commandline(self._input, classname=cname)
         return None

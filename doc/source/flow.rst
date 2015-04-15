@@ -3,7 +3,7 @@ Flow
 
 The flow components of *python-weka-wrapper* are not related to Weka's KnowledgeFlow. Instead, they were
 inspired by the `ADAMS workflow engine <https://adams.cms.waikato.ac.nz/>`_. It is a very simple workflow,
-aimed at automating tasks and being easy to extends as well. Instead of linking operators with explicit
+aimed at automating tasks and easy to extend as well. Instead of linking operators with explicit
 connections, this flow uses a tree structure for implicitly defining how the data is processed.
 
 
@@ -15,16 +15,17 @@ but there are four different kinds of actors present:
 
  * **source** actors generate data, but don't consume any
  * **transformer** actors consume and generate data, similar to a filter
- * **sink** actors only consume data, e.g., displaying data
- * **control** actors define how the data is passed around in a flow
+ * **sink** actors only consume data, e.g., displaying data or writing to file
+ * **control** actors define how the data is passed around in a flow, e.g., branching
 
 Data itself is being passed around in *Token* containers.
 
 Due to the limitation of the tree structure of providing only 1-to-n connections, objects can be stored
-internally in a flow using a simple dictionary. Special actors store, retrieve, update and delete these
-objects.
+internally in a flow using a simple dictionary (*internal storage*). Special actors store, retrieve,
+update and delete these objects.
 
-For finding out more about a specific actor, you use one of the following actor methods:
+For finding out more about a specific actor, and what parameters it offers (via the `config` dictionary
+property), you use one of the following actor methods:
 
  * `print_help()` -- outputs a description of actor and its options on stdout
  * `generate_help()` -- generates the help string output by `print_help()`
@@ -41,10 +42,10 @@ Life cycle
 
 The typical life-cycle of a flow (actually any actor) can be described through the following method calls:
 
- # **setup()** configures and checks the flow (outputs error message if failed, None otherwise)
- # **execute()** performs the execution of actors (outputs error message if failed, None otherwise)
- # **wrapup()** finishes up the execution
- # **cleanup()** destructive, frees up memory
+ #. **setup()** configures and checks the flow (outputs error message if failed, None otherwise)
+ #. **execute()** performs the execution of actors (outputs error message if failed, None otherwise)
+ #. **wrapup()** finishes up the execution
+ #. **cleanup()** destructive, frees up memory
 
 
 Sources
@@ -60,6 +61,7 @@ The following *source* actors are available:
  * **ListFiles** lists files/directories
  * **LoadDatabase** loads data from a database using an SQL query
  * **Start** dummy source that just triggers the execution of other actors following
+ * **StringConstants** simply outputs a list of predefined strings, one by one
 
 
 Transformers
@@ -67,7 +69,7 @@ Transformers
 
 The following *transformers* are available:
 
- * **AttributeSelection** performs attribute selection on a dataset
+ * **AttributeSelection** performs attribute selection on a dataset and outputs an `AttributeSelectionContainer`
  * **ClassSelector** sets/unsets the class attribute of a dataset
  * **Convert** applies simple conversion schemes to the data passing through
  * **Copy** creates a deep copy of serializable Java objects
@@ -81,12 +83,12 @@ The following *transformers* are available:
  * **LoadDataset** loads the data stored in the file received as input, either using automatic
    determined loader or user-specified one
  * **MathExpression** computes a numeric value from a expression and numeric input
- * **ModelReader** reads classifier/clusterer models from disk
+ * **ModelReader** reads classifier/clusterer models from disk and forwards a `ModelContainer`
  * **PassThrough** is a dummy that just passes through the tokens
  * **Predict** applies classifier/clusterer model (serialized file or from storage) to incoming Instance objects
  * **RenameRelation** updates the relation name of Instance/Instances objects
  * **SetStorageValue** stores the payload of the current token in internal storage
- * **Train** builds a classifier/clusterer/associator and passes on a ModelContainer
+ * **Train** builds a classifier/clusterer/associator and passes on a `ModelContainer`
  * **UpdateStorageValue** applies an expression to update an internal storage value, e.g.
    incrementing a counter
 
@@ -129,6 +131,8 @@ Conversions
 
 The following *conversion* schemes can be used in conjunction with the *Convert* transformer:
 
+ * **AnyToCommandline** generates a command-line string from an object, e.g., a classifier
+ * **CommandlineToAny** generates an object from a command-line string, e.g., a classifier setup
  * **PassThrough** is a dummy conversion that just passes through the data
 
 

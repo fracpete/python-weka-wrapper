@@ -667,3 +667,64 @@ class CombineStorage(Source):
         expanded = self.storagehandler.expand(formatstr)
         self._output.append(Token(expanded))
         return None
+
+
+class StringConstants(Source):
+    """
+    Outputs a fixed list of strings.
+    """
+
+    def __init__(self, name=None, config=None):
+        """
+        Initializes the transformer.
+        :param name: the name of the transformer
+        :type name: str
+        :param config: the dictionary with the options (str -> object).
+        :type config: dict
+        """
+        super(StringConstants, self).__init__(name=name, config=config)
+
+    def description(self):
+        """
+        Returns a description of the actor.
+        :return: the description
+        :rtype: str
+        """
+        return "Outputs a fixed list of strings."
+
+    @property
+    def quickinfo(self):
+        """
+        Returns a short string describing some of the options of the actor.
+        :return: the info, None if not available
+        :rtype: str
+        """
+        return "strings: " + str(len(self.config["strings"]))
+
+    def fix_config(self, options):
+        """
+        Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+        :param options: the options to fix
+        :type options: dict
+        :return: the (potentially) fixed options
+        :rtype: dict
+        """
+        options = super(StringConstants, self).fix_config(options)
+
+        opt = "strings"
+        if opt not in options:
+            options[opt] = []
+        if opt not in self.help:
+            self.help[opt] = "The strings to output (list of string)."
+
+        return options
+
+    def do_execute(self):
+        """
+        The actual execution of the actor.
+        :return: None if successful, otherwise error message
+        :rtype: str
+        """
+        for s in self.resolve_option("strings"):
+            self._output.append(Token(s))
+        return None
