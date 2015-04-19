@@ -1222,6 +1222,21 @@ class Tags(JavaObject):
             result += str(self.array[i])
         return result
 
+    def find(self, name):
+        """
+        Returns the Tag that matches the name.
+        :param name: the string representation of the tag
+        :type name: str
+        :return: the tag, None if not found
+        :rtype: Tag
+        """
+        result = None
+        for t in self.array:
+            if str(t) == name:
+                result = t
+                break
+        return result
+
     @classmethod
     def get_tags(cls, classname, field):
         """

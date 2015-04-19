@@ -165,10 +165,12 @@ class TestClasses(weka_test.WekaTest):
         tags = classes.Tags.get_tags("weka.classifiers.functions.SMO", "TAGS_FILTER")
         self.assertEqual(3, len(tags), "Number of tags differs!")
         self.assertEqual("0|1|2", str(tags), msg="String differs")
+        self.assertIsNotNone(tags.find("2"), msg="Should have found tag")
+        self.assertIsNone(tags.find("blah"), msg="Should not have found tag")
 
     def test_selectedtag(self):
         """
-        Tests the SelectedTag  class.
+        Tests the SelectedTag class.
         """
         tags = classes.Tags(jobject=javabridge.get_static_field("Lweka/classifiers/functions/SMO;", "TAGS_FILTER", "[Lweka/core/Tag;"))
         stag = classes.SelectedTag(tag_id=1, tags=tags)
