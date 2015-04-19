@@ -159,8 +159,10 @@ class TestClasses(weka_test.WekaTest):
         tags = classes.Tags(tags=[tag1, tag2, tag3])
         self.assertEqual(3, len(tags), "Number of tags differs!")
         self.assertEqual("TAG1|TAG2|TAG3", str(tags), msg="String differs")
-        smo = classes.JavaObject(classes.JavaObject.new_instance(classname="weka.classifiers.functions.SMO"))
         tags = classes.Tags(jobject=javabridge.get_static_field("Lweka/classifiers/functions/SMO;", "TAGS_FILTER", "[Lweka/core/Tag;"))
+        self.assertEqual(3, len(tags), "Number of tags differs!")
+        self.assertEqual("0|1|2", str(tags), msg="String differs")
+        tags = classes.Tags.get_tags("weka.classifiers.functions.SMO", "TAGS_FILTER")
         self.assertEqual(3, len(tags), "Number of tags differs!")
         self.assertEqual("0|1|2", str(tags), msg="String differs")
 

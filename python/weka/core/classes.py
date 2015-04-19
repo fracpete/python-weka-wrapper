@@ -1222,6 +1222,21 @@ class Tags(JavaObject):
             result += str(self.array[i])
         return result
 
+    @classmethod
+    def get_tags(cls, classname, field):
+        """
+        Instantiates the Tag array located in the specified class with the given field name.
+        Example: tag_array("weka.classifiers.functions.SMO", "TAGS_FILTER")
+        :param classname: the classname in which the tags reside
+        :type classname: str
+        :param field: the field name of the Tag array
+        :type field: str
+        :return: the Tags objects
+        :rtype: Tags
+        """
+        classname = "L" + classname.replace(".", "/") + ";"
+        return Tags(jobject=javabridge.get_static_field(classname, field, "[Lweka/core/Tag;"))
+
 
 class SelectedTag(JavaObject):
     """

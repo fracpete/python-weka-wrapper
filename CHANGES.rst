@@ -4,6 +4,7 @@ Changelog
 0.3.1 (????-??-??)
 ------------------
 
+- added `get_tags` class method to `Tags` method for easier instantiation of Tag arrays
 - ...
 
 
