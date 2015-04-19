@@ -1171,7 +1171,7 @@ class Tags(JavaObject):
         :param tags: the list of Tag objects to use
         :type tags: list
         """
-        if not tags is None:
+        if tags is not None:
             jarray = JavaArray(JavaArray.new_instance("weka.core.Tag", len(tags)))
             for i in range(len(tags)):
                 jarray[i] = tags[i]
