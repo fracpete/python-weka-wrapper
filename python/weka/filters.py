@@ -291,26 +291,27 @@ def main():
     parser.add_argument("-o", metavar="output1", dest="output1", required=True, help="output file 1")
     parser.add_argument("-r", metavar="input2", dest="input2", help="input file 2")
     parser.add_argument("-s", metavar="output2", dest="output2", help="output file 2")
-    parser.add_argument("-c", metavar="classindex", default="-1", dest="classindex", help="1-based class attribute index")
+    parser.add_argument("-c", metavar="classindex", default="-1", dest="classindex",
+                        help="1-based class attribute index")
     parser.add_argument("filter", help="filter classname, e.g., weka.filters.AllFilter")
     parser.add_argument("option", nargs=argparse.REMAINDER, help="additional filter options")
     parsed = parser.parse_args()
-    if parsed.input2 is None and not parsed.output2 is None:
+    if parsed.input2 is None and parsed.output2 is not None:
         raise Exception("No second input file provided ('-r ...')!")
 
     jars = []
-    if not parsed.classpath is None:
+    if parsed.classpath is not None:
         jars = parsed.classpath.split(os.pathsep)
     params = []
-    if not parsed.input1 is None:
+    if parsed.input1 is not None:
         params.extend(["-i", parsed.input1])
-    if not parsed.output1 is None:
+    if parsed.output1 is not None:
         params.extend(["-o", parsed.output1])
-    if not parsed.input2 is None:
+    if parsed.input2 is not None:
         params.extend(["-r", parsed.input2])
-    if not parsed.output2 is None:
+    if parsed.output2 is not None:
         params.extend(["-s", parsed.output2])
-    if not parsed.classindex is None:
+    if parsed.classindex is not None:
         params.extend(["-c", parsed.classindex])
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
@@ -333,7 +334,7 @@ def main():
         out1 = flter.filter(in1)
         saver = Saver(classname="weka.core.converters.ArffSaver")
         saver.save_file(out1, parsed.output1)
-        if not parsed.input2 is None:
+        if parsed.input2 is not None:
             in2 = loader.load_file(parsed.input2)
             in2.class_index = int(cls)
             out2 = flter.filter(in2)

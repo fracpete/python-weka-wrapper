@@ -304,18 +304,18 @@ def main():
     parser.add_argument("option", nargs=argparse.REMAINDER, help="additional evaluator options")
     parsed = parser.parse_args()
     jars = []
-    if not parsed.classpath is None:
+    if parsed.classpath is not None:
         jars = parsed.classpath.split(os.pathsep)
     params = []
-    if not parsed.input is None:
+    if parsed.input is not None:
         params.extend(["-i", parsed.input])
-    if not parsed.classindex is None:
+    if parsed.classindex is not None:
         params.extend(["-c", parsed.classindex])
-    if not parsed.search is None:
+    if parsed.search is not None:
         params.extend(["-s", parsed.search])
-    if not parsed.numfolds is None:
+    if parsed.numfolds is not None:
         params.extend(["-x", parsed.numfolds])
-    if not parsed.seed is None:
+    if parsed.seed is not None:
         params.extend(["-n", parsed.seed])
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)

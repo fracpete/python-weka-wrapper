@@ -174,11 +174,12 @@ def main():
         description='Executes a data generator from the command-line. Calls JVM start/stop automatically.')
     parser.add_argument("-j", metavar="classpath", dest="classpath", help="additional classpath, jars/directories")
     parser.add_argument("-X", metavar="heap", dest="heap", help="max heap size for jvm, e.g., 512m")
-    parser.add_argument("datagenerator", help="data generator classname, e.g., weka.datagenerators.classifiers.classification.LED24")
+    parser.add_argument("datagenerator", help="data generator classname, e.g., "
+                                              + "weka.datagenerators.classifiers.classification.LED24")
     parser.add_argument("option", nargs=argparse.REMAINDER, help="additional data generator options")
     parsed = parser.parse_args()
     jars = []
-    if not parsed.classpath is None:
+    if parsed.classpath is not None:
         jars = parsed.classpath.split(os.pathsep)
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)

@@ -377,26 +377,26 @@ def main():
     parser.add_argument("option", nargs=argparse.REMAINDER, help="additional clusterer options")
     parsed = parser.parse_args()
     jars = []
-    if not parsed.classpath is None:
+    if parsed.classpath is not None:
         jars = parsed.classpath.split(os.pathsep)
     params = []
-    if not parsed.train is None:
+    if parsed.train is not None:
         params.extend(["-t", parsed.train])
-    if not parsed.test is None:
+    if parsed.test is not None:
         params.extend(["-T", parsed.test])
-    if not parsed.outmodel is None:
+    if parsed.outmodel is not None:
         params.extend(["-d", parsed.outmodel])
-    if not parsed.inmodel is None:
+    if parsed.inmodel is not None:
         params.extend(["-l", parsed.inmodel])
-    if not parsed.attributes is None:
+    if parsed.attributes is not None:
         params.extend(["-p", parsed.attributes])
-    if not parsed.numfolds is None:
+    if parsed.numfolds is not None:
         params.extend(["-x", parsed.numfolds])
-    if not parsed.seed is None:
+    if parsed.seed is not None:
         params.extend(["-s", parsed.seed])
-    if not parsed.classindex is None:
+    if parsed.classindex is not None:
         params.extend(["-c", parsed.classindex])
-    if not parsed.graph is None:
+    if parsed.graph is not None:
         params.extend(["-g", parsed.graph])
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)

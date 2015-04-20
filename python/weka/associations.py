@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # associations.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import logging
@@ -95,7 +95,7 @@ def main():
     parser.add_argument("option", nargs=argparse.REMAINDER, help="additional associator options")
     parsed = parser.parse_args()
     jars = []
-    if not parsed.classpath is None:
+    if parsed.classpath is not None:
         jars = parsed.classpath.split(os.pathsep)
 
     jvm.start(jars, max_heap_size=parsed.heap, packages=True)
