@@ -369,6 +369,42 @@ class TestClassifiers(weka_test.WekaTest):
         cls = classifiers.Classifier(classname="weka.classifiers.trees.J48")
         gs.classifier = cls
 
+    def test_multisearch(self):
+        """
+        Tests the MultiSearch class.
+        NB: multisearch-weka-package must be installed (https://github.com/fracpete/multisearch-weka-package).
+        """
+        ms = classifiers.MultiSearch()
+
+        mparam = classes.MathParameter()
+        mparam.prop = "classifier.kernel.gamma"
+        mparam.minimum = -3.0
+        mparam.maximum = 3.0
+        mparam.step = 1.0
+        mparam.base = 10.0
+        mparam.expression = "pow(BASE,I)"
+        lparam = classes.ListParameter()
+        lparam.prop = "classifier.C"
+        lparam.values = ["-2.0", "-1.0", "0.0", "1.0", "2.0"]
+        ms.parameters = [mparam, lparam]
+        self.assertEqual(str([mparam, lparam]), str(ms.parameters), msg="parameters differ")
+
+        cls = classifiers.Classifier(
+            classname="weka.classifiers.functions.SMOreg",
+            options=["-K", "weka.classifiers.functions.supportVector.RBFKernel"])
+        ms.classifier = cls
+        self.assertEqual(cls.to_commandline(), ms.classifier.to_commandline(), msg="classifiers differ")
+
+        cls = classifiers.Classifier(classname="weka.classifiers.functions.LinearRegression")
+        ms.classifier = cls
+        ms.evaluation = ms.tags_evaluation.find("RMSE")
+        self.assertEqual("RMSE", str(ms.evaluation), "evaluation differs: " + str(ms.evaluation))
+
+        ms.evaluation = "ACC"
+        self.assertEqual("ACC", str(ms.evaluation), "evaluation differs: " + str(ms.evaluation))
+        cls = classifiers.Classifier(classname="weka.classifiers.trees.J48")
+        ms.classifier = cls
+
 
 def suite():
     """
@@ -380,6 +416,6 @@ def suite():
 
 
 if __name__ == '__main__':
-    jvm.start()
+    jvm.start(packages=True)   # necessary for multisearch
     unittest.TextTestRunner().run(suite())
     jvm.stop()

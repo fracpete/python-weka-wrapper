@@ -8,6 +8,8 @@ Changelog
 - added `find` method to `Tags` class to locate `Tag` object that matches the string
 - fixed `__getitem__` and `__setitem__` methods of the `Tags` class
 - added `GridSearch` meta-classifier with convenience properties to module `weka.classifiers`
+- added `SetupGenerator` and various parameter classes to `weka.core.classes`
+- added `MultiSearch` meta-classifier with convenience properties to module `weka.classifiers`
 - ...
 
 

@@ -1374,3 +1374,268 @@ def from_commandline(cmdline, classname=None):
     else:
         c = get_class(classname)
         return c(jobject=handler.jobject)
+
+
+class AbstractParameter(OptionHandler):
+    """
+    Ancestor for all parameter classes used by SetupGenerator and MultiSearch.
+    """
+
+    def __init__(self, classname=None, jobject=None, options=None):
+        """
+        Initializes the specified parameter using either the classname or the supplied JB_Object.
+        :param classname: the classname of the search parameter
+        :type classname: str
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        if jobject is None:
+            jobject = AbstractParameter.new_instance(classname)
+        self.enforce_type(jobject, "weka.core.setupgenerator.AbstractParameter")
+        super(AbstractParameter, self).__init__(jobject=jobject, options=options)
+
+    @property
+    def prop(self):
+        """
+        Returns the currently set property to apply the parameter to.
+        :return: the property
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "getProperty", "()Ljava/lang/String;")
+
+    @prop.setter
+    def prop(self, s):
+        """
+        Sets the property to apply the parameter to.
+        :param s: the property
+        :type s: str
+        """
+        javabridge.call(self.jobject, "setProperty", "(Ljava/lang/String;)V", s)
+
+
+class ListParameter(AbstractParameter):
+    """
+    Parameter using a predefined list of values, used by SetupGenerator and MultiSearch.
+    """
+
+    def __init__(self, jobject=None, options=None):
+        """
+        Initializes the specified parameter using either its classname or the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        classname = "weka.core.setupgenerator.ListParameter"
+        if jobject is None:
+            jobject = ListParameter.new_instance(classname)
+        self.enforce_type(jobject, "weka.core.setupgenerator.ListParameter")
+        super(ListParameter, self).__init__(jobject=jobject, options=options)
+
+    @property
+    def values(self):
+        """
+        Returns the currently set values.
+        :return: the list of values (strings)
+        :rtype: list
+        """
+        return split_options(javabridge.call(self.jobject, "getList", "()Ljava/lang/String;"))
+
+    @values.setter
+    def values(self, l):
+        """
+        Sets the list of values to apply.
+        :param l: the list of values (strings)
+        :type l: list
+        """
+        javabridge.call(self.jobject, "setList", "(Ljava/lang/String;)V", join_options(l))
+
+
+class MathParameter(AbstractParameter):
+    """
+    Parameter using a math expression for generating values, used by SetupGenerator and MultiSearch.
+    """
+
+    def __init__(self, jobject=None, options=None):
+        """
+        Initializes the specified parameter using either its classname or the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        classname = "weka.core.setupgenerator.MathParameter"
+        if jobject is None:
+            jobject = ListParameter.new_instance(classname)
+        self.enforce_type(jobject, "weka.core.setupgenerator.MathParameter")
+        super(MathParameter, self).__init__(jobject=jobject, options=options)
+
+    @property
+    def minimum(self):
+        """
+        Returns the currently set minimum value.
+        :return: the minimum
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "getMin", "()D")
+
+    @minimum.setter
+    def minimum(self, m):
+        """
+        Sets the new minimum value.
+        :param m: the minimum
+        :type m: float
+        """
+        javabridge.call(self.jobject, "setMin", "(D)V", m)
+
+    @property
+    def maximum(self):
+        """
+        Returns the currently set maximum value.
+        :return: the maximum
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "getMax", "()D")
+
+    @maximum.setter
+    def maximum(self, m):
+        """
+        Sets the new maximum value.
+        :param m: the maximum
+        :type m: float
+        """
+        javabridge.call(self.jobject, "setMax", "(D)V", m)
+
+    @property
+    def step(self):
+        """
+        Returns the currently set step value.
+        :return: the step
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "getStep", "()D")
+
+    @step.setter
+    def step(self, s):
+        """
+        Sets the new step value.
+        :param s: the step
+        :type s: float
+        """
+        javabridge.call(self.jobject, "setStep", "(D)V", s)
+
+    @property
+    def base(self):
+        """
+        Returns the currently set base value.
+        :return: the base
+        :rtype: float
+        """
+        return javabridge.call(self.jobject, "getBase", "()D")
+
+    @base.setter
+    def base(self, b):
+        """
+        Sets the new base value.
+        :param b: the base
+        :type b: float
+        """
+        javabridge.call(self.jobject, "setBase", "(D)V", b)
+
+    @property
+    def expression(self):
+        """
+        Returns the currently set expression.
+        :return: the expression
+        :rtype: str
+        """
+        return javabridge.call(self.jobject, "getExpression", "()Ljava/lang/String;")
+
+    @expression.setter
+    def expression(self, e):
+        """
+        Sets the new expression.
+        :param e: the expression
+        :type e: str
+        """
+        javabridge.call(self.jobject, "setExpression", "(Ljava/lang/String;)V", e)
+
+
+class SetupGenerator(OptionHandler):
+    """
+    Allows generation of large number of setups using parameter setups.
+    """
+
+    def __init__(self, jobject=None, options=None):
+        """
+        Initializes the specified classifier using its classname or the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        classname = "weka.core.SetupGenerator"
+        if jobject is None:
+            jobject = OptionHandler.new_instance(classname)
+        else:
+            self.enforce_type(jobject, classname)
+        super(SetupGenerator, self).__init__(jobject=jobject, options=options)
+
+    @property
+    def base_object(self):
+        """
+        Returns the base object to apply the setups to.
+        :return: the base object
+        :rtype: JavaObject
+        """
+        return JavaObject(javabridge.call(self.jobject, "getBaseObject", "()Ljava/io/Serializable;"))
+
+    @base_object.setter
+    def base_object(self, obj):
+        """
+        Sets the base object to apply the setups to.
+        :param obj: the object to use (must be serializable!)
+        :type obj: JavaObject
+        """
+        if not obj.is_serializable:
+            raise Exception("Base object must be serializable: " + obj.classname)
+        javabridge.call(self.jobject, "setBaseObject", "(Ljava/io/Serializable;)V", obj.jobject)
+
+    @property
+    def parameters(self):
+        """
+        Returns the list of currently set search parameters.
+        :return: the list of AbstractSearchParameter objects
+        :rtype: list
+        """
+        array = JavaArray(javabridge.call(self.jobject, "getParameters", "()[Lweka/core/AbstractParameter;"))
+        result = []
+        for item in array:
+            result.append(AbstractParameter(jobject=item.jobject))
+        return result
+
+    @parameters.setter
+    def parameters(self, params):
+        """
+        Sets the list of search parameters to use.
+        :param params: list of AbstractSearchParameter objects
+        :type params: list
+        """
+        array = JavaArray.new_instance("weka.core.AbstractParameter", len(params))
+        for idx, obj in enumerate(params):
+            array[idx] = obj.jobject
+        javabridge.call(self.jobject, "setParameters", "([Lweka/core/AbstractParameter;)V", array)
+
+    def setups(self):
+        """
+        Generates and returns all the setups according to the parameter search space.
+        :return: the list of configured objects (of type JavaObject)
+        :rtype: list
+        """
+        result = []
+        enm = javabridge.get_enumeration_wrapper(javabridge.call(self.jobject, "setups", "()Ljava/util/Enumeration;"))
+        while enm.hasMoreElements:
+            result.append(JavaObject(enm.nextElement))
+        return result

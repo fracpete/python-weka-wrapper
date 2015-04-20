@@ -205,6 +205,29 @@ class TestClasses(weka_test.WekaTest):
         self.assertIsNotNone(cls)
         self.assertEqual("weka.classifiers.trees.J48", classes.get_classname(cls.jobject))
 
+    def test_setupgenerator(self):
+        """
+        Tests the SetupGenerator class and related classes.
+        """
+        mparam = classes.MathParameter()
+        mparam.prop = "classifier.kernel.gamma"
+        mparam.minimum = -3.0
+        mparam.maximum = 3.0
+        mparam.step = 1.0
+        mparam.base = 10.0
+        mparam.expression = "pow(BASE,I)"
+        self.assertEqual(
+            "weka.core.setupgenerator.MathParameter -property classifier.kernel.gamma -min -3.0 -max 3.0 -step 1.0 -base 10.0 -expression pow(BASE,I)",\
+            mparam.to_commandline(), msg="commandlines differ")
+
+        lparam = classes.ListParameter()
+        lparam.prop = "classifier.C"
+        lparam.values = ["-2.0", "-1.0", "0.0", "1.0", "2.0"]
+        self.assertEqual(
+            "weka.core.setupgenerator.ListParameter -property classifier.C -list \"-2.0 -1.0 0.0 1.0 2.0\"",
+            lparam.to_commandline(), msg="commandlines differ")
+
+
 
 def suite():
     """
@@ -216,6 +239,6 @@ def suite():
 
 
 if __name__ == '__main__':
-    jvm.start()
+    jvm.start(packages=True)   # necessary for setupgenerator
     unittest.TextTestRunner().run(suite())
     jvm.stop()

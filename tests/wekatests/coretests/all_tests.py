@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # all_tests.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm
@@ -51,6 +51,6 @@ def suite():
 
 
 if __name__ == '__main__':
-    jvm.start()
+    jvm.start(packages=True)
     unittest.TextTestRunner().run(suite())
     jvm.stop()

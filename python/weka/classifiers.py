@@ -23,7 +23,8 @@ import weka.core.jvm as jvm
 import weka.core.types as arrays
 import weka.core.classes as classes
 from numpy import *
-from weka.core.classes import JavaObject, join_options, OptionHandler, Random, SelectedTag, Tags, Tag
+from weka.core.classes import JavaObject, join_options, OptionHandler, Random, SelectedTag, Tags, Tag, JavaArray
+from weka.core.classes import AbstractParameter
 from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances, Instance, Attribute
 from weka.filters import Filter
@@ -237,7 +238,7 @@ class GridSearch(SingleClassifierEnhancer):
         """
         classname = "weka.classifiers.meta.GridSearch"
         if jobject is None:
-            jobject = Classifier.new_instance(classname)
+            jobject = GridSearch.new_instance(classname)
         else:
             self.enforce_type(jobject, classname)
         super(GridSearch, self).__init__(jobject=jobject, options=options)
@@ -251,7 +252,7 @@ class GridSearch(SingleClassifierEnhancer):
         :rtype: SelectedTag
         """
         return SelectedTag(
-            javabridge.call(self.jobject, "getEvaluation", "()Lweka/core/SelectedTag;", self.jobject))
+            javabridge.call(self.jobject, "getEvaluation", "()Lweka/core/SelectedTag;"))
 
     @evaluation.setter
     def evaluation(self, evl):
@@ -345,6 +346,87 @@ class GridSearch(SingleClassifierEnhancer):
             javabridge.call(self.jobject, "setYBase", "(D)V", d["base"])
         if "expression" in d:
             javabridge.call(self.jobject, "setYExpression", "(Ljava/lang/String;)V", d["expression"])
+
+    @property
+    def best(self):
+        """
+        Returns the best classifier setup found during the th search.
+        :return: the best classifier setup
+        :rtype: Classifier
+        """
+        return Classifier(jobject=javabridge.call(self.jobject, "getBestClassifier", "()Lweka/classifiers/Classifier;"))
+
+
+class MultiSearch(SingleClassifierEnhancer):
+    """
+    Wrapper class for the MultiSearch meta-classifier.
+    NB: 'multi-search-weka-package' must be installed (https://github.com/fracpete/multisearch-weka-package).
+    """
+
+    def __init__(self, jobject=None, options=None):
+        """
+        Initializes the specified classifier using its classname or the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        classname = "weka.classifiers.meta.MultiSearch"
+        if jobject is None:
+            jobject = MultiSearch.new_instance(classname)
+        else:
+            self.enforce_type(jobject, classname)
+        super(MultiSearch, self).__init__(jobject=jobject, options=options)
+        self.tags_evaluation = Tags.get_tags("weka.classifiers.meta.MultiSearch", "TAGS_EVALUATION")
+
+    @property
+    def evaluation(self):
+        """
+        Returns the currently set statistic used for evaluation.
+        :return: the statistic
+        :rtype: SelectedTag
+        """
+        return SelectedTag(
+            javabridge.call(self.jobject, "getEvaluation", "()Lweka/core/SelectedTag;"))
+
+    @evaluation.setter
+    def evaluation(self, evl):
+        """
+        Sets the statistic to use for evaluation.
+        :param evl: the statistic
+        :type evl: SelectedTag, Tag or str
+        """
+        if isinstance(evl, str):
+            evl = self.tags_evaluation.find(evl)
+        if isinstance(evl, Tag):
+            evl = SelectedTag(tag_id=evl.ident, tags=self.tags_evaluation)
+        javabridge.call(self.jobject, "setEvaluation", "(Lweka/core/SelectedTag;)V", evl.jobject)
+
+    @property
+    def parameters(self):
+        """
+        Returns the list of currently set search parameters.
+        :return: the list of AbstractSearchParameter objects
+        :rtype: list
+        """
+        array = JavaArray(
+            javabridge.call(self.jobject, "getSearchParameters", "()[Lweka/core/setupgenerator/AbstractParameter;"))
+        result = []
+        for item in array:
+            result.append(AbstractParameter(jobject=item.jobject))
+        return result
+
+    @parameters.setter
+    def parameters(self, params):
+        """
+        Sets the list of search parameters to use.
+        :param params: list of AbstractSearchParameter objects
+        :type params: list
+        """
+        array = JavaArray(JavaArray.new_instance("weka.core.setupgenerator.AbstractParameter", len(params)))
+        for idx, obj in enumerate(params):
+            array[idx] = obj.jobject
+        javabridge.call(self.jobject, "setSearchParameters", "([Lweka/core/setupgenerator/AbstractParameter;)V", array.jobject)
 
     @property
     def best(self):
