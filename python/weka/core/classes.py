@@ -1196,7 +1196,7 @@ class Tags(JavaObject):
         :return: the tag
         :rtype: Tag
         """
-        return Tag(self.array[item])
+        return Tag(self.array[item].jobject)
 
     def __setitem__(self, key, value):
         """
@@ -1233,7 +1233,7 @@ class Tags(JavaObject):
         result = None
         for t in self.array:
             if str(t) == name:
-                result = t
+                result = Tag(t.jobject)
                 break
         return result
 

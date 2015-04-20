@@ -6,6 +6,7 @@ Changelog
 
 - added `get_tags` class method to `Tags` method for easier instantiation of Tag arrays
 - added `find` method to `Tags` class to locate `Tag` object that matches the string
+- fixed `__getitem__` and `__setitem__` methods of the `Tags` class
 - ...
 
 
