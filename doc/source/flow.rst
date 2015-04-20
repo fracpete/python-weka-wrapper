@@ -145,6 +145,114 @@ Check out the examples available through the *python-weka-wrapper-examples* proj
 
 The example scripts are located in the `src/wekaexamples/flow` sub-directory.
 
+Below is a code snippet for building a flow that cross-validates a classifier on a dataset
+and outputs the evaluation summary and the ROC and PRC curves:
+
+.. code-block:: python
+
+    from weka.classifiers import Classifier
+    from weka.flow.control import Flow, Branch, Sequence
+    from weka.flow.source import FileSupplier
+    from weka.flow.transformer import LoadDataset, ClassSelector, CrossValidate, EvaluationSummary
+    from weka.flow.sink import Console, ClassifierErrors, ROC, PRC
+
+    flow = Flow(name="cross-validate classifier")
+
+    filesupplier = FileSupplier()
+    filesupplier.config["files"] = ["/some/where/iris.arff"]
+    flow.actors.append(filesupplier)
+
+    loaddataset = LoadDataset()
+    flow.actors.append(loaddataset)
+
+    select = ClassSelector()
+    select.config["index"] = "last"
+    flow.actors.append(select)
+
+    cv = CrossValidate()
+    cv.config["setup"] = Classifier(classname="weka.classifiers.trees.J48")
+    flow.actors.append(cv)
+
+    branch = Branch()
+    flow.actors.append(branch)
+
+    seqsum = Sequence()
+    seqsum.name = "summary"
+    branch.actors.append(seqsum)
+
+    summary = EvaluationSummary()
+    summary.config["title"] = "=== J48/iris ==="
+    summary.config["complexity"] = False
+    summary.config["matrix"] = True
+    seqsum.actors.append(summary)
+
+    console = Console()
+    seqsum.actors.append(console)
+
+    seqerr = Sequence()
+    seqerr.name = "errors"
+    branch.actors.append(seqerr)
+
+    errors = ClassifierErrors()
+    errors.config["wait"] = False
+    seqerr.actors.append(errors)
+
+    seqroc = Sequence()
+    seqroc.name = "roc"
+    branch.actors.append(seqroc)
+
+    roc = ROC()
+    roc.config["wait"] = False
+    roc.config["class_index"] = [0, 1, 2]
+    seqroc.actors.append(roc)
+
+    seqprc = Sequence()
+    seqprc.name = "prc"
+    branch.actors.append(seqprc)
+
+    prc = PRC()
+    prc.config["wait"] = True
+    prc.config["class_index"] = [0, 1, 2]
+    seqprc.actors.append(prc)
+
+    # run the flow
+    msg = flow.setup()
+    if msg is None:
+        msg = flow.execute()
+        if msg is not None:
+            print("Error executing flow:\n" + msg)
+    else:
+        print("Error setting up flow:\n" + msg)
+    flow.wrapup()
+    flow.cleanup()
+
+
+With the following command you can output the built flow tree:
+
+.. code-block:: python
+
+    print(flow.tree)
+
+The above example gets printed like this:
+
+.. code-block:: none
+
+    Flow 'cross-validate classifier'
+    |-FileSupplier [files: 1]
+    |-LoadDataset [incremental: False, custom: False, loader: weka.core.converters.ArffLoader]
+    |-ClassSelector [index: last]
+    |-CrossValidate [setup: weka.classifiers.trees.J48 -C 0.25 -M 2, folds: 10]
+    |-Branch
+    | |-Sequence 'summary'
+    | | |-EvaluationSummary [title: === J48/iris ===, complexity: False, matrix: True]
+    | | |-Console [prefix: '']
+    | |-Sequence 'errors'
+    | | |-ClassifierErrors [absolute: True, title: None, outfile: None, wait: False]
+    | |-Sequence 'roc'
+    | | |-ROC [classes: [0, 1, 2], title: None, outfile: None, wait: False]
+    | |-Sequence 'prc'
+    | | |-PRC [classes: [0, 1, 2], title: None, outfile: None, wait: True]
+
 
 Extending
 ---------
