@@ -1713,7 +1713,7 @@ def main():
     Use -h to see all options.
     """
     parser = argparse.ArgumentParser(
-        description='Performs classification/regression from the command-line. Calls JVM start/stop automatically.')
+        description='Performs option handling operations from the command-line. Calls JVM start/stop automatically.')
     parser.add_argument("-j", metavar="classpath", dest="classpath", help="additional classpath, jars/directories")
     parser.add_argument("-action", metavar="action", dest="action", required=True,
                         help="The action to perform on the options: join=create single string, "\
@@ -1724,20 +1724,31 @@ def main():
     if parsed.classpath is not None:
         jars = parsed.classpath.split(os.pathsep)
 
-    jvm.start(jars, max_heap_size=parsed.heap, packages=True)
+    jvm.start(jars, packages=True)
 
     try:
         if parsed.action == "join":
-            join_options(parsed.option)
-        elif parsed.action == "split":
-            pass
+            output = "\"" + backquote(join_options(parsed.option)) + "\""
+        elif parsed.action == "split" and len(parsed.option) == 1:
+            output = ""
+            opts = split_options(parsed.option[0])
+            for idx, opt in enumerate(opts):
+                if idx > 0:
+                    output += "\n"
+                output += "\"" + backquote(opt) + "\""
         elif parsed.action == "code":
-            pass
+            output = "options = [ \n"
+            for idx, opt in enumerate(parsed.option):
+                if idx > 0:
+                    if idx < len(parsed.option) - 1:
+                        output += ","
+                    output += " \n"
+                output += "    \"" + backquote(opt) + "\""
+            output += "]\n"
         else:
             raise Exception("Unsupported action: " + parsed.action)
-        if len(parsed.option) > 0:
-            classifier.options = parsed.option
-        print(Evaluation.evaluate_model(classifier, params))
+        if output is not None:
+            print(output)
     except Exception, e:
         print(e)
     finally:
