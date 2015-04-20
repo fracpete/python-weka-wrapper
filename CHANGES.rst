@@ -10,6 +10,7 @@ Changelog
 - added `GridSearch` meta-classifier with convenience properties to module `weka.classifiers`
 - added `SetupGenerator` and various parameter classes to `weka.core.classes`
 - added `MultiSearch` meta-classifier with convenience properties to module `weka.classifiers`
+- added `quote`/`unquote` and `backquote`/`unbackquote` methods to `weka.core.classes` module
 - ...
 
 

@@ -14,7 +14,9 @@
 # classes.py
 # Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
+import os
 import inspect
+import argparse
 import json
 import logging
 import re
@@ -23,6 +25,10 @@ import javabridge
 from javabridge import JWrapper, JClassWrapper
 from javabridge.jutil import JavaException
 from weka.core import types as arrays
+import weka.core.jvm as jvm
+
+# logging setup
+logger = logging.getLogger("weka.core.classes")
 
 
 def get_class(classname):
@@ -1341,6 +1347,66 @@ def split_options(cmdline):
             cmdline))
 
 
+def backquote(s):
+    """
+    Backquotes the string.
+    :param s: the string to process
+    :type s: str
+    :return: the backquoted string
+    :rtype: str
+    """
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "backQuoteChars", "(Ljava/lang/String;)Ljava/lang/String;", s)
+
+
+def backquote(s):
+    """
+    Backquotes the string.
+    :param s: the string to process
+    :type s: str
+    :return: the backquoted string
+    :rtype: str
+    """
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "backQuoteChars", "(Ljava/lang/String;)Ljava/lang/String;", s)
+
+
+def unbackquote(s):
+    """
+    Un-backquotes the string.
+    :param s: the string to process
+    :type s: str
+    :return: the un-backquoted string
+    :rtype: str
+    """
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "unbackQuoteChars", "(Ljava/lang/String;)Ljava/lang/String;", s)
+
+
+def quote(s):
+    """
+    Quotes the string if necessary.
+    :param s: the string to process
+    :type s: str
+    :return: the quoted string
+    :rtype: str
+    """
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "quote", "(Ljava/lang/String;)Ljava/lang/String;", s)
+
+
+def unquote(s):
+    """
+    Un-quotes the string.
+    :param s: the string to process
+    :type s: str
+    :return: the un-quoted string
+    :rtype: str
+    """
+    return javabridge.static_call(
+        "Lweka/core/Utils;", "unquote", "(Ljava/lang/String;)Ljava/lang/String;", s)
+
+
 def to_commandline(optionhandler):
     """
     Generates a commandline string from the OptionHandler instance.
@@ -1639,3 +1705,46 @@ class SetupGenerator(OptionHandler):
         while enm.hasMoreElements:
             result.append(JavaObject(enm.nextElement))
         return result
+
+
+def main():
+    """
+    Runs a classifier from the command-line. Calls JVM start/stop automatically.
+    Use -h to see all options.
+    """
+    parser = argparse.ArgumentParser(
+        description='Performs classification/regression from the command-line. Calls JVM start/stop automatically.')
+    parser.add_argument("-j", metavar="classpath", dest="classpath", help="additional classpath, jars/directories")
+    parser.add_argument("-action", metavar="action", dest="action", required=True,
+                        help="The action to perform on the options: join=create single string, "\
+                             "split=create array from quoted option, code=generate code from options")
+    parser.add_argument("option", nargs=argparse.REMAINDER, help="The option(s) to process")
+    parsed = parser.parse_args()
+    jars = []
+    if parsed.classpath is not None:
+        jars = parsed.classpath.split(os.pathsep)
+
+    jvm.start(jars, max_heap_size=parsed.heap, packages=True)
+
+    try:
+        if parsed.action == "join":
+            join_options(parsed.option)
+        elif parsed.action == "split":
+            pass
+        elif parsed.action == "code":
+            pass
+        else:
+            raise Exception("Unsupported action: " + parsed.action)
+        if len(parsed.option) > 0:
+            classifier.options = parsed.option
+        print(Evaluation.evaluate_model(classifier, params))
+    except Exception, e:
+        print(e)
+    finally:
+        jvm.stop()
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception, ex:
+        print(ex)

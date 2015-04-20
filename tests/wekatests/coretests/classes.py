@@ -227,6 +227,47 @@ class TestClasses(weka_test.WekaTest):
             "weka.core.setupgenerator.ListParameter -property classifier.C -list \"-2.0 -1.0 0.0 1.0 2.0\"",
             lparam.to_commandline(), msg="commandlines differ")
 
+    def test_split_options(self):
+        """
+        Tests the split_options method.
+        """
+        self.assertEqual(0, len(classes.split_options("")))
+        self.assertEqual(2, len(classes.split_options("-t /some/where/test.arff")))
+
+    def test_join_options(self):
+        """
+        Tests the join_options method.
+        """
+        self.assertEqual("", str(classes.join_options([])))
+        self.assertEqual("-t /some/where/test.arff", str(classes.join_options(["-t", "/some/where/test.arff"])))
+
+    def test_quote(self):
+        """
+        Tests the quote/unquote methods.
+        """
+        self.assertEqual("''", str(classes.quote("")))
+        self.assertEqual("'hello world'", str(classes.quote("hello world")))
+        self.assertEqual("", str(classes.unquote("''")))
+        self.assertEqual("hello world", str(classes.unquote("'hello world'")))
+
+    def test_backquote(self):
+        """
+        Tests the backquote/unbackquote methods.
+        """
+        self.assertEqual("\\n\\t", str(classes.backquote("\n\t")))
+        self.assertEqual("hello\\tworld", str(classes.backquote("hello\tworld")))
+        self.assertEqual("\t\n", str(classes.unbackquote("\\t\\n")))
+        self.assertEqual("hello\tworld\n", str(classes.unbackquote("hello\\tworld\\n")))
+
+    def test_from_and_to_commandline(self):
+        """
+        Tests the from_commandline and to_commandline methods.
+        """
+        cmdline = "weka.classifiers.trees.J48 -C 0.3 -M 4"
+        cls = classes.from_commandline(
+            cmdline=cmdline, classname="weka.classifiers.Classifier")
+        self.assertIsNotNone(cls)
+        self.assertEqual(cmdline, cls.to_commandline())
 
 
 def suite():
