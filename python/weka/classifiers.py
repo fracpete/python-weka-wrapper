@@ -23,9 +23,7 @@ import weka.core.jvm as jvm
 import weka.core.types as arrays
 import weka.core.classes as classes
 from numpy import *
-from weka.core.classes import JavaObject, join_options
-from weka.core.classes import OptionHandler
-from weka.core.classes import Random
+from weka.core.classes import JavaObject, join_options, OptionHandler, Random, SelectedTag, Tags, Tag
 from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances, Instance, Attribute
 from weka.filters import Filter
@@ -192,7 +190,7 @@ class FilteredClassifier(SingleClassifierEnhancer):
 
     def __init__(self, jobject=None, options=None):
         """
-        Initializes the specified classifier using either the classname or the supplied JB_Object.
+        Initializes the specified classifier using its classname or the supplied JB_Object.
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to set
@@ -222,6 +220,140 @@ class FilteredClassifier(SingleClassifierEnhancer):
         :type filtr: Filter
         """
         javabridge.call(self.jobject, "setFilter", "(Lweka/filters/Filter;)V", filtr.jobject)
+
+
+class GridSearch(SingleClassifierEnhancer):
+    """
+    Wrapper class for the GridSearch meta-classifier.
+    """
+
+    def __init__(self, jobject=None, options=None):
+        """
+        Initializes the specified classifier using its classname or the supplied JB_Object.
+        :param jobject: the JB_Object to use
+        :type jobject: JB_Object
+        :param options: the list of commandline options to set
+        :type options: list
+        """
+        classname = "weka.classifiers.meta.GridSearch"
+        if jobject is None:
+            jobject = Classifier.new_instance(classname)
+        else:
+            self.enforce_type(jobject, classname)
+        super(GridSearch, self).__init__(jobject=jobject, options=options)
+        self.tags_evaluation = Tags.get_tags("weka.classifiers.meta.GridSearch", "TAGS_EVALUATION")
+
+    @property
+    def evaluation(self):
+        """
+        Returns the currently set statistic used for evaluation.
+        :return: the statistic
+        :rtype: SelectedTag
+        """
+        return SelectedTag(
+            javabridge.call(self.jobject, "getEvaluation", "()Lweka/core/SelectedTag;", self.jobject))
+
+    @evaluation.setter
+    def evaluation(self, evl):
+        """
+        Sets the statistic to use for evaluation.
+        :param evl: the statistic
+        :type evl: SelectedTag, Tag or str
+        """
+        if isinstance(evl, str):
+            evl = self.tags_evaluation.find(evl)
+        if isinstance(evl, Tag):
+            evl = SelectedTag(tag_id=evl.ident, tags=self.tags_evaluation)
+        javabridge.call(self.jobject, "setEvaluation", "(Lweka/core/SelectedTag;)V", evl.jobject)
+
+    @property
+    def x(self):
+        """
+        Returns a dictionary with all the current values for the X of the grid.
+        Keys for the dictionary: property, min, max, step, base, expression
+        Types: property=str, min=float, max=float, step=float, base=float, expression=str
+        :return: the dictionary with the parameters
+        :rtype: dict
+        """
+        result = {}
+        result["property"] = javabridge.call(self.jobject, "getXProperty", "()Ljava/lang/String;")
+        result["min"] = javabridge.call(self.jobject, "getXMin", "()D")
+        result["max"] = javabridge.call(self.jobject, "getXMax", "()D")
+        result["step"] = javabridge.call(self.jobject, "getXStep", "()D")
+        result["base"] = javabridge.call(self.jobject, "getXBase", "()D")
+        result["expression"] = javabridge.call(self.jobject, "getXExpression", "()Ljava/lang/String;")
+        return result
+
+    @x.setter
+    def x(self, d):
+        """
+        Allows to configure the X of the grid with one method call.
+        Keys for the dictionary: property, min, max, step, base, expression
+        Types: property=str, min=float, max=float, step=float, base=float, expression=str
+        :param d: the dictionary with the parameters
+        :type d: dict
+        """
+        if "property" in d:
+            javabridge.call(self.jobject, "setXProperty", "(Ljava/lang/String;)V", d["property"])
+        if "min" in d:
+            javabridge.call(self.jobject, "setXMin", "(D)V", d["min"])
+        if "max" in d:
+            javabridge.call(self.jobject, "setXMax", "(D)V", d["max"])
+        if "step" in d:
+            javabridge.call(self.jobject, "setXStep", "(D)V", d["step"])
+        if "base" in d:
+            javabridge.call(self.jobject, "setXBase", "(D)V", d["base"])
+        if "expression" in d:
+            javabridge.call(self.jobject, "setXExpression", "(Ljava/lang/String;)V", d["expression"])
+
+    @property
+    def y(self):
+        """
+        Returns a dictionary with all the current values for the Y of the grid.
+        Keys for the dictionary: property, min, max, step, base, expression
+        Types: property=str, min=float, max=float, step=float, base=float, expression=str
+        :return: the dictionary with the parameters
+        :rtype: dict
+        """
+        result = {}
+        result["property"] = javabridge.call(self.jobject, "getYProperty", "()Ljava/lang/String;")
+        result["min"] = javabridge.call(self.jobject, "getYMin", "()D")
+        result["max"] = javabridge.call(self.jobject, "getYMax", "()D")
+        result["step"] = javabridge.call(self.jobject, "getYStep", "()D")
+        result["base"] = javabridge.call(self.jobject, "getYBase", "()D")
+        result["expression"] = javabridge.call(self.jobject, "getYExpression", "()Ljava/lang/String;")
+        return result
+
+    @y.setter
+    def y(self, d):
+        """
+        Allows to configure the Y of the grid with one method call.
+        Keys for the dictionary: property, min, max, step, base, expression
+        Types: property=str, min=float, max=float, step=float, base=float, expression=str
+        :param d: the dictionary with the parameters
+        :type d: dict
+        """
+        if "property" in d:
+            javabridge.call(self.jobject, "setYProperty", "(Ljava/lang/String;)V", d["property"])
+        if "min" in d:
+            javabridge.call(self.jobject, "setYMin", "(D)V", d["min"])
+        if "max" in d:
+            javabridge.call(self.jobject, "setYMax", "(D)V", d["max"])
+        if "step" in d:
+            javabridge.call(self.jobject, "setYStep", "(D)V", d["step"])
+        if "base" in d:
+            javabridge.call(self.jobject, "setYBase", "(D)V", d["base"])
+        if "expression" in d:
+            javabridge.call(self.jobject, "setYExpression", "(Ljava/lang/String;)V", d["expression"])
+
+    @property
+    def best(self):
+        """
+        Returns the best classifier setup found during the th search.
+        :return: the best classifier setup
+        :rtype: Classifier
+        """
+        return Classifier(jobject=javabridge.call(self.jobject, "getBestClassifier", "()Lweka/classifiers/Classifier;"))
 
 
 class MultipleClassifiersCombiner(Classifier):

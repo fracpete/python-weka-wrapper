@@ -339,6 +339,36 @@ class TestClassifiers(weka_test.WekaTest):
         self.assertAlmostEqual(0.919, evl.correlation_coefficient, places=3, msg="correlation_coefficient differs")
         self.assertAlmostEqual(10.697, evl.error_rate, places=3, msg="error_rate differs")
 
+    def test_gridsearch(self):
+        """
+        Tests the GridSearch class.
+        """
+        gs = classifiers.GridSearch()
+
+        self.assertEqual({"property": "C", "expression": "pow(BASE,I)", "min": -3.0, "max": 3.0, "step": 1.0, "base": 10.0}, gs.x, msg="x of grid differs")
+        x = gs.x
+        x["min"] = -1.0
+        x["max"] = 2.0
+        gs.x = x
+        self.assertEqual({"property": "C", "expression": "pow(BASE,I)", "min": -1.0, "max": 2.0, "step": 1.0, "base": 10.0}, gs.x, msg="x of grid differs")
+
+        self.assertEqual({"property": "kernel.gamma", "expression": "pow(BASE,I)", "min": -3.0, "max": 3.0, "step": 1.0, "base": 10.0}, gs.y, msg="y of grid differs")
+        y = gs.y
+        y["min"] = -1.0
+        y["max"] = 2.0
+        gs.y = y
+        self.assertEqual({"property": "kernel.gamma", "expression": "pow(BASE,I)", "min": -1.0, "max": 2.0, "step": 1.0, "base": 10.0}, gs.y, msg="y of grid differs")
+
+        cls = classifiers.Classifier(classname="weka.classifiers.functions.LinearRegression")
+        gs.classifier = cls
+        gs.evaluation = gs.tags_evaluation.find("RMSE")
+        self.assertEqual("RMSE", str(gs.evaluation), "evaluation differs: " + str(gs.evaluation))
+
+        gs.evaluation = "ACC"
+        self.assertEqual("ACC", str(gs.evaluation), "evaluation differs: " + str(gs.evaluation))
+        cls = classifiers.Classifier(classname="weka.classifiers.trees.J48")
+        gs.classifier = cls
+
 
 def suite():
     """
