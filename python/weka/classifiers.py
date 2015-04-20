@@ -1889,7 +1889,7 @@ def main():
     parser.add_argument("-m", metavar="costmatrix", dest="costmatrix", help="cost matrix file")
     parser.add_argument("-g", metavar="graph", dest="graph", help="output file for graph (if supported)")
     parser.add_argument("classifier", help="classifier classname, e.g., weka.classifiers.trees.J48")
-    parser.add_argument("option", nargs=argparse.REMAINDER, help="additional ckassifier options")
+    parser.add_argument("option", nargs=argparse.REMAINDER, help="additional classifier options")
     parsed = parser.parse_args()
     jars = []
     if not parsed.classpath is None:
