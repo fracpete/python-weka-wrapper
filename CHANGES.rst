@@ -12,6 +12,7 @@ Changelog
 - added `MultiSearch` meta-classifier with convenience properties to module `weka.classifiers`
 - added `quote`/`unquote` and `backquote`/`unbackquote` methods to `weka.core.classes` module
 - added `main` method to `weka.core.classes` for operations on options: join, split, code
+- added support for option handling to `weka.core.classes` module
 - ...
 
 

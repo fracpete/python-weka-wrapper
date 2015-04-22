@@ -1728,23 +1728,31 @@ def main():
 
     try:
         if parsed.action == "join":
-            output = "\"" + backquote(join_options(parsed.option)) + "\""
+            output = "cmdline = \"" + backquote(join_options(parsed.option)) + "\""
         elif parsed.action == "split" and len(parsed.option) == 1:
-            output = ""
+            output = "options = [\n"
             opts = split_options(parsed.option[0])
             for idx, opt in enumerate(opts):
                 if idx > 0:
-                    output += "\n"
-                output += "\"" + backquote(opt) + "\""
+                    output += ",\n"
+                output += "    \"" + backquote(opt) + "\""
+            output += "]"
         elif parsed.action == "code":
+            options = parsed.option[:]
+            cname = None
+            # classname + options?
+            if options[0].find(".") > -1:
+                cname = options[0]
+                options = options[1:]
             output = "options = [ \n"
-            for idx, opt in enumerate(parsed.option):
+            for idx, opt in enumerate(options):
                 if idx > 0:
-                    if idx < len(parsed.option) - 1:
-                        output += ","
-                    output += " \n"
+                    output += ",\n"
                 output += "    \"" + backquote(opt) + "\""
             output += "]\n"
+            if cname is not None:
+                output += 'handler = OptionHandler(JavaObject.new_instance("' + cname + '"))\n'
+                output += 'handler.options = options\n'
         else:
             raise Exception("Unsupported action: " + parsed.action)
         if output is not None:

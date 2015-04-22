@@ -50,6 +50,7 @@ Contents
    troubleshooting
    commandline
    api
+   optionhandling
    virtualenv
    sourcecode
    examples
