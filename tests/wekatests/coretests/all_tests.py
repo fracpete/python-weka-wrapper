@@ -21,8 +21,10 @@ import wekatests.coretests.classes
 import wekatests.coretests.converters
 import wekatests.coretests.dataset
 import wekatests.coretests.serialization
+import wekatests.coretests.stemmers
+import wekatests.coretests.stopwords
+import wekatests.coretests.tokenizers
 import wekatests.coretests.types
-import wekatests.coretests.utils
 import wekatests.coretests.version
 
 
@@ -44,8 +46,10 @@ def suite():
     result.addTests(wekatests.coretests.converters.suite())
     result.addTests(wekatests.coretests.dataset.suite())
     result.addTests(wekatests.coretests.serialization.suite())
+    result.addTests(wekatests.coretests.stemmers.suite())
+    result.addTests(wekatests.coretests.stopwords.suite())
+    result.addTests(wekatests.coretests.tokenizers.suite())
     result.addTests(wekatests.coretests.types.suite())
-    result.addTests(wekatests.coretests.utils.suite())
     result.addTests(wekatests.coretests.version.suite())
     return result
 
