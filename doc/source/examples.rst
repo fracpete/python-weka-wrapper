@@ -162,6 +162,65 @@ Cross-validate regressor, display classifier errors and predictions
    plcls.plot_classifier_errors(evl.predictions, wait=True)
 
 
+Parameter optimization - GridSearch
+-----------------------------------
+
+The following code optimizes the `C` parameter of `SMOreg` and the `gamma` parameter of its `RBFKernel`:
+
+.. code-block:: python
+
+   from weka.classifiers import GridSearch
+   grid = GridSearch(options=["-sample-size", "100.0", "-traversal", "ROW-WISE", "-num-slots", "1", "-S", "1"])
+   grid.evaluation = "CC"
+   grid.y = {"property": "kernel.gamma", "min": -3.0, "max": 3.0, "step": 1.0, "base": 10.0, "expression": "pow(BASE,I)"}
+   grid.x = {"property": "C", "min": -3.0, "max": 3.0, "step": 1.0, "base": 10.0, "expression": "pow(BASE,I)"}
+   cls = Classifier(
+       classname="weka.classifiers.functions.SMOreg",
+       options=["-K", "weka.classifiers.functions.supportVector.RBFKernel"])
+   grid.classifier = cls
+   grid.build_classifier(train)
+   print("Model:\n" + str(grid))
+   print("\nBest setup:\n" + grid.best.to_commandline())
+
+**NB:** Make sure that the `GridSearch` package is not installed, as the `GridSearch` meta-classifier is already
+part of the monolithic `weka.jar` that comes with *python-weka-wrapper*.
+
+
+Parameter optimization - MultiSearch
+------------------------------------
+
+The following code optimizes the `C` parameter of `SMOreg` and the `gamma` parameter of its `RBFKernel`:
+
+.. code-block:: python
+
+   from weka.core.classes import ListParameter, MathParameter
+   multi = MultiSearch(
+       options=["-sample-size", "100.0", "-initial-folds", "2", "-subsequent-folds", "2",
+                "-num-slots", "1", "-S", "1"])
+   multi.evaluation = "CC"
+   mparam = MathParameter()
+   mparam.prop = "classifier.kernel.gamma"
+   mparam.minimum = -3.0
+   mparam.maximum = 3.0
+   mparam.step = 1.0
+   mparam.base = 10.0
+   mparam.expression = "pow(BASE,I)"
+   lparam = ListParameter()
+   lparam.prop = "classifier.C"
+   lparam.values = ["-2.0", "-1.0", "0.0", "1.0", "2.0"]
+   multi.parameters = [mparam, lparam]
+   cls = Classifier(
+       classname="weka.classifiers.functions.SMOreg",
+       options=["-K", "weka.classifiers.functions.supportVector.RBFKernel"])
+   multi.classifier = cls
+   multi.build_classifier(train)
+   print("Model:\n" + str(multi))
+   print("\nBest setup:\n" + multi.best.to_commandline())
+
+**NB:** `multisearch-weka-package <https://github.com/fracpete/multisearch-weka-package>`_ must be installed for
+this to work.
+
+
 Experiments
 -----------
 
