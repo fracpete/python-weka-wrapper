@@ -25,6 +25,14 @@ use the following call:
 
    >>> jvm.start(system_cp=True, packages=True)
 
+In case your Weka home directory is not located in `wekafiles` in your user's home directory,
+then you have two options for specifying the alternative location: use the `WEKA_HOME` environment
+variable or the `packages` parameter, supplying a directory. The latter is shown below:
+
+.. code-block:: python
+
+   >>> jvm.start(packages="/my/packages/are/somwhere/else")
+
 Most of the times, you will want to increase the maximum heap size available to the JVM.
 The following example reserves 512 MB:
 

@@ -41,13 +41,22 @@ def add_bundled_jars():
             javabridge.JARS.append(str(l))
 
 
-def add_weka_packages():
+def add_weka_packages(alt_path = None):
     """
     Adds the jars from all Weka packages to the JVM's classpath.
+    :param alt_path: an alternative weka home path
+    :type alt_path: str
     """
-    prefix = os.getenv("WEKA_HOME", "~")
-    package_dir = os.path.expanduser(prefix + os.sep + "wekafiles" + os.sep + "packages")
-    logger.debug("package_dir=" + package_dir)
+    if alt_path is None:
+        prefix = os.getenv("WEKA_HOME", "~" + os.sep + "wekafiles")
+    else:
+        prefix = alt_path
+    package_dir = os.path.expanduser(prefix + os.sep + "packages")
+    if not os.path.exists(package_dir):
+        logger.error("package_dir not found: " + package_dir)
+        return
+    else:
+        logger.debug("package_dir=" + package_dir)
     # traverse packages
     for p in os.listdir(package_dir):
         if os.path.isdir(package_dir + os.sep + p):
@@ -79,8 +88,8 @@ def start(class_path=None, bundled=True, packages=False, system_cp=False, max_he
     :type class_path: list
     :param bundled: whether to add jars from the "lib" directory
     :type bundled: bool
-    :param packages: whether to add jars from Weka packages as well
-    :type packages: bool
+    :param packages: whether to add jars from Weka packages as well (bool) or an alternative Weka home directory (str)
+    :type packages: bool or str
     :param system_cp: whether to add the system classpath as well
     :type system_cp: bool
     :param max_heap_size: the maximum heap size (-Xmx parameter, eg 512m or 4g)
@@ -102,9 +111,13 @@ def start(class_path=None, bundled=True, packages=False, system_cp=False, max_he
         logger.debug("Adding bundled jars")
         add_bundled_jars()
 
-    if packages:
-        logger.debug("Adding Weka packages")
-        add_weka_packages()
+    if packages is not None:
+        if isinstance(packages, bool):
+            logger.debug("Adding Weka packages")
+            add_weka_packages()
+        else:
+            logger.debug("Adding Weka packages, using: " + packages)
+            add_weka_packages(packages)
 
     if system_cp:
         logger.debug("Adding system classpath")

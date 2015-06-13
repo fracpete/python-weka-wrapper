@@ -4,6 +4,8 @@ Changelog
 0.3.2 (????-??-??)
 ------------------
 
+- The `packages` parameter of the `weka.core.jvm.start()` function can be used for specifying an alternative
+  Weka home directory now as well
 - ...
 
 
