@@ -446,7 +446,7 @@ class Instances(JavaObject):
         :rtype: Instances
         """
         msg = inst1.equal_headers(inst2)
-        if not msg is None:
+        if msg is not None:
             raise Exception("Cannot appent instances: " + msg)
         result = cls.copy_instances(inst1)
         for i in xrange(inst2.num_instances):
@@ -455,13 +455,17 @@ class Instances(JavaObject):
 
     def train_test_split(self, percentage, rnd=None):
         """
-        :param percentage: the percentage split to use (amount to use for training)
+        :param percentage: the percentage split to use (amount to use for training; 0-100)
         :type percentage: double
         :param rnd: the random number generator to use, if None the order gets preserved
         :type rnd: Random
         :return: the train/test splits
         :rtype: tuple
         """
+        if percentage <= 0:
+            raise Exception("Split percentage must be > 0, provided: " + str(percentage))
+        if percentage >= 100:
+            raise Exception("Split percentage must be < 100, provided: " + str(percentage))
         if rnd is not None:
             self.randomize(rnd)
         train_size = int(round(self.num_instances * percentage / 100))
