@@ -1006,7 +1006,7 @@ class Evaluation(JavaObject):
             "(Lweka/classifiers/Classifier;Lweka/core/Instances;ILjava/util/Random;[Ljava/lang/Object;)V",
             classifier.jobject, data.jobject, num_folds, rnd.jobject, generator)
 
-    def evaluate_train_test_split(self, classifier, data, percentage, rnd, output=None):
+    def evaluate_train_test_split(self, classifier, data, percentage, rnd=None, output=None):
         """
         Splits the data into train and test, builds the classifier with the training data and
         evaluates it against the test set.
@@ -1021,12 +1021,7 @@ class Evaluation(JavaObject):
         :param output: the output generator to use
         :type output: PredictionOutput
         """
-        if rnd is not None:
-            data.randomize(rnd)
-        train_size = int(round(data.num_instances * percentage / 100))
-        test_size = data.num_instances - train_size
-        train_inst = Instances.copy_instances(data, 0, train_size)
-        test_inst = Instances.copy_instances(data, train_size, test_size)
+        train_inst, test_inst = data.train_test_split(percentage, rnd=rnd)
         cls = Classifier.make_copy(classifier)
         cls.build_classifier(train_inst)
         self.test_model(cls, test_inst, output=output)
