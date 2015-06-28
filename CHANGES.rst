@@ -6,6 +6,8 @@ Changelog
 
 - The `packages` parameter of the `weka.core.jvm.start()` function can be used for specifying an alternative
   Weka home directory now as well
+- added `train_test_split` method to `weka.core.Instances` class to easily create train/test splits
+- `evaluate_train_test_split` method of `weka.classifiers.Evaluation` class now uses the `train_test_split` method
 - ...
 
 
