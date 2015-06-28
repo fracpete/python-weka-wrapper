@@ -279,6 +279,45 @@ class TestDataset(weka_test.WekaTest):
         self.assertEqual(data.get_instance(1).get_value(3), data.attribute(3).parse_date("2001-12-31"), msg="Date value differs")
         self.assertEqual(data.get_instance(2).get_value(3), data.attribute(3).parse_date("2011-02-03"), msg="Date value differs")
 
+        # train/test split
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datafile("iris.arff"))
+        self.assertIsNotNone(data, msg="Failed to load data!")
+        self.assertFalse(data.has_class(), msg="Should not have class set!")
+        data.class_is_last()
+
+        perc = 66.6
+        train, test = data.train_test_split(perc)
+        self.assertIsNotNone(train, msg="Train is None")
+        self.assertIsNotNone(test, msg="Test is None")
+        self.assertEqual(data.num_instances, train.num_instances + test.num_instances, msg="Total number of instances differ")
+        self.assertEqual(train.num_instances, 100, msg="Number of training instances differ")
+        self.assertEqual(test.num_instances, 50, msg="Number of test instances differ")
+        try:
+            perc = 0.0
+            data.train_test_split(perc)
+            self.fail(msg="Should not accept split percentage of " + str(perc))
+        except Exception, e:
+            pass
+        try:
+            perc = -1.0
+            data.train_test_split(perc)
+            self.fail(msg="Should not accept split percentage of " + str(perc))
+        except Exception, e:
+            pass
+        try:
+            perc = 100.0
+            data.train_test_split(perc)
+            self.fail(msg="Should not accept split percentage of " + str(perc))
+        except Exception, e:
+            pass
+        try:
+            perc = 101.0
+            data.train_test_split(perc)
+            self.fail(msg="Should not accept split percentage of " + str(perc))
+        except Exception, e:
+            pass
+
 
 def suite():
     """
