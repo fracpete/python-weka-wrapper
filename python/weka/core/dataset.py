@@ -453,6 +453,23 @@ class Instances(JavaObject):
             result.add_instance(inst2.get_instance(i))
         return result
 
+    def train_test_split(self, percentage, rnd=None):
+        """
+        :param percentage: the percentage split to use (amount to use for training)
+        :type percentage: double
+        :param rnd: the random number generator to use, if None the order gets preserved
+        :type rnd: Random
+        :return: the train/test splits
+        :rtype: tuple
+        """
+        if rnd is not None:
+            self.randomize(rnd)
+        train_size = int(round(self.num_instances * percentage / 100))
+        test_size = self.num_instances - train_size
+        train_inst = Instances.copy_instances(self, 0, train_size)
+        test_inst = Instances.copy_instances(self, train_size, test_size)
+        return train_inst, test_inst
+
     @classmethod
     def summary(cls, inst):
         """
