@@ -28,6 +28,8 @@ logger = logging.getLogger(__name__)
 def plot_experiment(mat, title="Experiment", axes_swapped=False, measure="Statistic", show_stdev=False,
                     key_loc="lower right", outfile=None, wait=True):
     """
+    Plots the results from an experiment.
+
     :param mat: the result matrix to plot
     :type mat: ResultMatrix
     :param title: the title for the experiment

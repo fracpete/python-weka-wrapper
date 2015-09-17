@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # graph.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import logging
 import tempfile
@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 def plot_dot_graph(graph, filename=None):
     """
     Plots a graph in graphviz dot notation.
+
     :param graph: the dot notation graph
     :type graph: str
     :param filename: the (optional) file to save the generated plot to. The extension determines the file format.

@@ -27,6 +27,7 @@ class Package(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the wrapper.
+
         :param jobject: the java Package instance to wrap
         :type jobject: JB_Object
         """
@@ -37,6 +38,7 @@ class Package(JavaObject):
     def name(self):
         """
         Returns the name of the package.
+
         :return: the name
         :rtype: str
         """
@@ -46,6 +48,7 @@ class Package(JavaObject):
     def url(self):
         """
         Returns the URL of the package.
+
         :return: the url
         :rtype: str
         """
@@ -55,6 +58,7 @@ class Package(JavaObject):
     def dependencies(self):
         """
         Returns the dependencies of the package.
+
         :return: the list of Dependency objects
         :rtype: list of Dependency
         """
@@ -69,6 +73,7 @@ class Package(JavaObject):
     def metadata(self):
         """
         Returns the meta-data.
+
         :return: the meta-data dictionary
         :rtype: dict
         """
@@ -79,6 +84,7 @@ class Package(JavaObject):
     def is_installed(self):
         """
         Returns whether the package is installed.
+
         :return: whether installed
         :rtype: bool
         """
@@ -99,6 +105,7 @@ class PackageConstraint(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the wrapper.
+
         :param jobject: the java PackageConstraint instance to wrap
         :type jobject: JB_Object
         """
@@ -108,6 +115,7 @@ class PackageConstraint(JavaObject):
     def set_package(self, pkge):
         """
         Sets the package.
+
         :param pkge: the package
         :type pkge: Package
         """
@@ -116,6 +124,7 @@ class PackageConstraint(JavaObject):
     def get_package(self):
         """
         Returns the package.
+
         :return: the package
         :rtype: Package
         """
@@ -123,7 +132,8 @@ class PackageConstraint(JavaObject):
 
     def check_constraint(self, pkge=None, constr=None):
         """
-        Checks the constraing.
+        Checks the constraints.
+
         :param pkge: the package to check
         :type pkge: Package
         :param constr: the package constraint to check
@@ -146,6 +156,7 @@ class Dependency(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the wrapper.
+
         :param jobject: the java Dependency instance to wrap
         :type jobject: JB_Object
         """
@@ -156,6 +167,7 @@ class Dependency(JavaObject):
     def source(self):
         """
         Returns the source package.
+
         :return: the package
         :rtype: Package
         """
@@ -166,6 +178,7 @@ class Dependency(JavaObject):
     def source(self, pkge):
         """
         Sets the source package.
+
         :param pkge: the package
         :type pkge: Package
         """
@@ -176,6 +189,7 @@ class Dependency(JavaObject):
     def target(self):
         """
         Returns the target package constraint.
+
         :return: the package constraint
         :rtype: PackageConstraint
         """
@@ -186,6 +200,7 @@ class Dependency(JavaObject):
     def target(self, constr):
         """
         Sets the target package constraint.
+
         :param constr: the package constraint
         :type constr: Package
         """
@@ -213,6 +228,7 @@ def refresh_cache():
 def all_packages():
     """
     Returns a list of all packages.
+
     :return: the list of packages
     :rtype: list
     """
@@ -229,6 +245,7 @@ def all_packages():
 def available_packages():
     """
     Returns a list of all packages that aren't installed yet.
+
     :return: the list of packages
     :rtype: list
     """
@@ -245,6 +262,7 @@ def available_packages():
 def installed_packages():
     """
     Returns a list of the installed packages.
+
     :return: the list of packages
     :rtype: list
     """
@@ -261,6 +279,7 @@ def installed_packages():
 def install_package(pkge, version="Latest"):
     """
     The list of packages to install.
+
     :param pkge: the name of the repository package, a URL (http/https) or a zip file
     :type pkge: str
     :param version: in case of the repository packages, the version
@@ -288,6 +307,7 @@ def install_package(pkge, version="Latest"):
 def uninstall_package(name):
     """
     Uninstalls a package.
+
     :param name: the name of the package
     :type name: str
     :return: whether successfully uninstalled
@@ -302,6 +322,7 @@ def uninstall_package(name):
 def is_installed(name):
     """
     Checks whether a package with the name is already installed.
+
     :param name: the name of the package
     :type name: str
     :return: whether the package is installed

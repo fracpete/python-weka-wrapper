@@ -39,6 +39,7 @@ class Clusterer(OptionHandler):
     def __init__(self, classname="weka.clusterers.SimpleKMeans", jobject=None, options=None):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the clusterer
         :type classname: str
         :param jobject: the JB_Object to use
@@ -59,6 +60,7 @@ class Clusterer(OptionHandler):
     def capabilities(self):
         """
         Returns the capabilities of the clusterer.
+
         :return: the capabilities
         :rtype: Capabilities
         """
@@ -67,6 +69,7 @@ class Clusterer(OptionHandler):
     def build_clusterer(self, data):
         """
         Builds the clusterer with the data.
+
         :param data: the data to use for training the clusterer
         :type data: Instances
         """
@@ -75,6 +78,7 @@ class Clusterer(OptionHandler):
     def update_clusterer(self, inst):
         """
         Updates the clusterer with the instance.
+
         :param inst: the Instance to update the clusterer with
         :type inst: Instance
         """
@@ -95,6 +99,7 @@ class Clusterer(OptionHandler):
     def cluster_instance(self, inst):
         """
         Peforms a prediction.
+
         :param inst: the instance to determine the cluster for
         :type inst: Instance
         :return: the clustering result
@@ -105,6 +110,7 @@ class Clusterer(OptionHandler):
     def distribution_for_instance(self, inst):
         """
         Peforms a prediction, returning the cluster distribution.
+
         :param inst: the Instance to get the cluster distribution for
         :type inst: Instance
         :return: the cluster distribution
@@ -117,6 +123,7 @@ class Clusterer(OptionHandler):
     def number_of_clusters(self):
         """
         Returns the number of clusters found.
+
         :return: the number fo clusters
         :rtype: int
         """
@@ -126,6 +133,7 @@ class Clusterer(OptionHandler):
     def graph_type(self):
         """
         Returns the graph type if classifier implements weka.core.Drawable, otherwise -1.
+
         :return: the type
         :rtype: int
         """
@@ -138,6 +146,7 @@ class Clusterer(OptionHandler):
     def graph(self):
         """
         Returns the graph if classifier implements weka.core.Drawable, otherwise None.
+
         :return: the graph or None if not available
         :rtype: str
         """
@@ -150,6 +159,7 @@ class Clusterer(OptionHandler):
     def make_copy(cls, clusterer):
         """
         Creates a copy of the clusterer.
+
         :param clusterer: the clustererto copy
         :type clusterer: Clusterer
         :return: the copy of the clusterer
@@ -169,6 +179,7 @@ class SingleClustererEnhancer(Clusterer):
     def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the clusterer
         :type classname: str
         :param jobject: the JB_Object to use
@@ -185,6 +196,7 @@ class SingleClustererEnhancer(Clusterer):
     def clusterer(self):
         """
         Returns the base clusterer.
+
         :return: the clusterer
         :rtype: Clusterer
         """
@@ -194,6 +206,7 @@ class SingleClustererEnhancer(Clusterer):
     def clusterer(self, clusterer):
         """
         Sets the base clusterer.
+
         :param clusterer: the base clusterer to use
         :type clusterer: Clusterer
         """
@@ -208,6 +221,7 @@ class FilteredClusterer(SingleClustererEnhancer):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the specified clusterer using either the classname or the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to use
@@ -223,6 +237,7 @@ class FilteredClusterer(SingleClustererEnhancer):
     def filter(self):
         """
         Returns the filter.
+
         :return: the filter
         :rtype: Filter
         """
@@ -232,6 +247,7 @@ class FilteredClusterer(SingleClustererEnhancer):
     def filter(self, filtr):
         """
         Sets the filter.
+
         :param filtr: the filter to use
         :type filtr: Filter
         """
@@ -252,6 +268,7 @@ class ClusterEvaluation(JavaObject):
     def set_model(self, clusterer):
         """
         Sets the built clusterer to evaluate.
+
         :param clusterer: the clusterer to evaluate
         :type clusterer: Clusterer
         """
@@ -260,6 +277,7 @@ class ClusterEvaluation(JavaObject):
     def test_model(self, test):
         """
         Evaluates the currently set clusterer on the test set.
+
         :param test: the test set to use for evaluating
         :type test: Instances
         """
@@ -269,6 +287,7 @@ class ClusterEvaluation(JavaObject):
     def cluster_results(self):
         """
         The cluster results as string.
+
         :return: the results string
         :rtype: str
         """
@@ -278,6 +297,7 @@ class ClusterEvaluation(JavaObject):
     def cluster_assignments(self):
         """
         Return an array of cluster assignments corresponding to the most recent set of instances clustered.
+
         :return: the cluster assignments
         :rtype: ndarray
         """
@@ -291,6 +311,7 @@ class ClusterEvaluation(JavaObject):
     def num_clusters(self):
         """
         Returns the number of clusters.
+
         :return: the number of clusters
         :rtype: int
         """
@@ -300,6 +321,7 @@ class ClusterEvaluation(JavaObject):
     def log_likelihood(self):
         """
         Returns the log likelihood.
+
         :return: the log likelihood
         :rtype: float
         """
@@ -308,7 +330,8 @@ class ClusterEvaluation(JavaObject):
     @property
     def classes_to_clusters(self):
         """
-        Return the array (ordered by cluster number) of minimum error class to cluster mappings..
+        Return the array (ordered by cluster number) of minimum error class to cluster mappings.
+
         :return: the mappings
         :rtype: ndarray
         """
@@ -322,6 +345,7 @@ class ClusterEvaluation(JavaObject):
     def evaluate_clusterer(cls, clusterer, args):
         """
         Evaluates the clusterer with the given options.
+
         :param clusterer: the clusterer instance to evaluate
         :type clusterer: Clusterer
         :param args: the command-line arguments
@@ -338,6 +362,7 @@ class ClusterEvaluation(JavaObject):
     def crossvalidate_model(cls, clusterer, data, num_folds, rnd):
         """
         Cross-validates the clusterer and returns the loglikelihood.
+
         :param clusterer: the clusterer instance to evaluate
         :type clusterer: Clusterer
         :param data: the data to evaluate on

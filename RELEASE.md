@@ -5,6 +5,10 @@ Preparation:
 * run unit tests: `tests/wekatests/all_tests.py`
 * increment version in `setup.py`
 * increment versions in `doc/source/conf.py`
+* update API documentation
+  * cd python/weka
+  * sphinx-apidoc -f -o ../../doc/source .
+  * make sure that all modules are included in `index.rst` (apart from `modules.rst`)
 * add new changelog section in `CHANGES.rst`
 * commit/push all changes
 
@@ -22,6 +26,7 @@ Commands for releasing on pypi.org:
 </pre>
 
 Requirements:
+* before Sphinx 1.3: sudo pip install sphinxcontrib-napoleon
 * Sphinx-PyPI-upload: `easy_install sphinx-pypi-upload`
 
 

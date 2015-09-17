@@ -41,6 +41,7 @@ class Classifier(OptionHandler):
     def __init__(self, classname="weka.classifiers.rules.ZeroR", jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the classifier
         :type classname: str
         :param jobject: the JB_Object to use
@@ -61,6 +62,7 @@ class Classifier(OptionHandler):
     def capabilities(self):
         """
         Returns the capabilities of the classifier.
+
         :return: the capabilities
         :rtype: Capabilities
         """
@@ -69,6 +71,7 @@ class Classifier(OptionHandler):
     def build_classifier(self, data):
         """
         Builds the classifier with the data.
+
         :param data: the data to train the classifier with
         :type data: Instances
         """
@@ -77,6 +80,7 @@ class Classifier(OptionHandler):
     def update_classifier(self, inst):
         """
         Updates the classifier with the instance.
+
         :param inst: the Instance to update the classifier with
         :type inst: Instance
         """
@@ -88,6 +92,7 @@ class Classifier(OptionHandler):
     def classify_instance(self, inst):
         """
         Peforms a prediction.
+
         :param inst: the Instance to get a prediction for
         :type inst: Instance
         :return: the classification (either regression value or 0-based label index)
@@ -98,6 +103,7 @@ class Classifier(OptionHandler):
     def distribution_for_instance(self, inst):
         """
         Peforms a prediction, returning the class distribution.
+
         :param inst: the Instance to get the class distribution for
         :type inst: Instance
         :return: the class distribution array
@@ -110,6 +116,7 @@ class Classifier(OptionHandler):
     def graph_type(self):
         """
         Returns the graph type if classifier implements weka.core.Drawable, otherwise -1.
+
         :return: the type
         :rtype: int
         """
@@ -122,6 +129,7 @@ class Classifier(OptionHandler):
     def graph(self):
         """
         Returns the graph if classifier implements weka.core.Drawable, otherwise None.
+
         :return: the generated graph string
         :rtype: str
         """
@@ -134,6 +142,7 @@ class Classifier(OptionHandler):
     def make_copy(cls, classifier):
         """
         Creates a copy of the classifier.
+
         :param classifier: the classifier to copy
         :type classifier: Classifier
         :return: the copy of the classifier
@@ -153,6 +162,7 @@ class SingleClassifierEnhancer(Classifier):
     def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the classifier
         :type classname: str
         :param jobject: the JB_Object to use
@@ -169,6 +179,7 @@ class SingleClassifierEnhancer(Classifier):
     def classifier(self):
         """
         Returns the base classifier.
+
         ;return: the base classifier
         :rtype: Classifier
         """
@@ -178,6 +189,7 @@ class SingleClassifierEnhancer(Classifier):
     def classifier(self, classifier):
         """
         Sets the base classifier.
+
         :param classifier: the base classifier to use
         :type classifier: Classifier
         """
@@ -192,6 +204,7 @@ class FilteredClassifier(SingleClassifierEnhancer):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the specified classifier using its classname or the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to set
@@ -208,6 +221,7 @@ class FilteredClassifier(SingleClassifierEnhancer):
     def filter(self):
         """
         Returns the filter.
+
         :return: the filter in use
         :rtype: Filter
         """
@@ -217,6 +231,7 @@ class FilteredClassifier(SingleClassifierEnhancer):
     def filter(self, filtr):
         """
         Sets the filter.
+
         :param filtr: the filter to use
         :type filtr: Filter
         """
@@ -231,6 +246,7 @@ class GridSearch(SingleClassifierEnhancer):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the specified classifier using its classname or the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to set
@@ -248,6 +264,7 @@ class GridSearch(SingleClassifierEnhancer):
     def evaluation(self):
         """
         Returns the currently set statistic used for evaluation.
+
         :return: the statistic
         :rtype: SelectedTag
         """
@@ -258,6 +275,7 @@ class GridSearch(SingleClassifierEnhancer):
     def evaluation(self, evl):
         """
         Sets the statistic to use for evaluation.
+
         :param evl: the statistic
         :type evl: SelectedTag, Tag or str
         """
@@ -273,6 +291,7 @@ class GridSearch(SingleClassifierEnhancer):
         Returns a dictionary with all the current values for the X of the grid.
         Keys for the dictionary: property, min, max, step, base, expression
         Types: property=str, min=float, max=float, step=float, base=float, expression=str
+
         :return: the dictionary with the parameters
         :rtype: dict
         """
@@ -291,6 +310,7 @@ class GridSearch(SingleClassifierEnhancer):
         Allows to configure the X of the grid with one method call.
         Keys for the dictionary: property, min, max, step, base, expression
         Types: property=str, min=float, max=float, step=float, base=float, expression=str
+
         :param d: the dictionary with the parameters
         :type d: dict
         """
@@ -313,6 +333,7 @@ class GridSearch(SingleClassifierEnhancer):
         Returns a dictionary with all the current values for the Y of the grid.
         Keys for the dictionary: property, min, max, step, base, expression
         Types: property=str, min=float, max=float, step=float, base=float, expression=str
+
         :return: the dictionary with the parameters
         :rtype: dict
         """
@@ -331,6 +352,7 @@ class GridSearch(SingleClassifierEnhancer):
         Allows to configure the Y of the grid with one method call.
         Keys for the dictionary: property, min, max, step, base, expression
         Types: property=str, min=float, max=float, step=float, base=float, expression=str
+
         :param d: the dictionary with the parameters
         :type d: dict
         """
@@ -351,6 +373,7 @@ class GridSearch(SingleClassifierEnhancer):
     def best(self):
         """
         Returns the best classifier setup found during the th search.
+
         :return: the best classifier setup
         :rtype: Classifier
         """
@@ -366,6 +389,7 @@ class MultiSearch(SingleClassifierEnhancer):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the specified classifier using its classname or the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to set
@@ -383,6 +407,7 @@ class MultiSearch(SingleClassifierEnhancer):
     def evaluation(self):
         """
         Returns the currently set statistic used for evaluation.
+
         :return: the statistic
         :rtype: SelectedTag
         """
@@ -393,6 +418,7 @@ class MultiSearch(SingleClassifierEnhancer):
     def evaluation(self, evl):
         """
         Sets the statistic to use for evaluation.
+
         :param evl: the statistic
         :type evl: SelectedTag, Tag or str
         """
@@ -406,6 +432,7 @@ class MultiSearch(SingleClassifierEnhancer):
     def parameters(self):
         """
         Returns the list of currently set search parameters.
+
         :return: the list of AbstractSearchParameter objects
         :rtype: list
         """
@@ -420,6 +447,7 @@ class MultiSearch(SingleClassifierEnhancer):
     def parameters(self, params):
         """
         Sets the list of search parameters to use.
+
         :param params: list of AbstractSearchParameter objects
         :type params: list
         """
@@ -432,6 +460,7 @@ class MultiSearch(SingleClassifierEnhancer):
     def best(self):
         """
         Returns the best classifier setup found during the th search.
+
         :return: the best classifier setup
         :rtype: Classifier
         """
@@ -446,6 +475,7 @@ class MultipleClassifiersCombiner(Classifier):
     def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the classifier
         :type classname: str
         :param jobject: the JB_Object to use
@@ -462,6 +492,7 @@ class MultipleClassifiersCombiner(Classifier):
     def classifiers(self):
         """
         Returns the list of base classifiers.
+
         :return: the classifier list
         :rtype: list
         """
@@ -476,6 +507,7 @@ class MultipleClassifiersCombiner(Classifier):
     def classifiers(self, classifiers):
         """
         Sets the base classifiers.
+
         :param classifiers: the list of base classifiers to use
         :type classifiers: list
         """
@@ -493,6 +525,7 @@ class Kernel(OptionHandler):
     def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified kernel using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the kernel
         :type classname: str
         :param jobject: the JB_Object to use
@@ -508,6 +541,7 @@ class Kernel(OptionHandler):
     def capabilities(self):
         """
         Returns the capabilities of the classifier.
+
         :return: the capabilities
         :rtype: Capabilities
         """
@@ -517,6 +551,7 @@ class Kernel(OptionHandler):
     def checks_turned_off(self):
         """
         Returns whether checks are turned off.
+
         :return: True if checks turned off
         :rtype: bool
         """
@@ -526,6 +561,7 @@ class Kernel(OptionHandler):
     def checks_turned_off(self, off):
         """
         Turns any checks on/off.
+
         :param off: True to turn off checks
         :type off: bool
         """
@@ -540,6 +576,7 @@ class Kernel(OptionHandler):
     def build_kernel(self, data):
         """
         Builds the classifier with the data.
+
         :param data: the data to train the classifier with
         :type data: Instances
         """
@@ -549,6 +586,7 @@ class Kernel(OptionHandler):
         """
         Computes the result of the kernel function for two instances. If id1 == -1, eval use inst1 instead of an
         instance in the dataset.
+
         :param id1: the index of the first instance in the dataset
         :type id1: int
         :param id2: the index of the second instance in the dataset
@@ -565,6 +603,7 @@ class Kernel(OptionHandler):
     def make_copy(cls, kernel):
         """
         Creates a copy of the kernel.
+
         :param kernel: the kernel to copy
         :type kernel: Kernel
         :return: the copy of the kernel
@@ -585,6 +624,7 @@ class KernelClassifier(Classifier):
     def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified classifier using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the classifier
         :type classname: str
         :param jobject: the JB_Object to use
@@ -606,6 +646,7 @@ class KernelClassifier(Classifier):
     def kernel(self):
         """
         Returns the current kernel.
+
         :return: the kernel or None if none found
         :rtype: Kernel
         """
@@ -622,6 +663,7 @@ class KernelClassifier(Classifier):
     def kernel(self, kernel):
         """
         Sets the kernel.
+
         :param kernel: the kernel to set
         :type kernel: Kernel
         """
@@ -641,6 +683,7 @@ class Prediction(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the wrapper.
+
         :param jobject: the prediction to wrap
         :type jobject: JB_Object
         """
@@ -651,6 +694,7 @@ class Prediction(JavaObject):
     def actual(self):
         """
         Returns the actual value.
+
         :return: the actual value (internal representation)
         :rtype: float
         """
@@ -660,6 +704,7 @@ class Prediction(JavaObject):
     def predicted(self):
         """
         Returns the predicted value.
+
         :return: the predicted value (internal representation)
         :rtype: float
         """
@@ -669,6 +714,7 @@ class Prediction(JavaObject):
     def weight(self):
         """
         Returns the weight.
+
         :return: the weight of the Instance that was used
         :rtype: float
         """
@@ -683,6 +729,7 @@ class NominalPrediction(Prediction):
     def __init__(self, jobject):
         """
         Initializes the wrapper.
+
         :param jobject: the prediction to wrap
         :type jobject: JB_Object
         """
@@ -693,6 +740,7 @@ class NominalPrediction(Prediction):
     def distribution(self):
         """
         Returns the class distribution.
+
         :return: the class distribution list
         :rtype: ndarray
         """
@@ -702,6 +750,7 @@ class NominalPrediction(Prediction):
     def margin(self):
         """
         Returns the margin.
+
         :return: the margin
         :rtype: float
         """
@@ -716,6 +765,7 @@ class NumericPrediction(Prediction):
     def __init__(self, jobject):
         """
         Initializes the wrapper.
+
         :param jobject: the prediction to wrap
         :type jobject: JB_Object
         """
@@ -726,6 +776,7 @@ class NumericPrediction(Prediction):
     def error(self):
         """
         Returns the error.
+
         :return: the error
         :rtype: float
         """
@@ -735,6 +786,7 @@ class NumericPrediction(Prediction):
     def prediction_intervals(self):
         """
         Returns the prediction intervals.
+
         :return: the intervals
         :rtype: ndarray
         """
@@ -752,6 +804,7 @@ class CostMatrix(JavaObject):
     def __init__(self, matrx=None, num_classes=None):
         """
         Initializes the matrix object.
+
         :param matrx: the matrix to copy
         :type matrx: CostMatrix or ndarray or JB_Object
         :param num_classes: the number of classes
@@ -790,6 +843,7 @@ class CostMatrix(JavaObject):
     def apply_cost_matrix(self, data, rnd):
         """
         Applies the cost matrix to the data.
+
         :param data: the data to apply to
         :type data: Instances
         :param rnd: the random number generator
@@ -804,6 +858,7 @@ class CostMatrix(JavaObject):
         """
         Calculates the expected misclassification cost for each possible class value, given class probability
         estimates.
+
         :param class_probs: the class probabilities
         :type class_probs: ndarray
         :return: the calculated costs
@@ -822,6 +877,7 @@ class CostMatrix(JavaObject):
     def get_cell(self, row, col):
         """
         Returns the JB_Object at the specified location.
+
         :param row: the 0-based index of the row
         :type row: int
         :param col: the 0-based index of the column
@@ -835,6 +891,7 @@ class CostMatrix(JavaObject):
     def set_cell(self, row, col, obj):
         """
         Sets the JB_Object at the specified location. Automatically unwraps JavaObject.
+
         :param row: the 0-based index of the row
         :type row: int
         :param col: the 0-based index of the column
@@ -850,6 +907,7 @@ class CostMatrix(JavaObject):
     def get_element(self, row, col, inst=None):
         """
         Returns the value at the specified location.
+
         :param row: the 0-based index of the row
         :type row: int
         :param col: the 0-based index of the column
@@ -869,6 +927,7 @@ class CostMatrix(JavaObject):
     def set_element(self, row, col, value):
         """
         Sets the float value at the specified location.
+
         :param row: the 0-based index of the row
         :type row: int
         :param col: the 0-based index of the column
@@ -882,6 +941,7 @@ class CostMatrix(JavaObject):
     def get_max_cost(self, class_value, inst=None):
         """
         Gets the maximum cost for a particular class value.
+
         :param class_value: the class value to get the maximum cost for
         :type class_value: int
         :param inst: the Instance
@@ -912,6 +972,7 @@ class CostMatrix(JavaObject):
     def num_columns(self):
         """
         Returns the number of columns.
+
         :return: the number of columns
         :rtype: int
         """
@@ -921,6 +982,7 @@ class CostMatrix(JavaObject):
     def num_rows(self):
         """
         Returns the number of rows.
+
         :return: the number of rows
         :rtype: int
         """
@@ -930,6 +992,7 @@ class CostMatrix(JavaObject):
     def size(self):
         """
         Returns the number of rows/columns.
+
         :return: the number of rows/columns
         :rtype: int
         """
@@ -938,6 +1001,7 @@ class CostMatrix(JavaObject):
     def to_matlab(self):
         """
         Returns the matrix in Matlab format.
+
         :return: the matrix as Matlab formatted string
         :rtype: str
         """
@@ -947,6 +1011,7 @@ class CostMatrix(JavaObject):
     def parse_matlab(cls, matlab):
         """
         Parses the costmatrix definition in matlab format and returns a matrix.
+
         :param matlab: the matlab matrix string, eg [1 2; 3 4].
         :type matlab: str
         :return: the generated matrix
@@ -966,6 +1031,7 @@ class Evaluation(JavaObject):
     def __init__(self, data, cost_matrix=None):
         """
         Initializes an Evaluation object.
+
         :param data: the data to use to initialize the priors with
         :type data: Instances
         :param cost_matrix: the cost matrix to use for initializing
@@ -986,6 +1052,7 @@ class Evaluation(JavaObject):
     def crossvalidate_model(self, classifier, data, num_folds, rnd, output=None):
         """
         Crossvalidates the model using the specified data, number of folds and random number generator wrapper.
+
         :param classifier: the classifier to cross-validate
         :type classifier: Classifier
         :param data: the data to evaluate on
@@ -1010,6 +1077,7 @@ class Evaluation(JavaObject):
         """
         Splits the data into train and test, builds the classifier with the training data and
         evaluates it against the test set.
+
         :param classifier: the classifier to cross-validate
         :type classifier: Classifier
         :param data: the data to evaluate on
@@ -1029,6 +1097,7 @@ class Evaluation(JavaObject):
     def test_model(self, classifier, data, output=None):
         """
         Evaluates the built model using the specified test data and returns the classifications.
+
         :param classifier: the trained classifier to evaluate
         :type classifier: Classifier
         :param data: the data to evaluate on
@@ -1055,6 +1124,7 @@ class Evaluation(JavaObject):
     def test_model_once(self, classifier, inst):
         """
         Evaluates the built model using the specified test instance and returns the classification.
+
         :param classifier: the classifier to cross-validate
         :type classifier: Classifier
         :param inst: the Instance to evaluate on
@@ -1070,6 +1140,7 @@ class Evaluation(JavaObject):
     def summary(self, title=None, complexity=False):
         """
         Generates a summary.
+
         :param title: optional title
         :type title: str
         :param complexity: whether to print the complexity information as well
@@ -1087,6 +1158,7 @@ class Evaluation(JavaObject):
     def class_details(self, title=None):
         """
         Generates the class details.
+
         :param title: optional title
         :type title: str
         :return: the details
@@ -1102,6 +1174,7 @@ class Evaluation(JavaObject):
     def matrix(self, title=None):
         """
         Generates the confusion matrix.
+
         :param title: optional title
         :type title: str
         :return: the matrix
@@ -1115,6 +1188,7 @@ class Evaluation(JavaObject):
     def area_under_prc(self, class_index):
         """
         Returns the area under precision recall curve.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the area
@@ -1126,6 +1200,7 @@ class Evaluation(JavaObject):
     def weighted_area_under_prc(self):
         """
         Returns the weighted area under precision recall curve.
+
         :return: the weighted area
         :rtype: float
         """
@@ -1134,6 +1209,7 @@ class Evaluation(JavaObject):
     def area_under_roc(self, class_index):
         """
         Returns the area under receiver operators characteristics curve.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the area
@@ -1145,6 +1221,7 @@ class Evaluation(JavaObject):
     def weighted_area_under_roc(self):
         """
         Returns the weighted area under receiver operator characteristic curve.
+
         :return: the weighted area
         :rtype: float
         """
@@ -1154,6 +1231,7 @@ class Evaluation(JavaObject):
     def avg_cost(self):
         """
         Returns the average cost.
+
         :return: the cost
         :rtype: float
         """
@@ -1163,6 +1241,7 @@ class Evaluation(JavaObject):
     def total_cost(self):
         """
         Returns the total cost.
+
         :return: the cost
         :rtype: float
         """
@@ -1172,6 +1251,7 @@ class Evaluation(JavaObject):
     def confusion_matrix(self):
         """
         Returns the confusion matrix.
+
         :return: the matrix
         :rtype: ndarray
         """
@@ -1181,6 +1261,7 @@ class Evaluation(JavaObject):
     def correct(self):
         """
         Returns the correct count (nominal classes).
+
         :return: the count
         :rtype: float
         """
@@ -1190,6 +1271,7 @@ class Evaluation(JavaObject):
     def incorrect(self):
         """
         Returns the incorrect count (nominal classes).
+
         :return: the count
         :rtype: float
         """
@@ -1199,6 +1281,7 @@ class Evaluation(JavaObject):
     def unclassified(self):
         """
         Returns the unclassified count.
+
         :return: the count
         :rtype: float
         """
@@ -1208,6 +1291,7 @@ class Evaluation(JavaObject):
     def num_instances(self):
         """
         Returns the number of instances that had a known class value.
+
         :return: the number of instances
         :rtype: float
         """
@@ -1217,6 +1301,7 @@ class Evaluation(JavaObject):
     def percent_correct(self):
         """
         Returns the percent correct (nominal classes).
+
         :return: the percentage
         :rtype: float
         """
@@ -1226,6 +1311,7 @@ class Evaluation(JavaObject):
     def percent_incorrect(self):
         """
         Returns the percent incorrect (nominal classes).
+
         :return: the percentage
         :rtype: float
         """
@@ -1235,6 +1321,7 @@ class Evaluation(JavaObject):
     def percent_unclassified(self):
         """
         Returns the percent unclassified.
+
         :return: the percentage
         :rtype: float
         """
@@ -1244,6 +1331,7 @@ class Evaluation(JavaObject):
     def correlation_coefficient(self):
         """
         Returns the correlation coefficient (numeric classes).
+
         :return: the coefficient
         :rtype: float
         """
@@ -1252,6 +1340,7 @@ class Evaluation(JavaObject):
     def matthews_correlation_coefficient(self, class_index):
         """
         Returns the Matthews correlation coefficient (nominal classes).
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the coefficient
@@ -1263,6 +1352,7 @@ class Evaluation(JavaObject):
     def weighted_matthews_correlation(self):
         """
         Returns the weighted Matthews correlation (nominal classes).
+
         :return: the correlation
         :rtype: float
         """
@@ -1273,6 +1363,7 @@ class Evaluation(JavaObject):
         """
         Returns the coverage of the test cases by the predicted regions at the confidence level
         specified when evaluation was performed.
+
         :return: the coverage
         :rtype: float
         """
@@ -1283,6 +1374,7 @@ class Evaluation(JavaObject):
         """
         Returns  the average size of the predicted regions, relative to the range of the target in the
         training data, at the confidence level specified when evaluation was performed.
+
         :return:the size of the regions
         :rtype: float
         """
@@ -1292,6 +1384,7 @@ class Evaluation(JavaObject):
     def error_rate(self):
         """
         Returns the error rate (numeric classes).
+
         :return: the rate
         :rtype: float
         """
@@ -1301,6 +1394,7 @@ class Evaluation(JavaObject):
     def mean_absolute_error(self):
         """
         Returns the mean absolute error.
+
         :return: the error
         :rtype: float
         """
@@ -1310,6 +1404,7 @@ class Evaluation(JavaObject):
     def relative_absolute_error(self):
         """
         Returns the relative absolute error.
+
         :return: the error
         :rtype: float
         """
@@ -1319,6 +1414,7 @@ class Evaluation(JavaObject):
     def root_mean_squared_error(self):
         """
         Returns the root mean squared error.
+
         :return: the error
         :rtype: float
         """
@@ -1328,6 +1424,7 @@ class Evaluation(JavaObject):
     def root_relative_squared_error(self):
         """
         Returns the root relative squared error.
+
         :return: the error
         :rtype: float
         """
@@ -1337,6 +1434,7 @@ class Evaluation(JavaObject):
     def root_mean_prior_squared_error(self):
         """
         Returns the root mean prior squared error.
+
         :return: the error
         :rtype: float
         """
@@ -1346,6 +1444,7 @@ class Evaluation(JavaObject):
     def mean_prior_absolute_error(self):
         """
         Returns the mean prior absolute error.
+
         :return: the error
         :rtype: float
         """
@@ -1354,6 +1453,7 @@ class Evaluation(JavaObject):
     def false_negative_rate(self, class_index):
         """
         Returns the false negative rate.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the rate
@@ -1365,6 +1465,7 @@ class Evaluation(JavaObject):
     def weighted_false_negative_rate(self):
         """
         Returns the weighted false negative rate.
+
         :return: the rate
         :rtype: float
         """
@@ -1373,6 +1474,7 @@ class Evaluation(JavaObject):
     def false_positive_rate(self, class_index):
         """
         Returns the false positive rate.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the rate
@@ -1384,6 +1486,7 @@ class Evaluation(JavaObject):
     def weighted_false_positive_rate(self):
         """
         Returns the weighted false positive rate.
+
         :return: the rate
         :rtype: float
         """
@@ -1392,6 +1495,7 @@ class Evaluation(JavaObject):
     def num_false_negatives(self, class_index):
         """
         Returns the number of false negatives.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the count
@@ -1402,6 +1506,7 @@ class Evaluation(JavaObject):
     def true_negative_rate(self, class_index):
         """
         Returns the true negative rate.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the rate
@@ -1413,6 +1518,7 @@ class Evaluation(JavaObject):
     def weighted_true_negative_rate(self):
         """
         Returns the weighted true negative rate.
+
         :return: the rate
         :rtype: float
         """
@@ -1421,6 +1527,7 @@ class Evaluation(JavaObject):
     def num_true_negatives(self, class_index):
         """
         Returns the number of true negatives.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the count
@@ -1431,6 +1538,7 @@ class Evaluation(JavaObject):
     def num_false_positives(self, class_index):
         """
         Returns the number of false positives.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the count
@@ -1441,6 +1549,7 @@ class Evaluation(JavaObject):
     def true_positive_rate(self, class_index):
         """
         Returns the true positive rate.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the rate
@@ -1452,6 +1561,7 @@ class Evaluation(JavaObject):
     def weighted_true_positive_rate(self):
         """
         Returns the weighted true positive rate.
+
         :return: the rate
         :rtype: float
         """
@@ -1460,6 +1570,7 @@ class Evaluation(JavaObject):
     def num_true_positives(self, class_index):
         """
         Returns the number of true positives.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the count
@@ -1470,6 +1581,7 @@ class Evaluation(JavaObject):
     def f_measure(self, class_index):
         """
         Returns the f measure.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the measure
@@ -1481,6 +1593,7 @@ class Evaluation(JavaObject):
     def weighted_f_measure(self):
         """
         Returns the weighted f measure.
+
         :return: the measure
         :rtype: float
         """
@@ -1490,6 +1603,7 @@ class Evaluation(JavaObject):
     def unweighted_macro_f_measure(self):
         """
         Returns the unweighted macro-averaged F-measure.
+
         :return: the measure
         :rtype: float
         """
@@ -1499,6 +1613,7 @@ class Evaluation(JavaObject):
     def unweighted_micro_f_measure(self):
         """
         Returns the unweighted micro-averaged F-measure.
+
         :return: the measure
         :rtype: float
         """
@@ -1507,6 +1622,7 @@ class Evaluation(JavaObject):
     def precision(self, class_index):
         """
         Returns the precision.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the precision
@@ -1518,6 +1634,7 @@ class Evaluation(JavaObject):
     def weighted_precision(self):
         """
         Returns the weighted precision.
+
         :return: the precision
         :rtype: float
         """
@@ -1526,6 +1643,7 @@ class Evaluation(JavaObject):
     def recall(self, class_index):
         """
         Returns the recall.
+
         :param class_index: the 0-based index of the class label
         :type class_index: int
         :return: the recall
@@ -1537,6 +1655,7 @@ class Evaluation(JavaObject):
     def weighted_recall(self):
         """
         Returns the weighted recall.
+
         :return: the recall
         :rtype: float
         """
@@ -1546,6 +1665,7 @@ class Evaluation(JavaObject):
     def kappa(self):
         """
         Returns kappa.
+
         :return: kappa
         :rtype: float
         """
@@ -1555,6 +1675,7 @@ class Evaluation(JavaObject):
     def kb_information(self):
         """
         Returns KB information.
+
         :return: the information
         :rtype: float
         """
@@ -1564,6 +1685,7 @@ class Evaluation(JavaObject):
     def kb_mean_information(self):
         """
         Returns KB mean information.
+
         :return: the information
         :rtype: float
         """
@@ -1573,6 +1695,7 @@ class Evaluation(JavaObject):
     def kb_relative_information(self):
         """
         Returns KB relative information.
+
         :return: the information
         :rtype: float
         """
@@ -1582,6 +1705,7 @@ class Evaluation(JavaObject):
     def sf_entropy_gain(self):
         """
         Returns the total SF, which is the null model entropy minus the scheme entropy.
+
         :return: the gain
         :rtype: float
         """
@@ -1591,6 +1715,7 @@ class Evaluation(JavaObject):
     def sf_mean_entropy_gain(self):
         """
         Returns the SF per instance, which is the null model entropy minus the scheme entropy, per instance.
+
         :return: the gain
         :rtype: float
         """
@@ -1600,6 +1725,7 @@ class Evaluation(JavaObject):
     def sf_mean_prior_entropy(self):
         """
         Returns the entropy per instance for the null model.
+
         :return: the entropy
         :rtype: float
         """
@@ -1609,6 +1735,7 @@ class Evaluation(JavaObject):
     def sf_mean_scheme_entropy(self):
         """
         Returns the entropy per instance for the scheme.
+
         :return: the entropy
         :rtype: float
         """
@@ -1618,6 +1745,7 @@ class Evaluation(JavaObject):
     def class_priors(self):
         """
         Returns the class priors.
+
         :return: the priors
         :rtype: ndarray
         """
@@ -1627,6 +1755,7 @@ class Evaluation(JavaObject):
     def class_priors(self, data):
         """
         Sets the class priors derived from the dataset.
+
         :param data: the dataset to derive the priors from
         :type data: Instances
         """
@@ -1636,6 +1765,7 @@ class Evaluation(JavaObject):
     def header(self):
         """
         Returns the header format.
+
         :return: the header format
         :rtype: Instances
         """
@@ -1645,6 +1775,7 @@ class Evaluation(JavaObject):
     def discard_predictions(self):
         """
         Returns whether to discard predictions (saves memory).
+
         :return: True if to discard
         :rtype: bool
         """
@@ -1654,6 +1785,7 @@ class Evaluation(JavaObject):
     def discard_predictions(self, discard):
         """
         Sets whether to discard predictions (saves memory).
+
         :param discard: True if to discard predictions
         :type discard: bool
         """
@@ -1663,6 +1795,7 @@ class Evaluation(JavaObject):
     def predictions(self):
         """
         Returns the predictions.
+
         :return: the predictions. None if not available
         :rtype: list
         """
@@ -1685,6 +1818,7 @@ class Evaluation(JavaObject):
     def evaluate_model(cls, classifier, args):
         """
         Evaluates the classifier with the given options.
+
         :param classifier: the classifier instance to use
         :type classifier: Classifier
         :param args: the command-line arguments to use
@@ -1707,6 +1841,7 @@ class PredictionOutput(OptionHandler):
     def __init__(self, classname="weka.classifiers.evaluation.output.prediction.PlainText", jobject=None, options=None):
         """
         Initializes the specified output generator using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the generator
         :type classname: str
         :param jobject: the JB_Object to use
@@ -1725,6 +1860,7 @@ class PredictionOutput(OptionHandler):
     def header(self):
         """
         Returns the header format.
+
         :return: The dataset format
         :rtype: Instances
         """
@@ -1734,6 +1870,7 @@ class PredictionOutput(OptionHandler):
     def header(self, data):
         """
         Sets the header format.
+
         :param data: The dataset format
         :type data: Instances
         """
@@ -1754,6 +1891,7 @@ class PredictionOutput(OptionHandler):
     def print_all(self, cls, data):
         """
         Prints the header, classifications and footer to the buffer.
+
         :param cls: the classifier
         :type cls: Classifier
         :param data: the test data
@@ -1766,6 +1904,7 @@ class PredictionOutput(OptionHandler):
     def print_classifications(self, cls, data):
         """
         Prints the classifications to the buffer.
+
         :param cls: the classifier
         :type cls: Classifier
         :param data: the test data
@@ -1778,6 +1917,7 @@ class PredictionOutput(OptionHandler):
     def print_classification(self, cls, inst, index):
         """
         Prints the classification to the buffer.
+
         :param cls: the classifier
         :type cls: Classifier
         :param inst: the test instance
@@ -1792,6 +1932,7 @@ class PredictionOutput(OptionHandler):
     def buffer_content(self):
         """
         Returns the content of the buffer as string.
+
         :return: The buffer content
         :rtype: str
         """
@@ -1800,6 +1941,7 @@ class PredictionOutput(OptionHandler):
     def __str__(self):
         """
         Returns the content of the buffer.
+
         :return: the current buffer content
         :rtype: str
         """
@@ -1809,6 +1951,7 @@ class PredictionOutput(OptionHandler):
 def predictions_to_instances(data, preds):
     """
     Turns the predictions turned into an Instances object.
+
     :param data: the original dataset format
     :type data: Instances
     :param preds: the predictions to convert

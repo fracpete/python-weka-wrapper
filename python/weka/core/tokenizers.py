@@ -24,6 +24,8 @@ class TokenIterator(object):
     """
     def __init__(self, tokenizer):
         """
+        Initializes the iterator.
+
         :param tokenizer: the tokenizer instance to use
         :type tokenizer: Tokenizer
         """
@@ -40,6 +42,7 @@ class TokenIterator(object):
     def next(self):
         """
         Reads the next dataset row.
+
         :return: the next row
         :rtype: Instance
         """
@@ -57,6 +60,7 @@ class Tokenizer(OptionHandler):
     def __init__(self, classname="weka.core.tokenizers.AlphabeticTokenizer", jobject=None, options=None):
         """
         Initializes the specified tokenizer using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the tokenizer
         :type classname: str
         :param jobject: the JB_Object to use
@@ -72,6 +76,7 @@ class Tokenizer(OptionHandler):
     def tokenize(self, s):
         """
         Tokenizes the string.
+
         :param s: the string to tokenize
         :type s: str
         :return: the iterator

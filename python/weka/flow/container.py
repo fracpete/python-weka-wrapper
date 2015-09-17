@@ -33,6 +33,7 @@ class Container(object):
     def get(self, name):
         """
         Returns the stored data.
+
         :param name: the name of the item to return
         :type name: str
         :return: the data
@@ -43,6 +44,7 @@ class Container(object):
     def set(self, name, value):
         """
         Stores the given data (if not None).
+
         :param name: the name of the item to store
         :type name: str
         :param value: the value to store
@@ -55,6 +57,7 @@ class Container(object):
     def allowed(self):
         """
         Returns the all the allowed keys.
+
         :return: the list of allowed keys.
         :rtype: list
         """
@@ -63,6 +66,7 @@ class Container(object):
     def is_valid(self):
         """
         Checks whether the container is valid.
+
         :return: True if the container is valid
         :rtype: bool
         """
@@ -71,6 +75,7 @@ class Container(object):
     def __str__(self):
         """
         Returns the content of the container as string.
+
         :return: the content
         :rtype: str
         """
@@ -79,6 +84,7 @@ class Container(object):
     def generate_help(self):
         """
         Generates a help string for this container.
+
         :return: the help string
         :rtype: str
         """
@@ -106,6 +112,7 @@ class ModelContainer(Container):
     def __init__(self, model=None, header=None):
         """
         Initializes the container.
+
         :param model: the model to store (eg Classifier or Clusterer)
         :type model: object
         :param header: the header instances
@@ -121,6 +128,7 @@ class ModelContainer(Container):
     def is_valid(self):
         """
         Checks whether the container is valid.
+
         :return: True if the container is valid
         :rtype: bool
         """
@@ -135,6 +143,7 @@ class AttributeSelectionContainer(Container):
     def __init__(self, original=None, reduced=None, num_atts=None, selected=None, results=None):
         """
         Initializes the container.
+
         :param original: the original dataset
         :type original: Instances
         :param reduced: the reduced dataset
@@ -157,6 +166,7 @@ class AttributeSelectionContainer(Container):
     def is_valid(self):
         """
         Checks whether the container is valid.
+
         :return: True if the container is valid
         :rtype: bool
         """
@@ -171,6 +181,7 @@ class ModelContainer(Container):
     def __init__(self, model=None, header=None):
         """
         Initializes the container.
+
         :param model: the model to store (eg Classifier or Clusterer)
         :type model: object
         :param header: the header instances
@@ -186,6 +197,7 @@ class ModelContainer(Container):
     def is_valid(self):
         """
         Checks whether the container is valid.
+
         :return: True if the container is valid
         :rtype: bool
         """
@@ -200,6 +212,7 @@ class ClassificationContainer(Container):
     def __init__(self, inst=None, classification=None, label=None, distribution=None):
         """
         Initializes the container.
+
         :param inst: the instance used for making the prediction
         :type inst: Instance
         :param classification: the classification (numeric value or 0-based label index)
@@ -219,6 +232,7 @@ class ClassificationContainer(Container):
     def is_valid(self):
         """
         Checks whether the container is valid.
+
         :return: True if the container is valid
         :rtype: bool
         """
@@ -233,6 +247,7 @@ class ClusteringContainer(Container):
     def __init__(self, inst=None, cluster=None, distribution=None):
         """
         Initializes the container.
+
         :param inst: the instance used for making the prediction
         :type inst: Instance
         :param cluster: the cluster
@@ -249,6 +264,7 @@ class ClusteringContainer(Container):
     def is_valid(self):
         """
         Checks whether the container is valid.
+
         :return: True if the container is valid
         :rtype: bool
         """

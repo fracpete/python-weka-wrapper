@@ -55,3 +55,11 @@ Contents
    sourcecode
    examples
    flow
+
+API
+===
+
+.. toctree::
+   :maxdepth: 4
+
+   weka

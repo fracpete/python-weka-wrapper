@@ -36,6 +36,7 @@ class DataGenerator(OptionHandler):
     def __init__(self, classname="weka.datagenerators.classifiers.classification.Agrawal", jobject=None, options=None):
         """
         Initializes the specified datagenerator using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the datagenerator
         :type classname: str
         :param jobject: the JB_Object to use
@@ -49,6 +50,7 @@ class DataGenerator(OptionHandler):
     def define_data_format(self):
         """
         Returns the data format.
+
         :return: the data format
         :rtype: Instances
         """
@@ -62,6 +64,7 @@ class DataGenerator(OptionHandler):
     def single_mode_flag(self):
         """
         Returns whether data is generated row by row (True) or in one go (False).
+
         :return: whether incremental
         :rtype: bool
         """
@@ -71,6 +74,7 @@ class DataGenerator(OptionHandler):
     def dataset_format(self):
         """
         Returns the dataset format.
+
         :return: the format
         :rtype: Instances
         """
@@ -84,6 +88,7 @@ class DataGenerator(OptionHandler):
     def dataset_format(self, inst):
         """
         Sets the dataset format.
+
         :param inst: the Instances to use as dataset format
         :type inst: Instances
         """
@@ -92,6 +97,7 @@ class DataGenerator(OptionHandler):
     def generate_start(self):
         """
         Returns a "start" string.
+
         :return: the start comment
         :rtype: str
         """
@@ -101,6 +107,7 @@ class DataGenerator(OptionHandler):
     def num_examples_act(self):
         """
         Returns a actual number of examples to generate.
+
         :return: the number of examples
         :rtype: int
         """
@@ -109,6 +116,7 @@ class DataGenerator(OptionHandler):
     def generate_example(self):
         """
         Returns a single Instance.
+
         :return: the next example
         :rtype: Instance
         """
@@ -121,6 +129,7 @@ class DataGenerator(OptionHandler):
     def generate_examples(self):
         """
         Returns complete dataset.
+
         :return: the generated dataset
         :rtype: Instances
         """
@@ -133,6 +142,7 @@ class DataGenerator(OptionHandler):
     def generate_finish(self):
         """
         Returns a "finish" string.
+
         :return: a finish comment
         :rtype: str
         """
@@ -142,6 +152,7 @@ class DataGenerator(OptionHandler):
     def make_data(cls, generator, args):
         """
         Generates data using the generator and commandline arguments.
+
         :param generator: the generator instance to use
         :type generator: DataGenerator
         :param args: the command-line arguments
@@ -156,6 +167,7 @@ class DataGenerator(OptionHandler):
     def make_copy(cls, generator):
         """
         Creates a copy of the generator.
+
         :param generator: the generator to copy
         :type generator: DataGenerator
         :return: the copy of the generator

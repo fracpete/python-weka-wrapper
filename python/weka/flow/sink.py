@@ -34,6 +34,7 @@ class Sink(InputConsumer):
     def __init__(self, name=None, config=None):
         """
         Initializes the sink.
+
         :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -45,6 +46,7 @@ class Sink(InputConsumer):
     def post_execute(self):
         """
         Gets executed after the actual execution.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -61,8 +63,9 @@ class Null(Sink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -72,6 +75,7 @@ class Null(Sink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -80,6 +84,7 @@ class Null(Sink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -93,8 +98,9 @@ class Console(Sink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -104,6 +110,7 @@ class Console(Sink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -113,6 +120,7 @@ class Console(Sink):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -121,6 +129,7 @@ class Console(Sink):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -139,6 +148,7 @@ class Console(Sink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -153,8 +163,9 @@ class FileOutputSink(Sink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -165,6 +176,7 @@ class FileOutputSink(Sink):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -173,6 +185,7 @@ class FileOutputSink(Sink):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -196,8 +209,9 @@ class DumpFile(FileOutputSink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -207,6 +221,7 @@ class DumpFile(FileOutputSink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -216,6 +231,7 @@ class DumpFile(FileOutputSink):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -224,6 +240,7 @@ class DumpFile(FileOutputSink):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -242,6 +259,7 @@ class DumpFile(FileOutputSink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -269,8 +287,9 @@ class ModelWriter(FileOutputSink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -280,6 +299,7 @@ class ModelWriter(FileOutputSink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -288,6 +308,7 @@ class ModelWriter(FileOutputSink):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -297,6 +318,7 @@ class ModelWriter(FileOutputSink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -315,8 +337,9 @@ class MatrixPlot(Sink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -326,6 +349,7 @@ class MatrixPlot(Sink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -334,6 +358,7 @@ class MatrixPlot(Sink):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -383,6 +408,7 @@ class MatrixPlot(Sink):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -394,6 +420,7 @@ class MatrixPlot(Sink):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -403,6 +430,7 @@ class MatrixPlot(Sink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -426,8 +454,9 @@ class LinePlot(Sink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -437,6 +466,7 @@ class LinePlot(Sink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -445,6 +475,7 @@ class LinePlot(Sink):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -494,6 +525,7 @@ class LinePlot(Sink):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -505,6 +537,7 @@ class LinePlot(Sink):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -514,6 +547,7 @@ class LinePlot(Sink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -537,8 +571,9 @@ class ClassifierErrors(Sink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -548,6 +583,7 @@ class ClassifierErrors(Sink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -556,6 +592,7 @@ class ClassifierErrors(Sink):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -605,6 +642,7 @@ class ClassifierErrors(Sink):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -616,6 +654,7 @@ class ClassifierErrors(Sink):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -625,6 +664,7 @@ class ClassifierErrors(Sink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -648,8 +688,9 @@ class ROC(Sink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -659,6 +700,7 @@ class ROC(Sink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -667,6 +709,7 @@ class ROC(Sink):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -710,6 +753,7 @@ class ROC(Sink):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -721,6 +765,7 @@ class ROC(Sink):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -730,6 +775,7 @@ class ROC(Sink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -752,8 +798,9 @@ class PRC(Sink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -763,6 +810,7 @@ class PRC(Sink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -771,6 +819,7 @@ class PRC(Sink):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -814,6 +863,7 @@ class PRC(Sink):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -825,6 +875,7 @@ class PRC(Sink):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -834,6 +885,7 @@ class PRC(Sink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -856,8 +908,9 @@ class InstanceDumper(FileOutputSink):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the sink.
+
+        :param name: the name of the sink
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -868,6 +921,7 @@ class InstanceDumper(FileOutputSink):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -876,6 +930,7 @@ class InstanceDumper(FileOutputSink):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -888,6 +943,7 @@ class InstanceDumper(FileOutputSink):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """

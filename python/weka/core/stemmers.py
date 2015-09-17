@@ -26,6 +26,7 @@ class Stemmer(OptionHandler):
     def __init__(self, classname="weka.core.stemmers.NullStemmer", jobject=None, options=None):
         """
         Initializes the specified stemmer using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the stemmer
         :type classname: str
         :param jobject: the JB_Object to use
@@ -42,6 +43,7 @@ class Stemmer(OptionHandler):
     def stem(self, s):
         """
         Performs stemming on the string.
+
         :param s: the string to stem
         :type s: str
         :return: the stemmed string

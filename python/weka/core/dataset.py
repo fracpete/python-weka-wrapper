@@ -32,6 +32,7 @@ class Instances(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the weka.core.Instances wrapper.
+
         :param jobject: the weka.core.Instances object to wrap
         :type jobject: JB_Object
         """
@@ -52,6 +53,7 @@ class Instances(JavaObject):
     def __iter__(self):
         """
         Allows iterating over the rows.
+
         :return: the iterator
         :rtype: InstanceIterator
         """
@@ -61,6 +63,7 @@ class Instances(JavaObject):
     def relationname(self):
         """
         Returns the name of the dataset.
+
         :return: the name
         :rtype: str
         """
@@ -70,6 +73,7 @@ class Instances(JavaObject):
     def relationname(self, value):
         """
         Sets the name of the dataset.
+
         :param value: the name
         :type value: str
         """
@@ -79,6 +83,7 @@ class Instances(JavaObject):
     def num_attributes(self):
         """
         Returns the number of attributes.
+
         :return: the number of attributes
         :rtype: int
         """
@@ -93,6 +98,7 @@ class Instances(JavaObject):
     def attribute(self, index):
         """
         Returns the specified attribute.
+
         :param index: the 0-based index of the attribute
         :type index: int
         :return: the attribute
@@ -103,6 +109,7 @@ class Instances(JavaObject):
     def attribute_by_name(self, name):
         """
         Returns the specified attribute, None if not found.
+
         :param name: the name of the attribute
         :type name: str
         :return: the attribute or None
@@ -117,6 +124,7 @@ class Instances(JavaObject):
     def attribute_stats(self, index):
         """
         Returns the specified attribute statistics.
+
         :param index: the 0-based index of the attribute
         :type index: int
         :return: the attribute statistics
@@ -127,6 +135,7 @@ class Instances(JavaObject):
     def values(self, index):
         """
         Returns the internal values of this attribute from all the instance objects.
+
         :return: the values as numpy array
         :rtype: list
         """
@@ -140,6 +149,7 @@ class Instances(JavaObject):
     def num_instances(self):
         """
         Returns the number of instances.
+
         :return: the number of instances
         :rtype: int
         """
@@ -149,6 +159,7 @@ class Instances(JavaObject):
     def class_attribute(self):
         """
         Returns the currently set class attribute.
+
         :return: the class attribute
         :rtype: Attribute
         """
@@ -158,6 +169,7 @@ class Instances(JavaObject):
     def class_index(self):
         """
         Returns the currently set class index (0-based).
+
         :return: the class index, -1 if not set
         :rtype: int
         """
@@ -167,6 +179,7 @@ class Instances(JavaObject):
     def class_index(self, index):
         """
         Sets the class index (0-based).
+
         :param index: the new index, use -1 to unset
         :type index: int
         """
@@ -175,6 +188,7 @@ class Instances(JavaObject):
     def has_class(self):
         """
         Returns whether a class attribute is set (convenience method).
+
         :return: whether a class attribute is currently set
         :rtype: bool
         """
@@ -201,6 +215,7 @@ class Instances(JavaObject):
     def get_instance(self, index):
         """
         Returns the Instance object at the specified location.
+
         :param index: the 0-based index of the instance
         :type index: int
         :return: the instance
@@ -211,6 +226,7 @@ class Instances(JavaObject):
     def add_instance(self, inst, index=None):
         """
         Adds the specified instance to the dataset.
+
         :param inst: the Instance to add
         :type inst: Instance
         :param index: the 0-based index where to add the Instance
@@ -224,6 +240,7 @@ class Instances(JavaObject):
     def set_instance(self, index, inst):
         """
         Sets the Instance at the specified location in the dataset.
+
         :param index: the 0-based index of the instance to replace
         :type index; int
         :param inst: the Instance to set
@@ -237,6 +254,7 @@ class Instances(JavaObject):
     def delete(self, index=None):
         """
         Removes either the specified Instance or all Instance objects.
+
         :param index: the 0-based index of the instance to remove
         :type index: int
         """
@@ -248,6 +266,7 @@ class Instances(JavaObject):
     def delete_attribute(self, index):
         """
         Deletes an attribute at the given position.
+
         :param index: the 0-based index of the attribute to remove
         :type index: int
         """
@@ -268,6 +287,7 @@ class Instances(JavaObject):
     def delete_attribute_type(self, typ):
         """
         Deletes all attributes of the given type in the dataset.
+
         :param typ: the attribute type to remove, see weka.core.Attribute Javadoc
         :type typ: int
         """
@@ -276,6 +296,7 @@ class Instances(JavaObject):
     def delete_with_missing(self, index):
         """
         Deletes all rows that have a missing value at the specified attribute index.
+
         :param index: the attribute index to check for missing attributes
         :type index: int
         """
@@ -290,6 +311,7 @@ class Instances(JavaObject):
     def sort(self, index):
         """
         Sorts the dataset using the specified attribute index.
+
         :param index: the index of the attribute
         :type index: int
         """
@@ -298,6 +320,7 @@ class Instances(JavaObject):
     def randomize(self, random):
         """
         Randomizes the dataset using the random number generator.
+
         :param random: the random number generator to use
         :type random: Random
         """
@@ -306,6 +329,7 @@ class Instances(JavaObject):
     def stratify(self, folds):
         """
         Stratifies the data after randomization for nominal class attributes.
+
         :param folds: the number of folds to perform the stratification for
         :type folds: int
         """
@@ -314,6 +338,7 @@ class Instances(JavaObject):
     def train_cv(self, num_folds, fold, random=None):
         """
         Generates a training fold for cross-validation.
+
         :param num_folds: the number of folds of cross-validation, eg 10
         :type num_folds: int
         :param fold: the current fold (0-based)
@@ -335,6 +360,7 @@ class Instances(JavaObject):
     def test_cv(self, num_folds, fold):
         """
         Generates a test fold for cross-validation.
+
         :param num_folds: the number of folds of cross-validation, eg 10
         :type num_folds: int
         :param fold: the current fold (0-based)
@@ -349,6 +375,7 @@ class Instances(JavaObject):
     def equal_headers(self, inst):
         """
         Compares this dataset against the given one in terms of attributes.
+
         :param inst: the dataset to compare against
         :type inst: Instances
         :return: None if the same, otherwise an error message
@@ -362,6 +389,7 @@ class Instances(JavaObject):
         """
         Creates a copy of the Instances. If either from_row or num_rows are None, then all of
         the data is being copied.
+
         :param dataset: the original dataset
         :type dataset: Instances
         :param from_row: the 0-based start index of the rows to copy
@@ -387,6 +415,7 @@ class Instances(JavaObject):
     def template_instances(cls, dataset, capacity=0):
         """
         Uses the Instances as template to create an empty dataset.
+
         :param dataset: the original dataset
         :type dataset: Instances
         :param capacity: how many data rows to reserve initially (see compactify)
@@ -402,6 +431,7 @@ class Instances(JavaObject):
     def create_instances(cls, name, atts, capacity):
         """
         Creates a new Instances.
+
         :param name: the relation name
         :type name: str
         :param atts: the list of attributes to use for the dataset
@@ -423,6 +453,7 @@ class Instances(JavaObject):
     def merge_instances(cls, inst1, inst2):
         """
         Merges the two datasets (side-by-side).
+
         :param inst1: the first dataset
         :type inst1: Instances or str
         :param inst2: the first dataset
@@ -438,6 +469,7 @@ class Instances(JavaObject):
     def append_instances(cls, inst1, inst2):
         """
         Merges the two datasets (one-after-the-other). Throws an exception if the datasets aren't compatible.
+
         :param inst1: the first dataset
         :type inst1: Instances
         :param inst2: the first dataset
@@ -455,6 +487,8 @@ class Instances(JavaObject):
 
     def train_test_split(self, percentage, rnd=None):
         """
+        Generates a train/test split.
+
         :param percentage: the percentage split to use (amount to use for training; 0-100)
         :type percentage: double
         :param rnd: the random number generator to use, if None the order gets preserved
@@ -478,6 +512,7 @@ class Instances(JavaObject):
     def summary(cls, inst):
         """
         Generates a summary of the dataset.
+
         :param inst: the dataset
         :type inst: Instances
         :return: the summary
@@ -494,6 +529,7 @@ class Instance(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the weka.core.Instance wrapper.
+
         :param jobject: the weka.core.Instance object to initialize with
         :type jobject: JB_Object
         """
@@ -511,6 +547,7 @@ class Instance(JavaObject):
     def __iter__(self):
         """
         Returns an iterator over the values.
+
         :return: a value iterator
         :rtype: InstanceValueIterator
         """
@@ -520,6 +557,7 @@ class Instance(JavaObject):
     def dataset(self):
         """
         Returns the dataset that this instance belongs to.
+
         :return: the dataset or None if no dataset set
         :rtype: Instances
         """
@@ -533,6 +571,7 @@ class Instance(JavaObject):
     def dataset(self, dataset):
         """
         Sets the dataset that this instance belongs to (for attribute information).
+
         :param dataset: the dataset this instance belongs to.
         :type dataset: Instances
         """
@@ -542,6 +581,7 @@ class Instance(JavaObject):
     def num_attributes(self):
         """
         Returns the number of attributes.
+
         :return: the numer of attributes
         :rtype: int
         """
@@ -551,6 +591,7 @@ class Instance(JavaObject):
     def num_classes(self):
         """
         Returns the number of class labels.
+
         :return: the numer of class labels
         :rtype: int
         """
@@ -560,6 +601,7 @@ class Instance(JavaObject):
     def class_attribute(self):
         """
         Returns the currently set class attribute.
+
         :return: the class attribute
         :rtype: Attribute
         """
@@ -569,6 +611,7 @@ class Instance(JavaObject):
     def class_index(self):
         """
         Returns the currently set class index.
+
         :return: the class index, -1 if not set
         :rtype: int
         """
@@ -577,6 +620,7 @@ class Instance(JavaObject):
     def has_class(self):
         """
         Returns whether a class attribute is set (convenience method).
+
         :return: whether a class attribute is currently set
         :rtype: bool
         """
@@ -585,6 +629,7 @@ class Instance(JavaObject):
     def set_value(self, index, value):
         """
         Sets the internal value at the specified position (0-based).
+
         :param index: the 0-based index of the attribute
         :type index: int
         :param value: the internal float value to set
@@ -595,6 +640,7 @@ class Instance(JavaObject):
     def get_value(self, index):
         """
         Returns the internal value at the specified position (0-based).
+
         :param index: the 0-based index of the inernal value
         :type index: int
         :return: the internal value
@@ -605,6 +651,7 @@ class Instance(JavaObject):
     def set_string_value(self, index, s):
         """
         Sets the string value at the specified position (0-based).
+
         :param index: the 0-based index of the inernal value
         :type index: int
         :param s: the string value
@@ -615,6 +662,7 @@ class Instance(JavaObject):
     def get_string_value(self, index):
         """
         Returns the string value at the specified position (0-based).
+
         :param index: the 0-based index of the inernal value
         :type index: int
         :return: the string value
@@ -625,6 +673,7 @@ class Instance(JavaObject):
     def get_relational_value(self, index):
         """
         Returns the relational value at the specified position (0-based).
+
         :param index: the 0-based index of the inernal value
         :type index: int
         :return: the relational value
@@ -635,6 +684,7 @@ class Instance(JavaObject):
     def set_missing(self, index):
         """
         Sets the attribute at the specified index to missing.
+
         :param index: the 0-based index of the attribute
         :type index: int
         """
@@ -643,6 +693,7 @@ class Instance(JavaObject):
     def is_missing(self, index):
         """
         Returns whether the attribute at the specified index is missing.
+
         :param index: the 0-based index of the attribute
         :type index: int
         :return: whether the value is missing
@@ -653,6 +704,7 @@ class Instance(JavaObject):
     def has_missing(self):
         """
         Returns whether at least one attribute has a missing value.
+
         :return: whether at least one value is missing
         :rtype: bool
         """
@@ -662,6 +714,7 @@ class Instance(JavaObject):
     def weight(self):
         """
         Returns the currently set weight.
+
         :return: the weight
         :rtype: float
         """
@@ -671,6 +724,7 @@ class Instance(JavaObject):
     def weight(self, weight):
         """
         Sets the weight.
+
         :param weight: the weight to set
         :type weight: float
         """
@@ -680,6 +734,7 @@ class Instance(JavaObject):
     def values(self):
         """
         Returns the internal values of this instance.
+
         :return: the values as numpy array
         :rtype: ndarray
         """
@@ -689,6 +744,7 @@ class Instance(JavaObject):
     def create_instance(cls, values, classname="weka.core.DenseInstance", weight=1.0):
         """
         Creates a new instance.
+
         :param values: the float values (internal format) to use, numpy array or list.
         :type values: ndarray or list
         :param classname: the classname of the instance (eg weka.core.DenseInstance).
@@ -710,6 +766,7 @@ class Instance(JavaObject):
     def create_sparse_instance(cls, values, max_values, classname="weka.core.SparseInstance", weight=1.0):
         """
         Creates a new sparse instance.
+
         :param values: the list of tuples (0-based index and internal format float). The indices of the
                        tuples must be in ascending order and "max_values" must be set to the maximum
                        number of attributes in the dataset.
@@ -742,7 +799,11 @@ class Attribute(JavaObject):
     """
     
     def __init__(self, jobject):
-        """ Initializes the weka.core.Attribute wrapper. """
+        """
+        Initializes the weka.core.Attribute wrapper.
+        :param jobject: the JB_Object
+        :type jobject: JB_Object
+        """
         self.enforce_type(jobject, "weka.core.Attribute")
         super(Attribute, self).__init__(jobject)
 
@@ -750,6 +811,7 @@ class Attribute(JavaObject):
     def name(self):
         """
         Returns the name of the attribute.
+
         :return: the name
         :rtype: str
         """
@@ -759,6 +821,7 @@ class Attribute(JavaObject):
     def index(self):
         """
         Returns the index of this attribute.
+
         :return: the index
         :rtype: int
         """
@@ -768,6 +831,7 @@ class Attribute(JavaObject):
     def weight(self):
         """
         Returns the weight of the attribute.
+
         :return: the weight
         :rtype: float
         """
@@ -777,6 +841,7 @@ class Attribute(JavaObject):
     def weight(self, weight):
         """
         Sets the weight of the attribute.
+
         :param weight: the weight of the attribute
         :type weight: float
         """
@@ -785,6 +850,7 @@ class Attribute(JavaObject):
     def index_of(self, label):
         """
         Returns the index of the label in this attribute.
+
         :param label: the string label to get the index for
         :type label: str
         :return: the 0-based index
@@ -795,6 +861,7 @@ class Attribute(JavaObject):
     def value(self, index):
         """
         Returns the label for the index.
+
         :param index: the 0-based index of the label to  return
         :type index: int
         :return: the label
@@ -806,6 +873,7 @@ class Attribute(JavaObject):
     def num_values(self):
         """
         Returns the number of labels.
+
         :return: the number of labels
         :rtype: int
         """
@@ -815,6 +883,7 @@ class Attribute(JavaObject):
     def values(self):
         """
         Returns the labels, strings or relation-values.
+
         :return: all the values, None if not NOMINAL, STRING, or RELATION
         :rtype: list
         """
@@ -828,6 +897,7 @@ class Attribute(JavaObject):
     def ordering(self):
         """
         Returns the ordering of the attribute.
+
         :return: the ordering (ORDERING_SYMBOLIC, ORDERING_ORDERED, ORDERING_MODULO)
         :rtype: int
         """
@@ -837,6 +907,7 @@ class Attribute(JavaObject):
     def type(self):
         """
         Returns the type of the attribute. See weka.core.Attribute Javadoc.
+
         :return: the type
         :rtype: int
         """
@@ -845,6 +916,7 @@ class Attribute(JavaObject):
     def type_str(self, short=False):
         """
         Returns the type of the attribute as string.
+
         :return: the type
         :rtype: str
         """
@@ -861,6 +933,7 @@ class Attribute(JavaObject):
     def is_averagable(self):
         """
         Returns whether the attribute is averagable.
+
         :return: whether averagable
         :rtype: bool
         """
@@ -870,6 +943,7 @@ class Attribute(JavaObject):
     def is_date(self):
         """
         Returns whether the attribute is a date one.
+
         :return: whether date attribute
         :rtype: bool
         """
@@ -879,6 +953,7 @@ class Attribute(JavaObject):
     def is_nominal(self):
         """
         Returns whether the attribute is a nominal one.
+
         :return: whether nominal attribute
         :rtype: bool
         """
@@ -888,6 +963,7 @@ class Attribute(JavaObject):
     def is_numeric(self):
         """
         Returns whether the attribute is a numeric one (date or numeric).
+
         :return: whether numeric attribute
         :rtype: bool
         """
@@ -897,6 +973,7 @@ class Attribute(JavaObject):
     def is_relation_valued(self):
         """
         Returns whether the attribute is a relation valued one.
+
         :return: whether relation valued attribute
         :rtype: bool
         """
@@ -906,6 +983,7 @@ class Attribute(JavaObject):
     def is_string(self):
         """
         Returns whether the attribute is a string attribute.
+
         :return: whether string attribute
         :rtype: bool
         """
@@ -915,6 +993,7 @@ class Attribute(JavaObject):
     def date_format(self):
         """
         Returns the format of this data attribute. See java.text.SimpleDateFormat Javadoc.
+
         :return: the format string
         :rtype: str
         """
@@ -924,6 +1003,7 @@ class Attribute(JavaObject):
     def lower_numeric_bound(self):
         """
         Returns the lower numeric bound of the numeric attribute.
+
         :return: the lower bound
         :rtype: float
         """
@@ -933,6 +1013,7 @@ class Attribute(JavaObject):
     def upper_numeric_bound(self):
         """
         Returns the upper numeric bound of the numeric attribute.
+
         :return: the upper bound
         :rtype: float
         """
@@ -941,6 +1022,7 @@ class Attribute(JavaObject):
     def is_in_range(self, value):
         """
         Checks whether the value is within the bounds of the numeric attribute.
+
         :param value: the numeric value to check
         :type value: float
         :return: whether between lower and upper bound
@@ -951,6 +1033,7 @@ class Attribute(JavaObject):
     def add_string_value(self, s):
         """
         Adds the string value, returns the index.
+
         :param s: the string to add
         :type s: str
         :return: the index
@@ -961,6 +1044,7 @@ class Attribute(JavaObject):
     def add_relation(self, instances):
         """
         Adds the relation value, returns the index.
+
         :param instances: the Instances object to add
         :type instances: Instances
         :return: the index
@@ -971,6 +1055,7 @@ class Attribute(JavaObject):
     def parse_date(self, s):
         """
         Parses the date string and returns the internal format value.
+
         :param s: the date string
         :type s: str
         :return: the internal format
@@ -981,6 +1066,7 @@ class Attribute(JavaObject):
     def equals(self, att):
         """
         Checks whether this attributes is the same as the provided one.
+
         :param att: the Attribute to check against
         :type att: Attribute
         :return: whether the same
@@ -992,6 +1078,7 @@ class Attribute(JavaObject):
         """
         Checks whether this attributes is the same as the provided one.
         Returns None if the same, otherwise error message.
+
         :param att: the Attribute to check against
         :type att: Attribute
         :return: None if the same, otherwise error message
@@ -1002,6 +1089,7 @@ class Attribute(JavaObject):
     def copy(self, name=None):
         """
         Creates a copy of this attribute.
+
         :param name: the new name, uses the old one if None
         :type name: str
         :return: the copy of the attribute
@@ -1018,6 +1106,7 @@ class Attribute(JavaObject):
     def create_numeric(cls, name):
         """
         Creates a numeric attribute.
+
         :param name: the name of the attribute
         :type name: str
         """
@@ -1029,6 +1118,7 @@ class Attribute(JavaObject):
     def create_date(cls, name, formt="yyyy-MM-dd'T'HH:mm:ss"):
         """
         Creates a date attribute.
+
         :param name: the name of the attribute
         :type name: str
         :param formt: the date format, see Javadoc for java.text.SimpleDateFormat
@@ -1042,6 +1132,7 @@ class Attribute(JavaObject):
     def create_nominal(cls, name, labels):
         """
         Creates a nominal attribute.
+
         :param name: the name of the attribute
         :type name: str
         :param labels: the list of string labels to use
@@ -1055,6 +1146,7 @@ class Attribute(JavaObject):
     def create_string(cls, name):
         """
         Creates a string attribute.
+
         :param name: the name of the attribute
         :type name: str
         """
@@ -1071,6 +1163,7 @@ class AttributeStats(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the container.
+
         :param jobject: The Java object to wrap
         :type jobject: JB_Object
         """
@@ -1081,6 +1174,7 @@ class AttributeStats(JavaObject):
     def distinct_count(self):
         """
         The number of distinct values.
+
         :return: The number of distinct values
         :rtype: int
         """
@@ -1090,6 +1184,7 @@ class AttributeStats(JavaObject):
     def int_count(self):
         """
         The number of int-like values.
+
         :return: The number of int-like values
         :rtype: int
         """
@@ -1099,6 +1194,7 @@ class AttributeStats(JavaObject):
     def missing_count(self):
         """
         The number of missing values.
+
         :return: The number of missing values
         :rtype: int
         """
@@ -1108,6 +1204,7 @@ class AttributeStats(JavaObject):
     def nominal_counts(self):
         """
         Counts of each nominal value.
+
         :return: Counts of each nominal value
         :rtype: ndarray
         """
@@ -1118,6 +1215,7 @@ class AttributeStats(JavaObject):
     def nominal_weights(self):
         """
         Weight mass for each nominal value.
+
         :return: Weight mass for each nominal value
         :rtype: ndarray
         """
@@ -1128,6 +1226,7 @@ class AttributeStats(JavaObject):
     def numeric_stats(self):
         """
         Stats on numeric value distributions.
+
         :return: Stats on numeric value distributions
         :rtype: NumericStats
         """
@@ -1137,6 +1236,7 @@ class AttributeStats(JavaObject):
     def total_count(self):
         """
         The total number of values.
+
         :return: The total number of values
         :rtype: int
         """
@@ -1146,6 +1246,7 @@ class AttributeStats(JavaObject):
     def unique_count(self):
         """
         The number of values that only appear once.
+
         :return: The number of values that only appear once
         :rtype: int
         """
@@ -1160,6 +1261,7 @@ class Stats(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the container.
+
         :param jobject: The Java object to wrap
         :type jobject: JB_Object
         """
@@ -1170,6 +1272,7 @@ class Stats(JavaObject):
     def count(self):
         """
         The number of values seen.
+
         :return: The number of values seen
         :rtype: float
         """
@@ -1179,6 +1282,7 @@ class Stats(JavaObject):
     def min(self):
         """
         The minimum value seen, or Double.NaN if no values seen.
+
         :return: The minimum value seen, or Double.NaN if no values seen
         :rtype: float
         """
@@ -1188,6 +1292,7 @@ class Stats(JavaObject):
     def max(self):
         """
         The maximum value seen, or Double.NaN if no values seen.
+
         :return: The maximum value seen, or Double.NaN if no values seen
         :rtype: float
         """
@@ -1197,6 +1302,7 @@ class Stats(JavaObject):
     def mean(self):
         """
         The mean of values at the last calculateDerived() call.
+
         :return: The mean of values at the last calculateDerived() call
         :rtype: float
         """
@@ -1205,7 +1311,8 @@ class Stats(JavaObject):
     @property
     def stddev(self):
         """
-        The std deviation of values at the last calculateDerived() call
+        The std deviation of values at the last calculateDerived() call.
+
         :return: The std deviation of values at the last calculateDerived() call
         :rtype: float
         """
@@ -1215,6 +1322,7 @@ class Stats(JavaObject):
     def sum(self):
         """
         The sum of values seen.
+
         :return: The sum of values seen
         :rtype: float
         """
@@ -1224,6 +1332,7 @@ class Stats(JavaObject):
     def sumsq(self):
         """
         The sum of values squared seen.
+
         :return: The sum of values squared seen
         :rtype: float
         """
@@ -1236,6 +1345,8 @@ class InstanceIterator(object):
     """
     def __init__(self, data):
         """
+        Initializes the iterator.
+
         :param data: the Instances object to iterate over
         :type data: Instances
         """
@@ -1251,6 +1362,7 @@ class InstanceIterator(object):
     def next(self):
         """
         Returns the next row from the Instances object.
+
         :return: the next Instance object
         :rtype: Instance
         """
@@ -1268,6 +1380,8 @@ class AttributeIterator(object):
     """
     def __init__(self, data):
         """
+        Initializes the iterator.
+
         :param data: the Instances object to iterate over
         :type data: Instances
         """
@@ -1283,6 +1397,7 @@ class AttributeIterator(object):
     def next(self):
         """
         Returns the next attribute from the Instances object.
+
         :return: the next Attribute object
         :rtype: Attribute
         """
@@ -1300,6 +1415,8 @@ class InstanceValueIterator(object):
     """
     def __init__(self, data):
         """
+        Initializes the iterator.
+
         :param data: the Instance object to iterate over
         :type data: Instance
         """
@@ -1315,6 +1432,7 @@ class InstanceValueIterator(object):
     def next(self):
         """
         Returns the next value from the Instance object.
+        
         :return: the next value, depending on the attribute that can be either a number of a string
         :rtype: str or float
         """

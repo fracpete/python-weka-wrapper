@@ -26,6 +26,7 @@ class Stopwords(OptionHandler):
     def __init__(self, classname="weka.core.stopwords.Null", jobject=None, options=None):
         """
         Initializes the specified stopwords handler using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the stopwords handler
         :type classname: str
         :param jobject: the JB_Object to use
@@ -42,6 +43,7 @@ class Stopwords(OptionHandler):
     def is_stopword(self, s):
         """
         Checks a string whether it is a stopword.
+
         :param s: the string to check
         :type s: str
         :return: True if a stopword

@@ -27,6 +27,7 @@ class Conversion(Configurable):
     def __init__(self, config=None):
         """
         Initializes the conversion.
+
         :param config: dictionary of options to use
         :type config: dict
         """
@@ -37,6 +38,7 @@ class Conversion(Configurable):
     def __str__(self):
         """
         Returns a short representation of the actor's setup.
+
         :return: the setup
         :rtype: str
         """
@@ -45,6 +47,7 @@ class Conversion(Configurable):
     def check_input(self, obj):
         """
         Performs checks on the input object. Raises an exception if unsupported.
+
         :param obj: the object to check
         :type obj: object
         """
@@ -54,6 +57,7 @@ class Conversion(Configurable):
     def input(self):
         """
         Returns the current input object, None if not available.
+
         :return: the input object
         :rtype: object
         """
@@ -63,6 +67,7 @@ class Conversion(Configurable):
     def input(self, obj):
         """
         Accepts the data for processing.
+
         :param obj: the object to process
         :type obj: object
         """
@@ -73,6 +78,7 @@ class Conversion(Configurable):
     def output(self):
         """
         Returns the generated output object, None if not available.
+
         :return: the output object
         :rtype: object
         """
@@ -81,6 +87,7 @@ class Conversion(Configurable):
     def convert(self):
         """
         Performs the actual conversion.
+
         :return: None if successful, otherwise errors message
         :rtype: str
         """
@@ -95,6 +102,7 @@ class PassThrough(Conversion):
     def __init__(self, config=None):
         """
         Initializes the conversion.
+
         :param config: dictionary of options to use
         :type config: dict
         """
@@ -103,6 +111,7 @@ class PassThrough(Conversion):
     def description(self):
         """
         Returns the description for the conversion.
+
         :return: the description
         :rtype: str
         """
@@ -111,6 +120,7 @@ class PassThrough(Conversion):
     def convert(self):
         """
         Performs the actual conversion.
+
         :return: None if successful, otherwise errors message
         :rtype: str
         """
@@ -126,6 +136,7 @@ class AnyToCommandline(Conversion):
     def __init__(self, config=None):
         """
         Initializes the conversion.
+
         :param config: dictionary of options to use
         :type config: dict
         """
@@ -134,6 +145,7 @@ class AnyToCommandline(Conversion):
     def description(self):
         """
         Returns the description for the conversion.
+
         :return: the description
         :rtype: str
         """
@@ -142,6 +154,7 @@ class AnyToCommandline(Conversion):
     def convert(self):
         """
         Performs the actual conversion.
+
         :return: None if successful, otherwise errors message
         :rtype: str
         """
@@ -157,6 +170,7 @@ class CommandlineToAny(Conversion):
     def __init__(self, config=None):
         """
         Initializes the conversion.
+
         :param config: dictionary of options to use
         :type config: dict
         """
@@ -165,6 +179,7 @@ class CommandlineToAny(Conversion):
     def description(self):
         """
         Returns the description for the conversion.
+
         :return: the description
         :rtype: str
         """
@@ -173,6 +188,7 @@ class CommandlineToAny(Conversion):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -191,6 +207,7 @@ class CommandlineToAny(Conversion):
     def check_input(self, obj):
         """
         Performs checks on the input object. Raises an exception if unsupported.
+
         :param obj: the object to check
         :type obj: object
         """
@@ -203,6 +220,7 @@ class CommandlineToAny(Conversion):
     def convert(self):
         """
         Performs the actual conversion.
+
         :return: None if successful, otherwise errors message
         :rtype: str
         """

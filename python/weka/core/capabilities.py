@@ -27,6 +27,7 @@ class Capability(Enum):
     def __init__(self, jobject=None, member=None):
         """
         Initializes the wrapper with the specified Capability object.
+
         :param jobject: the Capability object to wrap
         :type jobject: JB_Object
         :param member: the capability string to parse
@@ -39,6 +40,7 @@ class Capability(Enum):
     def is_attribute(self):
         """
         Returns whether this capability is an attribute.
+
         :return: whether it is an attribute
         :rtype: bool
         """
@@ -48,6 +50,7 @@ class Capability(Enum):
     def is_attribute_capability(self):
         """
         Returns whether this capability is an attribute capability.
+
         :return: whether it is an attribute capability
         :rtype: bool
         """
@@ -57,6 +60,7 @@ class Capability(Enum):
     def is_class(self):
         """
         Returns whether this capability is a class.
+
         :return: whether it is a class
         :rtype: bool
         """
@@ -66,6 +70,7 @@ class Capability(Enum):
     def is_class_capability(self):
         """
         Returns whether this capability is a class capability.
+
         :return: whether it is a class capability
         :rtype: bool
         """
@@ -75,6 +80,7 @@ class Capability(Enum):
     def is_other_capability(self):
         """
         Returns whether this capability is an other capability.
+
         :return: whether it is an other capability
         :rtype: bool
         """
@@ -89,6 +95,7 @@ class Capabilities(JavaObject):
     def __init__(self, jobject=None, owner=None):
         """
         Initializes the wrapper with the specified Capabilities object.
+
         :param jobject: the Capabilities object to wrap, instantiates a new one if None
         :type jobject: JB_Object
         :param owner: the weka.core.CapabilitiesHandler object to use as owner, can be None
@@ -106,6 +113,7 @@ class Capabilities(JavaObject):
     def owner(self):
         """
         Returns the owner of these capabilities, if any.
+
         :return: the owner, can be None
         :rtype: JavaObject
         """
@@ -119,6 +127,7 @@ class Capabilities(JavaObject):
     def owner(self, obj):
         """
         Sets the new owner.
+
         :param obj: the new owner
         :type obj: JavaObject or JB_Object
         """
@@ -129,6 +138,7 @@ class Capabilities(JavaObject):
     def capabilities(self):
         """
         Returns all the capabilities.
+
         :return: all capabilities
         :rtype: list
         """
@@ -141,6 +151,7 @@ class Capabilities(JavaObject):
     def attribute_capabilities(self):
         """
         Returns all the attribute capabilities.
+
         :return: attribute capabilities
         :rtype: Capabilities
         """
@@ -150,6 +161,7 @@ class Capabilities(JavaObject):
     def class_capabilities(self):
         """
         Returns all the class capabilities.
+
         :return: class capabilities
         :rtype: Capabilities
         """
@@ -159,6 +171,7 @@ class Capabilities(JavaObject):
     def other_capabilities(self):
         """
         Returns all other capabilities.
+
         :return: all other capabilities
         :rtype: Capabilities
         """
@@ -168,6 +181,7 @@ class Capabilities(JavaObject):
     def dependencies(self):
         """
         Returns all the dependencies.
+
         :return: the dependency list
         :rtype: list
         """
@@ -179,7 +193,8 @@ class Capabilities(JavaObject):
 
     def handles(self, capability):
         """
-        Returns whether the specified capability is set
+        Returns whether the specified capability is set.
+
         :param capability: the capability to check
         :type capability: Capability
         :return: whether the capability is set
@@ -209,6 +224,7 @@ class Capabilities(JavaObject):
     def enable(self, capability):
         """
         enables the specified capability.
+
         :param capability: the capability to enable
         :type capability: Capability
         """
@@ -230,6 +246,7 @@ class Capabilities(JavaObject):
         """
         enables the dependency of the given capability enabling NOMINAL_ATTRIBUTES also enables
         BINARY_ATTRIBUTES, UNARY_ATTRIBUTES and EMPTY_NOMINAL_ATTRIBUTES.
+
         :param capability: the dependency to enable
         :type capability: Capability
         """
@@ -257,6 +274,7 @@ class Capabilities(JavaObject):
     def disable(self, capability):
         """
         Disables the specified capability.
+
         :param capability: the capability to disable
         :type capability: Capability
         """
@@ -278,6 +296,7 @@ class Capabilities(JavaObject):
         """
         Disables the dependency of the given capability Disabling NOMINAL_ATTRIBUTES also disables
         BINARY_ATTRIBUTES, UNARY_ATTRIBUTES and EMPTY_NOMINAL_ATTRIBUTES.
+
         :param capability: the dependency to disable
         :type capability: Capability
         """
@@ -287,6 +306,7 @@ class Capabilities(JavaObject):
     def has_dependencies(self):
         """
         Returns whether any dependencies are set.
+
         :return: whether any dependecies are set
         :rtype: bool
         """
@@ -294,7 +314,8 @@ class Capabilities(JavaObject):
 
     def has_dependency(self, capability):
         """
-        Returns whether the specified dependency is set
+        Returns whether the specified dependency is set.
+
         :param capability: the capability to check
         :type capability: Capability
         :return: whether the dependency is set
@@ -307,6 +328,7 @@ class Capabilities(JavaObject):
         """
         Returns true if the currently set capabilities support at least all of the capabiliites of the given
         Capabilities object (checks only the enum!)
+
         :param capabilities: the capabilities to check
         :type capabilities: Capabilities
         :return: whether the current capabilities support at least the specified ones
@@ -318,6 +340,7 @@ class Capabilities(JavaObject):
         """
         Returns true if the currently set capabilities support (or have a dependency) at least all of the
         capabilities of the given Capabilities object (checks only the enum!)
+
         :param capabilities: the capabilities to check
         :type capabilities: Capabilities
         :return: whether the current capabilities (potentially) support the specified ones
@@ -329,6 +352,7 @@ class Capabilities(JavaObject):
     def min_instances(self):
         """
         Returns the minimum number of instances that must be supported.
+
         :return: the minimum number
         :rtype: int
         """
@@ -338,6 +362,7 @@ class Capabilities(JavaObject):
     def min_instances(self, minimum):
         """
         Sets the minimum number of instances that must be supported.
+
         :param minimum: the minimum number
         :type minimum: int
         """
@@ -346,6 +371,7 @@ class Capabilities(JavaObject):
     def test_attribute(self, att, is_class=None, fail=False):
         """
         Tests whether the attribute meets the conditions.
+
         :param att: the Attribute to test
         :type att: Attribute
         :param is_class: whether this attribute is the class attribute
@@ -373,6 +399,7 @@ class Capabilities(JavaObject):
     def test_instances(self, data, from_index=None, to_index=None, fail=False):
         """
         Tests whether the dataset meets the conditions.
+
         :param data: the Instances to test
         :type data: Instances
         :param from_index: the first attribute to include
@@ -402,6 +429,7 @@ class Capabilities(JavaObject):
         """
         returns a Capabilities object specific for this data. The minimum number of instances is not set, the check
         for multi-instance data is optional.
+
         :param data: the data to generate the capabilities for
         :type data: Instances
         :param multi: whether to check the structure, too

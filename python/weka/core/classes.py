@@ -34,7 +34,9 @@ logger = logging.getLogger("weka.core.classes")
 def get_class(classname):
     """
     Returns the class object associated with the dot-notation classname.
+
     Taken from here: http://stackoverflow.com/a/452981
+
     :param classname: the classname
     :type classname: str
     :return: the class object
@@ -51,6 +53,7 @@ def get_class(classname):
 def get_jclass(classname):
     """
     Returns the Java class object associated with the dot-notation classname.
+
     :param classname: the classname
     :type classname: str
     :return: the class object
@@ -62,6 +65,7 @@ def get_jclass(classname):
 def get_classname(obj):
     """
     Returns the classname of the JB_Object, Python class or object.
+
     :param obj: the java object or Python class/object to get the classname for
     :type obj: object
     :return: the classname
@@ -84,6 +88,7 @@ class Stoppable(object):
     def is_stopped(self):
         """
         Returns whether the object has been stopped.
+
         :return: whether stopped
         :rtype: bool
         """
@@ -105,6 +110,7 @@ The methods that handle the restoration from a JSON dictionary, stored under the
 def register_dict_handler(typestr, handler):
     """
     Registers a handler for restoring an object from a JSON dictionary.
+
     :param typestr: the type of the object
     :type typestr: str
     :param handler: the method
@@ -116,6 +122,7 @@ def register_dict_handler(typestr, handler):
 def deregister_dict_handler(typestr):
     """
     Deregisters a handler for restoring an object from a JSON dictionary.
+
     :param typestr: the type of the object
     :type typestr: str
     """
@@ -126,6 +133,7 @@ def deregister_dict_handler(typestr):
 def has_dict_handler(typestr):
     """
     Returns the handler for restoring an object from a JSON dictionary.
+
     :param typestr: the type of the object
     :type typestr: str
     :return: the handler, None if not available
@@ -137,6 +145,7 @@ def has_dict_handler(typestr):
 def get_dict_handler(typestr):
     """
     Returns the handler for restoring an object from a JSON dictionary.
+
     :param typestr: the type of the object
     :type typestr: str
     :return: the handler, None if not available
@@ -153,6 +162,7 @@ class JSONObject(object):
     def to_dict(self):
         """
         Returns a dictionary that represents this object, to be used for JSONification.
+
         :return: the object dictionary
         :rtype: dict
         """
@@ -162,6 +172,7 @@ class JSONObject(object):
     def from_dict(cls, d):
         """
         Restores an object state from a dictionary, used in de-JSONification.
+
         :param d: the object dictionary
         :type d: dict
         :return: the object
@@ -172,6 +183,7 @@ class JSONObject(object):
     def to_json(self):
         """
         Returns the options as JSON.
+
         :return: the object as string
         :rtype: str
         """
@@ -181,6 +193,7 @@ class JSONObject(object):
     def from_json(cls, s):
         """
         Restores the object from the given JSON.
+
         :param s: the JSON string to parse
         :type s: str
         :return: the
@@ -191,6 +204,7 @@ class JSONObject(object):
     def shallow_copy(self):
         """
         Returns a shallow copy of itself.
+
         :return: the copy
         :rtype: object
         """
@@ -205,6 +219,7 @@ class Configurable(JSONObject):
     def __init__(self, config=None):
         """
         Initializes the object.
+
         :param config: the dictionary with the options (str -> object).
         :type config: dict
         """
@@ -219,6 +234,7 @@ class Configurable(JSONObject):
     def __repr__(self):
         """
         Returns Python code for instantiating the object.
+
         :return: the representation
         :rtype: str
         """
@@ -229,6 +245,7 @@ class Configurable(JSONObject):
     def description(self):
         """
         Returns a description of the object.
+
         :return: the description
         :rtype: str
         """
@@ -237,6 +254,7 @@ class Configurable(JSONObject):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -248,6 +266,7 @@ class Configurable(JSONObject):
     def config(self):
         """
         Obtains the currently set options of the actor.
+
         :return: the options
         :rtype: dict
         """
@@ -257,6 +276,7 @@ class Configurable(JSONObject):
     def config(self, options):
         """
         Sets the options of the actor.
+
         :param options: the options
         :type options: dict
         """
@@ -265,6 +285,7 @@ class Configurable(JSONObject):
     def to_dict(self):
         """
         Returns a dictionary that represents this object, to be used for JSONification.
+
         :return: the object dictionary
         :rtype: dict
         """
@@ -284,6 +305,7 @@ class Configurable(JSONObject):
     def from_dict(cls, d):
         """
         Restores its state from a dictionary, used in de-JSONification.
+
         :param d: the object dictionary
         :type d: dict
         """
@@ -299,6 +321,7 @@ class Configurable(JSONObject):
     def new_logger(self):
         """
         Returns a new logger instance.
+
         :return: the logger instance
         :rtype: logger
         """
@@ -308,6 +331,7 @@ class Configurable(JSONObject):
     def logger(self):
         """
         Returns the logger object.
+
         :return: the logger
         :rtype: logger
         """
@@ -319,6 +343,7 @@ class Configurable(JSONObject):
     def help(self):
         """
         Obtains the help information per option for this actor.
+
         :return: the help
         :rtype: dict
         """
@@ -327,6 +352,7 @@ class Configurable(JSONObject):
     def generate_help(self):
         """
         Generates a help string for this actor.
+
         :return: the help string
         :rtype: str
         """
@@ -364,6 +390,7 @@ class JavaObject(JSONObject):
     def __init__(self, jobject):
         """
         Initializes the wrapper with the specified Java object.
+
         :param jobject: the Java object to wrap
         :type jobject: JB_Object
         """
@@ -376,6 +403,7 @@ class JavaObject(JSONObject):
     def __str__(self):
         """
         Just calls the toString() method.
+
         :rtype: str
         """
         return javabridge.to_string(self.jobject)
@@ -383,6 +411,7 @@ class JavaObject(JSONObject):
     def __repr__(self):
         """
         Just calls the toString() method.
+
         :rtype: str
         """
         return javabridge.to_string(self.jobject)
@@ -390,6 +419,7 @@ class JavaObject(JSONObject):
     def __unicode__(self):
         """
         Just calls the toString() method.
+
         :rtype: str
         """
         return javabridge.to_string(self.jobject)
@@ -398,6 +428,7 @@ class JavaObject(JSONObject):
     def classname(self):
         """
         Returns the Java classname in dot-notation.
+
         :return: the Java classname
         :rtype: str
         """
@@ -407,6 +438,7 @@ class JavaObject(JSONObject):
     def set_property(self, path, jobject):
         """
         Attempts to set the value (jobject, a Java object) of the provided (bean) property path.
+
         :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
         :type path: str
         :param jobject: the Java object to set; if instance of JavaObject class, the jobject member is
@@ -425,6 +457,7 @@ class JavaObject(JSONObject):
     def get_property(self, path):
         """
         Attempts to get the value (jobject, a Java object) of the provided (bean) property path.
+
         :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
         :type path: str
         :return the wrapped Java object
@@ -439,6 +472,7 @@ class JavaObject(JSONObject):
     def jclass(self):
         """
         Returns the Java class object of the underlying Java object.
+
         :return: the Java class
         :rtype: JB_Object
         """
@@ -449,7 +483,9 @@ class JavaObject(JSONObject):
         """
         Returns a JWrapper instance of the encapsulated Java object, giving access to methods
         using dot notation.
+
         http://pythonhosted.org//javabridge/highlevel.html#wrapping-java-objects-using-reflection
+
         :return: the wrapper
         :rtype: JWrapper
         """
@@ -460,7 +496,9 @@ class JavaObject(JSONObject):
         """
         Returns a JClassWrapper instance of the class for the encapsulated Java object, giving
         access to the class methods using dot notation.
+
         http://pythonhosted.org//javabridge/highlevel.html#wrapping-java-objects-using-reflection
+
         :return: the wrapper
         :rtype: JClassWrapper
         """
@@ -470,6 +508,7 @@ class JavaObject(JSONObject):
     def is_serializable(self):
         """
         Returns true if the object is serialiable.
+
         :return: true if serializable
         :rtype: bool
         """
@@ -478,6 +517,7 @@ class JavaObject(JSONObject):
     def to_dict(self):
         """
         Returns a dictionary that represents this object, to be used for JSONification.
+
         :return: the object dictionary
         :rtype: dict
         """
@@ -490,6 +530,7 @@ class JavaObject(JSONObject):
     def from_dict(cls, d):
         """
         Restores an object state from a dictionary, used in de-JSONification.
+
         :param d: the object dictionary
         :type d: dict
         :return: the object
@@ -500,9 +541,10 @@ class JavaObject(JSONObject):
     @classmethod
     def check_type(cls, jobject, intf_or_class, jni_intf_or_class=None):
         """
-        Returns whether the object implements the specified interface or is a subclass. 
+        Returns whether the object implements the specified interface or is a subclass.
         E.g.: self._check_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
         or self._check_type('weka.core.converters.AbstractFileLoader')
+
         :param jobject: the Java object to check
         :type jobject: JB_Object
         :param intf_or_class: the classname in Java notation (eg "weka.core.DenseInstance;")
@@ -520,6 +562,7 @@ class JavaObject(JSONObject):
         Raises an exception if the object does not implement the specified interface or is not a subclass. 
         E.g.: self._enforce_type('weka.core.OptionHandler', 'Lweka/core/OptionHandler;') 
         or self._enforce_type('weka.core.converters.AbstractFileLoader')
+
         :param jobject: the Java object to check
         :type jobject: JB_Object
         :param intf_or_class: the classname in Java notation (eg "weka.core.DenseInstance")
@@ -534,6 +577,7 @@ class JavaObject(JSONObject):
     def new_instance(cls, classname, jni_classname=None):
         """
         Creates a new object from the given classname using the default constructor, None in case of error.
+
         :param classname: the classname in Java notation (eg "weka.core.DenseInstance")
         :type classname: str
         :param jni_classname: the classname in JNI notation (eg "Lweka/core/DenseInstance;")
@@ -572,6 +616,7 @@ class JavaArrayIterator(object):
     def next(self):
         """
         Returns the next element from the array.
+
         :return: the next array element object, wrapped as JavaObject if not null
         :rtype: JavaObject or None
         """
@@ -591,6 +636,7 @@ class JavaArray(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the wrapper with the specified Java object.
+
         :param jobject: the java array object to wrap
         :type jobject: JB_Object
         """
@@ -602,6 +648,7 @@ class JavaArray(JavaObject):
     def __len__(self):
         """
         Returns the length of the array.
+
         :return: the array length
         :rtype: int
         """
@@ -610,6 +657,7 @@ class JavaArray(JavaObject):
     def __getitem__(self, key):
         """
         Returns the specified element in the array wrapped in a JavaObject.
+
         :param key: the index of the element to retrieve
         :type key: int
         :return: the element or None if element is null
@@ -627,6 +675,7 @@ class JavaArray(JavaObject):
     def __setitem__(self, key, value):
         """
         Sets the specified element in the array.
+
         :param key: the index of the element to set
         :type key: int
         :param value: the object to set (JavaObject or JB_Object)
@@ -650,6 +699,7 @@ class JavaArray(JavaObject):
     def __iter__(self):
         """
         Returns an iterator over the elements.
+
         :return: the iterator
         :rtype: JavaArrayIterator
         """
@@ -659,6 +709,7 @@ class JavaArray(JavaObject):
     def new_instance(cls, classname, length):
         """
         Creates a new array with the given classname and length; initial values are null.
+
         :param classname: the classname in Java notation (eg "weka.core.DenseInstance")
         :type classname: str
         :param length: the length of the array
@@ -681,6 +732,7 @@ class Enum(JavaObject):
     def __init__(self, jobject=None, enum=None, member=None):
         """
         Initializes the enum class.
+
         :param jobject: the Java object to wrap
         :type jobject: JB_Object
         :param enum: the enum class to instantiate (dot notation)
@@ -700,6 +752,7 @@ class Enum(JavaObject):
     def name(self):
         """
         Returns the name of the enum member.
+
         :return: the name
         :rtype: str
         """
@@ -709,6 +762,7 @@ class Enum(JavaObject):
     def ordinal(self):
         """
         Returns the ordinal of the enum member.
+
         :return: the ordinal
         :rtype: int
         """
@@ -718,6 +772,7 @@ class Enum(JavaObject):
     def values(self):
         """
         Returns list of all enum members.
+
         :return: all enum members
         :rtype: list
         """
@@ -739,6 +794,7 @@ class Random(JavaObject):
     def __init__(self, seed):
         """
         The seed value.
+
         :param seed: the seed value
         :type seed: int
         """
@@ -747,6 +803,7 @@ class Random(JavaObject):
     def next_int(self, n=None):
         """
         Next random integer. if n is provided, then between 0 and n-1.
+
         :param n: the upper limit (minus 1) for the random integer
         :type n: int
         :return: the next random integer
@@ -760,6 +817,7 @@ class Random(JavaObject):
     def next_double(self):
         """
         Next random double.
+
         :return: the next random double
         :rtype: double
         """
@@ -774,6 +832,7 @@ class Option(JavaObject):
     def __init__(self, jobject):
         """
         Initializes the wrapper with the specified option object.
+
         :param jobject: the java object to wrap
         :type jobject: JB_Object
         """
@@ -784,6 +843,7 @@ class Option(JavaObject):
     def name(self):
         """
         Returns the name of the option.
+
         :return: the name
         :rtype: str
         """
@@ -793,6 +853,7 @@ class Option(JavaObject):
     def description(self):
         """
         Returns the description of the option.
+
         :return: the description
         :rtype: str
         """
@@ -802,6 +863,7 @@ class Option(JavaObject):
     def synopsis(self):
         """
         Returns the synopsis of the option.
+
         :return: the synopsis
         :rtype: str
         """
@@ -811,6 +873,7 @@ class Option(JavaObject):
     def num_arguments(self):
         """
         Returns the synopsis of the option.
+
         :return: the synopsis
         :rtype: str
         """
@@ -826,6 +889,7 @@ class OptionHandler(JavaObject, Configurable):
     def __init__(self, jobject, options=None):
         """
         Initializes the wrapper with the specified Java object.
+
         :param jobject: the java object to wrap
         :type jobject: JB_Object
         :param options: the options to set
@@ -846,6 +910,7 @@ class OptionHandler(JavaObject, Configurable):
     def global_info(self):
         """
         Returns the globalInfo() result, None if not available.
+
         :rtypes: str
         """
         try:
@@ -856,6 +921,7 @@ class OptionHandler(JavaObject, Configurable):
     def description(self):
         """
         Returns a description of the object.
+
         :return: the description
         :rtype: str
         """
@@ -865,6 +931,7 @@ class OptionHandler(JavaObject, Configurable):
     def options(self):
         """
         Obtains the currently set options as list.
+
         :return: the list of options
         :rtype: list
         """
@@ -877,6 +944,7 @@ class OptionHandler(JavaObject, Configurable):
     def options(self, options):
         """
         Sets the command-line options (as list).
+
         :param options: the list of command-line options to set
         :type options: list
         """
@@ -886,6 +954,7 @@ class OptionHandler(JavaObject, Configurable):
     def to_commandline(self):
         """
         Generates a commandline string from the JavaObject instance.
+
         :return: the commandline string
         :rtype: str
         """
@@ -897,6 +966,7 @@ class OptionHandler(JavaObject, Configurable):
     def to_help(self):
         """
         Returns a string that contains the 'global_info' text and the options.
+
         :return: the generated help string
         :rtype: str
         """
@@ -922,6 +992,7 @@ class OptionHandler(JavaObject, Configurable):
     def __str__(self):
         """
         Calls the toString() method of the java object.
+
         :return: the result of the toString() method
         :rtype: str
         """
@@ -930,6 +1001,7 @@ class OptionHandler(JavaObject, Configurable):
     def to_dict(self):
         """
         Returns a dictionary that represents this object, to be used for JSONification.
+
         :return: the object dictionary
         :rtype: dict
         """
@@ -942,6 +1014,7 @@ class OptionHandler(JavaObject, Configurable):
     def from_dict(cls, d):
         """
         Restores an object state from a dictionary, used in de-JSONification.
+
         :param d: the object dictionary
         :type d: dict
         :return: the object
@@ -960,6 +1033,7 @@ class SingleIndex(JavaObject):
     def __init__(self, jobject=None, index=None):
         """
         Initializes the wrapper with the specified Java object or string index.
+
         :param jobject: the java object to wrap
         :type jobject: JB_Object
         :param index: the string index to use
@@ -977,6 +1051,7 @@ class SingleIndex(JavaObject):
     def upper(self, upper):
         """
         Sets the upper limit.
+
         :param upper: the upper limit
         :type upper: int
         """
@@ -985,6 +1060,7 @@ class SingleIndex(JavaObject):
     def index(self):
         """
         Returns the integer index.
+
         :return: the 0-based integer index
         :rtype: int
         """
@@ -994,6 +1070,7 @@ class SingleIndex(JavaObject):
     def single_index(self):
         """
         Returns the string index.
+
         :return: the 1-based string index
         :rtype: str
         """
@@ -1003,6 +1080,7 @@ class SingleIndex(JavaObject):
     def single_index(self, index):
         """
         Sets the string index.
+
         :param index: the 1-based string index
         ::type index: str
         """
@@ -1017,6 +1095,7 @@ class Range(JavaObject):
     def __init__(self, jobject=None, ranges=None):
         """
         Initializes the wrapper with the specified Java object or string range.
+
         :param jobject: the java object to wrap
         :type jobject: JB_Object
         :param ranges: the string range to use
@@ -1034,6 +1113,7 @@ class Range(JavaObject):
     def upper(self, upper):
         """
         Sets the upper limit.
+
         :param upper: the upper limit
         :type upper: int
         """
@@ -1042,6 +1122,7 @@ class Range(JavaObject):
     def selection(self):
         """
         Returns the selection list.
+
         :return: the list of 0-based integer indices
         :rtype: list
         """
@@ -1051,6 +1132,7 @@ class Range(JavaObject):
     def ranges(self):
         """
         Returns the string range.
+
         :return: the string range of 1-based indices
         :rtype: str
         """
@@ -1060,6 +1142,7 @@ class Range(JavaObject):
     def ranges(self, rng):
         """
         Sets the string range.
+
         :param rng: the range to set
         :type rng: str
         """
@@ -1069,6 +1152,7 @@ class Range(JavaObject):
     def invert(self):
         """
         Returns whether the range is inverted.
+
         :return: true if inverted
         :rtype: bool
         """
@@ -1078,6 +1162,7 @@ class Range(JavaObject):
     def invert(self, invert):
         """
         Sets the invert state.
+
         :param invert: whether to invert or not
         :type invert: bool
         """
@@ -1114,6 +1199,7 @@ class Tag(JavaObject):
     def ident(self):
         """
         Returns the current integer ID of the tag.
+
         :return: the integer ID
         :rtype: int
         """
@@ -1123,6 +1209,7 @@ class Tag(JavaObject):
     def ident(self, value):
         """
         Sets the integer ID of the tag.
+
         :param value: the new ID
         :type value: int
         """
@@ -1132,6 +1219,7 @@ class Tag(JavaObject):
     def identstr(self):
         """
         Returns the current ID string.
+
         :return: the ID string
         :rtype: str
         """
@@ -1141,6 +1229,7 @@ class Tag(JavaObject):
     def identstr(self, value):
         """
         Sets the ID string.
+
         :param value: the new ID string
         :type value: str
         """
@@ -1150,6 +1239,7 @@ class Tag(JavaObject):
     def readable(self):
         """
         Returns the 'human readable' string.
+
         :return: the readable string
         :rtype: str
         """
@@ -1159,6 +1249,7 @@ class Tag(JavaObject):
     def readable(self, value):
         """
         Sets the 'human readable' string.
+
         :param value: the new readable string
         :type value: str
         """
@@ -1189,6 +1280,7 @@ class Tags(JavaObject):
     def __len__(self):
         """
         Returns the number of Tag objects in the array.
+
         :return: the number of tag objects
         :rtype: int
         """
@@ -1197,6 +1289,7 @@ class Tags(JavaObject):
     def __getitem__(self, item):
         """
         Returns the specified Tag from the array.
+
         :param item: the 0-based index
         :type item: int
         :return: the tag
@@ -1219,6 +1312,7 @@ class Tags(JavaObject):
     def __str__(self):
         """
         Just calls the toString() method.
+
         :rtype: str
         """
         result = ""
@@ -1231,6 +1325,7 @@ class Tags(JavaObject):
     def find(self, name):
         """
         Returns the Tag that matches the name.
+
         :param name: the string representation of the tag
         :type name: str
         :return: the tag, None if not found
@@ -1247,7 +1342,9 @@ class Tags(JavaObject):
     def get_tags(cls, classname, field):
         """
         Instantiates the Tag array located in the specified class with the given field name.
+
         Example: tag_array("weka.classifiers.functions.SMO", "TAGS_FILTER")
+
         :param classname: the classname in which the tags reside
         :type classname: str
         :param field: the field name of the Tag array
@@ -1267,6 +1364,7 @@ class SelectedTag(JavaObject):
     def __init__(self, jobject=None, tag_id=None, tag_text=None, tags=None):
         """
         Initializes the wrapper with the specified Java object or tags and either tag_id or tag_text.
+
         :param jobject: the java object to wrap
         :type jobject: JB_Object
         :param tag_id: the integer associated with the tag
@@ -1297,6 +1395,7 @@ class SelectedTag(JavaObject):
     def selected(self):
         """
         Returns the selected tag.
+
         :return: the tag
         :rtype: Tag
         """
@@ -1306,6 +1405,7 @@ class SelectedTag(JavaObject):
     def tags(self):
         """
         Returns the associated tags.
+
         :return: the list of Tag objects
         :rtype: list
         """
@@ -1321,6 +1421,7 @@ class SelectedTag(JavaObject):
 def join_options(options):
     """
     Turns the list of options back into a single commandline string.
+
     :param options: the list of options to process
     :type options: list
     :return: the combined options
@@ -1335,6 +1436,7 @@ def join_options(options):
 def split_options(cmdline):
     """
     Splits the commandline into a list of options.
+
     :param cmdline: the commandline string to split into individual options
     :type cmdline: str
     :return: the split list of commandline options
@@ -1350,18 +1452,7 @@ def split_options(cmdline):
 def backquote(s):
     """
     Backquotes the string.
-    :param s: the string to process
-    :type s: str
-    :return: the backquoted string
-    :rtype: str
-    """
-    return javabridge.static_call(
-        "Lweka/core/Utils;", "backQuoteChars", "(Ljava/lang/String;)Ljava/lang/String;", s)
 
-
-def backquote(s):
-    """
-    Backquotes the string.
     :param s: the string to process
     :type s: str
     :return: the backquoted string
@@ -1374,6 +1465,7 @@ def backquote(s):
 def unbackquote(s):
     """
     Un-backquotes the string.
+
     :param s: the string to process
     :type s: str
     :return: the un-backquoted string
@@ -1386,6 +1478,7 @@ def unbackquote(s):
 def quote(s):
     """
     Quotes the string if necessary.
+
     :param s: the string to process
     :type s: str
     :return: the quoted string
@@ -1398,6 +1491,7 @@ def quote(s):
 def unquote(s):
     """
     Un-quotes the string.
+
     :param s: the string to process
     :type s: str
     :return: the un-quoted string
@@ -1410,6 +1504,7 @@ def unquote(s):
 def to_commandline(optionhandler):
     """
     Generates a commandline string from the OptionHandler instance.
+
     :param optionhandler: the OptionHandler instance to turn into a commandline
     :type optionhandler: OptionHandler
     :return: the commandline string
@@ -1424,6 +1519,7 @@ def to_commandline(optionhandler):
 def from_commandline(cmdline, classname=None):
     """
     Creates an OptionHandler based on the provided commandline string.
+
     :param cmdline: the commandline string to use
     :type cmdline: str
     :param classname: the classname of the wrapper to return other than OptionHandler (in dot-notation)
@@ -1450,6 +1546,7 @@ class AbstractParameter(OptionHandler):
     def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified parameter using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the search parameter
         :type classname: str
         :param jobject: the JB_Object to use
@@ -1466,6 +1563,7 @@ class AbstractParameter(OptionHandler):
     def prop(self):
         """
         Returns the currently set property to apply the parameter to.
+
         :return: the property
         :rtype: str
         """
@@ -1475,6 +1573,7 @@ class AbstractParameter(OptionHandler):
     def prop(self, s):
         """
         Sets the property to apply the parameter to.
+
         :param s: the property
         :type s: str
         """
@@ -1489,6 +1588,7 @@ class ListParameter(AbstractParameter):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the specified parameter using either its classname or the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to set
@@ -1504,6 +1604,7 @@ class ListParameter(AbstractParameter):
     def values(self):
         """
         Returns the currently set values.
+
         :return: the list of values (strings)
         :rtype: list
         """
@@ -1513,6 +1614,7 @@ class ListParameter(AbstractParameter):
     def values(self, l):
         """
         Sets the list of values to apply.
+
         :param l: the list of values (strings)
         :type l: list
         """
@@ -1527,6 +1629,7 @@ class MathParameter(AbstractParameter):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the specified parameter using either its classname or the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to set
@@ -1542,6 +1645,7 @@ class MathParameter(AbstractParameter):
     def minimum(self):
         """
         Returns the currently set minimum value.
+
         :return: the minimum
         :rtype: float
         """
@@ -1551,6 +1655,7 @@ class MathParameter(AbstractParameter):
     def minimum(self, m):
         """
         Sets the new minimum value.
+
         :param m: the minimum
         :type m: float
         """
@@ -1560,6 +1665,7 @@ class MathParameter(AbstractParameter):
     def maximum(self):
         """
         Returns the currently set maximum value.
+
         :return: the maximum
         :rtype: float
         """
@@ -1569,6 +1675,7 @@ class MathParameter(AbstractParameter):
     def maximum(self, m):
         """
         Sets the new maximum value.
+
         :param m: the maximum
         :type m: float
         """
@@ -1578,6 +1685,7 @@ class MathParameter(AbstractParameter):
     def step(self):
         """
         Returns the currently set step value.
+
         :return: the step
         :rtype: float
         """
@@ -1587,6 +1695,7 @@ class MathParameter(AbstractParameter):
     def step(self, s):
         """
         Sets the new step value.
+
         :param s: the step
         :type s: float
         """
@@ -1596,6 +1705,7 @@ class MathParameter(AbstractParameter):
     def base(self):
         """
         Returns the currently set base value.
+
         :return: the base
         :rtype: float
         """
@@ -1605,6 +1715,7 @@ class MathParameter(AbstractParameter):
     def base(self, b):
         """
         Sets the new base value.
+
         :param b: the base
         :type b: float
         """
@@ -1614,6 +1725,7 @@ class MathParameter(AbstractParameter):
     def expression(self):
         """
         Returns the currently set expression.
+
         :return: the expression
         :rtype: str
         """
@@ -1623,6 +1735,7 @@ class MathParameter(AbstractParameter):
     def expression(self, e):
         """
         Sets the new expression.
+
         :param e: the expression
         :type e: str
         """
@@ -1637,6 +1750,7 @@ class SetupGenerator(OptionHandler):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the specified classifier using its classname or the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to set
@@ -1653,6 +1767,7 @@ class SetupGenerator(OptionHandler):
     def base_object(self):
         """
         Returns the base object to apply the setups to.
+
         :return: the base object
         :rtype: JavaObject
         """
@@ -1662,6 +1777,7 @@ class SetupGenerator(OptionHandler):
     def base_object(self, obj):
         """
         Sets the base object to apply the setups to.
+
         :param obj: the object to use (must be serializable!)
         :type obj: JavaObject
         """
@@ -1673,6 +1789,7 @@ class SetupGenerator(OptionHandler):
     def parameters(self):
         """
         Returns the list of currently set search parameters.
+
         :return: the list of AbstractSearchParameter objects
         :rtype: list
         """
@@ -1686,6 +1803,7 @@ class SetupGenerator(OptionHandler):
     def parameters(self, params):
         """
         Sets the list of search parameters to use.
+
         :param params: list of AbstractSearchParameter objects
         :type params: list
         """
@@ -1697,6 +1815,7 @@ class SetupGenerator(OptionHandler):
     def setups(self):
         """
         Generates and returns all the setups according to the parameter search space.
+
         :return: the list of configured objects (of type JavaObject)
         :rtype: list
         """

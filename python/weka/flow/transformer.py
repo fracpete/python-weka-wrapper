@@ -43,6 +43,7 @@ class Transformer(InputConsumer, OutputProducer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -54,6 +55,7 @@ class Transformer(InputConsumer, OutputProducer):
     def post_execute(self):
         """
         Gets executed after the actual execution.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -71,6 +73,7 @@ class PassThrough(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -81,6 +84,7 @@ class PassThrough(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -89,6 +93,7 @@ class PassThrough(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -103,6 +108,7 @@ class LoadDataset(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -115,6 +121,7 @@ class LoadDataset(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -124,6 +131,7 @@ class LoadDataset(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -134,6 +142,7 @@ class LoadDataset(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -162,6 +171,7 @@ class LoadDataset(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -174,6 +184,7 @@ class LoadDataset(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -196,6 +207,7 @@ class LoadDataset(Transformer):
     def has_output(self):
         """
         Checks whether any output tokens are present.
+
         :return: true if at least one output token present
         :rtype: bool
         """
@@ -204,6 +216,7 @@ class LoadDataset(Transformer):
     def output(self):
         """
         Returns the next available output token.
+
         :return: the next token, None if none available
         :rtype: Token
         """
@@ -243,6 +256,7 @@ class SetStorageValue(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -253,6 +267,7 @@ class SetStorageValue(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -262,6 +277,7 @@ class SetStorageValue(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -270,6 +286,7 @@ class SetStorageValue(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -288,6 +305,7 @@ class SetStorageValue(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -306,6 +324,7 @@ class DeleteStorageValue(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -316,6 +335,7 @@ class DeleteStorageValue(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -325,6 +345,7 @@ class DeleteStorageValue(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -333,6 +354,7 @@ class DeleteStorageValue(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -351,6 +373,7 @@ class DeleteStorageValue(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -369,6 +392,7 @@ class InitStorageValue(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -379,6 +403,7 @@ class InitStorageValue(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -388,6 +413,7 @@ class InitStorageValue(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -396,6 +422,7 @@ class InitStorageValue(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -420,6 +447,7 @@ class InitStorageValue(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -439,6 +467,7 @@ class UpdateStorageValue(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -449,6 +478,7 @@ class UpdateStorageValue(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -460,6 +490,7 @@ class UpdateStorageValue(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -468,6 +499,7 @@ class UpdateStorageValue(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -492,6 +524,7 @@ class UpdateStorageValue(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -515,6 +548,7 @@ class MathExpression(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -525,6 +559,7 @@ class MathExpression(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -537,6 +572,7 @@ class MathExpression(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -545,6 +581,7 @@ class MathExpression(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -563,6 +600,7 @@ class MathExpression(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -580,6 +618,7 @@ class ClassSelector(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -590,6 +629,7 @@ class ClassSelector(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -599,6 +639,7 @@ class ClassSelector(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -608,6 +649,7 @@ class ClassSelector(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -632,6 +674,7 @@ class ClassSelector(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -644,6 +687,7 @@ class ClassSelector(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -683,6 +727,7 @@ class Train(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -695,6 +740,7 @@ class Train(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -706,6 +752,7 @@ class Train(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -714,6 +761,7 @@ class Train(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -732,6 +780,7 @@ class Train(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -744,6 +793,7 @@ class Train(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -802,6 +852,7 @@ class Filter(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -814,6 +865,7 @@ class Filter(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -824,6 +876,7 @@ class Filter(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -832,6 +885,7 @@ class Filter(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -854,6 +908,7 @@ class Filter(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -868,6 +923,7 @@ class Filter(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -918,6 +974,7 @@ class DeleteFile(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -928,6 +985,7 @@ class DeleteFile(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -937,6 +995,7 @@ class DeleteFile(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -945,6 +1004,7 @@ class DeleteFile(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -963,6 +1023,7 @@ class DeleteFile(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -986,6 +1047,7 @@ class CrossValidate(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -996,6 +1058,7 @@ class CrossValidate(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1006,6 +1069,7 @@ class CrossValidate(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -1014,6 +1078,7 @@ class CrossValidate(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -1056,6 +1121,7 @@ class CrossValidate(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -1066,6 +1132,7 @@ class CrossValidate(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1104,6 +1171,7 @@ class Evaluate(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1114,6 +1182,7 @@ class Evaluate(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1123,6 +1192,7 @@ class Evaluate(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -1131,6 +1201,7 @@ class Evaluate(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -1161,6 +1232,7 @@ class Evaluate(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -1171,6 +1243,7 @@ class Evaluate(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1206,6 +1279,7 @@ class EvaluationSummary(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1216,6 +1290,7 @@ class EvaluationSummary(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1225,6 +1300,7 @@ class EvaluationSummary(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -1235,6 +1311,7 @@ class EvaluationSummary(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -1265,6 +1342,7 @@ class EvaluationSummary(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -1279,6 +1357,7 @@ class EvaluationSummary(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1301,6 +1380,7 @@ class ModelReader(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1311,6 +1391,7 @@ class ModelReader(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1319,6 +1400,7 @@ class ModelReader(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1352,6 +1434,7 @@ class Convert(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1362,6 +1445,7 @@ class Convert(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1371,6 +1455,7 @@ class Convert(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -1379,6 +1464,7 @@ class Convert(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -1395,6 +1481,7 @@ class Convert(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -1405,6 +1492,7 @@ class Convert(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1426,6 +1514,7 @@ class AttributeSelection(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1436,6 +1525,7 @@ class AttributeSelection(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1447,6 +1537,7 @@ class AttributeSelection(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -1456,6 +1547,7 @@ class AttributeSelection(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -1478,6 +1570,7 @@ class AttributeSelection(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -1489,6 +1582,7 @@ class AttributeSelection(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1517,6 +1611,7 @@ class RenameRelation(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1527,6 +1622,7 @@ class RenameRelation(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1536,6 +1632,7 @@ class RenameRelation(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -1544,6 +1641,7 @@ class RenameRelation(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -1562,6 +1660,7 @@ class RenameRelation(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -1574,6 +1673,7 @@ class RenameRelation(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1595,6 +1695,7 @@ class Copy(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1605,6 +1706,7 @@ class Copy(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1614,6 +1716,7 @@ class Copy(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1636,6 +1739,7 @@ class Predict(Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the transformer.
+
         :param name: the name of the transformer
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1648,6 +1752,7 @@ class Predict(Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1660,6 +1765,7 @@ class Predict(Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -1668,6 +1774,7 @@ class Predict(Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -1692,6 +1799,7 @@ class Predict(Transformer):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -1702,6 +1810,7 @@ class Predict(Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """

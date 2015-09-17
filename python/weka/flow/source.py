@@ -32,6 +32,7 @@ class Source(OutputProducer, Actor):
     def __init__(self, name=None, config=None):
         """
         Initializes the source.
+
         :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -48,8 +49,9 @@ class Start(Source):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the source.
+
+        :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -59,6 +61,7 @@ class Start(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -67,6 +70,7 @@ class Start(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -81,8 +85,9 @@ class FileSupplier(Source):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the source.
+
+        :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -92,6 +97,7 @@ class FileSupplier(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -101,6 +107,7 @@ class FileSupplier(Source):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -109,6 +116,7 @@ class FileSupplier(Source):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -127,6 +135,7 @@ class FileSupplier(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -142,8 +151,9 @@ class ListFiles(Source):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the source.
+
+        :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -153,6 +163,7 @@ class ListFiles(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -162,6 +173,7 @@ class ListFiles(Source):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -173,6 +185,7 @@ class ListFiles(Source):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -215,6 +228,7 @@ class ListFiles(Source):
     def _list(self, path, collected):
         """
         Lists all the files/dirs in directory that match the pattern.
+
         :param path: the directory to search
         :type path: str
         :param collected: the files/dirs collected so far (full path)
@@ -248,6 +262,7 @@ class ListFiles(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -271,8 +286,9 @@ class GetStorageValue(Source):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the source.
+
+        :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -282,6 +298,7 @@ class GetStorageValue(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -291,6 +308,7 @@ class GetStorageValue(Source):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -299,6 +317,7 @@ class GetStorageValue(Source):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -317,6 +336,7 @@ class GetStorageValue(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -336,8 +356,9 @@ class ForLoop(Source):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the source.
+
+        :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -347,6 +368,7 @@ class ForLoop(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -356,6 +378,7 @@ class ForLoop(Source):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -366,6 +389,7 @@ class ForLoop(Source):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -396,6 +420,7 @@ class ForLoop(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -415,6 +440,7 @@ class LoadDatabase(Source):
     def __init__(self, name=None, config=None):
         """
         Initializes the source.
+
         :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -427,6 +453,7 @@ class LoadDatabase(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -436,6 +463,7 @@ class LoadDatabase(Source):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -445,6 +473,7 @@ class LoadDatabase(Source):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -491,6 +520,7 @@ class LoadDatabase(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -515,6 +545,7 @@ class DataGenerator(Source):
     def __init__(self, name=None, config=None):
         """
         Initializes the source.
+
         :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -525,6 +556,7 @@ class DataGenerator(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -534,6 +566,7 @@ class DataGenerator(Source):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -542,6 +575,7 @@ class DataGenerator(Source):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -564,6 +598,7 @@ class DataGenerator(Source):
     def to_config(self, k, v):
         """
         Hook method that allows conversion of individual options.
+
         :param k: the key of the option
         :type k: str
         :param v: the value
@@ -577,7 +612,8 @@ class DataGenerator(Source):
 
     def from_config(self, k, v):
         """
-        Hook method that allows converting values from the dictionary
+        Hook method that allows converting values from the dictionary.
+
         :param k: the key in the dictionary
         :type k: str
         :param v: the value
@@ -592,6 +628,7 @@ class DataGenerator(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -613,8 +650,9 @@ class CombineStorage(Source):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the source.
+
+        :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -624,6 +662,7 @@ class CombineStorage(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -633,6 +672,7 @@ class CombineStorage(Source):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -641,6 +681,7 @@ class CombineStorage(Source):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -660,6 +701,7 @@ class CombineStorage(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -676,8 +718,9 @@ class StringConstants(Source):
 
     def __init__(self, name=None, config=None):
         """
-        Initializes the transformer.
-        :param name: the name of the transformer
+        Initializes the source.
+
+        :param name: the name of the source
         :type name: str
         :param config: the dictionary with the options (str -> object).
         :type config: dict
@@ -687,6 +730,7 @@ class StringConstants(Source):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -696,6 +740,7 @@ class StringConstants(Source):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -704,6 +749,7 @@ class StringConstants(Source):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -722,6 +768,7 @@ class StringConstants(Source):
     def do_execute(self):
         """
         The actual execution of the actor.
+        
         :return: None if successful, otherwise error message
         :rtype: str
         """

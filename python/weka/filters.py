@@ -42,6 +42,7 @@ class Filter(OptionHandler):
     def __init__(self, classname="weka.filters.AllFilter", jobject=None, options=None):
         """
         Initializes the specified filter using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the filter
         :type classname: str
         :param jobject: the JB_Object to use
@@ -61,6 +62,7 @@ class Filter(OptionHandler):
     def capabilities(self):
         """
         Returns the capabilities of the filter.
+
         :return: the capabilities
         :rtype: Capabilities
         """
@@ -69,6 +71,7 @@ class Filter(OptionHandler):
     def inputformat(self, data):
         """
         Sets the input format.
+
         :param data: the data to use as input
         :type data: Instances
         """
@@ -77,6 +80,7 @@ class Filter(OptionHandler):
     def input(self, inst):
         """
         Inputs the Instance.
+
         :param inst: the instance to filter
         :type inst: Instance
         :return: True if filtered can be collected from output
@@ -87,6 +91,7 @@ class Filter(OptionHandler):
     def batch_finished(self):
         """
         Signals the filter that the batch of data has finished.
+
         :return: True if instances can be collected from the output
         :rtype: bool
         """
@@ -95,6 +100,7 @@ class Filter(OptionHandler):
     def outputformat(self):
         """
         Returns the output format.
+
         :return: the output format
         :rtype: Instances
         """
@@ -107,6 +113,7 @@ class Filter(OptionHandler):
     def output(self):
         """
         Outputs the filtered Instance.
+
         :return: the filtered instance
         :rtype: an Instance object
         """
@@ -117,7 +124,9 @@ class Filter(OptionHandler):
         Filters the dataset(s). When providing a list, this can be used to create compatible train/test sets,
         since the filter only gets initialized with the first dataset and all subsequent datasets get transformed
         using the same setup.
+
         NB: inputformat(Instances) must have been called beforehand.
+
         :param data: the Instances to filter
         :type data: Instances or list of Instances
         :return: the filtered Instances object(s)
@@ -141,6 +150,7 @@ class Filter(OptionHandler):
     def make_copy(cls, flter):
         """
         Creates a copy of the filter.
+
         :param flter: the filter to copy
         :type flter: Filter
         :return: the copy of the filter
@@ -160,6 +170,7 @@ class MultiFilter(Filter):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the MultiFilter instance using either creating new instance or using the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: list of commandline options
@@ -175,6 +186,7 @@ class MultiFilter(Filter):
     def filters(self):
         """
         Returns the list of base filters.
+
         :return: the filter list
         :rtype: list
         """
@@ -189,6 +201,7 @@ class MultiFilter(Filter):
     def filters(self, filters):
         """
         Sets the base filters.
+
         :param filters: the list of base filters to use
         :type filters: list
         """
@@ -206,6 +219,7 @@ class StringToWordVector(Filter):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the StringToWordVector instance using either creating new instance or using the supplied JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: list of commandline options
@@ -221,6 +235,7 @@ class StringToWordVector(Filter):
     def stemmer(self):
         """
         Returns the stemmer.
+
         :return: the stemmer
         :rtype: Stemmer
         """
@@ -231,6 +246,7 @@ class StringToWordVector(Filter):
     def stemmer(self, stemmer):
         """
         Sets the stemmer.
+
         :param stemmer: the stemmer to use
         :type stemmer: Stemmer
         """
@@ -241,6 +257,7 @@ class StringToWordVector(Filter):
     def stopwords(self):
         """
         Returns the stopwords handler.
+
         :return: the stopwords handler
         :rtype: Stopwords
         """
@@ -251,6 +268,7 @@ class StringToWordVector(Filter):
     def stopwords(self, stopwords):
         """
         Sets the stopwords handler.
+
         :param stopwords: the stopwords handler to use
         :type stopwords: Stopwords
         """
@@ -261,6 +279,7 @@ class StringToWordVector(Filter):
     def tokenizer(self):
         """
         Returns the tokenizer.
+
         :return: the tokenizer
         :rtype: Tokenizer
         """
@@ -271,6 +290,7 @@ class StringToWordVector(Filter):
     def tokenizer(self, tokenizer):
         """
         Sets the tokenizer.
+
         :param tokenizer: the tokenizer to use
         :type tokenizer: Tokenizer
         """

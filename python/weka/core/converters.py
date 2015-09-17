@@ -29,6 +29,7 @@ class Loader(OptionHandler):
     def __init__(self, classname="weka.core.converters.ArffLoader", jobject=None, options=None):
         """
         Initializes the specified loader either using the classname or the JB_Object.
+
         :param classname: the classname of the loader
         :type classname: str
         :param jobject: the JB_Object to use
@@ -47,6 +48,7 @@ class Loader(OptionHandler):
         """
         Returns an iterator in case the loader was instantiated in incremental mode, otherwise
         an Exception is raised.
+
         :return: the iterator
         :rtype: IncrementalLoaderIterator
         """
@@ -58,6 +60,7 @@ class Loader(OptionHandler):
         """
         Loads the specified file and returns the Instances object.
         In case of incremental loading, only the structure.
+
         :param dfile: the file to load
         :type dfile: str
         :param incremental: whether to load the dataset incrementally
@@ -82,6 +85,7 @@ class Loader(OptionHandler):
         """
         Loads the specified URL and returns the Instances object.
         In case of incremental loading, only the structure.
+
         :param url: the URL to load the data from
         :type url: str
         :param incremental: whether to load the dataset incrementally
@@ -123,6 +127,7 @@ class IncrementalLoaderIterator(object):
     def next(self):
         """
         Reads the next dataset row.
+
         :return: the next row
         :rtype: Instance
         """
@@ -143,6 +148,7 @@ class TextDirectoryLoader(OptionHandler):
     def __init__(self, jobject=None, options=None):
         """
         Initializes the text directory loader either using a new instance or the JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to set
@@ -157,6 +163,7 @@ class TextDirectoryLoader(OptionHandler):
         """
         Loads the text files from the specified directory and returns the Instances object.
         In case of incremental loading, only the structure.
+
         :return: the full dataset or the header (if incremental)
         :rtype: Instances
         """
@@ -172,6 +179,7 @@ class Saver(OptionHandler):
     def __init__(self, classname="weka.core.converters.ArffSaver", jobject=None, options=None):
         """
         Initializes the specified saver either using the classname or the provided JB_Object.
+
         :param classname: the classname of the saver
         :type classname: str
         :param jobject: the JB_Object to use
@@ -187,6 +195,7 @@ class Saver(OptionHandler):
     def capabilities(self):
         """
         Returns the capabilities of the saver.
+
         :return: the capabilities
         :rtype: Capabilities
         """
@@ -195,6 +204,7 @@ class Saver(OptionHandler):
     def save_file(self, data, dfile):
         """
         Saves the Instances object in the specified file.
+
         :param data: the data to save
         :type data: Instances
         :param dfile: the file to save the data to
@@ -212,6 +222,7 @@ class Saver(OptionHandler):
 def loader_for_file(filename):
     """
     Returns a Loader that can load the specified file, based on the file extension. None if failed to determine.
+
     :param filename: the filename to get the loader for
     :type filename: str
     :return: the assoicated loader instance or None if none found
@@ -229,6 +240,7 @@ def loader_for_file(filename):
 def saver_for_file(filename):
     """
     Returns a Saver that can load the specified file, based on the file extension. None if failed to determine.
+
     :param filename: the filename to get the saver for
     :type filename: str
     :return: the associated saver instance or None if none found
@@ -246,6 +258,7 @@ def saver_for_file(filename):
 def ndarray_to_instances(array, relation, att_template="Att-#", att_list=None):
     """
     Converts the numpy matrix into an Instances object and returns it.
+
     :param array: the numpy ndarray to convert
     :type array: numpy.darray
     :param relation: the name of the dataset

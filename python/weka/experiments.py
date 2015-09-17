@@ -32,6 +32,7 @@ class Experiment(OptionHandler):
     def __init__(self, classname="weka.experiment.Experiment", jobject=None, options=None):
         """
         Initializes the specified experiment using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the experiment
         :type classname: str
         :param jobject: the JB_Object to use
@@ -47,6 +48,7 @@ class Experiment(OptionHandler):
 class SimpleExperiment(OptionHandler):
     """
     Ancestor for simple experiments.
+
     See following URL for how to use the Experiment API:
     http://weka.wikispaces.com/Using+the+Experiment+API
     """
@@ -54,6 +56,7 @@ class SimpleExperiment(OptionHandler):
     def __init__(self, datasets, classifiers, jobject=None, classification=True, runs=10, result=None):
         """
         Initializes the experiment.
+
         :param datasets: the filenames of datasets to use in the experiment
         :type datasets: list
         :param classifiers: the Classifier objects or commandline strings to use in the experiment
@@ -83,6 +86,7 @@ class SimpleExperiment(OptionHandler):
     def configure_splitevaluator(self):
         """
         Configures and returns the SplitEvaluator and Classifier instance as tuple.
+
         :return: evaluator and classifier
         :rtype: tuple
         """
@@ -96,6 +100,7 @@ class SimpleExperiment(OptionHandler):
     def configure_resultproducer(self):
         """
         Configures and returns the ResultProducer and PropertyPath as tuple.
+
         :return: producer and property path
         :rtype: tuple
         """
@@ -172,6 +177,7 @@ class SimpleExperiment(OptionHandler):
     def experiment(self):
         """
         Returns the internal experiment, if set up, otherwise None.
+
         :return: the internal experiment
         :rtype: Experiment
         """
@@ -184,6 +190,7 @@ class SimpleExperiment(OptionHandler):
     def load(cls, filename):
         """
         Loads the experiment from disk.
+
         :param filename: the filename of the experiment to load
         :type filename: str
         :return: the experiment
@@ -198,6 +205,7 @@ class SimpleExperiment(OptionHandler):
     def save(cls, filename, experiment):
         """
         Saves the experiment to disk.
+
         :param filename: the filename to save the experiment to
         :type filename: str
         :param experiment: the Experiment to save
@@ -216,6 +224,7 @@ class SimpleCrossValidationExperiment(SimpleExperiment):
     def __init__(self, datasets, classifiers, classification=True, runs=10, folds=10, result=None):
         """
         Initializes the experiment.
+
         :param datasets: the filenames of datasets to use in the experiment
         :type datasets: list
         :param classifiers: the Classifier objects to use in the experiment
@@ -250,6 +259,7 @@ class SimpleCrossValidationExperiment(SimpleExperiment):
     def configure_resultproducer(self):
         """
         Configures and returns the ResultProducer and PropertyPath as tuple.
+
         :return: producer and property path
         :rtype: tuple
         """
@@ -286,6 +296,7 @@ class SimpleRandomSplitExperiment(SimpleExperiment):
                  result=None):
         """
         Initializes the experiment.
+
         :param classification: whether to perform classification or regression
         :type classification: bool
         :param runs: the number of runs to perform
@@ -325,6 +336,7 @@ class SimpleRandomSplitExperiment(SimpleExperiment):
     def configure_resultproducer(self):
         """
         Configures and returns the ResultProducer and PropertyPath as tuple.
+
         :return: producer and property path
         :rtype: tuple
         """
@@ -361,6 +373,7 @@ class ResultMatrix(OptionHandler):
     def __init__(self, classname="weka.experiment.ResultMatrixPlainText", jobject=None, options=None):
         """
         Initializes the specified ResultMatrix using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the ResultMatrix
         :type classname: str
         :param jobject: the JB_Object to use
@@ -377,6 +390,7 @@ class ResultMatrix(OptionHandler):
     def rows(self):
         """
         Returns the row count.
+
         :return: the count
         :rtype: int
         """
@@ -386,6 +400,7 @@ class ResultMatrix(OptionHandler):
     def columns(self):
         """
         Returns the column count.
+
         :return: the count
         :rtype: int
         """
@@ -394,6 +409,7 @@ class ResultMatrix(OptionHandler):
     def is_col_hidden(self, index):
         """
         Returns whether the column is hidden.
+
         :param index: the 0-based column index
         :type index: int
         :return: true if hidden
@@ -404,6 +420,7 @@ class ResultMatrix(OptionHandler):
     def hide_col(self, index):
         """
         Hides the column.
+
         :param index: the 0-based column index
         :type index: int
         """
@@ -412,6 +429,7 @@ class ResultMatrix(OptionHandler):
     def show_col(self, index):
         """
         Shows the column.
+
         :param index: the 0-based column index
         :type index: int
         """
@@ -420,6 +438,7 @@ class ResultMatrix(OptionHandler):
     def is_row_hidden(self, index):
         """
         Returns whether the row is hidden.
+
         :param index: the 0-based row index
         :type index: int
         :return: true if hidden
@@ -430,6 +449,7 @@ class ResultMatrix(OptionHandler):
     def hide_row(self, index):
         """
         Hides the row.
+
         :param index: the 0-based row index
         :type index: int
         """
@@ -438,6 +458,7 @@ class ResultMatrix(OptionHandler):
     def show_row(self, index):
         """
         Shows the row.
+
         :param index: the 0-based row index
         :type index: int
         """
@@ -446,6 +467,7 @@ class ResultMatrix(OptionHandler):
     def get_row_name(self, index):
         """
         Returns the row name.
+
         :param index: the 0-based row index
         :type index: int
         :return: the row name, None if invalid index
@@ -456,6 +478,7 @@ class ResultMatrix(OptionHandler):
     def set_row_name(self, index, name):
         """
         Sets the row name.
+
         :param index: the 0-based row index
         :type index: int
         :param name: the name of the row
@@ -466,6 +489,7 @@ class ResultMatrix(OptionHandler):
     def get_col_name(self, index):
         """
         Returns the column name.
+
         :param index: the 0-based row index
         :type index: int
         :return: the column name, None if invalid index
@@ -476,6 +500,7 @@ class ResultMatrix(OptionHandler):
     def set_col_name(self, index, name):
         """
         Sets the column name.
+
         :param index: the 0-based row index
         :type index: int
         :param name: the name of the column
@@ -486,6 +511,7 @@ class ResultMatrix(OptionHandler):
     def get_mean(self, col, row):
         """
         Returns the mean at this location (if valid location).
+
         :param col: the 0-based column index
         :type col: int
         :param row: the 0-based row index
@@ -498,6 +524,7 @@ class ResultMatrix(OptionHandler):
     def set_mean(self, col, row, mean):
         """
         Sets the mean at this location (if valid location).
+
         :param col: the 0-based column index
         :type col: int
         :param row: the 0-based row index
@@ -510,6 +537,7 @@ class ResultMatrix(OptionHandler):
     def get_stdev(self, col, row):
         """
         Returns the standard deviation at this location (if valid location).
+
         :param col: the 0-based column index
         :type col: int
         :param row: the 0-based row index
@@ -522,6 +550,7 @@ class ResultMatrix(OptionHandler):
     def set_stdev(self, col, row, stdev):
         """
         Sets the standard deviation at this location (if valid location).
+
         :param col: the 0-based column index
         :type col: int
         :param row: the 0-based row index
@@ -534,6 +563,7 @@ class ResultMatrix(OptionHandler):
     def average(self, col):
         """
         Returns the average mean at this location (if valid location).
+
         :param col: the 0-based column index
         :type col: int
         :return: the mean
@@ -544,6 +574,7 @@ class ResultMatrix(OptionHandler):
     def to_string_matrix(self):
         """
         Returns the matrix as a string.
+
         :return: the generated output
         :rtype: str
         """
@@ -552,6 +583,7 @@ class ResultMatrix(OptionHandler):
     def to_string_key(self):
         """
         Returns a key for all the col names, for better readability if the names got cut off.
+
         :return: the key
         :rtype: str
         """
@@ -560,6 +592,7 @@ class ResultMatrix(OptionHandler):
     def to_string_header(self):
         """
         Returns the header of the matrix as a string.
+
         :return: the header
         :rtype: str
         """
@@ -568,6 +601,7 @@ class ResultMatrix(OptionHandler):
     def to_string_summary(self):
         """
         returns the summary as string.
+
         :return: the summary
         :rtype: str
         """
@@ -576,6 +610,7 @@ class ResultMatrix(OptionHandler):
     def to_string_ranking(self):
         """
         Returns the ranking in a string representation.
+
         :return: the ranking
         :rtype: str
         """
@@ -590,6 +625,7 @@ class Tester(OptionHandler):
     def __init__(self, classname="weka.experiment.PairedCorrectedTTester", jobject=None, options=None):
         """
         Initializes the specified tester using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the tester
         :type classname: str
         :param jobject: the JB_Object to use
@@ -611,6 +647,7 @@ class Tester(OptionHandler):
     def resultmatrix(self):
         """
         Returns the ResultMatrix instance in use.
+
         :return: the matrix in use
         :rtype: ResultMatrix
         """
@@ -621,6 +658,7 @@ class Tester(OptionHandler):
     def resultmatrix(self, matrix):
         """
         Sets the ResultMatrix to use.
+
         :param matrix: the ResultMatrix instance to use
         :type matrix: ResultMatrix
         """
@@ -630,6 +668,7 @@ class Tester(OptionHandler):
     def instances(self):
         """
         Returns the data used in the analysis.
+
         :return: the data in use
         :rtype: Instances
         """
@@ -643,6 +682,7 @@ class Tester(OptionHandler):
     def instances(self, data):
         """
         Sets the data to use for analysis.
+
         :param data: the Instances to analyze
         :type data: Instances
         """
@@ -653,6 +693,7 @@ class Tester(OptionHandler):
     def dataset_columns(self):
         """
         Returns the list of column names that identify uniquely a dataset.
+
         :return: the list of attributes names
         :rtype: list
         """
@@ -662,6 +703,7 @@ class Tester(OptionHandler):
     def dataset_columns(self, col_names):
         """
         Sets the list of column names that identify uniquely a dataset.
+
         :param col_names: the list of attribute names
         :type col_names: list
         """
@@ -671,6 +713,7 @@ class Tester(OptionHandler):
     def run_column(self):
         """
         Returns the column name that holds the Run number.
+
         :return: the attribute name
         :rtype: str
         """
@@ -680,6 +723,7 @@ class Tester(OptionHandler):
     def run_column(self, col_name):
         """
         Sets the column name that holds the Run number.
+
         :param col_name: the attribute name
         :type col_name: str
         """
@@ -689,6 +733,7 @@ class Tester(OptionHandler):
     def fold_column(self):
         """
         Returns the column name that holds the Fold number.
+
         :return: the attribute name
         :rtype: str
         """
@@ -698,6 +743,7 @@ class Tester(OptionHandler):
     def fold_column(self, col_name):
         """
         Sets the column name that holds the Fold number.
+
         :param col_name: the attribute name
         :type col_name: str
         """
@@ -707,6 +753,7 @@ class Tester(OptionHandler):
     def result_columns(self):
         """
         Returns the list of column names that identify uniquely a result (eg classifier + options + ID).
+
         :return: the list of attribute names
         :rtype: list
         """
@@ -716,6 +763,7 @@ class Tester(OptionHandler):
     def result_columns(self, col_names):
         """
         Sets the list of column names that identify uniquely a result (eg classifier + options + ID).
+
         :param col_names: the list of attribute names
         :type col_names: list
         """
@@ -784,6 +832,7 @@ class Tester(OptionHandler):
     def header(self, comparison_column):
         """
         Creates a "header" string describing the current resultsets.
+
         :param comparison_column: the index of the column to compare against
         :type comparison_column: int
         :return: the header
@@ -796,6 +845,7 @@ class Tester(OptionHandler):
     def multi_resultset_full(self, base_resultset, comparison_column):
         """
         Creates a comparison table where a base resultset is compared to the other resultsets.
+
         :param base_resultset: the 0-based index of the base resultset (eg classifier to compare against)
         :type base_resultset: int
         :param comparison_column: the 0-based index of the column to compare against
@@ -809,6 +859,7 @@ class Tester(OptionHandler):
     def multi_resultset_ranking(self, comparison_column):
         """
         Creates a ranking.
+
         :param comparison_column: the 0-based index of the column to compare against
         :type comparison_column: int
         :return: the ranking
@@ -821,6 +872,7 @@ class Tester(OptionHandler):
         """
         Carries out a comparison between all resultsets, counting the number of datsets where one resultset
         outperforms the other.
+
         :param comparison_column: the 0-based index of the column to compare against
         :type comparison_column: int
         :return: the summary

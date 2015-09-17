@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # dataset.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import logging
 import weka.plot as plot
@@ -27,7 +27,9 @@ logger = logging.getLogger(__name__)
 def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=None, outfile=None, wait=True):
     """
     Plots two attributes against each other.
+
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
+
     :param data: the dataset
     :type data: Instances
     :param index_x: the 0-based index of the attribute on the x axis
@@ -94,7 +96,9 @@ def scatter_plot(data, index_x, index_y, percent=100.0, seed=1, size=50, title=N
 def matrix_plot(data, percent=100.0, seed=1, size=10, title=None, outfile=None, wait=True):
     """
     Plots all attributes against each other.
+
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
+
     :param data: the dataset
     :type data: Instances
     :param percent: the percentage of the dataset to use for plotting
@@ -164,6 +168,7 @@ def matrix_plot(data, percent=100.0, seed=1, size=10, title=None, outfile=None, 
 def line_plot(data, atts=None, percent=100.0, seed=1, title=None, outfile=None, wait=True):
     """
     Uses the internal format to plot the dataset, one line per instance.
+
     :param data: the dataset
     :type data: Instances
     :param atts: the list of 0-based attribute indices of attributes to plot

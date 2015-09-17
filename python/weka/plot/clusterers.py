@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # clusterers.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import logging
 import weka.plot as plot
@@ -28,7 +28,9 @@ logger = logging.getLogger(__name__)
 def plot_cluster_assignments(evl, data, atts=None, inst_no=False, size=10, title=None, outfile=None, wait=True):
     """
     Plots the cluster assignments against the specified attributes.
+
     TODO: click events http://matplotlib.org/examples/event_handling/data_browser.html
+
     :param evl: the cluster evaluation to obtain the cluster assignments from
     :type evl: ClusterEvaluation
     :param data: the dataset the clusterer was evaluated against

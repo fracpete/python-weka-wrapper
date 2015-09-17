@@ -29,6 +29,7 @@ class ActorHandler(Actor):
     def __init__(self, name=None, config=None):
         """
         Initializes the actor handler.
+
         :param name: the name of the actor handler
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -42,6 +43,7 @@ class ActorHandler(Actor):
     def new_director(self):
         """
         Creates the director to use for handling the sub-actors.
+
         :return: the director instance
         :rtype: Director
         """
@@ -50,6 +52,7 @@ class ActorHandler(Actor):
     def default_actors(self):
         """
         Returns the default actors to use.
+
         :return: the default actors, if any
         :rtype: list
         """
@@ -58,6 +61,7 @@ class ActorHandler(Actor):
     def check_actors(self, actors):
         """
         Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+
         :param actors: the actors to check
         :type actors: list
         """
@@ -66,6 +70,7 @@ class ActorHandler(Actor):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -84,6 +89,7 @@ class ActorHandler(Actor):
     def to_dict(self):
         """
         Returns a dictionary that represents this object, to be used for JSONification.
+
         :return: the object dictionary
         :rtype: dict
         """
@@ -99,6 +105,7 @@ class ActorHandler(Actor):
     def from_dict(cls, d):
         """
         Restores an object state from a dictionary, used in de-JSONification.
+
         :param d: the object dictionary
         :type d: dict
         :return: the object
@@ -119,6 +126,7 @@ class ActorHandler(Actor):
     def actors(self):
         """
         Obtains the currently set sub-actors.
+
         :return: the sub-actors
         :rtype: list
         """
@@ -131,6 +139,7 @@ class ActorHandler(Actor):
     def actors(self, actors):
         """
         Sets the sub-actors of the actor.
+
         :param actors: the sub-actors
         :type actors: list
         """
@@ -143,6 +152,7 @@ class ActorHandler(Actor):
     def active(self):
         """
         Returns the count of non-skipped actors.
+
         :return: the count
         :rtype: int
         """
@@ -156,6 +166,7 @@ class ActorHandler(Actor):
     def first_active(self):
         """
         Returns the first non-skipped actor.
+
         :return: the first active actor, None if not available
         :rtype: Actor
         """
@@ -170,6 +181,7 @@ class ActorHandler(Actor):
     def last_active(self):
         """
         Returns the last non-skipped actor.
+
         :return: the last active actor, None if not available
         :rtype: Actor
         """
@@ -183,6 +195,7 @@ class ActorHandler(Actor):
     def index_of(self, name):
         """
         Returns the index of the actor with the given name.
+
         :param name: the name of the Actor to find
         :type name: str
         :return: the index, -1 if not found
@@ -205,6 +218,7 @@ class ActorHandler(Actor):
     def setup(self):
         """
         Configures the actor before execution.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -235,6 +249,7 @@ class ActorHandler(Actor):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -269,6 +284,7 @@ class ActorHandler(Actor):
     def _build_tree(self, actor, content):
         """
         Builds the tree for the given actor.
+
         :param actor: the actor to process
         :type actor: Actor
         :param content: the rows of the tree collected so far
@@ -297,6 +313,7 @@ class ActorHandler(Actor):
     def tree(self):
         """
         Returns a tree representation of this sub-flow.
+
         :return: the tree
         :rtype: str
         """
@@ -312,7 +329,8 @@ class Director(object):
 
     def __init__(self, owner):
         """
-        Initializes the director
+        Initializes the director.
+
         :param owner: the owning actor
         :type owner: Actor
         """
@@ -322,6 +340,7 @@ class Director(object):
     def __str__(self):
         """
         Returns a short description about the director.
+
         :return: the description
         :rtype: str
         """
@@ -334,6 +353,7 @@ class Director(object):
     def owner(self):
         """
         Obtains the currently set owner.
+
         :return: the owner
         :rtype: Actor
         """
@@ -342,6 +362,7 @@ class Director(object):
     def check_owner(self, owner):
         """
         Checks the owner. Raises an exception if invalid.
+
         :param owner: the owner to check
         :type owner: Actor
         """
@@ -350,6 +371,7 @@ class Director(object):
     def setup(self):
         """
         Performs some checks.
+
         :return: None if successful, otherwise error message.
         :rtype: str
         """
@@ -358,6 +380,7 @@ class Director(object):
     def do_execute(self):
         """
         Actual execution of the director.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -366,6 +389,7 @@ class Director(object):
     def execute(self):
         """
         Executes the director.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -383,7 +407,8 @@ class SequentialDirector(Director, Stoppable):
 
     def __init__(self, owner):
         """
-        Initializes the director
+        Initializes the director.
+
         :param owner: the owning actor
         :type owner: Actor
         """
@@ -398,6 +423,7 @@ class SequentialDirector(Director, Stoppable):
     def allow_source(self):
         """
         Obtains whether to allow a source actor.
+
         :return: true if to allow
         :rtype: bool
         """
@@ -407,6 +433,7 @@ class SequentialDirector(Director, Stoppable):
     def allow_source(self, allow):
         """
         Sets whether to allow a source actor.
+
         :param allow: true if to allow
         :type allow: bool
         """
@@ -416,6 +443,7 @@ class SequentialDirector(Director, Stoppable):
     def record_output(self):
         """
         Obtains whether to record the output of the last actor.
+
         :return: true if to record
         :rtype: bool
         """
@@ -425,6 +453,7 @@ class SequentialDirector(Director, Stoppable):
     def record_output(self, record):
         """
         Sets whether to record the output of the last actor.
+
         :param record: true if to record
         :type record: bool
         """
@@ -434,6 +463,7 @@ class SequentialDirector(Director, Stoppable):
     def recorded_output(self):
         """
         Obtains the recorded output.
+
         :return: the output
         :rtype: list
         """
@@ -450,7 +480,8 @@ class SequentialDirector(Director, Stoppable):
 
     def is_stopping(self):
         """
-        Returns whether the director is in the process of stopping
+        Returns whether the director is in the process of stopping.
+
         :return:
         """
         return self._stopping
@@ -458,6 +489,7 @@ class SequentialDirector(Director, Stoppable):
     def is_stopped(self):
         """
         Returns whether the object has been stopped.
+
         :return: whether stopped
         :rtype: bool
         """
@@ -466,6 +498,7 @@ class SequentialDirector(Director, Stoppable):
     def check_owner(self, owner):
         """
         Checks the owner. Raises an exception if invalid.
+
         :param owner: the owner to check
         :type owner: Actor
         """
@@ -492,6 +525,7 @@ class SequentialDirector(Director, Stoppable):
     def setup(self):
         """
         Performs some checks.
+
         :return: None if successful, otherwise error message.
         :rtype: str
         """
@@ -506,6 +540,7 @@ class SequentialDirector(Director, Stoppable):
     def do_execute(self):
         """
         Actual execution of the director.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -604,6 +639,7 @@ class Flow(ActorHandler, StorageHandler):
     def __init__(self, name=None, config=None):
         """
         Initializes the sequence.
+
         :param name: the name of the sequence
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -615,6 +651,7 @@ class Flow(ActorHandler, StorageHandler):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -623,6 +660,7 @@ class Flow(ActorHandler, StorageHandler):
     def new_director(self):
         """
         Creates the director to use for handling the sub-actors.
+
         :return: the director instance
         :rtype: Director
         """
@@ -634,6 +672,7 @@ class Flow(ActorHandler, StorageHandler):
     def check_actors(self, actors):
         """
         Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+
         :param actors: the actors to check
         :type actors: list
         """
@@ -646,6 +685,7 @@ class Flow(ActorHandler, StorageHandler):
     def storage(self):
         """
         Returns the internal storage.
+
         :return: the internal storage
         :rtype: dict
         """
@@ -655,6 +695,7 @@ class Flow(ActorHandler, StorageHandler):
     def load(cls, fname):
         """
         Loads the flow from a JSON file.
+
         :param fname: the file to load
         :type fname: str
         :return: the flow
@@ -668,6 +709,7 @@ class Flow(ActorHandler, StorageHandler):
     def save(cls, flow, fname):
         """
         Saves the flow to a JSON file.
+
         :param flow: the flow to save
         :type flow: Flow
         :param fname: the file to load
@@ -693,6 +735,7 @@ class Sequence(ActorHandler, InputConsumer):
     def __init__(self, name=None, config=None):
         """
         Initializes the sequence.
+
         :param name: the name of the sequence
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -704,6 +747,7 @@ class Sequence(ActorHandler, InputConsumer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -712,6 +756,7 @@ class Sequence(ActorHandler, InputConsumer):
     def new_director(self):
         """
         Creates the director to use for handling the sub-actors.
+
         :return: the director instance
         :rtype: Director
         """
@@ -723,6 +768,7 @@ class Sequence(ActorHandler, InputConsumer):
     def check_actors(self, actors):
         """
         Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+
         :param actors: the actors to check
         :type actors: list
         """
@@ -734,6 +780,7 @@ class Sequence(ActorHandler, InputConsumer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -752,6 +799,7 @@ class Tee(ActorHandler, Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the sequence.
+
         :param name: the name of the sequence
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -763,6 +811,7 @@ class Tee(ActorHandler, Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -772,6 +821,7 @@ class Tee(ActorHandler, Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -784,6 +834,7 @@ class Tee(ActorHandler, Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -805,6 +856,7 @@ class Tee(ActorHandler, Transformer):
     def new_director(self):
         """
         Creates the director to use for handling the sub-actors.
+
         :return: the director instance
         :rtype: Director
         """
@@ -816,6 +868,7 @@ class Tee(ActorHandler, Transformer):
     def check_actors(self, actors):
         """
         Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+
         :param actors: the actors to check
         :type actors: list
         """
@@ -830,6 +883,7 @@ class Tee(ActorHandler, Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -854,6 +908,7 @@ class Trigger(ActorHandler, Transformer):
     def __init__(self, name=None, config=None):
         """
         Initializes the sequence.
+
         :param name: the name of the sequence
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -864,6 +919,7 @@ class Trigger(ActorHandler, Transformer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -873,6 +929,7 @@ class Trigger(ActorHandler, Transformer):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -885,6 +942,7 @@ class Trigger(ActorHandler, Transformer):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -906,6 +964,7 @@ class Trigger(ActorHandler, Transformer):
     def new_director(self):
         """
         Creates the director to use for handling the sub-actors.
+
         :return: the director instance
         :rtype: Director
         """
@@ -917,6 +976,7 @@ class Trigger(ActorHandler, Transformer):
     def check_actors(self, actors):
         """
         Performs checks on the actors that are to be used. Raises an exception if invalid setup.
+
         :param actors: the actors to check
         :type actors: list
         """
@@ -930,6 +990,7 @@ class Trigger(ActorHandler, Transformer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -952,7 +1013,8 @@ class BranchDirector(Director, Stoppable):
 
     def __init__(self, owner):
         """
-        Initializes the director
+        Initializes the director.
+
         :param owner: the owning actor
         :type owner: Actor
         """
@@ -971,7 +1033,8 @@ class BranchDirector(Director, Stoppable):
 
     def is_stopping(self):
         """
-        Returns whether the director is in the process of stopping
+        Returns whether the director is in the process of stopping.
+
         :return:
         """
         return self._stopping
@@ -979,6 +1042,7 @@ class BranchDirector(Director, Stoppable):
     def is_stopped(self):
         """
         Returns whether the object has been stopped.
+
         :return: whether stopped
         :rtype: bool
         """
@@ -987,6 +1051,7 @@ class BranchDirector(Director, Stoppable):
     def check_owner(self, owner):
         """
         Checks the owner. Raises an exception if invalid.
+
         :param owner: the owner to check
         :type owner: Actor
         """
@@ -1011,6 +1076,7 @@ class BranchDirector(Director, Stoppable):
     def setup(self):
         """
         Performs some checks.
+
         :return: None if successful, otherwise error message.
         :rtype: str
         """
@@ -1025,6 +1091,7 @@ class BranchDirector(Director, Stoppable):
     def do_execute(self):
         """
         Actual execution of the director.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1052,6 +1119,7 @@ class Branch(ActorHandler, InputConsumer):
     def __init__(self, name=None, config=None):
         """
         Initializes the branch.
+
         :param name: the name of the branch
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1062,6 +1130,7 @@ class Branch(ActorHandler, InputConsumer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1070,6 +1139,7 @@ class Branch(ActorHandler, InputConsumer):
     def new_director(self):
         """
         Creates the director to use for handling the sub-actors.
+
         :return: the director instance
         :rtype: Director
         """
@@ -1085,6 +1155,7 @@ class ContainerValuePicker(Tee):
     def __init__(self, name=None, config=None):
         """
         Initializes the actor.
+
         :param name: the name of the actor
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1096,6 +1167,7 @@ class ContainerValuePicker(Tee):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1105,6 +1177,7 @@ class ContainerValuePicker(Tee):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -1113,6 +1186,7 @@ class ContainerValuePicker(Tee):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -1138,6 +1212,7 @@ class ContainerValuePicker(Tee):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -1169,6 +1244,7 @@ class Stop(InputConsumer):
     def __init__(self, name=None, config=None):
         """
         Initializes the branch.
+
         :param name: the name of the branch
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -1180,6 +1256,7 @@ class Stop(InputConsumer):
     def description(self):
         """
         Returns a description of the actor.
+
         :return: the description
         :rtype: str
         """
@@ -1188,6 +1265,7 @@ class Stop(InputConsumer):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """

@@ -36,6 +36,7 @@ class Associator(OptionHandler):
     def __init__(self, classname=None, jobject=None, options=None):
         """
         Initializes the specified associator using either the classname or the supplied JB_Object.
+
         :param classname: the classname of the associator
         :type classname: str
         :param jobject: the JB_Object to use
@@ -52,6 +53,7 @@ class Associator(OptionHandler):
     def capabilities(self):
         """
         Returns the capabilities of the associator.
+
         :return: the capabilities
         :rtype: Capabilities
         """
@@ -60,6 +62,7 @@ class Associator(OptionHandler):
     def build_associations(self, data):
         """
         Builds the associator with the data.
+
         :param data: the data to train the associator with
         :type data: Instances
         """
@@ -69,6 +72,7 @@ class Associator(OptionHandler):
     def make_copy(cls, associator):
         """
         Creates a copy of the clusterer.
+
         :param associator: the associator to copy
         :type associator: Associator
         :return: the copy of the associator

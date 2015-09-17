@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 def add_bundled_jars():
     """
-     Adds the bundled jars to the JVM's classpath.
+    Adds the bundled jars to the JVM's classpath.
     """
     # determine lib directory with jars
     rootdir = os.path.split(os.path.dirname(__file__))[0]
@@ -44,6 +44,7 @@ def add_bundled_jars():
 def add_weka_packages(alt_path = None):
     """
     Adds the jars from all Weka packages to the JVM's classpath.
+
     :param alt_path: an alternative weka home path
     :type alt_path: str
     """
@@ -84,6 +85,7 @@ def add_system_classpath():
 def start(class_path=None, bundled=True, packages=False, system_cp=False, max_heap_size=None):
     """
     Initializes the javabridge connection (starts up the JVM).
+
     :param class_path: the additional classpath elements to add
     :type class_path: list
     :param bundled: whether to add jars from the "lib" directory
@@ -132,7 +134,9 @@ def start(class_path=None, bundled=True, packages=False, system_cp=False, max_he
 
 
 def stop():
-    """ Kills the JVM. """
+    """
+    Kills the JVM.
+    """
     global started
     if started is not None:
         started = None

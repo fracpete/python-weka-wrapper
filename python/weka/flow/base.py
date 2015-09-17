@@ -31,6 +31,7 @@ class Actor(Configurable, Stoppable):
     def __init__(self, name=None, config=None):
         """
         Initializes the actor.
+
         :param name: the name of the actor
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -49,6 +50,7 @@ class Actor(Configurable, Stoppable):
     def __str__(self):
         """
         Returns a short representation of the actor's setup.
+
         :return: the setup
         :rtype: str
         """
@@ -57,6 +59,7 @@ class Actor(Configurable, Stoppable):
     def __repr__(self):
         """
         Returns Python code for instantiating the object.
+
         :return: the representation
         :rtype: str
         """
@@ -67,6 +70,7 @@ class Actor(Configurable, Stoppable):
     def new_logger(self):
         """
         Returns a new logger instance.
+
         :return: the logger instance
         :rtype: logger
         """
@@ -76,6 +80,7 @@ class Actor(Configurable, Stoppable):
     def name(self):
         """
         Obtains the currently set name of the actor.
+
         :return: the name
         :rtype: str
         """
@@ -85,6 +90,7 @@ class Actor(Configurable, Stoppable):
     def name(self, name):
         """
         Sets the name of the actor.
+
         :param name: the name
         :type name: str
         """
@@ -93,6 +99,7 @@ class Actor(Configurable, Stoppable):
     def unique_name(self, name):
         """
         Generates a unique name.
+
         :param name: the name to check
         :type name: str
         :return: the unique name
@@ -119,6 +126,7 @@ class Actor(Configurable, Stoppable):
     def parent(self):
         """
         Obtains the currently set parent of the actor.
+
         :return: the name
         :rtype: str
         """
@@ -128,6 +136,7 @@ class Actor(Configurable, Stoppable):
     def parent(self, parent):
         """
         Sets the parent of the actor.
+
         :param parent: the parent
         :type parent: Actor
         """
@@ -140,6 +149,7 @@ class Actor(Configurable, Stoppable):
     def index(self):
         """
         Returns the index of this actor in its parent's list of actors.
+
         :return: the index, -1 if not available
         :rtype: int
         """
@@ -152,6 +162,7 @@ class Actor(Configurable, Stoppable):
     def full_name(self):
         """
         Obtains the full name of the actor.
+
         :return: the full name
         :rtype: str
         """
@@ -167,6 +178,7 @@ class Actor(Configurable, Stoppable):
     def fix_config(self, options):
         """
         Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.
+
         :param options: the options to fix
         :type options: dict
         :return: the (potentially) fixed options
@@ -189,6 +201,7 @@ class Actor(Configurable, Stoppable):
     def to_dict(self):
         """
         Returns a dictionary that represents this object, to be used for JSONification.
+
         :return: the object dictionary
         :rtype: dict
         """
@@ -201,6 +214,7 @@ class Actor(Configurable, Stoppable):
     def from_dict(cls, d):
         """
         Restores an object state from a dictionary, used in de-JSONification.
+
         :param d: the object dictionary
         :type d: dict
         :return: the object
@@ -223,6 +237,7 @@ class Actor(Configurable, Stoppable):
         """
         Resolves the option, i.e., interprets "@{...}" values and retrievs them instead from internal
         storage.
+
         :param name: the name of the option
         :type name: str
         :param default: the optional default value
@@ -249,6 +264,7 @@ class Actor(Configurable, Stoppable):
     def skip(self):
         """
         Obtains whether the actor is disabled (skipped).
+
         :return: True if skipped
         :rtype: bool
         """
@@ -258,6 +274,7 @@ class Actor(Configurable, Stoppable):
     def skip(self, skip):
         """
         Sets whether the actor is skipped.
+
         :param skip: True if skipped
         :type skip: bool
         """
@@ -267,6 +284,7 @@ class Actor(Configurable, Stoppable):
     def quickinfo(self):
         """
         Returns a short string describing some of the options of the actor.
+
         :return: the info, None if not available
         :rtype: str
         """
@@ -276,6 +294,7 @@ class Actor(Configurable, Stoppable):
     def storagehandler(self):
         """
         Returns the storage handler available to thise actor.
+
         :return: the storage handler, None if not available
         """
         if isinstance(self, StorageHandler):
@@ -289,6 +308,7 @@ class Actor(Configurable, Stoppable):
     def root(self):
         """
         Returns the top-level actor.
+
         :return: the top-level actor
         :rtype: Actor
         """
@@ -301,6 +321,7 @@ class Actor(Configurable, Stoppable):
     def depth(self):
         """
         Returns the depth of this actor inside the overall flow.
+
         :return: the depth
         :rtype: int
         """
@@ -312,6 +333,7 @@ class Actor(Configurable, Stoppable):
     def is_stopped(self):
         """
         Returns whether the object has been stopped.
+
         :return: whether stopped
         :rtype: bool
         """
@@ -326,6 +348,7 @@ class Actor(Configurable, Stoppable):
     def setup(self):
         """
         Configures the actor before execution.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -334,6 +357,7 @@ class Actor(Configurable, Stoppable):
     def pre_execute(self):
         """
         Gets executed before the actual execution.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -342,6 +366,7 @@ class Actor(Configurable, Stoppable):
     def do_execute(self):
         """
         The actual execution of the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -350,6 +375,7 @@ class Actor(Configurable, Stoppable):
     def post_execute(self):
         """
         Gets executed after the actual execution.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -358,6 +384,7 @@ class Actor(Configurable, Stoppable):
     def execute(self):
         """
         Executes the actor.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -396,6 +423,7 @@ class Token(object):
     def __init__(self, payload):
         """
         Initializes the token with the given payload.
+
         :param payload: the payload for the token.
         :type payload: object
         """
@@ -406,6 +434,7 @@ class Token(object):
     def id(self):
         """
         Obtains the ID of the token.
+
         :return: the ID
         :rtype: str
         """
@@ -415,6 +444,7 @@ class Token(object):
     def payload(self):
         """
         Obtains the currently set payload.
+
         :return: the payload
         :rtype: object
         """
@@ -435,6 +465,7 @@ class InputConsumer(Actor):
     def __init__(self, name=None, config=None):
         """
         Initializes the actor.
+
         :param name: the name of the actor
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -446,6 +477,7 @@ class InputConsumer(Actor):
     def check_input(self, token):
         """
         Performs checks on the input token. Raises an exception if unsupported.
+
         :param token: the token to check
         :type token: Token
         """
@@ -455,6 +487,7 @@ class InputConsumer(Actor):
     def input(self):
         """
         Returns the current input token, None if not available.
+
         :return: the input token
         :rtype: Token
         """
@@ -464,6 +497,7 @@ class InputConsumer(Actor):
     def input(self, token):
         """
         Accepts the data for processing.
+
         :param token: the token to process
         :type token: Token
         """
@@ -479,6 +513,7 @@ class OutputProducer(Actor):
     def __init__(self, name=None, config=None):
         """
         Initializes the actor.
+
         :param name: the name of the actor
         :type name: str
         :param config: the dictionary with the options (str -> object).
@@ -490,6 +525,7 @@ class OutputProducer(Actor):
     def pre_execute(self):
         """
         Gets executed before the actual execution.
+
         :return: None if successful, otherwise error message
         :rtype: str
         """
@@ -499,6 +535,7 @@ class OutputProducer(Actor):
     def has_output(self):
         """
         Checks whether any output tokens are present.
+
         :return: true if at least one output token present
         :rtype: bool
         """
@@ -507,6 +544,7 @@ class OutputProducer(Actor):
     def output(self):
         """
         Returns the next available output token.
+
         :return: the next token, None if none available
         :rtype: Token
         """
@@ -526,6 +564,7 @@ class StorageHandler(object):
     def storage(self):
         """
         Returns the internal storage.
+
         :return: the internal storage
         :rtype: dict
         """
@@ -535,6 +574,7 @@ class StorageHandler(object):
         """
         Expands all occurrences of "@{...}" within the string with the actual values currently stored
         in internal storage.
+
         :param s: the string to expand
         :type s: str
         :return: the expanded string
@@ -556,6 +596,7 @@ class StorageHandler(object):
     def pad(cls, name):
         """
         Pads the name with "@{...}".
+
         :param name: the name to pad
         :type name: str
         :return: the padded name
@@ -570,6 +611,7 @@ class StorageHandler(object):
     def extract(cls, padded):
         """
         Removes the surrounding "@{...}" from the name.
+
         :param padded: the padded string
         :type padded: str
         :return: the extracted name
@@ -584,6 +626,7 @@ class StorageHandler(object):
 def is_source(actor):
     """
     Checks whether the actor is a source.
+
     :param actor: the actor to check
     :type actor: Actor
     :return: True if the actor is a source
@@ -595,6 +638,7 @@ def is_source(actor):
 def is_transformer(actor):
     """
     Checks whether the actor is a transformer.
+
     :param actor: the actor to check
     :type actor: Actor
     :return: True if the actor is a transformer
@@ -606,6 +650,7 @@ def is_transformer(actor):
 def is_sink(actor):
     """
     Checks whether the actor is a sink.
+
     :param actor: the actor to check
     :type actor: Actor
     :return: True if the actor is a sink
@@ -618,6 +663,7 @@ def to_commandline(o):
     """
     Turns the object into a commandline string. However, first checks whether a string represents
     a internal value placeholder (@{...}).
+
     :param o: the object to turn into commandline
     :type o: object
     :return: the commandline

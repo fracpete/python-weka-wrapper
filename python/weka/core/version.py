@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # version.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 from weka.core.classes import JavaObject
 
@@ -20,6 +20,7 @@ from weka.core.classes import JavaObject
 def weka_version():
     """
     Determines the version of Weka in use.
+
     :return: the version
     :rtype: str
     """

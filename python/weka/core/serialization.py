@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 def deepcopy(obj):
     """
     Creates a deep copy of the JavaObject (or derived class) or JB_Object.
+
     :param obj: the object to create a copy of
     :type obj: object
     :return: the copy, None if failed to copy
@@ -52,6 +53,7 @@ def deepcopy(obj):
 def read(filename):
     """
     Reads the serialized object from disk. Caller must wrap object in appropriate Python wrapper class.
+
     :param filename: the file with the serialized object
     :type filename: str
     :return: the JB_Object
@@ -66,6 +68,7 @@ def read(filename):
 def read_all(filename):
     """
     Reads the serialized objects from disk. Caller must wrap objects in appropriate Python wrapper classes.
+
     :param filename: the file with the serialized objects
     :type filename: str
     :return: the list of JB_OBjects
@@ -83,7 +86,8 @@ def read_all(filename):
 
 def write(filename, jobject):
     """
-    Serializes the object to disk. JavaObject instances get automatically unwrapped
+    Serializes the object to disk. JavaObject instances get automatically unwrapped.
+
     :param filename: the file to serialize the object to
     :type filename: str
     :param jobject: the object to serialize
@@ -99,7 +103,8 @@ def write(filename, jobject):
 
 def write_all(filename, jobjects):
     """
-    Serializes the list of objects to disk. JavaObject instances get automatically unwrapped
+    Serializes the list of objects to disk. JavaObject instances get automatically unwrapped.
+
     :param filename: the file to serialize the object to
     :type filename: str
     :param jobjects: the list of objects to serialize

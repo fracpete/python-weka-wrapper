@@ -27,6 +27,7 @@ class DatabaseUtils(OptionHandler):
     def __init__(self, jobject=None, options=None):
         """
         Initializes a DatabaseUtils object from scratch or uses the provided JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to use
@@ -41,6 +42,7 @@ class DatabaseUtils(OptionHandler):
     def db_url(self):
         """
         Obtains the currently set database URL.
+
         :return: the database URL
         :rtype: str
         """
@@ -50,6 +52,7 @@ class DatabaseUtils(OptionHandler):
     def db_url(self, url):
         """
         Sets the database URL.
+
         :param url: the database URL
         :type url: str
         """
@@ -59,6 +62,7 @@ class DatabaseUtils(OptionHandler):
     def user(self):
         """
         Obtains the currently set database user.
+
         :return: the database user
         :rtype: str
         """
@@ -68,6 +72,7 @@ class DatabaseUtils(OptionHandler):
     def user(self, user):
         """
         Sets the database user.
+
         :param user: the database user
         :type user: str
         """
@@ -77,6 +82,7 @@ class DatabaseUtils(OptionHandler):
     def password(self):
         """
         Obtains the currently set database password.
+
         :return: the database password
         :rtype: str
         """
@@ -86,6 +92,7 @@ class DatabaseUtils(OptionHandler):
     def password(self, password):
         """
         Sets the database password.
+
         :param password: the database password
         :type password: str
         """
@@ -100,6 +107,7 @@ class InstanceQuery(DatabaseUtils):
     def __init__(self, jobject=None, options=None):
         """
         Initializes an InstanceQuery object from scratch or uses the provided JB_Object.
+
         :param jobject: the JB_Object to use
         :type jobject: JB_Object
         :param options: the list of commandline options to use
@@ -114,6 +122,7 @@ class InstanceQuery(DatabaseUtils):
     def custom_properties(self):
         """
         Obtains the currently set custom properties file.
+
         :return: the custom properties file
         :rtype: str
         """
@@ -123,6 +132,7 @@ class InstanceQuery(DatabaseUtils):
     def custom_properties(self, props):
         """
         Sets the custom properties file to use.
+
         :param props: the props file
         :type props: str
         """
@@ -133,6 +143,7 @@ class InstanceQuery(DatabaseUtils):
     def sparse_data(self):
         """
         Obtains the whether sparse data is returned or not.
+
         :return: whether sparse data is generated
         :rtype: bool
         """
@@ -142,6 +153,7 @@ class InstanceQuery(DatabaseUtils):
     def sparse_data(self, sparse):
         """
         Sets whether to generate sparse data.
+
         :param sparse: whether to generated sparse data
         :type sparse: bool
         """
@@ -151,6 +163,7 @@ class InstanceQuery(DatabaseUtils):
     def query(self):
         """
         Obtains the current SQL query to execute.
+
         :return: the SQL query
         :rtype: str
         """
@@ -160,6 +173,7 @@ class InstanceQuery(DatabaseUtils):
     def query(self, query):
         """
         Sets the SQL query to execute.
+
         :param query: the SQL query
         :type query: str
         """
@@ -168,6 +182,7 @@ class InstanceQuery(DatabaseUtils):
     def retrieve_instances(self, query=None):
         """
         Executes either the supplied query or the one set via options (or the 'query' property).
+
         :param query: query to execute if not the currently set one
         :type query: str
         :return: the generated dataq

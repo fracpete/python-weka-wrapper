@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # types.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import logging
@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 def string_array_to_list(a):
     """
     Turns the Java string array into Python unicode string list.
+
     :param a: the string array to convert
     :type a: JB_Object
     :return: the string list
@@ -41,6 +42,7 @@ def string_array_to_list(a):
 def string_list_to_array(l):
     """
     Turns a Python unicode string list into a Java String array.
+
     :param l: the string list
     :type: list
     :rtype: java string array
@@ -55,6 +57,7 @@ def string_list_to_array(l):
 def double_matrix_to_ndarray(m):
     """
     Turns the Java matrix (2-dim array) of doubles into a numpy 2-dim array.
+
     :param m: the double matrix
     :type: JB_Object
     :return: Numpy array
@@ -77,6 +80,7 @@ def double_matrix_to_ndarray(m):
 def enumeration_to_list(enm):
     """
     Turns the java.util.Enumeration into a list.
+
     :param enm: the enumeration to convert
     :type enm: JB_Object
     :return: the list
@@ -91,6 +95,7 @@ def enumeration_to_list(enm):
 def double_to_float(d):
     """
     Turns the Python float into a Java java.lang.Float object.
+
     :param d: the Python float
     :type d: float
     :return: the Float object
