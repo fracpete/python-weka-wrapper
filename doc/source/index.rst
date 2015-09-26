@@ -18,8 +18,10 @@ Additional jars can be added as well.
 Links:
 
 * Looking for code?
+
   * `Project homepage <https://github.com/fracpete/python-weka-wrapper>`_
   * `Example code <https://github.com/fracpete/python-weka-wrapper-examples>`_
+
 * Questions? You can post them in the project's `Google Group <https://groups.google.com/forum/#!forum/python-weka-wrapper>`_
 * `MLOSS project <https://mloss.org/software/view/548/>`_
 
