@@ -17,9 +17,11 @@ Additional jars can be added as well.
 
 Links:
 
-* `Project homepage <https://github.com/fracpete/python-weka-wrapper>`_
+* Looking for code?
+  * `Project homepage <https://github.com/fracpete/python-weka-wrapper>`_
+  * `Example code <https://github.com/fracpete/python-weka-wrapper-examples>`_
+* Questions? You can post them in the project's `Google Group <https://groups.google.com/forum/#!forum/python-weka-wrapper>`_
 * `MLOSS project <https://mloss.org/software/view/548/>`_
-* `Google Group <https://groups.google.com/forum/#!forum/python-weka-wrapper>`_
 
 
 Requirements
@@ -38,7 +40,7 @@ The library has the following requirements:
 
 Uses:
 
-* Weka (3.7.12)
+* Weka (3.7.13)
 
 Contents
 ========
