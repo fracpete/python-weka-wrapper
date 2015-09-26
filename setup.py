@@ -98,13 +98,14 @@ setup(
     packages=[
         "weka",
         "weka.core",
+        "weka.flow",
         "weka.plot"
     ],
     package_data={
         "weka": ["lib/*.jar"],
     },
     include_package_data=True,
-    version="0.3.2",
+    version="0.3.3",
     author='Peter "fracpete" Reutemann',
     author_email='pythonwekawrapper at gmail dot com',
     install_requires=[

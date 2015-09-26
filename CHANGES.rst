@@ -1,10 +1,11 @@
 Changelog
 =========
 
-0.3.3 (????-??-??)
+0.3.3 (2015-09-26)
 ------------------
 
 - updated to Weka 3.7.13
+- documentation now covers the API as well
 
 
 0.3.2 (2015-06-29)
