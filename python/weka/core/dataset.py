@@ -1445,3 +1445,34 @@ class InstanceValueIterator(object):
                 return self.data.get_string_value(index)
         else:
             raise StopIteration()
+
+
+def create_instances_from_lists(x, y, name="data"):
+    """
+    Allows the generation of an Instances object from a list of lists for X and a list for Y.
+    All data must be numerical. Attributes can be converted to nominal with the
+    weka.filters.unsupervised.attribute.NumericToNominal filter.
+
+    :param x: the input variables (row wise)
+    :type x: list of list
+    :param y: the output variable
+    :type y: list
+    :param name: the name of the dataset
+    :type name: str
+    :return: the generated dataset
+    :rtype: Instances
+    """
+    if len(x) != len(y):
+        raise Exception("Dimensions of x and y differ: " + str(len(x)) + " != " + str(len(y)))
+    # create header
+    atts = []
+    for i in xrange(len(x[0])):
+        atts.append(Attribute.create_numeric("x" + str(i+1)))
+    atts.append(Attribute.create_numeric("y"))
+    result = Instances.create_instances(name, atts, len(y))
+    # add data
+    for i in xrange(len(x)):
+        values = x[i][:]
+        values.append(y[i])
+        result.add_instance(Instance.create_instance(values))
+    return result

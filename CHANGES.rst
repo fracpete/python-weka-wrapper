@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.3.4 (????-??-??)
+------------------
+
+- added convenience method `create_instances_from_lists` to `weka.core.dataset` module to easily create
+  an `Instances` object from numeric lists (x and y)
+
+
 0.3.3 (2015-09-26)
 ------------------
 
