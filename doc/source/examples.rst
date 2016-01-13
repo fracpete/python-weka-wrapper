@@ -129,7 +129,7 @@ Cross-validate filtered classifier and print evaluation and display ROC
    from weka.classifiers import Evaluation
    from weka.core.classes import Random
    evl = Evaluation(data)
-   evl.crossvalidate_model(cls, data, 10, Random(1))
+   evl.crossvalidate_model(fc, data, 10, Random(1))
 
    print(evl.percent_correct)
    print(evl.summary())
