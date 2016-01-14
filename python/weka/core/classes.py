@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # classes.py
-# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2016 Fracpete (pythonwekawrapper at gmail dot com)
 
 import os
 import inspect
@@ -1343,7 +1343,8 @@ class Tags(JavaObject):
         """
         Instantiates the Tag array located in the specified class with the given field name.
 
-        Example: tag_array("weka.classifiers.functions.SMO", "TAGS_FILTER")
+        Example:
+        tags = Tags.get_tags("weka.classifiers.functions.SMO", "TAGS_FILTER")
 
         :param classname: the classname in which the tags reside
         :type classname: str
@@ -1354,6 +1355,24 @@ class Tags(JavaObject):
         """
         classname = "L" + classname.replace(".", "/") + ";"
         return Tags(jobject=javabridge.get_static_field(classname, field, "[Lweka/core/Tag;"))
+
+    @classmethod
+    def get_object_tags(cls, javaobject, methodname):
+        """
+        Instantiates the Tag array obtained from the object using the specified method name.
+
+        Example:
+        cls = Classifier(classname="weka.classifiers.meta.MultiSearch")
+        tags = Tags.get_object_tags(cls, "getMetricsTags")
+
+        :param javaobject: the javaobject to obtain the tags from
+        :type javaobject: JavaObject
+        :param methodname: the method name returning the Tag array
+        :type methodname: str
+        :return: the Tags objects
+        :rtype: Tags
+        """
+        return Tags(jobject=javabridge.call(javaobject.jobject, methodname, "()[Lweka/core/Tag;"))
 
 
 class SelectedTag(JavaObject):
