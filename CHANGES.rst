@@ -1,11 +1,15 @@
 Changelog
 =========
 
-0.3.4 (????-??-??)
+0.3.4 (2016-01-15)
 ------------------
 
 - added convenience method `create_instances_from_lists` to `weka.core.dataset` module to easily create
   an `Instances` object from numeric lists (x and y)
+- added `get_object_tags` method to `Tags` class from module `weka.core.classes`, to allow obtaining
+  `weka.core.Tag` array from the method of a `JavaObject` rather than a static field (MultiSearch)
+- updated `MultiSearch` wrapper in module `weka.classifiers` to work with the `multi-search` package
+  version 2016.1.15 or later
 
 
 0.3.3 (2015-09-26)
