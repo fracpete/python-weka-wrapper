@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # classifiers.py
-# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2016 Fracpete (pythonwekawrapper at gmail dot com)
 
 import sys
 import os
@@ -383,7 +383,8 @@ class GridSearch(SingleClassifierEnhancer):
 class MultiSearch(SingleClassifierEnhancer):
     """
     Wrapper class for the MultiSearch meta-classifier.
-    NB: 'multi-search-weka-package' must be installed (https://github.com/fracpete/multisearch-weka-package).
+    NB: 'multi-search-weka-package' must be installed (https://github.com/fracpete/multisearch-weka-package),
+    version 2016.1.15 or later.
     """
 
     def __init__(self, jobject=None, options=None):
@@ -401,7 +402,7 @@ class MultiSearch(SingleClassifierEnhancer):
         else:
             self.enforce_type(jobject, classname)
         super(MultiSearch, self).__init__(jobject=jobject, options=options)
-        self.tags_evaluation = Tags.get_tags("weka.classifiers.meta.MultiSearch", "TAGS_EVALUATION")
+        self.tags_evaluation = Tags.get_object_tags(self, "getMetricsTags")
 
     @property
     def evaluation(self):
