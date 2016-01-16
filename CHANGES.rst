@@ -4,7 +4,8 @@ Changelog
 0.3.5 (????-??-??)
 ------------------
 
--
+- added support for `weka.core.BatchPredictor` to class `Classifier` in module `weka.classifiers`
+- ...
 
 
 0.3.4 (2016-01-15)

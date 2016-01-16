@@ -54,9 +54,13 @@ class Classifier(OptionHandler):
         self.enforce_type(jobject, "weka.classifiers.Classifier")
         self.is_updateable = self.check_type(jobject, "weka.classifiers.UpdateableClassifier")
         self.is_drawable = self.check_type(jobject, "weka.core.Drawable")
+        self.is_batchpredictor = self.check_type(jobject, "weka.core.BatchPredictor")
         super(Classifier, self).__init__(jobject=jobject, options=options)
         self.__classify = javabridge.make_call(self.jobject, "classifyInstance", "(Lweka/core/Instance;)D")
         self.__distribution = javabridge.make_call(self.jobject, "distributionForInstance", "(Lweka/core/Instance;)[D")
+        if self.is_batchpredictor:
+            self.__distributions = javabridge.make_call(
+                self.jobject, "distributionsForInstances", "(Lweka/core/Instances;)[[D")
 
     @property
     def capabilities(self):
@@ -111,6 +115,56 @@ class Classifier(OptionHandler):
         """
         pred = self.__distribution(inst.jobject)
         return javabridge.get_env().get_double_array_elements(pred)
+
+    def distributions_for_instances(self, data):
+        """
+        Peforms predictions, returning the class distributions.
+
+        :param data: the Instances to get the class distributions for
+        :type data: Instances
+        :return: the class distribution matrix, None if not a batch predictor
+        :rtype: ndarray
+        """
+        if self.is_batchpredictor:
+            return arrays.double_matrix_to_ndarray(self.__distributions(data.jobject))
+        else:
+            return None
+
+    @property
+    def batch_size(self):
+        """
+        Returns the batch size, in case this classifier is a batch predictor.
+
+        :return: the batch size, None if not a batch predictor
+        :rtype: str
+        """
+        if self.is_batchpredictor:
+            return javabridge.call(self.jobject, "getBatchSize", "()Ljava/lang/String;")
+        else:
+            return None
+
+    @batch_size.setter
+    def batch_size(self, size):
+        """
+        Sets the batch size, in case this classifier is a batch predictor.
+
+        :param size: the size of the batch
+        :type size: str
+        """
+        if self.is_batchpredictor:
+            javabridge.call(self.jobject, "setBatchSize", "(Ljava/lang/String;)V", size)
+
+    def has_efficient_batch_prediction(self):
+        """
+        Returns whether the classifier implements a more efficient batch prediction.
+
+        :return: True if a more efficient batch prediction is implemented, always False if not batch predictor
+        :rtype: bool
+        """
+        if self.is_batchpredictor:
+            return javabridge.call(self.jobject, "implementsMoreEfficientBatchPrediction", "()Z")
+        else:
+            return False
 
     @property
     def graph_type(self):

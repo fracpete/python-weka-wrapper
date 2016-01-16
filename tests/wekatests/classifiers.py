@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # classifiers.py
-# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2016 Fracpete (pythonwekawrapper at gmail dot com)
 
 import unittest
 import weka.core.jvm as jvm
@@ -150,6 +150,34 @@ class TestClassifiers(weka_test.WekaTest):
             dist = cls.distribution_for_instance(data.get_instance(i))
             self.assertIsNotNone(dist)
             self.assertEqual(1, len(dist), msg="Number of classes in prediction should be one for numeric classifier!")
+
+    def test_batchpredictor(self):
+        """
+        Tests the batch predictor methods.
+        """
+
+        loader = converters.Loader(classname="weka.core.converters.ArffLoader")
+        data = loader.load_file(self.datafile("anneal.arff"))
+        self.assertIsNotNone(data)
+        data.class_is_last()
+
+        cname = "weka.classifiers.trees.J48"
+        options = []
+        cls = classifiers.Classifier(classname=cname, options=options)
+        self.assertIsNotNone(cls, msg="Failed to instantiate: " + cname + "/" + str(options))
+
+        # batch predictor?
+        self.assertTrue(cls.is_batchpredictor, msg="not a batch predictor: " + cname + "/" + str(options))
+
+        # more efficient implementation?
+        cls.has_efficient_batch_prediction()
+
+        # batch size
+        self.assertIsNotNone(cls.batch_size, msg="batch size is not initialized")
+
+        # distributions_for_instances
+        cls.build_classifier(data)
+        self.assertIsNotNone(cls.distributions_for_instances(data), msg="no distributions generated")
 
     def test_classify_instance(self):
         """
