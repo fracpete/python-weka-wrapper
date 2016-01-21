@@ -1788,9 +1788,13 @@ class SetupGenerator(OptionHandler):
         Returns the base object to apply the setups to.
 
         :return: the base object
-        :rtype: JavaObject
+        :rtype: JavaObject or OptionHandler
         """
-        return JavaObject(javabridge.call(self.jobject, "getBaseObject", "()Ljava/io/Serializable;"))
+        jobj = javabridge.call(self.jobject, "getBaseObject", "()Ljava/io/Serializable;")
+        if OptionHandler.check_type(jobj, "weka.core.OptionHandler"):
+            return OptionHandler(jobj)
+        else:
+            return JavaObject(jobj)
 
     @base_object.setter
     def base_object(self, obj):
@@ -1812,7 +1816,7 @@ class SetupGenerator(OptionHandler):
         :return: the list of AbstractSearchParameter objects
         :rtype: list
         """
-        array = JavaArray(javabridge.call(self.jobject, "getParameters", "()[Lweka/core/AbstractParameter;"))
+        array = JavaArray(javabridge.call(self.jobject, "getParameters", "()[Lweka/core/setupgenerator/AbstractParameter;"))
         result = []
         for item in array:
             result.append(AbstractParameter(jobject=item.jobject))
@@ -1826,10 +1830,10 @@ class SetupGenerator(OptionHandler):
         :param params: list of AbstractSearchParameter objects
         :type params: list
         """
-        array = JavaArray.new_instance("weka.core.AbstractParameter", len(params))
+        array = JavaArray(jobject=JavaArray.new_instance("weka.core.setupgenerator.AbstractParameter", len(params)))
         for idx, obj in enumerate(params):
             array[idx] = obj.jobject
-        javabridge.call(self.jobject, "setParameters", "([Lweka/core/AbstractParameter;)V", array)
+        javabridge.call(self.jobject, "setParameters", "([Lweka/core/setupgenerator/AbstractParameter;)V", array.jobject)
 
     def setups(self):
         """
@@ -1839,9 +1843,13 @@ class SetupGenerator(OptionHandler):
         :rtype: list
         """
         result = []
+        has_options = self.base_object.is_optionhandler
         enm = javabridge.get_enumeration_wrapper(javabridge.call(self.jobject, "setups", "()Ljava/util/Enumeration;"))
-        while enm.hasMoreElements:
-            result.append(JavaObject(enm.nextElement))
+        while enm.hasMoreElements():
+            if has_options:
+                result.append(OptionHandler(enm.nextElement()))
+            else:
+                result.append(JavaObject(enm.nextElement()))
         return result
 
 
