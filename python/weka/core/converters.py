@@ -237,6 +237,22 @@ def loader_for_file(filename):
         return Loader(jobject=loader)
 
 
+def load_any_file(filename):
+    """
+    Determines a Loader based on the the file extension. If successful, loads the full dataset and returns it.
+
+    :param filename: the name of the file to load
+    :type filename: str
+    :return: the
+    :rtype: Instances
+    """
+    loader = loader_for_file(filename)
+    if loader is None:
+        return None
+    else:
+        return loader.load_file(filename)
+
+
 def saver_for_file(filename):
     """
     Returns a Saver that can load the specified file, based on the file extension. None if failed to determine.

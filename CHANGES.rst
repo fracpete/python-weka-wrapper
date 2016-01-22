@@ -7,6 +7,7 @@ Changelog
 - added support for `weka.core.BatchPredictor` to class `Classifier` in module `weka.classifiers`
 - upgraded Weka to revision 12311 (post 3.7.13) to avoid performance bottleneck when using setOptions method
 - fixed class `SetupGenerator` from module `weka.core.classes`
+- added `load_any_file` method to the `weka.core.converters` module
 - ...
 
 
