@@ -51,7 +51,7 @@ def download_weka():
     """
     Downloads the monolithic Weka jar from sourceforget.net if nececssary.
     """
-    url = "https://sourceforge.net/projects/weka/files/weka-3-7/3.7.13/weka-3-7-13-monolithic.jar/download"
+    url = "https://github.com/fracpete/python-weka-wrapper/blob/e4518862a42f234c2f75da46965d4051b07898b4/python/weka/lib/weka.jar?raw=true"
     outfile = os.path.join(os.path.dirname(__file__), "python", "weka", "lib", "weka.jar")
     if not os.path.exists(outfile):
         if not download_file(url, outfile):
