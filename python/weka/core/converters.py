@@ -271,6 +271,25 @@ def saver_for_file(filename):
         return Saver(jobject=saver)
 
 
+def save_any_file(data, filename):
+    """
+    Determines a Saver based on the the file extension. Returns whether successfully saved.
+
+    :param filename: the name of the file to save
+    :type filename: str
+    :param data: the data to save
+    :type data: Instances
+    :return: whether successfully saved
+    :rtype: bool
+    """
+    saver = saver_for_file(filename)
+    if saver is None:
+        return False
+    else:
+        saver.save_file(data, filename)
+        return True
+
+
 def ndarray_to_instances(array, relation, att_template="Att-#", att_list=None):
     """
     Converts the numpy matrix into an Instances object and returns it.
