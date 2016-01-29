@@ -44,6 +44,18 @@ Load dataset and print it
 
    print(data)
 
+The `weka.core.converters` module has a convenience method for loading datasets
+called `load_any_file`. This method determines a loader based on the file extension
+and then loads the full dataset:
+
+.. code-block:: python
+
+   import weka.core.converters as converters
+   data = converters.load_any_file(data_dir + "iris.arff")
+   data.class_is_last()
+
+   print(data)
+
 
 Output help from underlying OptionHandler
 -----------------------------------------

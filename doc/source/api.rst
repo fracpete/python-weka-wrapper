@@ -89,6 +89,16 @@ The following example loads an ARFF file and saves it as CSV:
    >>> saver = Saver(classname="weka.core.converters.CSVSaver")
    >>> saver.save_file(data, "/some/where/iris.csv")
 
+The `weka.core.converters` module has convenience method for loading and saving
+datasets called `load_any_file` and `save_any_file`. These methods determine
+the loader/saver based on the file extension:
+
+.. code-block:: python
+
+   >>> import weka.core.converters as converters
+   >>> data = converters.load_any_file("/some/where/iris.arff")
+   >>> converters.save_any_file("/some/where/else/iris.csv")
+
 
 Filters
 -------
