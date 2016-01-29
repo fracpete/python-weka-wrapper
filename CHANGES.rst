@@ -9,6 +9,8 @@ Changelog
 - fixed class `SetupGenerator` from module `weka.core.classes`
 - added `load_any_file` method to the `weka.core.converters` module
 - added `save_any_file` method to the `weka.core.converters` module
+- if `GridSearch` instantiation (module `weka.classifiers`) fails, it now outputs message whether package
+  installed and JVM with package support started
 
 
 0.3.4 (2016-01-15)

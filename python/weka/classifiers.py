@@ -309,6 +309,9 @@ class GridSearch(SingleClassifierEnhancer):
         classname = "weka.classifiers.meta.GridSearch"
         if jobject is None:
             jobject = GridSearch.new_instance(classname)
+            if jobject is None:
+                raise Exception(
+                    "Failed to instantiate GridSearch - package installed and jvm started with package support?")
         else:
             self.enforce_type(jobject, classname)
         super(GridSearch, self).__init__(jobject=jobject, options=options)
