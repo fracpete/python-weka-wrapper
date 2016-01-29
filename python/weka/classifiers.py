@@ -1879,7 +1879,7 @@ class Evaluation(JavaObject):
         :param args: the command-line arguments to use
         :type args: list
         :return: the evaluation string
-        :rtype : str
+        :rtype: str
         """
         return javabridge.static_call(
             "Lweka/classifiers/Evaluation;", "evaluateModel",

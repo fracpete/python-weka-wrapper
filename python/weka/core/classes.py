@@ -441,8 +441,7 @@ class JavaObject(JSONObject):
 
         :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
         :type path: str
-        :param jobject: the Java object to set; if instance of JavaObject class, the jobject member is
-        automatically used
+        :param jobject: the Java object to set; if instance of JavaObject class, the jobject member is automatically used
         :type jobject: JB_Object
         """
         # unwrap?
@@ -460,7 +459,7 @@ class JavaObject(JSONObject):
 
         :param path: the property path, e.g., "filter" for a setFilter(...)/getFilter() method pair
         :type path: str
-        :return the wrapped Java object
+        :return: the wrapped Java object
         :rtype: JavaObject
         """
         return JavaObject(javabridge.static_call(

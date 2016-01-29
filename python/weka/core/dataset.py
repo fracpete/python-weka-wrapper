@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # dataset.py
-# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2016 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import logging
@@ -242,7 +242,7 @@ class Instances(JavaObject):
         Sets the Instance at the specified location in the dataset.
 
         :param index: the 0-based index of the instance to replace
-        :type index; int
+        :type index: int
         :param inst: the Instance to set
         :type inst: Instance
         :return: the instance
