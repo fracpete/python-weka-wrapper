@@ -217,8 +217,14 @@ Perform the following steps:
  * download from `here <https://bootstrap.pypa.io/get-pip.py>`__
  * install using ``python get-pip.py``
 
-* install `numpy 1.9.x <http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy>`__
-* install `.Net 4.0 <http://go.microsoft.com/fwlink/?LinkID=187668>`__ (if not already installed)
+* install numpy
+
+ * download `numpy 1.9.x MKL <http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy>`__
+   (or later) for Python 2.7 (*cp27*) and your *bitness* (32 or 64 bit)
+ * install the *.whl* file using pip: ``pip install numpy-X.Y.Z.whl``
+
+* install `.Net 4.0 <http://go.microsoft.com/fwlink/?LinkID=187668>`__ (if not
+  already installed)
 * install `Windows SDK 7.1 <http://www.microsoft.com/download/details.aspx?id=8279>`__
 
 * open Windows SDK command prompt (**not** the regular command prompt!) and install *javabridge* and *python-weka-wrapper*
@@ -232,13 +238,49 @@ Perform the following steps:
 
 Now you can run *python-weka-wrapper* using the regular command-prompt as well.
 
+If you want to use the plotting functionality, you need to install *matplotlib* as well:
+
+* download `matplotlib <http://www.lfd.uci.edu/~gohlke/pythonlibs/#matplotlib>`__
+  for Python 2.7 (*cp27*) and your bitness (32 or 64 bit)
+* install the *.whl* file using pip: ``pip install matplotlib-X.Y.Z.whl``
+
 
 From source
 -----------
 
-You can either download a source archive or clone the github repository
-(``git clone https://github.com/fracpete/python-weka-wrapper.git``). Once you
-have done this, you can install the library using the following command:
+You have two options for installing the library from source, either through a release
+archive or using the *bleeding edge* source code that is available through the 
+Github repository.
+
+
+Archive
++++++++
+
+Go to the `releases <https://github.com/fracpete/python-weka-wrapper/releases>`__ 
+page on Github and download the *Source code* archive (zip or tar.gz) of the 
+release that you want to install. After the download finishes, decompress the
+archive. Open a terminal/command prompt and execute the following command
+from within the directory with the `setup.py` file:
+
+.. code-block:: bash
+
+   $ python setup.py install
+
+Check out the section on *virtualenv* as well, if you would rather install it
+in a *disposable* location.
+
+
+Gtihub
+++++++
+
+Clone the Github repository as follows:
+
+.. code-block:: bash
+
+   git clone https://github.com/fracpete/python-weka-wrapper.git
+
+Change into the newly created directory and install the library using the
+following command:
 
 .. code-block:: bash
 
