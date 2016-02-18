@@ -71,6 +71,35 @@ and ``listOptions()`` information:
    print(cls.to_help())
 
 
+Option handling
+---------------
+
+Any class derived from ``OptionHandler`` (module ``weka.core.classes``) allows 
+getting and setting of the options via the property ``options``. Depending on
+the sub-class, you may also provide the options already when instantiating the
+class. The following two examples instantiate a J48 classifier, one using
+the ``options`` property and the other using the shortcut through the constructor:
+
+.. code-block:: python
+
+   from weka.classifiers import Classifier
+   cls = Classifier(classname="weka.classifiers.trees.J48")
+   cls.options = ["-C", "0.3"]
+
+.. code-block:: python
+
+   from weka.classifiers import Classifier
+   cls = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
+
+You can use the ``options`` property also to retrieve the currently set options:
+
+.. code-block:: python
+
+   from weka.classifiers import Classifier
+   cls = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
+   print(cls.options)
+
+
 Build classifier on dataset, output predictions
 -----------------------------------------------
 
