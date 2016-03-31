@@ -4,6 +4,8 @@ Changelog
 0.3.6 (????-??-??)
 ------------------
 
+- `Loader.load_file` method now checks whether the dataset file really exists, otherwise a previously loaded
+  file gets loaded again without an error message (seems to be a Weka issue)
 - ...
 
 
