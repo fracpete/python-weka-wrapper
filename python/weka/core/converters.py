@@ -68,6 +68,7 @@ class Loader(OptionHandler):
         :type incremental: bool
         :return: the full dataset or the header (if incremental)
         :rtype: Instances
+        :raises Exception: if the file does not exist
         """
         self.enforce_type(self.jobject, "weka.core.converters.FileSourcedConverter")
         self.incremental = incremental
