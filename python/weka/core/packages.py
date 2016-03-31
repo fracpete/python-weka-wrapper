@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # packages.py
-# Copyright (C) 2014 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import weka.core.jvm as jvm
@@ -21,7 +21,7 @@ from weka.core.classes import JavaObject
 
 class Package(JavaObject):
     """
-    Wrapper for the org.pentaho.packageManagement.Package class.
+    Wrapper for the weka.core.packageManagement.Package class.
     """
 
     def __init__(self, jobject):
@@ -31,7 +31,7 @@ class Package(JavaObject):
         :param jobject: the java Package instance to wrap
         :type jobject: JB_Object
         """
-        self.enforce_type(jobject, "org.pentaho.packageManagement.Package")
+        self.enforce_type(jobject, "weka.core.packageManagement.Package")
         super(Package, self).__init__(jobject)
 
     @property
@@ -99,7 +99,7 @@ class Package(JavaObject):
 
 class PackageConstraint(JavaObject):
     """
-    Wrapper for the org.pentaho.packageManagement.PackageConstraint class.
+    Wrapper for the weka.core.packageManagement.PackageConstraint class.
     """
 
     def __init__(self, jobject):
@@ -109,7 +109,7 @@ class PackageConstraint(JavaObject):
         :param jobject: the java PackageConstraint instance to wrap
         :type jobject: JB_Object
         """
-        self.enforce_type(jobject, "org.pentaho.packageManagement.PackageConstraint")
+        self.enforce_type(jobject, "weka.core.packageManagement.PackageConstraint")
         super(PackageConstraint, self).__init__(jobject)
 
     def set_package(self, pkge):
@@ -119,7 +119,7 @@ class PackageConstraint(JavaObject):
         :param pkge: the package
         :type pkge: Package
         """
-        javabridge.call(self.jobject, "setPackage", "(Lorg/pentaho/packageManagement/Package;)V", pkge.jobject)
+        javabridge.call(self.jobject, "setPackage", "(Lweka/core/packageManagement/Package;)V", pkge.jobject)
 
     def get_package(self):
         """
@@ -128,7 +128,7 @@ class PackageConstraint(JavaObject):
         :return: the package
         :rtype: Package
         """
-        return Package(javabridge.call(self.jobject, "getPackage", "()Lorg/pentaho/packageManagement/Package;"))
+        return Package(javabridge.call(self.jobject, "getPackage", "()Lweka/core/packageManagement/Package;"))
 
     def check_constraint(self, pkge=None, constr=None):
         """
@@ -141,16 +141,16 @@ class PackageConstraint(JavaObject):
         """
         if not pkge is None:
             return javabridge.call(
-                self.jobject, "checkConstraint", "(Lorg/pentaho/packageManagement/Package;)Z", pkge.jobject)
+                self.jobject, "checkConstraint", "(Lweka/core/packageManagement/Package;)Z", pkge.jobject)
         if not constr is None:
             return javabridge.call(
-                self.jobject, "checkConstraint", "(Lorg/pentaho/packageManagement/PackageConstraint;)Z", pkge.jobject)
+                self.jobject, "checkConstraint", "(Lweka/core/packageManagement/PackageConstraint;)Z", pkge.jobject)
         raise Exception("Either package or package constraing must be provided!")
 
 
 class Dependency(JavaObject):
     """
-    Wrapper for the org.pentaho.packageManagement.Dependency class.
+    Wrapper for the weka.core.packageManagement.Dependency class.
     """
 
     def __init__(self, jobject):
@@ -160,7 +160,7 @@ class Dependency(JavaObject):
         :param jobject: the java Dependency instance to wrap
         :type jobject: JB_Object
         """
-        self.enforce_type(jobject, "org.pentaho.packageManagement.Dependency")
+        self.enforce_type(jobject, "weka.core.packageManagement.Dependency")
         super(Dependency, self).__init__(jobject)
 
     @property
@@ -172,7 +172,7 @@ class Dependency(JavaObject):
         :rtype: Package
         """
         return Package(
-            javabridge.call(self.jobject, "getSource", "()Lorg/pentaho/packageManagement/Package;"))
+            javabridge.call(self.jobject, "getSource", "()Lweka/core/packageManagement/Package;"))
 
     @source.setter
     def source(self, pkge):
@@ -183,7 +183,7 @@ class Dependency(JavaObject):
         :type pkge: Package
         """
         javabridge.call(
-            self.jobject, "setSource", "(Lorg/pentaho/packageManagement/Package;)V", pkge.jobject)
+            self.jobject, "setSource", "(Lweka/core/packageManagement/Package;)V", pkge.jobject)
 
     @property
     def target(self):
@@ -194,7 +194,7 @@ class Dependency(JavaObject):
         :rtype: PackageConstraint
         """
         return PackageConstraint(
-            javabridge.call(self.jobject, "getTarget", "()Lorg/pentaho/packageManagement/PackageConstraint;"))
+            javabridge.call(self.jobject, "getTarget", "()Lweka/core/packageManagement/PackageConstraint;"))
 
     @target.setter
     def target(self, constr):
@@ -205,7 +205,7 @@ class Dependency(JavaObject):
         :type constr: Package
         """
         javabridge.call(
-            self.jobject, "setTarget", "(Lorg/pentaho/packageManagement/PackageConstraint;)V", constr.jobject)
+            self.jobject, "setTarget", "(Lweka/core/packageManagement/PackageConstraint;)V", constr.jobject)
 
 
 def establish_cache():
