@@ -19,6 +19,7 @@ from weka.core.classes import OptionHandler
 from weka.core.capabilities import Capabilities
 from weka.core.dataset import Instances, Instance, Attribute
 import numpy
+import os
 
 
 class Loader(OptionHandler):
@@ -74,6 +75,10 @@ class Loader(OptionHandler):
             dfile = javabridge.make_instance(
                 "Ljava/io/File;", "(Ljava/lang/String;)V", javabridge.get_env().new_string_utf(str(dfile)))
         javabridge.call(self.jobject, "reset", "()V")
+        # check whether file exists, otherwise previously set file gets loaded again
+        sfile = javabridge.to_string(dfile)
+        if not os.path.exists(sfile):
+            raise Exception("Dataset file does not exist: " + str(sfile))
         javabridge.call(self.jobject, "setFile", "(Ljava/io/File;)V", dfile)
         if incremental:
             self.structure = Instances(javabridge.call(self.jobject, "getStructure", "()Lweka/core/Instances;"))
