@@ -6,6 +6,8 @@ Changelog
 
 - `Loader.load_file` method now checks whether the dataset file really exists, otherwise a previously loaded
   file gets loaded again without an error message (seems to be a Weka issue)
+- replaced `org.pentaho.packageManagement` with `weka.core.packageManagement` as the package management code
+  is now part of Weka rather than a third-party library
 - ...
 
 
