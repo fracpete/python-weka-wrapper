@@ -8,6 +8,8 @@ Changelog
   file gets loaded again without an error message (seems to be a Weka issue)
 - replaced `org.pentaho.packageManagement` with `weka.core.packageManagement` as the package management code
   is now part of Weka rather than a third-party library
+- `jvm.start()` no longer tries to load packages and therefore suppresses error message if `$HOME/wekafiles/packages`
+  should not yet exist
 - ...
 
 

@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # jvm.py
-# Copyright (C) 2014-2015 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2016 Fracpete (pythonwekawrapper at gmail dot com)
 
 import javabridge
 import os
@@ -115,8 +115,9 @@ def start(class_path=None, bundled=True, packages=False, system_cp=False, max_he
 
     if packages is not None:
         if isinstance(packages, bool):
-            logger.debug("Adding Weka packages")
-            add_weka_packages()
+            if packages:
+                logger.debug("Adding Weka packages")
+                add_weka_packages()
         else:
             logger.debug("Adding Weka packages, using: " + packages)
             add_weka_packages(packages)
