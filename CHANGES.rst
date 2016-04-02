@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3.6 (????-??-??)
+0.3.6 (2016-04-02)
 ------------------
 
 - `Loader.load_file` method now checks whether the dataset file really exists, otherwise a previously loaded
@@ -10,7 +10,6 @@ Changelog
   is now part of Weka rather than a third-party library
 - `jvm.start()` no longer tries to load packages and therefore suppresses error message if `$HOME/wekafiles/packages`
   should not yet exist
-- ...
 
 
 0.3.5 (2016-01-29)
