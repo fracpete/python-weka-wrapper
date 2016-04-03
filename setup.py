@@ -89,7 +89,7 @@ setup(
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.7',
     ],
     license='GNU General Public License version 3.0 (GPLv3)',
     package_dir={
