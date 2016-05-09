@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3.8 (????-??-??)
+0.3.8 (2016-05-09)
 ------------------
 
 - now works with javabridge 1.0.14 as well
