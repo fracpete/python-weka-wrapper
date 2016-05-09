@@ -109,7 +109,7 @@ setup(
     author='Peter "fracpete" Reutemann',
     author_email='pythonwekawrapper at gmail dot com',
     install_requires=[
-        "javabridge==1.0.11",
+        "javabridge>=1.0.11",
         "numpy"
     ],
     extras_require={

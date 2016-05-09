@@ -4,7 +4,7 @@ Changelog
 0.3.8 (????-??-??)
 ------------------
 
-- ...
+- now works with javabridge 1.0.14 as well
 
 
 0.3.7 (2016-05-04)
