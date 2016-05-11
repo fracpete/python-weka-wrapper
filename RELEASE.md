@@ -21,13 +21,7 @@ Commands for releasing on pypi.org:
   find -name "*~" -delete
   python setup.py clean
   python setup.py sdist upload
-  python setup.py build_sphinx
-  python setup.py upload_sphinx
 ```
-
-Requirements:
-* before Sphinx 1.3: sudo pip install sphinxcontrib-napoleon
-* Sphinx-PyPI-upload: `easy_install sphinx-pypi-upload`
 
 
 Github
@@ -38,6 +32,13 @@ Steps:
 * enter release notes, i.e., significant changes since last release
 * upload `python-weka-wrapper-X.Y.Z.tar.gz` previously generated with `setyp.py`
 * publish
+
+
+ReadTheDocs
+===========
+
+Make documentation for new version public on
+[readthedocs.org](https://readthedocs.org/projects/python-weka-wrapper/).
 
 
 MLOSS
