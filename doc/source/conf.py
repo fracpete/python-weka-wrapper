@@ -32,15 +32,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.inheritance_diagram',
-    'autoapi.sphinx'
 ]
-
-autoapi_modules = {
-   'weka': {
-      'override': False,
-      'output': 'auto'
-   }
-}
 
 
 # Add any paths that contain templates here, relative to this directory.
