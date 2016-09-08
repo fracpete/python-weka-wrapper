@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.3.9 (????-??-??)
+------------------
+
+- `plot_learning_curve` method of module `weka.plot.classifiers` now accepts a list of test sets;
+  `*` is index of test set in label template string
+- ...
+
+
 0.3.8 (2016-05-09)
 ------------------
 
