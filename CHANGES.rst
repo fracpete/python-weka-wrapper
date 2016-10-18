@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3.9 (????-??-??)
+0.3.9 (2016-10-19)
 ------------------
 
 - `plot_learning_curve` method of module `weka.plot.classifiers` now accepts a list of test sets;
@@ -11,7 +11,6 @@ Changelog
   `weka.core.dataset` is now optional
 - added convenience method `create_instances_from_matrices` to `weka.core.dataset` module to easily create
   an `Instances` object from numpy matrices (x and y)
-- ...
 
 
 0.3.8 (2016-05-09)
