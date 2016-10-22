@@ -4,6 +4,9 @@ Changelog
 0.3.10 (????-??-??)
 ------------------
 
+- `types.double_matrix_to_ndarray` no longer assumes a square matrix
+  (https://github.com/fracpete/python-weka-wrapper/issues/48)
+- `len(Instances)` now returns the number of rows in the dataset (module `weka.core.dataset`)
 - ...
 
 
