@@ -7,6 +7,8 @@ Changelog
 - `types.double_matrix_to_ndarray` no longer assumes a square matrix
   (https://github.com/fracpete/python-weka-wrapper/issues/48)
 - `len(Instances)` now returns the number of rows in the dataset (module `weka.core.dataset`)
+- added method `insert_attribute` to the `Instances` class
+- added class method `create_relational` to the `Attribute` class
 - ...
 
 
