@@ -12,7 +12,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # setup.py
-# Copyright (C) 2014-2016 Fracpete (pythonwekawrapper at gmail dot com)
+# Copyright (C) 2014-2017 Fracpete (pythonwekawrapper at gmail dot com)
 
 import os
 from setuptools import setup
@@ -51,7 +51,7 @@ def download_weka():
     """
     Downloads the Weka jar from github associated with this release if nececssary.
     """
-    url = "https://github.com/fracpete/python-weka-wrapper/raw/8fc11c3f728fbde705fb817953cb7844d6987ae6/python/weka/lib/weka.jar"
+    url = "https://github.com/fracpete/python-weka-wrapper/raw/01909daa575bbf838cccc7e27fe7e569a532c598/python/weka/lib/weka.jar"
     outfile = os.path.join(os.path.dirname(__file__), "python", "weka", "lib", "weka.jar")
     if not os.path.exists(outfile):
         if not download_file(url, outfile):
@@ -105,11 +105,11 @@ setup(
         "weka": ["lib/*.jar"],
     },
     include_package_data=True,
-    version="0.3.9",
+    version="0.3.10",
     author='Peter "fracpete" Reutemann',
     author_email='pythonwekawrapper at gmail dot com',
     install_requires=[
-        "javabridge>=1.0.11",
+        "javabridge>=1.0.14",
         "numpy"
     ],
     extras_require={

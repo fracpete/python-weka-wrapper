@@ -6,14 +6,14 @@ using the [javabridge](https://pypi.python.org/pypi/javabridge) library.
 Requirements:
 
 * Python 2.7 (for Python 3 version see [here](https://github.com/fracpete/python-weka-wrapper3))
- * javabridge (>= 1.0.11)
+ * javabridge (>= 1.0.14)
  * matplotlib (optional)
  * pygraphviz (optional)
  * PIL (optional)
 * Oracle JDK 1.7+
 
 Uses:
-* Weka (3.9.0)
+* Weka (3.9.1)
 
 ## Installation
 
