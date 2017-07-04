@@ -26,6 +26,19 @@ Commands for releasing on pypi.org:
   create zip of doc/buid/html, replace html/pypi/sphinx.zip and upload on pypi.org
 ```
 
+Commands for updating github pages:
+
+```
+  find -name "*~" -delete
+  cd doc
+  make html
+  copy build/html content to python-weka-wrapper.gh-pages
+  cd into python-weka-wrapper.gh-pages
+  git add -A
+  git commit -a "updated documentation"
+  git push
+```
+
 
 Github
 ======
