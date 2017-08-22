@@ -107,7 +107,7 @@ setup(
     include_package_data=True,
     version="0.3.11",
     author='Peter "fracpete" Reutemann',
-    author_email='pythonwekawrapper at gmail dot com',
+    author_email='pythonwekawrapper@gmail.com',
     install_requires=[
         "javabridge>=1.0.14",
         "numpy"
