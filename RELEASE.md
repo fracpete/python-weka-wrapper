@@ -34,9 +34,11 @@ Commands for updating github pages:
   make html
   copy build/html content to python-weka-wrapper.gh-pages
   cd into python-weka-wrapper.gh-pages
+  git pull origin gh-pages
   git add -A
   git commit -a "updated documentation"
-  git push
+  git rebase gh-pages
+  git push origin gh-pages
 ```
 
 
