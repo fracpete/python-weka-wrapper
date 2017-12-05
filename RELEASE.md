@@ -15,12 +15,14 @@ Preparation:
 When upgrading Weka version:
 * change download URL in method `download_weka()` in `setup.py`
 
-Commands for releasing on pypi.org:
+Commands for releasing on pypi.org (requires twine >= 1.8.0):
 
 ```
   find -name "*~" -delete
+  rm dist/*
   python setup.py clean
-  python setup.py sdist upload
+  python setup.py sdist
+  twine upload dist/*
   cd doc
   make html
   create zip of doc/buid/html, replace html/pypi/sphinx.zip and upload on pypi.org
@@ -34,9 +36,11 @@ Commands for updating github pages:
   make html
   copy build/html content to python-weka-wrapper.gh-pages
   cd into python-weka-wrapper.gh-pages
+  git pull origin gh-pages
   git add -A
   git commit -a "updated documentation"
-  git push
+  git rebase gh-pages
+  git push origin gh-pages
 ```
 
 
