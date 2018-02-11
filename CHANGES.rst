@@ -4,7 +4,8 @@ Changelog
 0.3.12 (????-??-??)
 -------------------
 
-- ...
+- upgraded to Weka 3.9.2
+- properly initializing package support now, rather than adding package jars to classpath
 
 
 0.3.11 (2017-08-23)
