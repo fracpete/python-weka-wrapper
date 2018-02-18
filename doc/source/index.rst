@@ -33,16 +33,16 @@ The library has the following requirements:
 
 * Python 2.7 (does not work with Python 3)
 
- * javabridge (>= 1.0.11, required)
+ * javabridge (>= 1.0.14, required)
  * pygraphviz (optional)
  * PIL (optional)
  * matplotlib (optional)
 
-* Oracle JDK 1.7+
+* Oracle JDK 1.8+
 
 Uses:
 
-* Weka (3.9.1)
+* Weka (3.9.2)
 
 Contents
 ========
