@@ -25,7 +25,7 @@ Commands for updating github pages:
   cd into python-weka-wrapper.gh-pages
   git pull origin gh-pages
   git add -A
-  git commit -a "updated documentation"
+  git commit -a -m "updated documentation"
   git rebase gh-pages
   git push origin gh-pages
 ```
@@ -39,13 +39,6 @@ Steps:
 * enter release notes, i.e., significant changes since last release
 * upload `python-weka-wrapper-X.Y.Z.tar.gz` previously generated with `setyp.py`
 * publish
-
-
-ReadTheDocs
-===========
-
-Make documentation for new version public on
-[readthedocs.org](https://readthedocs.org/projects/python-weka-wrapper/).
 
 
 MLOSS
