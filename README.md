@@ -14,7 +14,7 @@ Requirements:
 
 Uses:
 
-* Weka (3.9.2)
+* Weka (3.9.3)
 
 ## Installation
 
