@@ -14,57 +14,7 @@
 # setup.py
 # Copyright (C) 2014-2018 Fracpete (pythonwekawrapper at gmail dot com)
 
-import os
 from setuptools import setup
-from urllib2 import urlopen, URLError, HTTPError
-
-
-def download_file(url, outfile):
-    """
-    Downloads the file associated with the URL and saves it to the specified output file.
-    Taken from here: http://stackoverflow.com/a/4028894
-    :param url: the URL to download
-    :type url: str
-    :param outfile: the name of the output file
-    :type outfile: str
-    :returns: whether the download was successful
-    :rtype: bool
-    """
-    try:
-        # Open the url
-        f = urlopen(url)
-        print("Downloading '" + url + "' to '" + outfile + "'")
-        # Open our local file for writing
-        with open(outfile, "wb") as local_file:
-            local_file.write(f.read())
-    # handle errors
-    except HTTPError, e:
-        print("HTTP Error: " + str(e.code) + " " + url)
-        return False
-    except URLError, e:
-        print("URL Error: " + str(e.reason) + " " + url)
-        return False
-    return True
-
-
-def download_weka():
-    """
-    Downloads the Weka jar from github associated with this release if nececssary.
-    """
-    url = "https://github.com/fracpete/python-weka-wrapper/raw/5d00d206a1d06732cc408da2d2331d5c87eb4954/python/weka/lib/weka.jar"
-    outfile = os.path.join(os.path.dirname(__file__), "python", "weka", "lib", "weka.jar")
-    if not os.path.exists(outfile):
-        if not download_file(url, outfile):
-            print("Failed to download Weka jar '" + url + "' to '" + outfile + "'!")
-        else:
-            print("Download of Weka jar successful!")
-
-
-def ext_modules():
-    """
-    Initiates Weka jar download.
-    """
-    download_weka()
 
 
 def _read(f):
@@ -105,7 +55,7 @@ setup(
         "weka": ["lib/*.jar"],
     },
     include_package_data=True,
-    version="0.3.12",
+    version="0.3.13",
     author='Peter "fracpete" Reutemann',
     author_email='pythonwekawrapper@gmail.com',
     install_requires=[
@@ -116,5 +66,4 @@ setup(
         'plots': ["matplotlib"],
         'graphs': ["pygraphviz", "PIL"],
     },
-    ext_modules=ext_modules(),
 )
