@@ -1,12 +1,11 @@
 Changelog
 =========
 
-0.3.14 (????-??-??)
+0.3.14 (2018-10-28)
 -------------------
 
 - fixed logging setup in `weka.core.jvm` to avoid global setting global logging
   setup to `DEBUG` (thanks to https://github.com/Arnie97)
-- ...
 
 
 0.3.13 (2018-09-16)
