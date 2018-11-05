@@ -207,6 +207,32 @@ $ pip install python-weka-wrapper
 </pre></div>
 </div>
 </div>
+<div class="section" id="windows-using-anaconda">
+<h2>Windows using Anaconda<a class="headerlink" href="#windows-using-anaconda" title="Permalink to this headline">¶</a></h2>
+<p><strong>Please note:</strong> You need to make sure that the <em>bitness</em> of your environment
+is consistent.  I.e., if you install a 32-bit version of Anaconda, you need to
+install a 32-bit JDK (or all of them are 64-bit).</p>
+<ul>
+<li><p class="first">download <a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#javabridge">javabridge</a>
+for Python 2.7 (<em>cp27</em>) and your bitness (32 or 64 bit)</p>
+</li>
+<li><p class="first">the following sets up an environment with Python 2.7</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt; conda create --name pww <span class="nv">python</span><span class="o">=</span>2.7
+&gt; activate pww
+&gt; pip install numpy
+&gt; pip install C:<span class="se">\w</span>here<span class="se">\y</span>ou<span class="se">\d</span>ownloaded<span class="se">\i</span>t<span class="se">\j</span>avabridge-X.Y.Z.whl
+&gt; pip install python-weka-wrapper
+</pre></div>
+</div>
+</li>
+</ul>
+<p>If you want plotting support, then install also <em>graphviz</em> and <em>matplotlib</em>:</p>
+<ul class="simple">
+<li>download <a class="reference external" href="https://graphviz.gitlab.io/_pages/Download/Download_windows.html">graphviz</a>
+and add the path to its installed binaries to your <code class="docutils literal"><span class="pre">PATH</span></code> environment variable.</li>
+<li>install matplotlib using <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">matplotlib</span></code></li>
+</ul>
+</div>
 <div class="section" id="windows">
 <h2>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
 <p><strong>Please note:</strong> You need to make sure that the <em>bitness</em> of your environment
@@ -311,6 +337,7 @@ in a <em>disposable</em> location.</p>
 <li><a class="reference internal" href="#fedora-centos-redhat">Fedora/CentOS/Redhat</a></li>
 <li><a class="reference internal" href="#other-linux-distributions">Other Linux distributions</a></li>
 <li><a class="reference internal" href="#mac-osx">Mac OSX</a></li>
+<li><a class="reference internal" href="#windows-using-anaconda">Windows using Anaconda</a></li>
 <li><a class="reference internal" href="#windows">Windows</a></li>
 <li><a class="reference internal" href="#from-source">From source</a><ul>
 <li><a class="reference internal" href="#archive">Archive</a></li>
