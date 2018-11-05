@@ -201,6 +201,33 @@ Python packages:
    $ pip install python-weka-wrapper
 
 
+Windows using Anaconda
+----------------------
+
+**Please note:** You need to make sure that the *bitness* of your environment
+is consistent.  I.e., if you install a 32-bit version of Anaconda, you need to
+install a 32-bit JDK (or all of them are 64-bit).
+
+* download `javabridge <http://www.lfd.uci.edu/~gohlke/pythonlibs/#javabridge>`__
+  for Python 2.7 (*cp27*) and your bitness (32 or 64 bit)
+
+* the following sets up an environment with Python 2.7
+
+  .. code-block:: bash
+
+     > conda create --name pww python=2.7
+     > activate pww
+     > pip install numpy
+     > pip install C:\where\you\downloaded\it\javabridge-X.Y.Z.whl
+     > pip install python-weka-wrapper
+
+If you want plotting support, then install also *graphviz* and *matplotlib*:
+
+* download `graphviz <https://graphviz.gitlab.io/_pages/Download/Download_windows.html>`__
+  and add the path to its installed binaries to your ``PATH`` environment variable.
+* install matplotlib using ``pip install matplotlib``
+
+
 Windows
 -------
 
