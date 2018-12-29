@@ -4,6 +4,8 @@ Changelog
 0.3.15 (????-??-??)
 -------------------
 
+- added wrapper classes for association classes that implement `AssociationRuleProducer`
+  (package `weka.associations`): `AssociationRules`, `AssociationRule`, `item`
 - ...
 
 
