@@ -1,14 +1,13 @@
 Changelog
 =========
 
-0.3.15 (????-??-??)
+0.3.15 (2019-01-11)
 -------------------
 
 - added wrapper classes for association classes that implement `AssociationRuleProducer`
   (package `weka.associations`): `AssociationRules`, `AssociationRule`, `item`
 - added `to_source` method to `weka.classifiers.Classifier` and `weka.filters.Filter`
   (underlying Java classes must implement the respective `Sourcable` interface)
-- ...
 
 
 0.3.14 (2018-10-28)

@@ -4,7 +4,7 @@ PyPi
 Preparation:
 * run unit tests: `tests/wekatests/all_tests.py`
 * increment version in `setup.py`
-* increment versions in `doc/source/conf.py`
+* increment versions/copyright in `doc/source/conf.py`
 * update API documentation
   * cd python/weka
   * sphinx-apidoc -f -o ../../doc/source .
