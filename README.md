@@ -3,6 +3,9 @@
 Python wrapper for the Java machine learning workbench [Weka](http://www.cs.waikato.ac.nz/~ml/weka/)
 using the [javabridge](https://pypi.python.org/pypi/javabridge) library.
 
+**Python 2.7 reaches its [end-of-life in 2020](https://pythonclock.org/), you should consider
+using the [Python 3 version](https://github.com/fracpete/python-weka-wrapper3) of this library!**
+
 Requirements:
 
 * Python 2.7 (for Python 3 version see [here](https://github.com/fracpete/python-weka-wrapper3))
