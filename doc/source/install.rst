@@ -59,7 +59,7 @@ graphical output:
 
 .. code-block:: bash
 
-   $ sudo apt-get install python-imaging python-matplotlib python-pygraphviz
+   $ sudo apt-get install python-pil python-matplotlib python-pygraphviz
 
 Install OpenJDK as well, in order to get all the header files that *javabridge*
 compiles against (but don't use it for starting up JVMs):
