@@ -2251,8 +2251,798 @@ a internal value placeholder (&#64;{…}).</p>
 </dd></dl>
 
 </div>
-<div class="section" id="weka-flow-sink-module">
-<h2>weka.flow.sink module<a class="headerlink" href="#weka-flow-sink-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-weka.flow.sink">
+<span id="weka-flow-sink-module"></span><h2>weka.flow.sink module<a class="headerlink" href="#module-weka.flow.sink" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="weka.flow.sink.ClassifierErrors">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">ClassifierErrors</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ClassifierErrors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.Sink" title="weka.flow.sink.Sink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.Sink</span></code></a></p>
+<p>Displays the errors obtained through a classifier evaluation.</p>
+<dl class="method">
+<dt id="weka.flow.sink.ClassifierErrors.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ClassifierErrors.check_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs checks on the input token. Raises an exception if unsupported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<a class="reference internal" href="#weka.flow.base.Token" title="weka.flow.base.Token"><em>Token</em></a>) – the token to check</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.ClassifierErrors.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ClassifierErrors.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.ClassifierErrors.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ClassifierErrors.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.ClassifierErrors.fix_config">
+<code class="descname">fix_config</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ClassifierErrors.fix_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>dict</em>) – the options to fix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the (potentially) fixed options</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="weka.flow.sink.ClassifierErrors.quickinfo">
+<code class="descname">quickinfo</code><a class="headerlink" href="#weka.flow.sink.ClassifierErrors.quickinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a short string describing some of the options of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the info, None if not available</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.Console">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">Console</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.Sink" title="weka.flow.sink.Sink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.Sink</span></code></a></p>
+<p>Sink that outputs the payloads of the data on stdout.</p>
+<dl class="method">
+<dt id="weka.flow.sink.Console.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Console.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.Console.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Console.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.Console.fix_config">
+<code class="descname">fix_config</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Console.fix_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>dict</em>) – the options to fix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the (potentially) fixed options</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="weka.flow.sink.Console.quickinfo">
+<code class="descname">quickinfo</code><a class="headerlink" href="#weka.flow.sink.Console.quickinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a short string describing some of the options of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the info, None if not available</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.DumpFile">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">DumpFile</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.DumpFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.FileOutputSink" title="weka.flow.sink.FileOutputSink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.FileOutputSink</span></code></a></p>
+<p>Sink that outputs the payloads of the data to a file.</p>
+<dl class="method">
+<dt id="weka.flow.sink.DumpFile.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.DumpFile.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.DumpFile.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.DumpFile.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.DumpFile.fix_config">
+<code class="descname">fix_config</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.DumpFile.fix_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>dict</em>) – the options to fix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the (potentially) fixed options</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="weka.flow.sink.DumpFile.quickinfo">
+<code class="descname">quickinfo</code><a class="headerlink" href="#weka.flow.sink.DumpFile.quickinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a short string describing some of the options of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the info, None if not available</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.FileOutputSink">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">FileOutputSink</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.FileOutputSink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.Sink" title="weka.flow.sink.Sink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.Sink</span></code></a></p>
+<p>Ancestor for sinks that output data to a file.</p>
+<dl class="method">
+<dt id="weka.flow.sink.FileOutputSink.fix_config">
+<code class="descname">fix_config</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.FileOutputSink.fix_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>dict</em>) – the options to fix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the (potentially) fixed options</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="weka.flow.sink.FileOutputSink.quickinfo">
+<code class="descname">quickinfo</code><a class="headerlink" href="#weka.flow.sink.FileOutputSink.quickinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a short string describing some of the options of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the info, None if not available</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.InstanceDumper">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">InstanceDumper</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.InstanceDumper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.FileOutputSink" title="weka.flow.sink.FileOutputSink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.FileOutputSink</span></code></a></p>
+<p>Sink that dumps the incoming Instance/Instances into a file.</p>
+<dl class="method">
+<dt id="weka.flow.sink.InstanceDumper.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.InstanceDumper.check_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs checks on the input token. Raises an exception if unsupported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<a class="reference internal" href="#weka.flow.base.Token" title="weka.flow.base.Token"><em>Token</em></a>) – the token to check</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.InstanceDumper.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.InstanceDumper.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.InstanceDumper.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.InstanceDumper.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.LinePlot">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">LinePlot</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.LinePlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.Sink" title="weka.flow.sink.Sink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.Sink</span></code></a></p>
+<p>Displays the Instances object as line plot using the internal format, one line per Instance.</p>
+<dl class="method">
+<dt id="weka.flow.sink.LinePlot.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.LinePlot.check_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs checks on the input token. Raises an exception if unsupported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<a class="reference internal" href="#weka.flow.base.Token" title="weka.flow.base.Token"><em>Token</em></a>) – the token to check</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.LinePlot.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.LinePlot.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.LinePlot.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.LinePlot.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.LinePlot.fix_config">
+<code class="descname">fix_config</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.LinePlot.fix_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>dict</em>) – the options to fix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the (potentially) fixed options</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="weka.flow.sink.LinePlot.quickinfo">
+<code class="descname">quickinfo</code><a class="headerlink" href="#weka.flow.sink.LinePlot.quickinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a short string describing some of the options of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the info, None if not available</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.MatrixPlot">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">MatrixPlot</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.MatrixPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.Sink" title="weka.flow.sink.Sink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.Sink</span></code></a></p>
+<p>Displays the Instances object as matrix plot.</p>
+<dl class="method">
+<dt id="weka.flow.sink.MatrixPlot.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.MatrixPlot.check_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs checks on the input token. Raises an exception if unsupported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<a class="reference internal" href="#weka.flow.base.Token" title="weka.flow.base.Token"><em>Token</em></a>) – the token to check</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.MatrixPlot.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.MatrixPlot.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.MatrixPlot.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.MatrixPlot.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.MatrixPlot.fix_config">
+<code class="descname">fix_config</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.MatrixPlot.fix_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>dict</em>) – the options to fix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the (potentially) fixed options</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="weka.flow.sink.MatrixPlot.quickinfo">
+<code class="descname">quickinfo</code><a class="headerlink" href="#weka.flow.sink.MatrixPlot.quickinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a short string describing some of the options of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the info, None if not available</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.ModelWriter">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">ModelWriter</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ModelWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.FileOutputSink" title="weka.flow.sink.FileOutputSink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.FileOutputSink</span></code></a></p>
+<p>Writes a model to disk.</p>
+<dl class="method">
+<dt id="weka.flow.sink.ModelWriter.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ModelWriter.check_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs checks on the input token. Raises an exception if unsupported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<a class="reference internal" href="#weka.flow.base.Token" title="weka.flow.base.Token"><em>Token</em></a>) – the token to check</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.ModelWriter.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ModelWriter.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.ModelWriter.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ModelWriter.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.Null">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">Null</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Null" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.Sink" title="weka.flow.sink.Sink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.Sink</span></code></a></p>
+<p>Sink that just gobbles up all the data.</p>
+<dl class="method">
+<dt id="weka.flow.sink.Null.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Null.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.Null.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Null.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.PRC">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">PRC</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.PRC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.Sink" title="weka.flow.sink.Sink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.Sink</span></code></a></p>
+<p>Displays the PRC curve obtained from a classifier evaluation.</p>
+<dl class="method">
+<dt id="weka.flow.sink.PRC.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.PRC.check_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs checks on the input token. Raises an exception if unsupported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<a class="reference internal" href="#weka.flow.base.Token" title="weka.flow.base.Token"><em>Token</em></a>) – the token to check</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.PRC.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.PRC.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.PRC.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.PRC.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.PRC.fix_config">
+<code class="descname">fix_config</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.PRC.fix_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>dict</em>) – the options to fix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the (potentially) fixed options</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="weka.flow.sink.PRC.quickinfo">
+<code class="descname">quickinfo</code><a class="headerlink" href="#weka.flow.sink.PRC.quickinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a short string describing some of the options of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the info, None if not available</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.ROC">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">ROC</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ROC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.sink.Sink" title="weka.flow.sink.Sink"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.sink.Sink</span></code></a></p>
+<p>Displays the ROC curve obtained from a classifier evaluation.</p>
+<dl class="method">
+<dt id="weka.flow.sink.ROC.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ROC.check_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs checks on the input token. Raises an exception if unsupported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<a class="reference internal" href="#weka.flow.base.Token" title="weka.flow.base.Token"><em>Token</em></a>) – the token to check</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.ROC.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ROC.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a description of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the description</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.ROC.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ROC.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual execution of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="weka.flow.sink.ROC.fix_config">
+<code class="descname">fix_config</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.ROC.fix_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the options, if necessary. I.e., it adds all required elements to the dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>dict</em>) – the options to fix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the (potentially) fixed options</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="weka.flow.sink.ROC.quickinfo">
+<code class="descname">quickinfo</code><a class="headerlink" href="#weka.flow.sink.ROC.quickinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a short string describing some of the options of the actor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the info, None if not available</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="weka.flow.sink.Sink">
+<em class="property">class </em><code class="descclassname">weka.flow.sink.</code><code class="descname">Sink</code><span class="sig-paren">(</span><em>name=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Sink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#weka.flow.base.InputConsumer" title="weka.flow.base.InputConsumer"><code class="xref py py-class docutils literal"><span class="pre">weka.flow.base.InputConsumer</span></code></a></p>
+<p>The ancestor for all sinks.</p>
+<dl class="method">
+<dt id="weka.flow.sink.Sink.post_execute">
+<code class="descname">post_execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#weka.flow.sink.Sink.post_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets executed after the actual execution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None if successful, otherwise error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-weka.flow.source">
 <span id="weka-flow-source-module"></span><h2>weka.flow.source module<a class="headerlink" href="#module-weka.flow.source" title="Permalink to this headline">¶</a></h2>
@@ -4549,7 +5339,7 @@ The current value is available through the variable {X} in the expression.</p>
 <li><a class="reference internal" href="#module-weka.flow.container">weka.flow.container module</a></li>
 <li><a class="reference internal" href="#module-weka.flow.control">weka.flow.control module</a></li>
 <li><a class="reference internal" href="#module-weka.flow.conversion">weka.flow.conversion module</a></li>
-<li><a class="reference internal" href="#weka-flow-sink-module">weka.flow.sink module</a></li>
+<li><a class="reference internal" href="#module-weka.flow.sink">weka.flow.sink module</a></li>
 <li><a class="reference internal" href="#module-weka.flow.source">weka.flow.source module</a></li>
 <li><a class="reference internal" href="#module-weka.flow.transformer">weka.flow.transformer module</a></li>
 <li><a class="reference internal" href="#module-weka.flow">Module contents</a></li>
