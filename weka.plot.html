@@ -65,11 +65,41 @@
 <div class="section" id="weka-plot-experiments-module">
 <h2>weka.plot.experiments module<a class="headerlink" href="#weka-plot-experiments-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="weka-plot-graph-module">
-<h2>weka.plot.graph module<a class="headerlink" href="#weka-plot-graph-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-weka.plot.graph">
+<span id="weka-plot-graph-module"></span><h2>weka.plot.graph module<a class="headerlink" href="#module-weka.plot.graph" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="weka.plot.graph.plot_dot_graph">
+<code class="descclassname">weka.plot.graph.</code><code class="descname">plot_dot_graph</code><span class="sig-paren">(</span><em>graph</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.plot.graph.plot_dot_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a graph in graphviz dot notation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>graph</strong> (<em>str</em>) – the dot notation graph</li>
+<li><strong>filename</strong> (<em>str</em>) – the (optional) file to save the generated plot to. The extension determines the file format.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-weka.plot">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-weka.plot" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="weka.plot.create_subsample">
+<code class="descclassname">weka.plot.</code><code class="descname">create_subsample</code><span class="sig-paren">(</span><em>data</em>, <em>percent</em>, <em>seed=1</em><span class="sig-paren">)</span><a class="headerlink" href="#weka.plot.create_subsample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a subsample of the dataset.
+:param data: the data to create the subsample from
+:type data: Instances
+:param percent: the percentage (0-100)
+:type percent: float
+:param seed: the seed value to use
+:type seed: int</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -90,8 +120,8 @@
 <li><a class="reference internal" href="#weka-plot-clusterers-module">weka.plot.clusterers module</a></li>
 <li><a class="reference internal" href="#weka-plot-dataset-module">weka.plot.dataset module</a></li>
 <li><a class="reference internal" href="#weka-plot-experiments-module">weka.plot.experiments module</a></li>
-<li><a class="reference internal" href="#weka-plot-graph-module">weka.plot.graph module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-weka.plot.graph">weka.plot.graph module</a></li>
+<li><a class="reference internal" href="#module-weka.plot">Module contents</a></li>
 </ul>
 </li>
 </ul>
