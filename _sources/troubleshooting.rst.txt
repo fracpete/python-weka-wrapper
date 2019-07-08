@@ -8,6 +8,13 @@ General
 
   **A:** `.whl` are *Python Wheels* archives, which you can install using pip (>= 1.4). See also `this website <http://pythonwheels.com/>`__.
 
+* **Q:** Why does javabridge not compile?                                                                               
+
+  **A:** Ensure that you have an actual JDK installed (test it by issuing the ``javac`` command), as 
+  javabridge requires header files to present that won't be present if you only have a runtime 
+  environment (JRE). You also may have to set the ``JAVA_HOME`` environment variable pointing 
+  to your JDK installation (above the ``bin`` directory).
+
 * **Q:** Packages don't get loaded and/or you see exceptions of the type 
   ``java.lang.ClassNotFoundException: org.pentaho.packageManagement.DefaultPackage``
   output in the terminal. What is the cause?
