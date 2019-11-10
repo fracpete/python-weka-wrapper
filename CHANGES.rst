@@ -2,7 +2,7 @@ Changelog
 =========
 
 0.3.16 (2019-11-11)
-------------------
+-------------------
 
 - added console scripts: `pww-associator`, `pww-attsel`, `pww-classifier`, `pww-clusterer`, `pww-datagenerator`, `pww-filter`
 - added `serialize`, `deserialize` methods to `weka.classifiers.Classifier` to simplify loading/saving model
