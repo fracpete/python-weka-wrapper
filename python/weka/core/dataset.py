@@ -1493,7 +1493,7 @@ class InstanceValueIterator(object):
 def create_instances_from_lists(x, y=None, name="data"):
     """
     Allows the generation of an Instances object from a list of lists for X and a list for Y (optional).
-    All data must be numerical. Attributes can be converted to nominal with the
+    Data can be numeric, string or bytes. Attributes can be converted to nominal with the
     weka.filters.unsupervised.attribute.NumericToNominal filter.
 
     :param x: the input variables (row wise)
@@ -1508,19 +1508,58 @@ def create_instances_from_lists(x, y=None, name="data"):
     if y is not None:
         if len(x) != len(y):
             raise Exception("Dimensions of x and y differ: " + str(len(x)) + " != " + str(len(y)))
+
     # create header
     atts = []
+    type_x = []
     for i in xrange(len(x[0])):
-        atts.append(Attribute.create_numeric("x" + str(i+1)))
+        if isinstance(x[0][i], float) or isinstance(x[0][i], int):
+            type_x.append("N")
+            atts.append(Attribute.create_numeric("x" + str(i+1)))
+        elif isinstance(x[0][i], bytes):
+            type_x.append("B")
+            atts.append(Attribute.create_string("x" + str(i+1)))
+        elif isinstance(x[0][i], str):
+            type_x.append("S")
+            atts.append(Attribute.create_string("x" + str(i+1)))
+        else:
+            raise Exception("Only float, int, bytes and str are supported, #" + str(i) + ": " + str(type(x[i][0])))
+
+    type_y = ""
     if y is not None:
-        atts.append(Attribute.create_numeric("y"))
+        if isinstance(y[0], float) or isinstance(y[0], int):
+            type_y = "N"
+            atts.append(Attribute.create_numeric("y"))
+        elif isinstance(y[0], bytes):
+            type_y = "B"
+            atts.append(Attribute.create_string("y"))
+        elif isinstance(y[0], str):
+            type_y = "S"
+            atts.append(Attribute.create_string("y"))
+        else:
+            raise Exception("Only float, int, bytes and str are supported for y: " + str(type(y[0])))
+
     result = Instances.create_instances(name, atts, len(x))
+
     # add data
     for i in xrange(len(x)):
-        values = x[i][:]
+        values = []
+        for n in xrange(len(x[i])):
+            if type_x[n] == "N":
+                values.append(x[i][n])
+            elif type_x[n] == "B":
+                values.append(result.attribute(n).add_string_value(x[i][n].decode("utf-8")))
+            else:
+                values.append(result.attribute(n).add_string_value(x[i][n]))
         if y is not None:
-            values.append(y[i])
+            if type_y == "N":
+                values.append(y[i])
+            elif type_y == "B":
+                values.append(result.attribute(result.num_attributes - 1).add_string_value(y[i].decode("utf-8")))
+            else:
+                values.append(result.attribute(result.num_attributes - 1).add_string_value(y[i]))
         result.add_instance(Instance.create_instance(values))
+
     return result
 
 
@@ -1547,7 +1586,7 @@ def create_instances_from_matrices(x, y=None, name="data"):
     # create header
     atts = []
     type_x = []
-    for i in range(len(x[0])):
+    for i in xrange(len(x[0])):
         if np.issubdtype(x.dtype[i], np.number):
             type_x.append("N")  # number
             atts.append(Attribute.create_numeric("x" + str(i+1)))
@@ -1572,9 +1611,9 @@ def create_instances_from_matrices(x, y=None, name="data"):
     result = Instances.create_instances(name, atts, len(x))
 
     # add data
-    for i in range(len(x)):
+    for i in xrange(len(x)):
         values = []
-        for n in range(len(x[i])):
+        for n in xrange(len(x[i])):
             if type_x[n] == "N":
                 values.append(x[i][n])
             elif type_x[n] == "S":
