@@ -4,6 +4,7 @@ Changelog
 0.3.16 (????-??-??)
 ------------------
 
+- added console scripts: pww-associator, pww-attsel, pww-classifier, pww-clusterer, pww-datagenerator, pww-filter
 - ...
 
 0.3.15 (2019-01-11)
