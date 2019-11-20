@@ -6,6 +6,9 @@
 Introduction
 ============
 
+**WARNING:** Python 2.7 reaches its `end-of-life in 2020 <https://pythonclock.org/>`_, 
+you should consider using the `Python 3 version <https://github.com/fracpete/python-weka-wrapper3>`_ of this library!
+
 *python-weka-wrapper* allows you to use `Weka <http://www.cs.waikato.ac.nz/~ml/weka/>`_ from within Python.
 
 The library uses the `javabridge <https://pypi.python.org/pypi/javabridge>`_ library for starting up,
