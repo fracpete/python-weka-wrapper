@@ -1,10 +1,13 @@
+# END OF LIFE
+
+**Python 2.7 has reached its [end-of-life in 2020](https://pythonclock.org/), you should consider
+using the [Python 3 version](https://github.com/fracpete/python-weka-wrapper3) of this library,
+as the Python 2.7 version will no longer get updates!**
+
 # python-weka-wrapper
 
 Python wrapper for the Java machine learning workbench [Weka](http://www.cs.waikato.ac.nz/~ml/weka/)
 using the [javabridge](https://pypi.python.org/pypi/javabridge) library.
-
-**Python 2.7 reaches its [end-of-life in 2020](https://pythonclock.org/), you should consider
-using the [Python 3 version](https://github.com/fracpete/python-weka-wrapper3) of this library!**
 
 Requirements:
 
